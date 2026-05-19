@@ -67,6 +67,7 @@ def main():
             padding: 24px;
             margin-bottom: 24px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            overflow: hidden;
         }}
 
         h2 {{
@@ -86,8 +87,15 @@ def main():
             background: white;
         }}
 
+        .table-wrapper {{
+            width: 100%;
+            overflow-x: auto;
+            padding-bottom: 6px;
+        }}
+
         .data-table {{
             width: 100%;
+            min-width: 1100px;
             border-collapse: collapse;
             font-size: 13px;
         }}
@@ -97,10 +105,12 @@ def main():
             border-bottom: 1px solid #e5e7eb;
             padding: 8px;
             text-align: right;
+            white-space: nowrap;
         }}
 
         .data-table th {{
             background: #f9fafb;
+            font-weight: 700;
         }}
 
         .note {{
@@ -114,6 +124,21 @@ def main():
             color: #6b7280;
             padding: 24px;
             font-size: 13px;
+        }}
+
+        @media (max-width: 900px) {{
+            header {{
+                padding: 24px;
+            }}
+
+            main {{
+                margin: 24px auto;
+                padding: 0 16px;
+            }}
+
+            .grid {{
+                grid-template-columns: 1fr;
+            }}
         }}
     </style>
 </head>
@@ -138,7 +163,9 @@ def main():
 
         <section>
             <h2>Selected salary points</h2>
-            {table_html}
+            <div class="table-wrapper">
+                {table_html}
+            </div>
         </section>
 
         <section>
@@ -147,22 +174,22 @@ def main():
             <div class="grid">
                 <div class="figure-card">
                     <h3>Gross wage, net wage and employer cost</h3>
-                    <img src="../figures/cost_and_net_vs_gross.png">
+                    <img src="../figures/cost_and_net_vs_gross.png" alt="Gross wage, net wage and employer cost">
                 </div>
 
                 <div class="figure-card">
                     <h3>Employer contribution rate</h3>
-                    <img src="../figures/employer_contribution_rate.png">
+                    <img src="../figures/employer_contribution_rate.png" alt="Employer contribution rate">
                 </div>
 
                 <div class="figure-card">
                     <h3>Social wedge</h3>
-                    <img src="../figures/social_wedge_rate.png">
+                    <img src="../figures/social_wedge_rate.png" alt="Social wedge">
                 </div>
 
                 <div class="figure-card">
                     <h3>Cost-to-net ratio</h3>
-                    <img src="../figures/cost_to_net_ratio.png">
+                    <img src="../figures/cost_to_net_ratio.png" alt="Cost-to-net ratio">
                 </div>
             </div>
         </section>
