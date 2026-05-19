@@ -60,7 +60,8 @@ TEXT = {
         "metric_ratio_2_smic": "Cost/net ratio at 2 SMIC",
         "table_title": "Selected salary points",
         "figures_title": "Interactive figures",
-        "interpretation_title": "Interpretation",
+	"key_metrics_title": "Key indicators",
+	"interpretation_title": "Interpretation",
         "interpretation_text": (
             "The dashboard now compares employee profiles instead of relying on a single generic case. "
             "This makes it possible to distinguish the effects of executive status and the Alsace-Moselle "
@@ -145,7 +146,8 @@ TEXT = {
         "metric_ratio_2_smic": "Ratio coût/net à 2 SMIC",
         "table_title": "Points de salaire sélectionnés",
         "figures_title": "Graphiques interactifs",
-        "interpretation_title": "Interprétation",
+	"key_metrics_title": "Indicateurs clés",
+	"interpretation_title": "Interprétation",
         "interpretation_text": (
             "Le tableau de bord compare désormais plusieurs profils salariés au lieu de s’appuyer sur un seul cas générique. "
             "Cela permet de distinguer les effets du statut cadre et du régime Alsace-Moselle sur le salaire net, "
@@ -209,17 +211,40 @@ def safe_id(value):
 
 
 def base_layout(lang: str, title: str, yaxis_title: str):
+    """
+    Layout commun des graphiques.
+
+    Important : le titre Plotly interne est volontairement supprimé,
+    car chaque carte HTML possède déjà son propre titre <h3>.
+    Cela évite les doublons et les chevauchements.
+    """
     t = TEXT[lang]
+
     return dict(
-        title=dict(text=title, x=0.02, xanchor="left", font=dict(size=18, color=COLOR_NAVY)),
         template="plotly_white",
-        height=430,
-        margin=dict(l=64, r=32, t=70, b=60),
+        height=420,
+        margin=dict(l=64, r=42, t=28, b=70),
         font=dict(family="Arial", size=13, color=COLOR_NAVY),
         hovermode="x unified",
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-        xaxis=dict(title=t["x_axis"], showgrid=False, zeroline=False),
-        yaxis=dict(title=yaxis_title, showgrid=True, gridcolor="#e5e7eb", zeroline=False),
+        legend=dict(
+            orientation="h",
+            yanchor="top",
+            y=-0.18,
+            xanchor="center",
+            x=0.5,
+            font=dict(size=12)
+        ),
+        xaxis=dict(
+            title=t["x_axis"],
+            showgrid=False,
+            zeroline=False
+        ),
+        yaxis=dict(
+            title=yaxis_title,
+            showgrid=True,
+            gridcolor="#e5e7eb",
+            zeroline=False
+        )
     )
 
 
@@ -485,6 +510,7 @@ def compute_marginal_indicators(df):
 def make_marginal_chart(df, lang: str):
     t = TEXT[lang]
     df_m = compute_marginal_indicators(df)
+
     fig = go.Figure()
 
     fig.add_trace(go.Scatter(
@@ -497,8 +523,8 @@ def make_marginal_chart(df, lang: str):
         hovertemplate=(
             "<b>%{x:.2f}× SMIC</b><br>"
             + f"{t['gross_wage']}: " + "%{customdata[0]:,.0f} €<br>"
-            "Δ gross wage: %{customdata[1]:,.0f} €<br>"
-            "Δ employer cost: %{customdata[2]:,.0f} €<br>"
+            "Δ salaire brut: %{customdata[1]:,.0f} €<br>"
+            "Δ coût employeur: %{customdata[2]:,.0f} €<br>"
             + f"{t['marginal_cost_rate']}: " + "%{y:.1f}%"
             "<extra></extra>"
         )
@@ -514,16 +540,49 @@ def make_marginal_chart(df, lang: str):
         hovertemplate=(
             "<b>%{x:.2f}× SMIC</b><br>"
             + f"{t['gross_wage']}: " + "%{customdata[0]:,.0f} €<br>"
-            "Δ net wage: %{customdata[1]:,.0f} €<br>"
-            "Δ employer cost: %{customdata[2]:,.0f} €<br>"
+            "Δ salaire net: %{customdata[1]:,.0f} €<br>"
+            "Δ coût employeur: %{customdata[2]:,.0f} €<br>"
             + f"{t['marginal_net_retention']}: " + "%{y:.1f}%"
             "<extra></extra>"
         )
     ))
 
-    fig.update_layout(**base_layout(lang, t["chart_marginal_title"], t["y_marginal"]))
-    fig.update_yaxes(ticksuffix="%")
+    # Layout spécifique au graphique marginal :
+    # - pas de titre interne ;
+    # - légende sous le graphique ;
+    # - marges augmentées ;
+    # - hauteur supérieure pour éviter les chevauchements.
+    fig.update_layout(
+        template="plotly_white",
+        height=500,
+        margin=dict(l=72, r=42, t=34, b=105),
+        font=dict(family="Arial", size=13, color=COLOR_NAVY),
+        hovermode="x unified",
+        showlegend=True,
+        legend=dict(
+            orientation="h",
+            yanchor="top",
+            y=-0.22,
+            xanchor="center",
+            x=0.5,
+            font=dict(size=12)
+        ),
+        xaxis=dict(
+            title=t["x_axis"],
+            showgrid=False,
+            zeroline=False
+        ),
+        yaxis=dict(
+            title=t["y_marginal"],
+            ticksuffix="%",
+            showgrid=True,
+            gridcolor="#e5e7eb",
+            zeroline=False
+        )
+    )
+
     add_rgdu_zone(fig, lang)
+
     return fig
 
 
@@ -622,29 +681,6 @@ def build_profile_panel(df_profile, profile_id, lang: str):
 
     return f"""
     <div class="profile-panel" id="panel-{lang}-{safe_id(profile_id)}">
-        <div class="metrics-grid">
-            <div class="metric-card">
-                <div class="metric-label">{t["metric_net_smic"]}</div>
-                <div class="metric-value">{metrics["smic_net"]}</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">{t["metric_cost_smic"]}</div>
-                <div class="metric-value">{metrics["smic_cost"]}</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">{t["metric_rgdu_smic"]}</div>
-                <div class="metric-value">{metrics["smic_rgdu"]}</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">{t["metric_ratio_2_smic"]}</div>
-                <div class="metric-value">{metrics["smic_2_cost_net_ratio"]}</div>
-            </div>
-        </div>
-
-        <section>
-            <h2>{t["table_title"]}</h2>
-            <div class="table-wrapper">{table_html}</div>
-        </section>
 
         <section>
             <h2>{t["figures_title"]}</h2>
@@ -654,32 +690,67 @@ def build_profile_panel(df_profile, profile_id, lang: str):
                     <p class="chart-subtitle">{t["chart_cost_subtitle"]}</p>
                     <div class="plotly-chart">{fig_to_html(make_cost_chart(df_profile, lang))}</div>
                 </div>
+
                 <div class="chart-card">
                     <h3>{t["chart_employer_rate_title"]}</h3>
                     <p class="chart-subtitle">{t["chart_employer_rate_subtitle"]}</p>
                     <div class="plotly-chart">{fig_to_html(make_employer_rate_chart(df_profile, lang))}</div>
                 </div>
+
                 <div class="chart-card">
                     <h3>{t["chart_rgdu_title"]}</h3>
                     <p class="chart-subtitle">{t["chart_rgdu_subtitle"]}</p>
                     <div class="plotly-chart">{fig_to_html(make_rgdu_chart(df_profile, lang))}</div>
                 </div>
+
                 <div class="chart-card">
                     <h3>{t["chart_wedge_title"]}</h3>
                     <p class="chart-subtitle">{t["chart_wedge_subtitle"]}</p>
                     <div class="plotly-chart">{fig_to_html(make_social_wedge_chart(df_profile, lang))}</div>
                 </div>
+
                 <div class="chart-card">
                     <h3>{t["chart_ratio_title"]}</h3>
                     <p class="chart-subtitle">{t["chart_ratio_subtitle"]}</p>
                     <div class="plotly-chart">{fig_to_html(make_cost_to_net_chart(df_profile, lang))}</div>
                 </div>
+
                 <div class="chart-card">
                     <h3>{t["chart_marginal_title"]}</h3>
                     <p class="chart-subtitle">{t["chart_marginal_subtitle"]}</p>
                     <div class="plotly-chart">{fig_to_html(make_marginal_chart(df_profile, lang))}</div>
                 </div>
             </div>
+        </section>
+
+        <section>
+            <h2>{t["key_metrics_title"]}</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">{t["metric_net_smic"]}</div>
+                    <div class="metric-value">{metrics["smic_net"]}</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">{t["metric_cost_smic"]}</div>
+                    <div class="metric-value">{metrics["smic_cost"]}</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">{t["metric_rgdu_smic"]}</div>
+                    <div class="metric-value">{metrics["smic_rgdu"]}</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">{t["metric_ratio_2_smic"]}</div>
+                    <div class="metric-value">{metrics["smic_2_cost_net_ratio"]}</div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>{t["table_title"]}</h2>
+            <div class="table-wrapper">{table_html}</div>
         </section>
     </div>
     """
@@ -736,11 +807,6 @@ def build_language_section(df, lang: str, updated_at: str):
                 </div>
             </section>
 
-            <section>
-                <h2>{t["methodology_title"]}</h2>
-                {methodology_html}
-            </section>
-
             <div id="profile-panels-{lang}">
                 {panels_html}
             </div>
@@ -748,6 +814,11 @@ def build_language_section(df, lang: str, updated_at: str):
             <section>
                 <h2>{t["interpretation_title"]}</h2>
                 <p class="interpretation">{t["interpretation_text"]}</p>
+            </section>
+
+            <section>
+                <h2>{t["methodology_title"]}</h2>
+                {methodology_html}
             </section>
         </main>
 
