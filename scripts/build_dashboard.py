@@ -24,26 +24,22 @@ COLOR_LIGHT_BLUE = "rgba(37, 99, 235, 0.10)"
 
 TEXT = {
     "en": {
-        "html_lang": "en",
         "page_title": "French Labour Cost Lab",
         "subtitle": "Open-source research tool for simulating and visualizing labour costs in France.",
         "language_button": "Français",
         "engine_badge": "Calculation engine: Mon-entreprise / URSSAF API",
-
+        "profile_label": "Employee profile",
         "purpose_title": "Purpose",
         "purpose_text": (
-            "French Labour Cost Lab provides reproducible simulations of gross wages, "
-            "net wages, employer costs, employer contribution reliefs and social wedges in France."
+            "French Labour Cost Lab provides reproducible simulations of gross wages, net wages, "
+            "employer costs, employer contribution reliefs and social wedges in France."
         ),
-
         "method_note": (
             "<strong>Methodological note.</strong> This version uses the Mon-entreprise / URSSAF "
-            "calculation engine through its public API. Results are computed for a generic wage grid "
-            "and should be interpreted as a reference case, not as an official payslip calculator. "
-            "Some institutional parameters may depend on firm size, sector, collective agreement, "
-            "location, executive status and specific contribution regimes."
+            "calculation engine through its public API. Results are computed over a wage grid and "
+            "by employee profile. They should be interpreted as reference simulations, not as official "
+            "payslip calculations."
         ),
-
         "methodology_title": "Methodology",
         "methodology_intro": (
             "The dashboard is built from a reproducible wage grid evaluated through the "
@@ -53,64 +49,42 @@ TEXT = {
         "methodology_points": [
             "<strong>Source.</strong> Calculations are obtained from the public Mon-entreprise / URSSAF API.",
             "<strong>Wage grid.</strong> Gross monthly wages are expressed as multiples of the gross monthly SMIC, from 0.8 to 3.5 SMIC.",
-            "<strong>Reference case.</strong> The simulation corresponds to a generic private-sector employee case. It does not encode every sectoral, local or contractual specificity.",
+            "<strong>Profiles.</strong> The dashboard compares different employee profiles, including non-executive/executive status and Alsace-Moselle regime.",
             "<strong>Indicators.</strong> Employer cost, net wage, employer contributions, employee contributions, RGDU 2026, social wedge and cost-to-net ratios are derived from API outputs.",
             "<strong>Marginal indicators.</strong> The marginal employer-cost rate is computed as the finite difference between two adjacent points of the wage grid: Δ employer cost / Δ gross wage.",
-            "<strong>Limitations.</strong> Results can vary with firm size, AT/MP rates, Alsace-Moselle regime, collective agreements, executive status, exemptions and other contribution regimes."
+            "<strong>Limitations.</strong> Results can vary with firm size, AT/MP rates, collective agreements, executive status, exemptions and other contribution regimes."
         ],
-
         "metric_net_smic": "Net wage at 1 SMIC",
         "metric_cost_smic": "Employer cost at 1 SMIC",
         "metric_rgdu_smic": "RGDU 2026 at 1 SMIC",
         "metric_ratio_2_smic": "Cost/net ratio at 2 SMIC",
-
         "table_title": "Selected salary points",
         "figures_title": "Interactive figures",
         "interpretation_title": "Interpretation",
         "interpretation_text": (
-            "The central object of the project is not only the legal distinction between employer "
-            "and employee contributions, but the full wedge between what the employer pays and what "
-            "the employee receives as net wage. The RGDU 2026 graph isolates the employer contribution "
-            "relief component, while the marginal chart shows how the cost of an additional euro of gross wage "
-            "varies along the wage distribution."
+            "The dashboard now compares employee profiles instead of relying on a single generic case. "
+            "This makes it possible to distinguish the effects of executive status and the Alsace-Moselle "
+            "regime on net wages, employer costs and the structure of contribution wedges."
         ),
-
         "footer": "Last updated",
         "x_axis": "Gross wage, SMIC multiple",
         "y_monthly_amount": "Monthly amount, euros",
         "y_rate": "Contribution rate",
         "y_wedge": "Social wedge",
         "y_ratio": "Employer cost / net wage",
-        "y_rgdu": "Monthly relief amount, euros",
         "y_marginal": "Marginal rate",
-
         "chart_cost_title": "From gross wage to employer cost",
-        "chart_cost_subtitle": (
-            "Compare monthly gross wage, net wage and total employer cost across the wage grid."
-        ),
+        "chart_cost_subtitle": "Compare monthly gross wage, net wage and total employer cost across the wage grid.",
         "chart_employer_rate_title": "Effective employer contribution rate",
-        "chart_employer_rate_subtitle": (
-            "Employer contribution rates are computed from Mon-entreprise outputs as employer "
-            "contributions divided by gross wage."
-        ),
+        "chart_employer_rate_subtitle": "Employer contribution rates are computed as employer contributions divided by gross wage.",
         "chart_rgdu_title": "Employer contribution relief — RGDU 2026",
-        "chart_rgdu_subtitle": (
-            "Monthly or annual amount of the 2026 single degressive general reduction computed from "
-            "the Mon-entreprise / URSSAF engine. The right axis shows the amount as a share of gross wage."
-        ),
+        "chart_rgdu_subtitle": "Monthly or annual amount of the 2026 single degressive general reduction. The right axis shows the amount as a share of gross wage.",
         "chart_wedge_title": "Social wedge as a share of employer cost",
-        "chart_wedge_subtitle": (
-            "The social wedge measures the gap between what the employer pays and what the employee receives."
-        ),
+        "chart_wedge_subtitle": "The social wedge measures the gap between what the employer pays and what the employee receives.",
         "chart_ratio_title": "Employer cost to net wage ratio",
-        "chart_ratio_subtitle": (
-            "This ratio summarizes how many euros the employer pays for one euro of net wage."
-        ),
+        "chart_ratio_subtitle": "This ratio summarizes how many euros the employer pays for one euro of net wage.",
         "chart_marginal_title": "Marginal cost of gross wage increases",
-        "chart_marginal_subtitle": (
-            "This chart shows how employer cost and net wage react locally to an additional euro of gross wage."
-        ),
-
+        "chart_marginal_subtitle": "This chart shows how employer cost and net wage react locally to an additional euro of gross wage.",
         "employer_cost": "Employer cost",
         "net_wage": "Net wage",
         "gross_wage": "Gross wage",
@@ -126,7 +100,6 @@ TEXT = {
         "rgdu_zone": "RGDU 2026<br>degressive area",
         "marginal_cost_rate": "Δ employer cost / Δ gross wage",
         "marginal_net_retention": "Δ net wage / Δ employer cost",
-
         "monthly": "Monthly",
         "annual": "Annual",
         "monthly_amount": "Monthly amount",
@@ -135,29 +108,23 @@ TEXT = {
         "y_annual_rgdu": "Annual relief amount, euros",
         "y2_rgdu": "RGDU / gross wage",
     },
-
     "fr": {
-        "html_lang": "fr",
         "page_title": "French Labour Cost Lab",
         "subtitle": "Outil open source de simulation et de visualisation du coût du travail en France.",
         "language_button": "English",
         "engine_badge": "Moteur de calcul : API Mon-entreprise / URSSAF",
-
+        "profile_label": "Profil salarié",
         "purpose_title": "Objectif",
         "purpose_text": (
-            "French Labour Cost Lab propose des simulations reproductibles du salaire brut, "
-            "du salaire net, du coût employeur, des allègements de charges et du coin socio-fiscal en France."
+            "French Labour Cost Lab propose des simulations reproductibles du salaire brut, du salaire net, "
+            "du coût employeur, des allègements de charges et du coin socio-fiscal en France."
         ),
-
         "method_note": (
             "<strong>Note méthodologique.</strong> Cette version utilise le moteur de calcul "
             "Mon-entreprise / URSSAF via son API publique. Les résultats sont calculés sur une grille "
-            "générique de salaires et doivent être interprétés comme un cas de référence, non comme "
-            "un simulateur officiel de fiche de paie. Certains paramètres institutionnels peuvent dépendre "
-            "de la taille de l’entreprise, du secteur, de la convention collective, de la localisation, "
-            "du statut cadre et de régimes spécifiques de cotisations."
+            "salariale et par profil de salarié. Ils doivent être interprétés comme des simulations de référence, "
+            "non comme des calculs officiels de fiche de paie."
         ),
-
         "methodology_title": "Méthodologie",
         "methodology_intro": (
             "Le tableau de bord est construit à partir d’une grille salariale reproductible évaluée via "
@@ -167,65 +134,42 @@ TEXT = {
         "methodology_points": [
             "<strong>Source.</strong> Les calculs sont obtenus à partir de l’API publique Mon-entreprise / URSSAF.",
             "<strong>Grille salariale.</strong> Les salaires bruts mensuels sont exprimés en multiples du SMIC brut mensuel, de 0,8 à 3,5 SMIC.",
-            "<strong>Cas de référence.</strong> La simulation correspond à un cas générique de salarié du secteur privé. Elle n’intègre pas toutes les spécificités sectorielles, locales ou contractuelles.",
+            "<strong>Profils.</strong> Le tableau de bord compare plusieurs profils salariés, notamment selon le statut cadre/non-cadre et le régime Alsace-Moselle.",
             "<strong>Indicateurs.</strong> Coût employeur, salaire net, cotisations employeur, cotisations salarié, RGDU 2026, coin social et ratio coût/net sont dérivés des sorties de l’API.",
             "<strong>Indicateurs marginaux.</strong> Le taux marginal de coût employeur est calculé par différence finie entre deux points adjacents de la grille : Δ coût employeur / Δ salaire brut.",
-            "<strong>Limites.</strong> Les résultats peuvent varier selon la taille de l’entreprise, le taux AT/MP, le régime Alsace-Moselle, la convention collective, le statut cadre, les exonérations et les régimes spécifiques."
+            "<strong>Limites.</strong> Les résultats peuvent varier selon la taille de l’entreprise, le taux AT/MP, la convention collective, le statut cadre, les exonérations et les régimes spécifiques."
         ],
-
         "metric_net_smic": "Salaire net à 1 SMIC",
         "metric_cost_smic": "Coût employeur à 1 SMIC",
         "metric_rgdu_smic": "RGDU 2026 à 1 SMIC",
         "metric_ratio_2_smic": "Ratio coût/net à 2 SMIC",
-
         "table_title": "Points de salaire sélectionnés",
         "figures_title": "Graphiques interactifs",
         "interpretation_title": "Interprétation",
         "interpretation_text": (
-            "L’objet central du projet n’est pas seulement la distinction juridique entre cotisations "
-            "employeur et cotisations salarié, mais l’écart complet entre ce que l’employeur paie et "
-            "ce que le salarié reçoit en salaire net. Le graphique RGDU 2026 isole la composante "
-            "d’allègement de charges, tandis que le graphique marginal montre comment le coût d’un euro "
-            "supplémentaire de salaire brut varie le long de la distribution salariale."
+            "Le tableau de bord compare désormais plusieurs profils salariés au lieu de s’appuyer sur un seul cas générique. "
+            "Cela permet de distinguer les effets du statut cadre et du régime Alsace-Moselle sur le salaire net, "
+            "le coût employeur et la structure du coin socio-fiscal."
         ),
-
         "footer": "Dernière mise à jour",
         "x_axis": "Salaire brut, multiple du SMIC",
         "y_monthly_amount": "Montant mensuel, euros",
         "y_rate": "Taux de cotisation",
         "y_wedge": "Coin social",
         "y_ratio": "Coût employeur / salaire net",
-        "y_rgdu": "Montant mensuel d’allègement, euros",
         "y_marginal": "Taux marginal",
-
         "chart_cost_title": "Du salaire brut au coût employeur",
-        "chart_cost_subtitle": (
-            "Comparaison du salaire brut, du salaire net et du coût total employeur le long de la grille salariale."
-        ),
+        "chart_cost_subtitle": "Comparaison du salaire brut, du salaire net et du coût total employeur le long de la grille salariale.",
         "chart_employer_rate_title": "Taux effectif de cotisations employeur",
-        "chart_employer_rate_subtitle": (
-            "Le taux de cotisations employeur est calculé à partir des sorties Mon-entreprise, "
-            "en rapportant les cotisations employeur au salaire brut."
-        ),
+        "chart_employer_rate_subtitle": "Le taux de cotisations employeur est calculé en rapportant les cotisations employeur au salaire brut.",
         "chart_rgdu_title": "Allègements de charges — RGDU 2026",
-        "chart_rgdu_subtitle": (
-            "Montant mensuel ou annuel de réduction générale dégressive unique calculé à partir du moteur "
-            "Mon-entreprise / URSSAF. L’axe de droite indique le montant rapporté au salaire brut."
-        ),
+        "chart_rgdu_subtitle": "Montant mensuel ou annuel de réduction générale dégressive unique. L’axe de droite indique le montant rapporté au salaire brut.",
         "chart_wedge_title": "Coin social en part du coût employeur",
-        "chart_wedge_subtitle": (
-            "Le coin social mesure l’écart entre ce que l’employeur paie et ce que le salarié reçoit."
-        ),
+        "chart_wedge_subtitle": "Le coin social mesure l’écart entre ce que l’employeur paie et ce que le salarié reçoit.",
         "chart_ratio_title": "Ratio coût employeur / salaire net",
-        "chart_ratio_subtitle": (
-            "Ce ratio indique combien l’employeur paie pour un euro de salaire net."
-        ),
+        "chart_ratio_subtitle": "Ce ratio indique combien l’employeur paie pour un euro de salaire net.",
         "chart_marginal_title": "Coût marginal des hausses de salaire brut",
-        "chart_marginal_subtitle": (
-            "Ce graphique montre comment le coût employeur et le salaire net réagissent localement "
-            "à un euro supplémentaire de salaire brut."
-        ),
-
+        "chart_marginal_subtitle": "Ce graphique montre comment le coût employeur et le salaire net réagissent localement à un euro supplémentaire de salaire brut.",
         "employer_cost": "Coût employeur",
         "net_wage": "Salaire net",
         "gross_wage": "Salaire brut",
@@ -241,7 +185,6 @@ TEXT = {
         "rgdu_zone": "RGDU 2026<br>zone dégressive",
         "marginal_cost_rate": "Δ coût employeur / Δ salaire brut",
         "marginal_net_retention": "Δ salaire net / Δ coût employeur",
-
         "monthly": "Mensuel",
         "annual": "Annuel",
         "monthly_amount": "Montant mensuel",
@@ -261,45 +204,27 @@ def pct(value):
     return f"{value:.1f}%"
 
 
+def safe_id(value):
+    return str(value).replace(" ", "_").replace("-", "_")
+
+
 def base_layout(lang: str, title: str, yaxis_title: str):
     t = TEXT[lang]
-
     return dict(
-        title=dict(
-            text=title,
-            x=0.02,
-            xanchor="left",
-            font=dict(size=18, color=COLOR_NAVY)
-        ),
+        title=dict(text=title, x=0.02, xanchor="left", font=dict(size=18, color=COLOR_NAVY)),
         template="plotly_white",
         height=430,
         margin=dict(l=64, r=32, t=70, b=60),
         font=dict(family="Arial", size=13, color=COLOR_NAVY),
         hovermode="x unified",
-        legend=dict(
-            orientation="h",
-            yanchor="bottom",
-            y=1.02,
-            xanchor="right",
-            x=1
-        ),
-        xaxis=dict(
-            title=t["x_axis"],
-            showgrid=False,
-            zeroline=False
-        ),
-        yaxis=dict(
-            title=yaxis_title,
-            showgrid=True,
-            gridcolor="#e5e7eb",
-            zeroline=False
-        )
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        xaxis=dict(title=t["x_axis"], showgrid=False, zeroline=False),
+        yaxis=dict(title=yaxis_title, showgrid=True, gridcolor="#e5e7eb", zeroline=False),
     )
 
 
 def add_rgdu_zone(fig, lang: str):
     t = TEXT[lang]
-
     fig.add_vrect(
         x0=1.0,
         x1=3.0,
@@ -309,9 +234,8 @@ def add_rgdu_zone(fig, lang: str):
         annotation_text=t["rgdu_zone"],
         annotation_position="top left",
         annotation_font_size=12,
-        annotation_font_color=COLOR_BLUE
+        annotation_font_color=COLOR_BLUE,
     )
-
     fig.add_vline(x=1.0, line_dash="dash", line_color=COLOR_BLUE, opacity=0.7)
     fig.add_vline(x=3.0, line_dash="dash", line_color=COLOR_BLUE, opacity=0.7)
 
@@ -320,75 +244,65 @@ def make_cost_chart(df, lang: str):
     t = TEXT[lang]
     fig = go.Figure()
 
-    fig.add_trace(
-        go.Scatter(
-            x=df["smic_multiple"],
-            y=df["employer_cost_monthly_eur"],
-            mode="lines",
-            name=t["employer_cost"],
-            line=dict(color=COLOR_BLUE, width=3),
-            customdata=df[["gross_monthly_eur", "net_monthly_eur"]],
-            hovertemplate=(
-                "<b>%{x:.2f}× SMIC</b><br>"
-                + f"{t['gross_wage']}: " + "%{customdata[0]:,.0f} €<br>"
-                + f"{t['net_wage']}: " + "%{customdata[1]:,.0f} €<br>"
-                + f"{t['employer_cost']}: " + "%{y:,.0f} €"
-                "<extra></extra>"
-            )
+    fig.add_trace(go.Scatter(
+        x=df["smic_multiple"],
+        y=df["employer_cost_monthly_eur"],
+        mode="lines",
+        name=t["employer_cost"],
+        line=dict(color=COLOR_BLUE, width=3),
+        customdata=df[["gross_monthly_eur", "net_monthly_eur"]],
+        hovertemplate=(
+            "<b>%{x:.2f}× SMIC</b><br>"
+            + f"{t['gross_wage']}: " + "%{customdata[0]:,.0f} €<br>"
+            + f"{t['net_wage']}: " + "%{customdata[1]:,.0f} €<br>"
+            + f"{t['employer_cost']}: " + "%{y:,.0f} €"
+            "<extra></extra>"
         )
-    )
+    ))
 
-    fig.add_trace(
-        go.Scatter(
-            x=df["smic_multiple"],
-            y=df["net_monthly_eur"],
-            mode="lines",
-            name=t["net_wage"],
-            line=dict(color=COLOR_ORANGE, width=3),
-            customdata=df[["gross_monthly_eur", "employer_cost_monthly_eur"]],
-            hovertemplate=(
-                "<b>%{x:.2f}× SMIC</b><br>"
-                + f"{t['gross_wage']}: " + "%{customdata[0]:,.0f} €<br>"
-                + f"{t['net_wage']}: " + "%{y:,.0f} €<br>"
-                + f"{t['employer_cost']}: " + "%{customdata[1]:,.0f} €"
-                "<extra></extra>"
-            )
+    fig.add_trace(go.Scatter(
+        x=df["smic_multiple"],
+        y=df["net_monthly_eur"],
+        mode="lines",
+        name=t["net_wage"],
+        line=dict(color=COLOR_ORANGE, width=3),
+        customdata=df[["gross_monthly_eur", "employer_cost_monthly_eur"]],
+        hovertemplate=(
+            "<b>%{x:.2f}× SMIC</b><br>"
+            + f"{t['gross_wage']}: " + "%{customdata[0]:,.0f} €<br>"
+            + f"{t['net_wage']}: " + "%{y:,.0f} €<br>"
+            + f"{t['employer_cost']}: " + "%{customdata[1]:,.0f} €"
+            "<extra></extra>"
         )
-    )
+    ))
 
     fig.update_layout(**base_layout(lang, t["chart_cost_title"], t["y_monthly_amount"]))
     fig.update_yaxes(ticksuffix=" €")
     add_rgdu_zone(fig, lang)
-
     return fig
 
 
 def make_employer_rate_chart(df, lang: str):
     t = TEXT[lang]
     fig = go.Figure()
-
-    fig.add_trace(
-        go.Scatter(
-            x=df["smic_multiple"],
-            y=df["employer_contribution_rate"] * 100,
-            mode="lines",
-            name=t["employer_rate"],
-            line=dict(color=COLOR_BLUE, width=3),
-            customdata=df[["employer_contributions_monthly_eur", "gross_monthly_eur"]],
-            hovertemplate=(
-                "<b>%{x:.2f}× SMIC</b><br>"
-                + f"{t['gross_wage']}: " + "%{customdata[1]:,.0f} €<br>"
-                + f"{t['employer_contrib']}: " + "%{customdata[0]:,.0f} €<br>"
-                + f"{t['employer_rate']}: " + "%{y:.1f}%"
-                "<extra></extra>"
-            )
+    fig.add_trace(go.Scatter(
+        x=df["smic_multiple"],
+        y=df["employer_contribution_rate"] * 100,
+        mode="lines",
+        name=t["employer_rate"],
+        line=dict(color=COLOR_BLUE, width=3),
+        customdata=df[["employer_contributions_monthly_eur", "gross_monthly_eur"]],
+        hovertemplate=(
+            "<b>%{x:.2f}× SMIC</b><br>"
+            + f"{t['gross_wage']}: " + "%{customdata[1]:,.0f} €<br>"
+            + f"{t['employer_contrib']}: " + "%{customdata[0]:,.0f} €<br>"
+            + f"{t['employer_rate']}: " + "%{y:.1f}%"
+            "<extra></extra>"
         )
-    )
-
+    ))
     fig.update_layout(**base_layout(lang, t["chart_employer_rate_title"], t["y_rate"]))
     fig.update_yaxes(ticksuffix="%")
     add_rgdu_zone(fig, lang)
-
     return fig
 
 
@@ -396,17 +310,9 @@ def make_rgdu_chart(df, lang: str):
     t = TEXT[lang]
     fig = go.Figure()
 
-    if "rgdu_monthly_eur" not in df.columns:
-        df["rgdu_monthly_eur"] = 0.0
-
-    if "rgdu_rate_gross" not in df.columns:
-        df["rgdu_rate_gross"] = 0.0
-
     df_rgdu = df[df["smic_multiple"] >= 1.0].copy()
-
     df_rgdu.loc[df_rgdu["smic_multiple"] >= 3.0, "rgdu_monthly_eur"] = 0.0
     df_rgdu.loc[df_rgdu["smic_multiple"] >= 3.0, "rgdu_rate_gross"] = 0.0
-
     df_rgdu["rgdu_annual_eur"] = df_rgdu["rgdu_monthly_eur"] * 12
     df_rgdu["rgdu_rate_percent"] = df_rgdu["rgdu_rate_gross"] * 100
 
@@ -414,82 +320,64 @@ def make_rgdu_chart(df, lang: str):
     annual_label = t["annual_amount"]
     percent_label = t["rgdu_rate"]
 
-    fig.add_trace(
-        go.Scatter(
-            x=df_rgdu["smic_multiple"],
-            y=df_rgdu["rgdu_monthly_eur"],
-            mode="lines",
-            name=monthly_label,
-            line=dict(color=COLOR_PURPLE, width=3),
-            fill="tozeroy",
-            fillcolor="rgba(124, 58, 237, 0.12)",
-            yaxis="y",
-            customdata=df_rgdu[[
-                "gross_monthly_eur",
-                "employer_cost_monthly_eur",
-                "rgdu_rate_percent"
-            ]],
-            hovertemplate=(
-                "<b>%{x:.2f}× SMIC</b><br>"
-                + f"{t['gross_wage']}: " + "%{customdata[0]:,.0f} €<br>"
-                + f"{t['employer_cost']}: " + "%{customdata[1]:,.0f} €<br>"
-                + f"{monthly_label}: " + "%{y:,.0f} €<br>"
-                + f"{percent_label}: " + "%{customdata[2]:.1f}%"
-                "<extra></extra>"
-            )
+    fig.add_trace(go.Scatter(
+        x=df_rgdu["smic_multiple"],
+        y=df_rgdu["rgdu_monthly_eur"],
+        mode="lines",
+        name=monthly_label,
+        line=dict(color=COLOR_PURPLE, width=3),
+        fill="tozeroy",
+        fillcolor="rgba(124, 58, 237, 0.12)",
+        yaxis="y",
+        customdata=df_rgdu[["gross_monthly_eur", "employer_cost_monthly_eur", "rgdu_rate_percent"]],
+        hovertemplate=(
+            "<b>%{x:.2f}× SMIC</b><br>"
+            + f"{t['gross_wage']}: " + "%{customdata[0]:,.0f} €<br>"
+            + f"{t['employer_cost']}: " + "%{customdata[1]:,.0f} €<br>"
+            + f"{monthly_label}: " + "%{y:,.0f} €<br>"
+            + f"{percent_label}: " + "%{customdata[2]:.1f}%"
+            "<extra></extra>"
         )
-    )
+    ))
 
-    fig.add_trace(
-        go.Scatter(
-            x=df_rgdu["smic_multiple"],
-            y=df_rgdu["rgdu_annual_eur"],
-            mode="lines",
-            name=annual_label,
-            line=dict(color=COLOR_PURPLE, width=3),
-            fill="tozeroy",
-            fillcolor="rgba(124, 58, 237, 0.12)",
-            yaxis="y",
-            visible=False,
-            customdata=df_rgdu[[
-                "gross_monthly_eur",
-                "employer_cost_monthly_eur",
-                "rgdu_rate_percent"
-            ]],
-            hovertemplate=(
-                "<b>%{x:.2f}× SMIC</b><br>"
-                + f"{t['gross_wage']}: " + "%{customdata[0]:,.0f} €<br>"
-                + f"{t['employer_cost']}: " + "%{customdata[1]:,.0f} €<br>"
-                + f"{annual_label}: " + "%{y:,.0f} €<br>"
-                + f"{percent_label}: " + "%{customdata[2]:.1f}%"
-                "<extra></extra>"
-            )
+    fig.add_trace(go.Scatter(
+        x=df_rgdu["smic_multiple"],
+        y=df_rgdu["rgdu_annual_eur"],
+        mode="lines",
+        name=annual_label,
+        line=dict(color=COLOR_PURPLE, width=3),
+        fill="tozeroy",
+        fillcolor="rgba(124, 58, 237, 0.12)",
+        yaxis="y",
+        visible=False,
+        customdata=df_rgdu[["gross_monthly_eur", "employer_cost_monthly_eur", "rgdu_rate_percent"]],
+        hovertemplate=(
+            "<b>%{x:.2f}× SMIC</b><br>"
+            + f"{t['gross_wage']}: " + "%{customdata[0]:,.0f} €<br>"
+            + f"{t['employer_cost']}: " + "%{customdata[1]:,.0f} €<br>"
+            + f"{annual_label}: " + "%{y:,.0f} €<br>"
+            + f"{percent_label}: " + "%{customdata[2]:.1f}%"
+            "<extra></extra>"
         )
-    )
+    ))
 
-    fig.add_trace(
-        go.Scatter(
-            x=df_rgdu["smic_multiple"],
-            y=df_rgdu["rgdu_rate_percent"],
-            mode="lines",
-            name=percent_label,
-            line=dict(color=COLOR_RED, width=2.5, dash="dot"),
-            yaxis="y2",
-            customdata=df_rgdu[[
-                "gross_monthly_eur",
-                "rgdu_monthly_eur",
-                "rgdu_annual_eur"
-            ]],
-            hovertemplate=(
-                "<b>%{x:.2f}× SMIC</b><br>"
-                + f"{t['gross_wage']}: " + "%{customdata[0]:,.0f} €<br>"
-                + f"{monthly_label}: " + "%{customdata[1]:,.0f} €<br>"
-                + f"{annual_label}: " + "%{customdata[2]:,.0f} €<br>"
-                + f"{percent_label}: " + "%{y:.1f}%"
-                "<extra></extra>"
-            )
+    fig.add_trace(go.Scatter(
+        x=df_rgdu["smic_multiple"],
+        y=df_rgdu["rgdu_rate_percent"],
+        mode="lines",
+        name=percent_label,
+        line=dict(color=COLOR_RED, width=2.5, dash="dot"),
+        yaxis="y2",
+        customdata=df_rgdu[["gross_monthly_eur", "rgdu_monthly_eur", "rgdu_annual_eur"]],
+        hovertemplate=(
+            "<b>%{x:.2f}× SMIC</b><br>"
+            + f"{t['gross_wage']}: " + "%{customdata[0]:,.0f} €<br>"
+            + f"{monthly_label}: " + "%{customdata[1]:,.0f} €<br>"
+            + f"{annual_label}: " + "%{customdata[2]:,.0f} €<br>"
+            + f"{percent_label}: " + "%{y:.1f}%"
+            "<extra></extra>"
         )
-    )
+    ))
 
     fig.update_layout(
         template="plotly_white",
@@ -498,35 +386,10 @@ def make_rgdu_chart(df, lang: str):
         font=dict(family="Arial", size=13, color=COLOR_NAVY),
         hovermode="x unified",
         showlegend=True,
-        legend=dict(
-            orientation="h",
-            yanchor="top",
-            y=-0.22,
-            xanchor="center",
-            x=0.5,
-            font=dict(size=12)
-        ),
-        xaxis=dict(
-            title=t["x_axis"],
-            showgrid=False,
-            zeroline=False,
-            range=[0.95, 3.5]
-        ),
-        yaxis=dict(
-            title=t["y_monthly_rgdu"],
-            ticksuffix=" €",
-            showgrid=True,
-            gridcolor="#e5e7eb",
-            zeroline=False
-        ),
-        yaxis2=dict(
-            title=t["y2_rgdu"],
-            overlaying="y",
-            side="right",
-            ticksuffix="%",
-            showgrid=False,
-            zeroline=False
-        ),
+        legend=dict(orientation="h", yanchor="top", y=-0.22, xanchor="center", x=0.5, font=dict(size=12)),
+        xaxis=dict(title=t["x_axis"], showgrid=False, zeroline=False, range=[0.95, 3.5]),
+        yaxis=dict(title=t["y_monthly_rgdu"], ticksuffix=" €", showgrid=True, gridcolor="#e5e7eb", zeroline=False),
+        yaxis2=dict(title=t["y2_rgdu"], overlaying="y", side="right", ticksuffix="%", showgrid=False, zeroline=False),
         updatemenus=[
             dict(
                 type="buttons",
@@ -539,24 +402,12 @@ def make_rgdu_chart(df, lang: str):
                     dict(
                         label=t["monthly"],
                         method="update",
-                        args=[
-                            {"visible": [True, False, True]},
-                            {
-                                "yaxis.title.text": t["y_monthly_rgdu"],
-                                "yaxis.ticksuffix": " €"
-                            }
-                        ]
+                        args=[{"visible": [True, False, True]}, {"yaxis.title.text": t["y_monthly_rgdu"]}]
                     ),
                     dict(
                         label=t["annual"],
                         method="update",
-                        args=[
-                            {"visible": [False, True, True]},
-                            {
-                                "yaxis.title.text": t["y_annual_rgdu"],
-                                "yaxis.ticksuffix": " €"
-                            }
-                        ]
+                        args=[{"visible": [False, True, True]}, {"yaxis.title.text": t["y_annual_rgdu"]}]
                     )
                 ],
                 showactive=True,
@@ -569,143 +420,110 @@ def make_rgdu_chart(df, lang: str):
     )
 
     add_rgdu_zone(fig, lang)
-
     return fig
 
 
 def make_social_wedge_chart(df, lang: str):
     t = TEXT[lang]
     fig = go.Figure()
-
-    fig.add_trace(
-        go.Scatter(
-            x=df["smic_multiple"],
-            y=df["social_wedge_rate"] * 100,
-            mode="lines",
-            name=t["social_wedge"],
-            line=dict(color=COLOR_TEAL, width=3),
-            fill="tozeroy",
-            fillcolor="rgba(8, 145, 178, 0.12)",
-            customdata=df[["social_wedge_monthly_eur", "employer_cost_monthly_eur"]],
-            hovertemplate=(
-                "<b>%{x:.2f}× SMIC</b><br>"
-                + f"{t['employer_cost']}: " + "%{customdata[1]:,.0f} €<br>"
-                + f"{t['social_wedge']}: " + "%{customdata[0]:,.0f} €<br>"
-                + f"{t['social_wedge_rate']}: " + "%{y:.1f}%"
-                "<extra></extra>"
-            )
+    fig.add_trace(go.Scatter(
+        x=df["smic_multiple"],
+        y=df["social_wedge_rate"] * 100,
+        mode="lines",
+        name=t["social_wedge"],
+        line=dict(color=COLOR_TEAL, width=3),
+        fill="tozeroy",
+        fillcolor="rgba(8, 145, 178, 0.12)",
+        customdata=df[["social_wedge_monthly_eur", "employer_cost_monthly_eur"]],
+        hovertemplate=(
+            "<b>%{x:.2f}× SMIC</b><br>"
+            + f"{t['employer_cost']}: " + "%{customdata[1]:,.0f} €<br>"
+            + f"{t['social_wedge']}: " + "%{customdata[0]:,.0f} €<br>"
+            + f"{t['social_wedge_rate']}: " + "%{y:.1f}%"
+            "<extra></extra>"
         )
-    )
-
+    ))
     fig.update_layout(**base_layout(lang, t["chart_wedge_title"], t["y_wedge"]))
     fig.update_yaxes(ticksuffix="%")
     add_rgdu_zone(fig, lang)
-
     return fig
 
 
 def make_cost_to_net_chart(df, lang: str):
     t = TEXT[lang]
     fig = go.Figure()
-
-    fig.add_trace(
-        go.Scatter(
-            x=df["smic_multiple"],
-            y=df["cost_to_net_ratio"],
-            mode="lines",
-            name=t["cost_net_ratio"],
-            line=dict(color=COLOR_RED, width=3),
-            customdata=df[["employer_cost_monthly_eur", "net_monthly_eur"]],
-            hovertemplate=(
-                "<b>%{x:.2f}× SMIC</b><br>"
-                + f"{t['employer_cost']}: " + "%{customdata[0]:,.0f} €<br>"
-                + f"{t['net_wage']}: " + "%{customdata[1]:,.0f} €<br>"
-                + f"{t['cost_net_ratio']}: " + "%{y:.2f}"
-                "<extra></extra>"
-            )
+    fig.add_trace(go.Scatter(
+        x=df["smic_multiple"],
+        y=df["cost_to_net_ratio"],
+        mode="lines",
+        name=t["cost_net_ratio"],
+        line=dict(color=COLOR_RED, width=3),
+        customdata=df[["employer_cost_monthly_eur", "net_monthly_eur"]],
+        hovertemplate=(
+            "<b>%{x:.2f}× SMIC</b><br>"
+            + f"{t['employer_cost']}: " + "%{customdata[0]:,.0f} €<br>"
+            + f"{t['net_wage']}: " + "%{customdata[1]:,.0f} €<br>"
+            + f"{t['cost_net_ratio']}: " + "%{y:.2f}"
+            "<extra></extra>"
         )
-    )
-
+    ))
     fig.update_layout(**base_layout(lang, t["chart_ratio_title"], t["y_ratio"]))
     add_rgdu_zone(fig, lang)
-
     return fig
 
 
 def compute_marginal_indicators(df):
     df_m = df.sort_values("smic_multiple").copy()
-
     df_m["delta_gross"] = df_m["gross_monthly_eur"].diff()
     df_m["delta_employer_cost"] = df_m["employer_cost_monthly_eur"].diff()
     df_m["delta_net"] = df_m["net_monthly_eur"].diff()
-
     df_m["marginal_employer_cost_rate"] = df_m["delta_employer_cost"] / df_m["delta_gross"]
     df_m["marginal_net_retention_rate"] = df_m["delta_net"] / df_m["delta_employer_cost"]
-
-    df_m = df_m.dropna(subset=[
-        "marginal_employer_cost_rate",
-        "marginal_net_retention_rate"
-    ]).copy()
-
-    return df_m
+    return df_m.dropna(subset=["marginal_employer_cost_rate", "marginal_net_retention_rate"]).copy()
 
 
 def make_marginal_chart(df, lang: str):
     t = TEXT[lang]
     df_m = compute_marginal_indicators(df)
-
     fig = go.Figure()
 
-    fig.add_trace(
-        go.Scatter(
-            x=df_m["smic_multiple"],
-            y=df_m["marginal_employer_cost_rate"] * 100,
-            mode="lines",
-            name=t["marginal_cost_rate"],
-            line=dict(color=COLOR_GREEN, width=3),
-            customdata=df_m[[
-                "gross_monthly_eur",
-                "delta_gross",
-                "delta_employer_cost"
-            ]],
-            hovertemplate=(
-                "<b>%{x:.2f}× SMIC</b><br>"
-                + f"{t['gross_wage']}: " + "%{customdata[0]:,.0f} €<br>"
-                "Δ gross wage: %{customdata[1]:,.0f} €<br>"
-                "Δ employer cost: %{customdata[2]:,.0f} €<br>"
-                + f"{t['marginal_cost_rate']}: " + "%{y:.1f}%"
-                "<extra></extra>"
-            )
+    fig.add_trace(go.Scatter(
+        x=df_m["smic_multiple"],
+        y=df_m["marginal_employer_cost_rate"] * 100,
+        mode="lines",
+        name=t["marginal_cost_rate"],
+        line=dict(color=COLOR_GREEN, width=3),
+        customdata=df_m[["gross_monthly_eur", "delta_gross", "delta_employer_cost"]],
+        hovertemplate=(
+            "<b>%{x:.2f}× SMIC</b><br>"
+            + f"{t['gross_wage']}: " + "%{customdata[0]:,.0f} €<br>"
+            "Δ gross wage: %{customdata[1]:,.0f} €<br>"
+            "Δ employer cost: %{customdata[2]:,.0f} €<br>"
+            + f"{t['marginal_cost_rate']}: " + "%{y:.1f}%"
+            "<extra></extra>"
         )
-    )
+    ))
 
-    fig.add_trace(
-        go.Scatter(
-            x=df_m["smic_multiple"],
-            y=df_m["marginal_net_retention_rate"] * 100,
-            mode="lines",
-            name=t["marginal_net_retention"],
-            line=dict(color=COLOR_ORANGE, width=3, dash="dot"),
-            customdata=df_m[[
-                "gross_monthly_eur",
-                "delta_net",
-                "delta_employer_cost"
-            ]],
-            hovertemplate=(
-                "<b>%{x:.2f}× SMIC</b><br>"
-                + f"{t['gross_wage']}: " + "%{customdata[0]:,.0f} €<br>"
-                "Δ net wage: %{customdata[1]:,.0f} €<br>"
-                "Δ employer cost: %{customdata[2]:,.0f} €<br>"
-                + f"{t['marginal_net_retention']}: " + "%{y:.1f}%"
-                "<extra></extra>"
-            )
+    fig.add_trace(go.Scatter(
+        x=df_m["smic_multiple"],
+        y=df_m["marginal_net_retention_rate"] * 100,
+        mode="lines",
+        name=t["marginal_net_retention"],
+        line=dict(color=COLOR_ORANGE, width=3, dash="dot"),
+        customdata=df_m[["gross_monthly_eur", "delta_net", "delta_employer_cost"]],
+        hovertemplate=(
+            "<b>%{x:.2f}× SMIC</b><br>"
+            + f"{t['gross_wage']}: " + "%{customdata[0]:,.0f} €<br>"
+            "Δ net wage: %{customdata[1]:,.0f} €<br>"
+            "Δ employer cost: %{customdata[2]:,.0f} €<br>"
+            + f"{t['marginal_net_retention']}: " + "%{y:.1f}%"
+            "<extra></extra>"
         )
-    )
+    ))
 
     fig.update_layout(**base_layout(lang, t["chart_marginal_title"], t["y_marginal"]))
     fig.update_yaxes(ticksuffix="%")
     add_rgdu_zone(fig, lang)
-
     return fig
 
 
@@ -714,17 +532,12 @@ def fig_to_html(fig):
         fig,
         include_plotlyjs=False,
         full_html=False,
-        config={
-            "displaylogo": False,
-            "responsive": True,
-            "modeBarButtonsToRemove": ["select2d", "lasso2d", "autoScale2d"]
-        }
+        config={"displaylogo": False, "responsive": True, "modeBarButtonsToRemove": ["select2d", "lasso2d", "autoScale2d"]}
     )
 
 
 def build_table(df, lang: str):
     t = TEXT[lang]
-
     selected_points = [1.0, 1.2, 1.6, 2.0, 2.5, 3.0]
     sample_rows = df[df["smic_multiple"].isin(selected_points)].copy()
 
@@ -760,7 +573,7 @@ def build_table(df, lang: str):
         "cost_to_net_ratio": t["cost_net_ratio"]
     })
 
-    money_columns = [
+    for col in [
         f"{t['gross_wage']} (€)",
         f"{t['net_wage']} (€)",
         f"{t['employer_cost']} (€)",
@@ -768,29 +581,15 @@ def build_table(df, lang: str):
         f"{t['employer_contrib']} (€)",
         f"{t['rgdu']} (€)",
         f"{t['social_wedge']} (€)"
-    ]
-
-    rate_columns = [
-        t["employee_rate"],
-        t["employer_rate"],
-        t["rgdu_rate"],
-        t["social_wedge_rate"]
-    ]
-
-    for col in money_columns:
+    ]:
         sample_rows[col] = sample_rows[col].map(lambda x: euro(float(x)))
 
-    for col in rate_columns:
+    for col in [t["employee_rate"], t["employer_rate"], t["rgdu_rate"], t["social_wedge_rate"]]:
         sample_rows[col] = sample_rows[col].map(lambda x: pct(float(x) * 100))
 
     sample_rows[t["cost_net_ratio"]] = sample_rows[t["cost_net_ratio"]].map(lambda x: f"{float(x):.2f}")
 
-    return sample_rows.to_html(
-        index=False,
-        classes="data-table",
-        border=0,
-        escape=False
-    )
+    return sample_rows.to_html(index=False, classes="data-table", border=0, escape=False)
 
 
 def build_key_metrics(df):
@@ -807,9 +606,7 @@ def build_key_metrics(df):
 
 def build_methodology_list(lang: str):
     t = TEXT[lang]
-
     items = "\n".join([f"<li>{item}</li>" for item in t["methodology_points"]])
-
     return f"""
     <p>{t["methodology_intro"]}</p>
     <ul class="methodology-list">
@@ -818,22 +615,104 @@ def build_methodology_list(lang: str):
     """
 
 
-def build_language_section(df, lang: str, updated_at: str):
+def build_profile_panel(df_profile, profile_id, lang: str):
     t = TEXT[lang]
-
-    table_html = build_table(df, lang)
-    metrics = build_key_metrics(df)
-    methodology_html = build_methodology_list(lang)
-
-    cost_chart = fig_to_html(make_cost_chart(df, lang))
-    employer_rate_chart = fig_to_html(make_employer_rate_chart(df, lang))
-    rgdu_chart = fig_to_html(make_rgdu_chart(df, lang))
-    social_wedge_chart = fig_to_html(make_social_wedge_chart(df, lang))
-    cost_to_net_chart = fig_to_html(make_cost_to_net_chart(df, lang))
-    marginal_chart = fig_to_html(make_marginal_chart(df, lang))
+    metrics = build_key_metrics(df_profile)
+    table_html = build_table(df_profile, lang)
 
     return f"""
-    <div class="language-section" id="section-{lang}">
+    <div class="profile-panel" id="panel-{lang}-{safe_id(profile_id)}">
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">{t["metric_net_smic"]}</div>
+                <div class="metric-value">{metrics["smic_net"]}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">{t["metric_cost_smic"]}</div>
+                <div class="metric-value">{metrics["smic_cost"]}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">{t["metric_rgdu_smic"]}</div>
+                <div class="metric-value">{metrics["smic_rgdu"]}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">{t["metric_ratio_2_smic"]}</div>
+                <div class="metric-value">{metrics["smic_2_cost_net_ratio"]}</div>
+            </div>
+        </div>
+
+        <section>
+            <h2>{t["table_title"]}</h2>
+            <div class="table-wrapper">{table_html}</div>
+        </section>
+
+        <section>
+            <h2>{t["figures_title"]}</h2>
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3>{t["chart_cost_title"]}</h3>
+                    <p class="chart-subtitle">{t["chart_cost_subtitle"]}</p>
+                    <div class="plotly-chart">{fig_to_html(make_cost_chart(df_profile, lang))}</div>
+                </div>
+                <div class="chart-card">
+                    <h3>{t["chart_employer_rate_title"]}</h3>
+                    <p class="chart-subtitle">{t["chart_employer_rate_subtitle"]}</p>
+                    <div class="plotly-chart">{fig_to_html(make_employer_rate_chart(df_profile, lang))}</div>
+                </div>
+                <div class="chart-card">
+                    <h3>{t["chart_rgdu_title"]}</h3>
+                    <p class="chart-subtitle">{t["chart_rgdu_subtitle"]}</p>
+                    <div class="plotly-chart">{fig_to_html(make_rgdu_chart(df_profile, lang))}</div>
+                </div>
+                <div class="chart-card">
+                    <h3>{t["chart_wedge_title"]}</h3>
+                    <p class="chart-subtitle">{t["chart_wedge_subtitle"]}</p>
+                    <div class="plotly-chart">{fig_to_html(make_social_wedge_chart(df_profile, lang))}</div>
+                </div>
+                <div class="chart-card">
+                    <h3>{t["chart_ratio_title"]}</h3>
+                    <p class="chart-subtitle">{t["chart_ratio_subtitle"]}</p>
+                    <div class="plotly-chart">{fig_to_html(make_cost_to_net_chart(df_profile, lang))}</div>
+                </div>
+                <div class="chart-card">
+                    <h3>{t["chart_marginal_title"]}</h3>
+                    <p class="chart-subtitle">{t["chart_marginal_subtitle"]}</p>
+                    <div class="plotly-chart">{fig_to_html(make_marginal_chart(df_profile, lang))}</div>
+                </div>
+            </div>
+        </section>
+    </div>
+    """
+
+
+def build_language_section(df, lang: str, updated_at: str):
+    t = TEXT[lang]
+    methodology_html = build_methodology_list(lang)
+
+    profiles = (
+        df[["profile_id", f"profile_label_{lang}"]]
+        .drop_duplicates()
+        .sort_values("profile_id")
+        .to_dict("records")
+    )
+
+    default_profile = profiles[0]["profile_id"]
+
+    options = "\n".join([
+        f'<option value="{row["profile_id"]}">{row[f"profile_label_{lang}"]}</option>'
+        for row in profiles
+    ])
+
+    panels = []
+    for row in profiles:
+        profile_id = row["profile_id"]
+        df_profile = df[df["profile_id"] == profile_id].copy()
+        panels.append(build_profile_panel(df_profile, profile_id, lang))
+
+    panels_html = "\n".join(panels)
+
+    return f"""
+    <div class="language-section" id="section-{lang}" data-default-profile="{default_profile}">
         <header>
             <div>
                 <h1>{t["page_title"]}</h1>
@@ -847,30 +726,13 @@ def build_language_section(df, lang: str, updated_at: str):
                 <div class="badge">{t["engine_badge"]}</div>
                 <h2>{t["purpose_title"]}</h2>
                 <p>{t["purpose_text"]}</p>
-                <div class="method-box">
-                    {t["method_note"]}
-                </div>
+                <div class="method-box">{t["method_note"]}</div>
 
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">{t["metric_net_smic"]}</div>
-                        <div class="metric-value">{metrics["smic_net"]}</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">{t["metric_cost_smic"]}</div>
-                        <div class="metric-value">{metrics["smic_cost"]}</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">{t["metric_rgdu_smic"]}</div>
-                        <div class="metric-value">{metrics["smic_rgdu"]}</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">{t["metric_ratio_2_smic"]}</div>
-                        <div class="metric-value">{metrics["smic_2_cost_net_ratio"]}</div>
-                    </div>
+                <div class="profile-selector">
+                    <label for="profile-select-{lang}">{t["profile_label"]}</label>
+                    <select id="profile-select-{lang}" onchange="switchProfile('{lang}')">
+                        {options}
+                    </select>
                 </div>
             </section>
 
@@ -879,54 +741,9 @@ def build_language_section(df, lang: str, updated_at: str):
                 {methodology_html}
             </section>
 
-            <section>
-                <h2>{t["table_title"]}</h2>
-                <div class="table-wrapper">
-                    {table_html}
-                </div>
-            </section>
-
-            <section>
-                <h2>{t["figures_title"]}</h2>
-
-                <div class="charts-grid">
-                    <div class="chart-card">
-                        <h3>{t["chart_cost_title"]}</h3>
-                        <p class="chart-subtitle">{t["chart_cost_subtitle"]}</p>
-                        <div class="plotly-chart">{cost_chart}</div>
-                    </div>
-
-                    <div class="chart-card">
-                        <h3>{t["chart_employer_rate_title"]}</h3>
-                        <p class="chart-subtitle">{t["chart_employer_rate_subtitle"]}</p>
-                        <div class="plotly-chart">{employer_rate_chart}</div>
-                    </div>
-
-                    <div class="chart-card">
-                        <h3>{t["chart_rgdu_title"]}</h3>
-                        <p class="chart-subtitle">{t["chart_rgdu_subtitle"]}</p>
-                        <div class="plotly-chart">{rgdu_chart}</div>
-                    </div>
-
-                    <div class="chart-card">
-                        <h3>{t["chart_wedge_title"]}</h3>
-                        <p class="chart-subtitle">{t["chart_wedge_subtitle"]}</p>
-                        <div class="plotly-chart">{social_wedge_chart}</div>
-                    </div>
-
-                    <div class="chart-card">
-                        <h3>{t["chart_ratio_title"]}</h3>
-                        <p class="chart-subtitle">{t["chart_ratio_subtitle"]}</p>
-                        <div class="plotly-chart">{cost_to_net_chart}</div>
-                    </div>
-
-                    <div class="chart-card">
-                        <h3>{t["chart_marginal_title"]}</h3>
-                        <p class="chart-subtitle">{t["chart_marginal_subtitle"]}</p>
-                        <div class="plotly-chart">{marginal_chart}</div>
-                    </div>
-                </div>
-            </section>
+            <div id="profile-panels-{lang}">
+                {panels_html}
+            </div>
 
             <section>
                 <h2>{t["interpretation_title"]}</h2>
@@ -934,9 +751,7 @@ def build_language_section(df, lang: str, updated_at: str):
             </section>
         </main>
 
-        <footer>
-            {t["footer"]}: {updated_at}
-        </footer>
+        <footer>{t["footer"]}: {updated_at}</footer>
     </div>
     """
 
@@ -947,15 +762,14 @@ def main():
     if "status" in df.columns:
         df = df[df["status"] == "ok"].copy()
 
-    df = df.sort_values("smic_multiple").reset_index(drop=True)
+    df = df.sort_values(["profile_id", "smic_multiple"]).reset_index(drop=True)
 
     for column in ["rgdu_monthly_eur", "rgdu_rate_gross", "rgdu_rate_employer_cost"]:
         if column not in df.columns:
             df[column] = 0.0
 
     df[["rgdu_monthly_eur", "rgdu_rate_gross", "rgdu_rate_employer_cost"]] = (
-        df[["rgdu_monthly_eur", "rgdu_rate_gross", "rgdu_rate_employer_cost"]]
-        .fillna(0.0)
+        df[["rgdu_monthly_eur", "rgdu_rate_gross", "rgdu_rate_employer_cost"]].fillna(0.0)
     )
 
     updated_at = datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -968,7 +782,6 @@ def main():
 <head>
     <meta charset="UTF-8">
     <title>French Labour Cost Lab</title>
-
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 
     <style>
@@ -979,11 +792,13 @@ def main():
             color: #1f2937;
         }}
 
-        .language-section {{
+        .language-section,
+        .profile-panel {{
             display: none;
         }}
 
-        .language-section.active {{
+        .language-section.active,
+        .profile-panel.active {{
             display: block;
         }}
 
@@ -1017,10 +832,6 @@ def main():
             padding: 10px 16px;
             cursor: pointer;
             font-weight: 700;
-        }}
-
-        .language-toggle:hover {{
-            background: rgba(255, 255, 255, 0.16);
         }}
 
         main {{
@@ -1079,6 +890,29 @@ def main():
             line-height: 1.55;
         }}
 
+        .profile-selector {{
+            margin-top: 22px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }}
+
+        .profile-selector label {{
+            font-weight: 700;
+            color: #0f172a;
+        }}
+
+        .profile-selector select {{
+            min-width: 280px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 10px 12px;
+            background: white;
+            color: #0f172a;
+            font-weight: 600;
+        }}
+
         .methodology-list {{
             margin: 18px 0 0 0;
             padding-left: 22px;
@@ -1094,7 +928,7 @@ def main():
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 16px;
-            margin-top: 22px;
+            margin-bottom: 26px;
         }}
 
         .metric-card {{
@@ -1213,6 +1047,10 @@ def main():
             .metrics-grid {{
                 grid-template-columns: 1fr;
             }}
+
+            .profile-selector select {{
+                min-width: 100%;
+            }}
         }}
     </style>
 </head>
@@ -1221,6 +1059,10 @@ def main():
     {french_section}
 
     <script>
+        function safeId(value) {{
+            return String(value).replaceAll(" ", "_").replaceAll("-", "_");
+        }}
+
         function setLanguage(lang) {{
             const enSection = document.getElementById("section-en");
             const frSection = document.getElementById("section-fr");
@@ -1238,14 +1080,41 @@ def main():
 
             localStorage.setItem("flcl_language", lang);
 
-            setTimeout(function() {{
-                window.dispatchEvent(new Event("resize"));
-            }}, 100);
+            const selectedProfile = localStorage.getItem("flcl_profile_" + lang)
+                || document.getElementById("section-" + lang).dataset.defaultProfile;
+
+            const select = document.getElementById("profile-select-" + lang);
+            if (select) {{
+                select.value = selectedProfile;
+            }}
+
+            showProfile(lang, selectedProfile);
         }}
 
         function switchLanguage() {{
             const current = localStorage.getItem("flcl_language") || "en";
             setLanguage(current === "en" ? "fr" : "en");
+        }}
+
+        function switchProfile(lang) {{
+            const select = document.getElementById("profile-select-" + lang);
+            const profileId = select.value;
+            localStorage.setItem("flcl_profile_" + lang, profileId);
+            showProfile(lang, profileId);
+        }}
+
+        function showProfile(lang, profileId) {{
+            const panels = document.querySelectorAll("#profile-panels-" + lang + " .profile-panel");
+            panels.forEach(panel => panel.classList.remove("active"));
+
+            const target = document.getElementById("panel-" + lang + "-" + safeId(profileId));
+            if (target) {{
+                target.classList.add("active");
+            }}
+
+            setTimeout(function() {{
+                window.dispatchEvent(new Event("resize"));
+            }}, 150);
         }}
 
         const savedLanguage = localStorage.getItem("flcl_language") || "en";
@@ -1257,7 +1126,6 @@ def main():
 
     DOCS_DIR.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(html, encoding="utf-8")
-
     print(f"Dashboard created: {OUTPUT_PATH}")
 
 
