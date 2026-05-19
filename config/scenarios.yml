@@ -1,8 +1,8 @@
 metadata:
   project: "French Labour Cost Lab"
   country: "France"
-  version: "0.1.0"
-  note: "V1 uses stylized assumptions. Future versions will use official Mon-entreprise calculations."
+  version: "0.2.0"
+  note: "Official dataset is generated through the Mon-entreprise / URSSAF API."
 
 baseline:
   monthly_smic_gross: 1801.80
@@ -11,7 +11,5 @@ baseline:
   step_smic_multiple: 0.01
 
 assumptions:
-  employee_contribution_rate: 0.22
-  employer_contribution_rate_above_relief: 0.42
-  employer_contribution_rate_at_smic: 0.08
-  relief_end_smic_multiple: 1.6
+  reference_case: "Private-sector employee, generic case."
+  note: "Results depend on the Mon-entreprise / URSSAF calculation engine and may vary with firm size, sector, location, collective agreement, executive status and specific contribution regimes."
