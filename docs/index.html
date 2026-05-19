@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>French Labour Cost Lab</title>
+
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,51 +17,64 @@
         header {
             background: #111827;
             color: white;
-            padding: 32px 48px;
+            padding: 42px 52px;
         }
 
         header h1 {
-            margin: 0 0 8px 0;
-            font-size: 34px;
+            margin: 0 0 10px 0;
+            font-size: 42px;
+            letter-spacing: -0.03em;
         }
 
         header p {
             margin: 0;
             color: #d1d5db;
-            font-size: 16px;
+            font-size: 18px;
         }
 
         main {
-            max-width: 1100px;
-            margin: 32px auto;
+            max-width: 1220px;
+            margin: 34px auto;
             padding: 0 24px;
         }
 
         section {
             background: white;
             border: 1px solid #e5e7eb;
-            border-radius: 14px;
-            padding: 24px;
-            margin-bottom: 24px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border-radius: 18px;
+            padding: 30px;
+            margin-bottom: 26px;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
             overflow: hidden;
         }
 
         h2 {
             margin-top: 0;
+            margin-bottom: 18px;
+            font-size: 25px;
+            color: #0f172a;
+            letter-spacing: -0.02em;
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
+        h3 {
+            margin-top: 0;
+            margin-bottom: 8px;
+            font-size: 18px;
+            color: #0f172a;
         }
 
-        .figure-card img {
-            width: 100%;
-            border: 1px solid #e5e7eb;
-            border-radius: 10px;
-            background: white;
+        p {
+            line-height: 1.55;
+        }
+
+        .method-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 16px 18px;
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.55;
         }
 
         .table-wrapper {
@@ -69,7 +85,7 @@
 
         .data-table {
             width: 100%;
-            min-width: 1100px;
+            min-width: 1080px;
             border-collapse: collapse;
             font-size: 13px;
         }
@@ -77,7 +93,7 @@
         .data-table th,
         .data-table td {
             border-bottom: 1px solid #e5e7eb;
-            padding: 8px;
+            padding: 9px 10px;
             text-align: right;
             white-space: nowrap;
         }
@@ -85,24 +101,53 @@
         .data-table th {
             background: #f9fafb;
             font-weight: 700;
+            color: #0f172a;
         }
 
-        .note {
-            color: #6b7280;
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .chart-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 18px 18px 10px 18px;
+            background: #ffffff;
+            min-width: 0;
+        }
+
+        .chart-subtitle {
+            margin: 0 0 10px 0;
+            color: #64748b;
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 1.45;
+        }
+
+        .plotly-chart {
+            width: 100%;
+        }
+
+        .interpretation {
+            color: #334155;
+            font-size: 15px;
         }
 
         footer {
             text-align: center;
             color: #6b7280;
-            padding: 24px;
+            padding: 30px;
             font-size: 13px;
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 980px) {
             header {
-                padding: 24px;
+                padding: 30px 24px;
+            }
+
+            header h1 {
+                font-size: 34px;
             }
 
             main {
@@ -110,7 +155,11 @@
                 padding: 0 16px;
             }
 
-            .grid {
+            section {
+                padding: 22px;
+            }
+
+            .charts-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -129,10 +178,12 @@
                 French Labour Cost Lab provides reproducible simulations of gross wages,
                 net wages, employer costs and social wedges in France.
             </p>
-            <p class="note">
-                This first version uses stylized assumptions. Future versions will connect
-                the simulation engine to official Mon-entreprise calculations.
-            </p>
+            <div class="method-box">
+                <strong>Methodological note.</strong> This first version relies on stylized assumptions.
+                It is designed to illustrate the structure of labour costs and contribution wedges,
+                not to serve as an official payroll calculator. Future versions will connect the
+                simulation engine to official Mon-entreprise calculations.
+            </div>
         </section>
 
         <section>
@@ -141,97 +192,97 @@
                 <table class="dataframe data-table">
   <thead>
     <tr style="text-align: right;">
-      <th>smic_multiple</th>
-      <th>gross_monthly_eur</th>
-      <th>net_monthly_eur</th>
-      <th>employer_cost_monthly_eur</th>
-      <th>employee_contributions_monthly_eur</th>
-      <th>employer_contributions_monthly_eur</th>
-      <th>employee_contribution_rate</th>
-      <th>employer_contribution_rate</th>
-      <th>social_wedge_monthly_eur</th>
-      <th>social_wedge_rate</th>
-      <th>cost_to_net_ratio</th>
+      <th>SMIC multiple</th>
+      <th>Gross wage (€)</th>
+      <th>Net wage (€)</th>
+      <th>Employer cost (€)</th>
+      <th>Employee contrib. (€)</th>
+      <th>Employer contrib. (€)</th>
+      <th>Employee rate</th>
+      <th>Employer rate</th>
+      <th>Social wedge (€)</th>
+      <th>Social wedge rate</th>
+      <th>Cost / net ratio</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td>1.0</td>
-      <td>1801.80</td>
-      <td>1405.40</td>
-      <td>1945.94</td>
-      <td>396.40</td>
-      <td>144.14</td>
-      <td>0.22</td>
-      <td>0.0800</td>
-      <td>540.54</td>
-      <td>0.2778</td>
-      <td>1.3846</td>
+      <td>1 802 €</td>
+      <td>1 405 €</td>
+      <td>1 946 €</td>
+      <td>396 €</td>
+      <td>144 €</td>
+      <td>22.0%</td>
+      <td>8.0%</td>
+      <td>541 €</td>
+      <td>27.8%</td>
+      <td>1.38</td>
     </tr>
     <tr>
       <td>1.2</td>
-      <td>2162.16</td>
-      <td>1686.48</td>
-      <td>2580.18</td>
-      <td>475.68</td>
-      <td>418.02</td>
-      <td>0.22</td>
-      <td>0.1933</td>
-      <td>893.69</td>
-      <td>0.3464</td>
-      <td>1.5299</td>
+      <td>2 162 €</td>
+      <td>1 686 €</td>
+      <td>2 580 €</td>
+      <td>476 €</td>
+      <td>418 €</td>
+      <td>22.0%</td>
+      <td>19.3%</td>
+      <td>894 €</td>
+      <td>34.6%</td>
+      <td>1.53</td>
     </tr>
     <tr>
       <td>1.6</td>
-      <td>2882.88</td>
-      <td>2248.65</td>
-      <td>4093.69</td>
-      <td>634.23</td>
-      <td>1210.81</td>
-      <td>0.22</td>
-      <td>0.4200</td>
-      <td>1845.04</td>
-      <td>0.4507</td>
-      <td>1.8205</td>
+      <td>2 883 €</td>
+      <td>2 249 €</td>
+      <td>4 094 €</td>
+      <td>634 €</td>
+      <td>1 211 €</td>
+      <td>22.0%</td>
+      <td>42.0%</td>
+      <td>1 845 €</td>
+      <td>45.1%</td>
+      <td>1.82</td>
     </tr>
     <tr>
       <td>2.0</td>
-      <td>3603.60</td>
-      <td>2810.81</td>
-      <td>5117.11</td>
-      <td>792.79</td>
-      <td>1513.51</td>
-      <td>0.22</td>
-      <td>0.4200</td>
-      <td>2306.30</td>
-      <td>0.4507</td>
-      <td>1.8205</td>
+      <td>3 604 €</td>
+      <td>2 811 €</td>
+      <td>5 117 €</td>
+      <td>793 €</td>
+      <td>1 514 €</td>
+      <td>22.0%</td>
+      <td>42.0%</td>
+      <td>2 306 €</td>
+      <td>45.1%</td>
+      <td>1.82</td>
     </tr>
     <tr>
       <td>2.5</td>
-      <td>4504.50</td>
-      <td>3513.51</td>
-      <td>6396.39</td>
-      <td>990.99</td>
-      <td>1891.89</td>
-      <td>0.22</td>
-      <td>0.4200</td>
-      <td>2882.88</td>
-      <td>0.4507</td>
-      <td>1.8205</td>
+      <td>4 504 €</td>
+      <td>3 514 €</td>
+      <td>6 396 €</td>
+      <td>991 €</td>
+      <td>1 892 €</td>
+      <td>22.0%</td>
+      <td>42.0%</td>
+      <td>2 883 €</td>
+      <td>45.1%</td>
+      <td>1.82</td>
     </tr>
     <tr>
       <td>3.0</td>
-      <td>5405.40</td>
-      <td>4216.21</td>
-      <td>7675.67</td>
-      <td>1189.19</td>
-      <td>2270.27</td>
-      <td>0.22</td>
-      <td>0.4200</td>
-      <td>3459.46</td>
-      <td>0.4507</td>
-      <td>1.8205</td>
+      <td>5 405 €</td>
+      <td>4 216 €</td>
+      <td>7 676 €</td>
+      <td>1 189 €</td>
+      <td>2 270 €</td>
+      <td>22.0%</td>
+      <td>42.0%</td>
+      <td>3 459 €</td>
+      <td>45.1%</td>
+      <td>1.82</td>
     </tr>
   </tbody>
 </table>
@@ -239,43 +290,65 @@
         </section>
 
         <section>
-            <h2>Figures</h2>
+            <h2>Interactive figures</h2>
 
-            <div class="grid">
-                <div class="figure-card">
-                    <h3>Gross wage, net wage and employer cost</h3>
-                    <img src="../figures/cost_and_net_vs_gross.png" alt="Gross wage, net wage and employer cost">
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3>From gross wage to employer cost</h3>
+                    <p class="chart-subtitle">
+                        Compare monthly gross wage, net wage and total employer cost across the wage grid.
+                    </p>
+                    <div class="plotly-chart">
+                        <div>                            <div id="8d19c018-fc78-4c9e-b380-a894cd7b57b7" class="plotly-graph-div" style="height:430px; width:100%;"></div>            <script type="text/javascript">                                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("8d19c018-fc78-4c9e-b380-a894cd7b57b7")) {                    Plotly.newPlot(                        "8d19c018-fc78-4c9e-b380-a894cd7b57b7",                        [{"customdata":[[1441.44,1124.32],[1531.53,1194.59],[1621.62,1264.86],[1711.71,1335.13],[1801.8,1405.4],[1891.89,1475.67],[1981.98,1545.94],[2072.07,1616.21],[2162.16,1686.48],[2252.25,1756.76],[2342.34,1827.03],[2432.43,1897.3],[2522.52,1967.57],[2612.61,2037.84],[2702.7,2108.11],[2792.79,2178.38],[2882.88,2248.65],[2972.97,2318.92],[3063.06,2389.19],[3153.15,2459.46],[3243.24,2529.73],[3333.33,2600.0],[3423.42,2670.27],[3513.51,2740.54],[3603.6,2810.81],[3693.69,2881.08],[3783.78,2951.35],[3873.87,3021.62],[3963.96,3091.89],[4054.05,3162.16],[4144.14,3232.43],[4234.23,3302.7],[4324.32,3372.97],[4414.41,3443.24],[4504.5,3513.51],[4594.59,3583.78],[4684.68,3654.05],[4774.77,3724.32],[4864.86,3794.59],[4954.95,3864.86],[5045.04,3935.13],[5135.13,4005.4],[5225.22,4075.67],[5315.31,4145.94],[5405.4,4216.21],[5495.49,4286.48],[5585.58,4356.75],[5675.67,4427.02],[5765.76,4497.29],[5855.85,4567.56],[5945.94,4637.83],[6036.03,4708.1],[6126.12,4778.37],[6216.21,4848.64],[6306.3,4918.91]],"hovertemplate":"\u003cb\u003e%{x:.2f}\u00d7 SMIC\u003c\u002fb\u003e\u003cbr\u003eGross wage: %{customdata[0]:,.0f} \u20ac\u003cbr\u003eNet wage: %{customdata[1]:,.0f} \u20ac\u003cbr\u003eEmployer cost: %{y:,.0f} \u20ac\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#2563eb","width":3},"mode":"lines","name":"Employer cost","x":[0.8,0.85,0.9,0.95,1.0,1.05,1.1,1.15,1.2,1.25,1.3,1.35,1.4,1.45,1.5,1.55,1.6,1.65,1.7,1.75,1.8,1.85,1.9,1.95,2.0,2.05,2.1,2.15,2.2,2.25,2.3,2.35,2.4,2.45,2.5,2.55,2.6,2.65,2.7,2.75,2.8,2.85,2.9,2.95,3.0,3.05,3.1,3.15,3.2,3.25,3.3,3.35,3.4,3.45,3.5],"y":[1556.76,1654.05,1751.35,1848.65,1945.94,2096.84,2252.85,2413.96,2580.18,2751.5,2927.93,3109.46,3296.09,3487.83,3684.68,3886.63,4093.69,4221.62,4349.55,4477.47,4605.4,4733.33,4861.26,4989.18,5117.11,5245.04,5372.97,5500.9,5628.82,5756.75,5884.68,6012.61,6140.53,6268.46,6396.39,6524.32,6652.25,6780.17,6908.1,7036.03,7163.96,7291.88,7419.81,7547.74,7675.67,7803.6,7931.52,8059.45,8187.38,8315.31,8443.23,8571.16,8699.09,8827.02,8954.95],"type":"scatter"},{"customdata":[[1441.44,1556.76],[1531.53,1654.05],[1621.62,1751.35],[1711.71,1848.65],[1801.8,1945.94],[1891.89,2096.84],[1981.98,2252.85],[2072.07,2413.96],[2162.16,2580.18],[2252.25,2751.5],[2342.34,2927.93],[2432.43,3109.46],[2522.52,3296.09],[2612.61,3487.83],[2702.7,3684.68],[2792.79,3886.63],[2882.88,4093.69],[2972.97,4221.62],[3063.06,4349.55],[3153.15,4477.47],[3243.24,4605.4],[3333.33,4733.33],[3423.42,4861.26],[3513.51,4989.18],[3603.6,5117.11],[3693.69,5245.04],[3783.78,5372.97],[3873.87,5500.9],[3963.96,5628.82],[4054.05,5756.75],[4144.14,5884.68],[4234.23,6012.61],[4324.32,6140.53],[4414.41,6268.46],[4504.5,6396.39],[4594.59,6524.32],[4684.68,6652.25],[4774.77,6780.17],[4864.86,6908.1],[4954.95,7036.03],[5045.04,7163.96],[5135.13,7291.88],[5225.22,7419.81],[5315.31,7547.74],[5405.4,7675.67],[5495.49,7803.6],[5585.58,7931.52],[5675.67,8059.45],[5765.76,8187.38],[5855.85,8315.31],[5945.94,8443.23],[6036.03,8571.16],[6126.12,8699.09],[6216.21,8827.02],[6306.3,8954.95]],"hovertemplate":"\u003cb\u003e%{x:.2f}\u00d7 SMIC\u003c\u002fb\u003e\u003cbr\u003eGross wage: %{customdata[0]:,.0f} \u20ac\u003cbr\u003eNet wage: %{y:,.0f} \u20ac\u003cbr\u003eEmployer cost: %{customdata[1]:,.0f} \u20ac\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#f97316","width":3},"mode":"lines","name":"Net wage","x":[0.8,0.85,0.9,0.95,1.0,1.05,1.1,1.15,1.2,1.25,1.3,1.35,1.4,1.45,1.5,1.55,1.6,1.65,1.7,1.75,1.8,1.85,1.9,1.95,2.0,2.05,2.1,2.15,2.2,2.25,2.3,2.35,2.4,2.45,2.5,2.55,2.6,2.65,2.7,2.75,2.8,2.85,2.9,2.95,3.0,3.05,3.1,3.15,3.2,3.25,3.3,3.35,3.4,3.45,3.5],"y":[1124.32,1194.59,1264.86,1335.13,1405.4,1475.67,1545.94,1616.21,1686.48,1756.76,1827.03,1897.3,1967.57,2037.84,2108.11,2178.38,2248.65,2318.92,2389.19,2459.46,2529.73,2600.0,2670.27,2740.54,2810.81,2881.08,2951.35,3021.62,3091.89,3162.16,3232.43,3302.7,3372.97,3443.24,3513.51,3583.78,3654.05,3724.32,3794.59,3864.86,3935.13,4005.4,4075.67,4145.94,4216.21,4286.48,4356.75,4427.02,4497.29,4567.56,4637.83,4708.1,4778.37,4848.64,4918.91],"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmapgl":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmapgl"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"title":{"font":{"size":18,"color":"#0f172a"},"text":"From gross wage to employer cost","x":0.02,"xanchor":"left"},"margin":{"l":64,"r":32,"t":70,"b":60},"font":{"family":"Arial","size":13,"color":"#0f172a"},"legend":{"orientation":"h","yanchor":"bottom","y":1.02,"xanchor":"right","x":1},"xaxis":{"title":{"text":"Gross wage, SMIC multiple"},"showgrid":false,"zeroline":false},"yaxis":{"title":{"text":"Monthly amount, euros"},"showgrid":true,"gridcolor":"#e5e7eb","zeroline":false,"tickprefix":"","ticksuffix":" \u20ac"},"height":430,"hovermode":"x unified","shapes":[{"fillcolor":"rgba(37, 99, 235, 0.10)","layer":"below","line":{"width":0},"type":"rect","x0":1.0,"x1":1.6,"xref":"x","y0":0,"y1":1,"yref":"y domain"},{"line":{"color":"#2563eb","dash":"dash"},"opacity":0.7,"type":"line","x0":1.0,"x1":1.0,"xref":"x","y0":0,"y1":1,"yref":"y domain"},{"line":{"color":"#2563eb","dash":"dash"},"opacity":0.7,"type":"line","x0":1.6,"x1":1.6,"xref":"x","y0":0,"y1":1,"yref":"y domain"}],"annotations":[{"font":{"color":"#2563eb","size":12},"showarrow":false,"text":"Relief phase-out\u003cbr\u003e1.0\u20131.6 SMIC","x":1.0,"xanchor":"left","xref":"x","y":1,"yanchor":"top","yref":"y domain"}]},                        {"displaylogo": false, "responsive": true, "modeBarButtonsToRemove": ["select2d", "lasso2d", "autoScale2d"]}                    )                };                            </script>        </div>
+                    </div>
                 </div>
 
-                <div class="figure-card">
-                    <h3>Employer contribution rate</h3>
-                    <img src="../figures/employer_contribution_rate.png" alt="Employer contribution rate">
+                <div class="chart-card">
+                    <h3>Effective employer contribution rate</h3>
+                    <p class="chart-subtitle">
+                        The shaded zone highlights the phase-out of contribution relief between 1.0 and 1.6 SMIC.
+                    </p>
+                    <div class="plotly-chart">
+                        <div>                            <div id="f4045e88-106f-4f56-8830-b626c2736971" class="plotly-graph-div" style="height:430px; width:100%;"></div>            <script type="text/javascript">                                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("f4045e88-106f-4f56-8830-b626c2736971")) {                    Plotly.newPlot(                        "f4045e88-106f-4f56-8830-b626c2736971",                        [{"hovertemplate":"\u003cb\u003e%{x:.2f}\u00d7 SMIC\u003c\u002fb\u003e\u003cbr\u003eEmployer contribution rate: %{y:.1f}%\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#2563eb","width":3},"mode":"lines","name":"Employer contribution rate","x":[0.8,0.85,0.9,0.95,1.0,1.05,1.1,1.15,1.2,1.25,1.3,1.35,1.4,1.45,1.5,1.55,1.6,1.65,1.7,1.75,1.8,1.85,1.9,1.95,2.0,2.05,2.1,2.15,2.2,2.25,2.3,2.35,2.4,2.45,2.5,2.55,2.6,2.65,2.7,2.75,2.8,2.85,2.9,2.95,3.0,3.05,3.1,3.15,3.2,3.25,3.3,3.35,3.4,3.45,3.5],"y":[8.0,8.0,8.0,8.0,8.0,10.83,13.669999999999998,16.5,19.33,22.17,25.0,27.83,30.669999999999998,33.5,36.33,39.17,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0,42.0],"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmapgl":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmapgl"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"title":{"font":{"size":18,"color":"#0f172a"},"text":"Effective employer contribution rate","x":0.02,"xanchor":"left"},"margin":{"l":64,"r":32,"t":70,"b":60},"font":{"family":"Arial","size":13,"color":"#0f172a"},"legend":{"orientation":"h","yanchor":"bottom","y":1.02,"xanchor":"right","x":1},"xaxis":{"title":{"text":"Gross wage, SMIC multiple"},"showgrid":false,"zeroline":false},"yaxis":{"title":{"text":"Contribution rate"},"showgrid":true,"gridcolor":"#e5e7eb","zeroline":false,"ticksuffix":"%"},"height":430,"hovermode":"x unified","shapes":[{"fillcolor":"rgba(37, 99, 235, 0.10)","layer":"below","line":{"width":0},"type":"rect","x0":1.0,"x1":1.6,"xref":"x","y0":0,"y1":1,"yref":"y domain"},{"line":{"color":"#2563eb","dash":"dash"},"opacity":0.7,"type":"line","x0":1.0,"x1":1.0,"xref":"x","y0":0,"y1":1,"yref":"y domain"},{"line":{"color":"#2563eb","dash":"dash"},"opacity":0.7,"type":"line","x0":1.6,"x1":1.6,"xref":"x","y0":0,"y1":1,"yref":"y domain"}],"annotations":[{"font":{"color":"#2563eb","size":12},"showarrow":false,"text":"Relief phase-out\u003cbr\u003e1.0\u20131.6 SMIC","x":1.0,"xanchor":"left","xref":"x","y":1,"yanchor":"top","yref":"y domain"}]},                        {"displaylogo": false, "responsive": true, "modeBarButtonsToRemove": ["select2d", "lasso2d", "autoScale2d"]}                    )                };                            </script>        </div>
+                    </div>
                 </div>
 
-                <div class="figure-card">
-                    <h3>Social wedge</h3>
-                    <img src="../figures/social_wedge_rate.png" alt="Social wedge">
+                <div class="chart-card">
+                    <h3>Social wedge as a share of employer cost</h3>
+                    <p class="chart-subtitle">
+                        The social wedge measures the gap between what the employer pays and what the employee receives.
+                    </p>
+                    <div class="plotly-chart">
+                        <div>                            <div id="8b9b7bc9-51e3-4df2-b92d-f1780099b8f1" class="plotly-graph-div" style="height:430px; width:100%;"></div>            <script type="text/javascript">                                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("8b9b7bc9-51e3-4df2-b92d-f1780099b8f1")) {                    Plotly.newPlot(                        "8b9b7bc9-51e3-4df2-b92d-f1780099b8f1",                        [{"fill":"tozeroy","fillcolor":"rgba(8, 145, 178, 0.12)","hovertemplate":"\u003cb\u003e%{x:.2f}\u00d7 SMIC\u003c\u002fb\u003e\u003cbr\u003eSocial wedge: %{y:.1f}% of employer cost\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#0891b2","width":3},"mode":"lines","name":"Social wedge","x":[0.8,0.85,0.9,0.95,1.0,1.05,1.1,1.15,1.2,1.25,1.3,1.35,1.4,1.45,1.5,1.55,1.6,1.65,1.7,1.75,1.8,1.85,1.9,1.95,2.0,2.05,2.1,2.15,2.2,2.25,2.3,2.35,2.4,2.45,2.5,2.55,2.6,2.65,2.7,2.75,2.8,2.85,2.9,2.95,3.0,3.05,3.1,3.15,3.2,3.25,3.3,3.35,3.4,3.45,3.5],"y":[27.779999999999998,27.779999999999998,27.779999999999998,27.779999999999998,27.779999999999998,29.62,31.380000000000003,33.050000000000004,34.64,36.15,37.6,38.98,40.31,41.57,42.79,43.95,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07,45.07],"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmapgl":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmapgl"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"title":{"font":{"size":18,"color":"#0f172a"},"text":"Social wedge as a share of employer cost","x":0.02,"xanchor":"left"},"margin":{"l":64,"r":32,"t":70,"b":60},"font":{"family":"Arial","size":13,"color":"#0f172a"},"legend":{"orientation":"h","yanchor":"bottom","y":1.02,"xanchor":"right","x":1},"xaxis":{"title":{"text":"Gross wage, SMIC multiple"},"showgrid":false,"zeroline":false},"yaxis":{"title":{"text":"Social wedge"},"showgrid":true,"gridcolor":"#e5e7eb","zeroline":false,"ticksuffix":"%"},"height":430,"hovermode":"x unified","shapes":[{"fillcolor":"rgba(37, 99, 235, 0.10)","layer":"below","line":{"width":0},"type":"rect","x0":1.0,"x1":1.6,"xref":"x","y0":0,"y1":1,"yref":"y domain"},{"line":{"color":"#2563eb","dash":"dash"},"opacity":0.7,"type":"line","x0":1.0,"x1":1.0,"xref":"x","y0":0,"y1":1,"yref":"y domain"},{"line":{"color":"#2563eb","dash":"dash"},"opacity":0.7,"type":"line","x0":1.6,"x1":1.6,"xref":"x","y0":0,"y1":1,"yref":"y domain"}],"annotations":[{"font":{"color":"#2563eb","size":12},"showarrow":false,"text":"Relief phase-out\u003cbr\u003e1.0\u20131.6 SMIC","x":1.0,"xanchor":"left","xref":"x","y":1,"yanchor":"top","yref":"y domain"}]},                        {"displaylogo": false, "responsive": true, "modeBarButtonsToRemove": ["select2d", "lasso2d", "autoScale2d"]}                    )                };                            </script>        </div>
+                    </div>
                 </div>
 
-                <div class="figure-card">
-                    <h3>Cost-to-net ratio</h3>
-                    <img src="../figures/cost_to_net_ratio.png" alt="Cost-to-net ratio">
+                <div class="chart-card">
+                    <h3>Employer cost to net wage ratio</h3>
+                    <p class="chart-subtitle">
+                        This ratio summarizes how many euros the employer pays for one euro of net wage.
+                    </p>
+                    <div class="plotly-chart">
+                        <div>                            <div id="b3013901-2a50-4e02-b90b-42635adec13a" class="plotly-graph-div" style="height:430px; width:100%;"></div>            <script type="text/javascript">                                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("b3013901-2a50-4e02-b90b-42635adec13a")) {                    Plotly.newPlot(                        "b3013901-2a50-4e02-b90b-42635adec13a",                        [{"hovertemplate":"\u003cb\u003e%{x:.2f}\u00d7 SMIC\u003c\u002fb\u003e\u003cbr\u003eCost-to-net ratio: %{y:.2f}\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#dc2626","width":3},"mode":"lines","name":"Employer cost \u002f net wage","x":[0.8,0.85,0.9,0.95,1.0,1.05,1.1,1.15,1.2,1.25,1.3,1.35,1.4,1.45,1.5,1.55,1.6,1.65,1.7,1.75,1.8,1.85,1.9,1.95,2.0,2.05,2.1,2.15,2.2,2.25,2.3,2.35,2.4,2.45,2.5,2.55,2.6,2.65,2.7,2.75,2.8,2.85,2.9,2.95,3.0,3.05,3.1,3.15,3.2,3.25,3.3,3.35,3.4,3.45,3.5],"y":[1.3846,1.3846,1.3846,1.3846,1.3846,1.4209,1.4573,1.4936,1.5299,1.5662,1.6026,1.6389,1.6752,1.7115,1.7479,1.7842,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205,1.8205],"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmapgl":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmapgl"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"title":{"font":{"size":18,"color":"#0f172a"},"text":"Employer cost to net wage ratio","x":0.02,"xanchor":"left"},"margin":{"l":64,"r":32,"t":70,"b":60},"font":{"family":"Arial","size":13,"color":"#0f172a"},"legend":{"orientation":"h","yanchor":"bottom","y":1.02,"xanchor":"right","x":1},"xaxis":{"title":{"text":"Gross wage, SMIC multiple"},"showgrid":false,"zeroline":false},"yaxis":{"title":{"text":"Employer cost \u002f net wage"},"showgrid":true,"gridcolor":"#e5e7eb","zeroline":false},"height":430,"hovermode":"x unified","shapes":[{"fillcolor":"rgba(37, 99, 235, 0.10)","layer":"below","line":{"width":0},"type":"rect","x0":1.0,"x1":1.6,"xref":"x","y0":0,"y1":1,"yref":"y domain"},{"line":{"color":"#2563eb","dash":"dash"},"opacity":0.7,"type":"line","x0":1.0,"x1":1.0,"xref":"x","y0":0,"y1":1,"yref":"y domain"},{"line":{"color":"#2563eb","dash":"dash"},"opacity":0.7,"type":"line","x0":1.6,"x1":1.6,"xref":"x","y0":0,"y1":1,"yref":"y domain"}],"annotations":[{"font":{"color":"#2563eb","size":12},"showarrow":false,"text":"Relief phase-out\u003cbr\u003e1.0\u20131.6 SMIC","x":1.0,"xanchor":"left","xref":"x","y":1,"yanchor":"top","yref":"y domain"}]},                        {"displaylogo": false, "responsive": true, "modeBarButtonsToRemove": ["select2d", "lasso2d", "autoScale2d"]}                    )                };                            </script>        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
         <section>
             <h2>Interpretation</h2>
-            <p>
-                The central object of the project is not only the legal distinction between
-                employer and employee contributions, but the full wedge between what the employer
-                pays and what the employee receives as net wage.
+            <p class="interpretation">
+                The central object of the project is not only the legal distinction between employer
+                and employee contributions, but the full wedge between what the employer pays and what
+                the employee receives as net wage. This makes it possible to study not only average
+                labour costs, but also the implicit structure of contribution relief and the marginal
+                incentives embedded in the French payroll system.
             </p>
         </section>
     </main>
 
     <footer>
-        Last updated: 2026-05-19 17:55
+        Last updated: 2026-05-19 18:00
     </footer>
 </body>
 </html>
