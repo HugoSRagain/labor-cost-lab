@@ -8,7 +8,7 @@ baseline:
   monthly_smic_gross: 1801.80
   min_smic_multiple: 0.8
   max_smic_multiple: 3.5
-  step_smic_multiple: 0.05
+  step_smic_multiple: 0.01
 
 assumptions:
   employee_contribution_rate: 0.22

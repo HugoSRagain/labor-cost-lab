@@ -7,10 +7,7 @@ import plotly.io as pio
 
 
 BASE_DIR = Path(__file__).resolve().parents[1]
-
-# Dataset officiel Mon-entreprise
 DATA_PATH = BASE_DIR / "data" / "labour_cost_grid_mon_entreprise.csv"
-
 DOCS_DIR = BASE_DIR / "docs"
 OUTPUT_PATH = DOCS_DIR / "index.html"
 
@@ -20,8 +17,146 @@ COLOR_BLUE = "#2563eb"
 COLOR_ORANGE = "#f97316"
 COLOR_TEAL = "#0891b2"
 COLOR_RED = "#dc2626"
-COLOR_GREY = "#64748b"
 COLOR_LIGHT_BLUE = "rgba(37, 99, 235, 0.10)"
+
+
+TEXT = {
+    "en": {
+        "html_lang": "en",
+        "page_title": "French Labour Cost Lab",
+        "subtitle": "Open-source research tool for simulating and visualizing labour costs in France.",
+        "language_button": "Français",
+        "engine_badge": "Calculation engine: Mon-entreprise / URSSAF API",
+        "purpose_title": "Purpose",
+        "purpose_text": (
+            "French Labour Cost Lab provides reproducible simulations of gross wages, "
+            "net wages, employer costs and social wedges in France."
+        ),
+        "method_note": (
+            "<strong>Methodological note.</strong> This version uses the Mon-entreprise / URSSAF "
+            "calculation engine through its public API. Results are computed for a generic wage grid "
+            "and should be interpreted as a reference case, not as an official payslip calculator. "
+            "Some institutional parameters may depend on firm size, sector, collective agreement, "
+            "location, executive status and specific contribution regimes."
+        ),
+        "metric_net_smic": "Net wage at 1 SMIC",
+        "metric_cost_smic": "Employer cost at 1 SMIC",
+        "metric_wedge_smic": "Social wedge at 1 SMIC",
+        "metric_ratio_2_smic": "Cost/net ratio at 2 SMIC",
+        "table_title": "Selected salary points",
+        "figures_title": "Interactive figures",
+        "interpretation_title": "Interpretation",
+        "interpretation_text": (
+            "The central object of the project is not only the legal distinction between employer "
+            "and employee contributions, but the full wedge between what the employer pays and what "
+            "the employee receives as net wage. This makes it possible to study not only average "
+            "labour costs, but also the implicit structure of contribution relief and the marginal "
+            "incentives embedded in the French payroll system."
+        ),
+        "footer": "Last updated",
+        "x_axis": "Gross wage, SMIC multiple",
+        "y_monthly_amount": "Monthly amount, euros",
+        "y_rate": "Contribution rate",
+        "y_wedge": "Social wedge",
+        "y_ratio": "Employer cost / net wage",
+        "chart_cost_title": "From gross wage to employer cost",
+        "chart_cost_subtitle": (
+            "Compare monthly gross wage, net wage and total employer cost across the wage grid."
+        ),
+        "chart_employer_rate_title": "Effective employer contribution rate",
+        "chart_employer_rate_subtitle": (
+            "Employer contribution rates are computed from Mon-entreprise outputs as employer "
+            "contributions divided by gross wage."
+        ),
+        "chart_wedge_title": "Social wedge as a share of employer cost",
+        "chart_wedge_subtitle": (
+            "The social wedge measures the gap between what the employer pays and what the employee receives."
+        ),
+        "chart_ratio_title": "Employer cost to net wage ratio",
+        "chart_ratio_subtitle": (
+            "This ratio summarizes how many euros the employer pays for one euro of net wage."
+        ),
+        "employer_cost": "Employer cost",
+        "net_wage": "Net wage",
+        "gross_wage": "Gross wage",
+        "employee_contrib": "Employee contrib.",
+        "employer_contrib": "Employer contrib.",
+        "social_wedge": "Social wedge",
+        "employee_rate": "Employee rate",
+        "employer_rate": "Employer rate",
+        "social_wedge_rate": "Social wedge rate",
+        "cost_net_ratio": "Cost / net ratio",
+        "relief_zone": "General relief zone<br>around low wages",
+    },
+    "fr": {
+        "html_lang": "fr",
+        "page_title": "French Labour Cost Lab",
+        "subtitle": "Outil open source de simulation et de visualisation du coût du travail en France.",
+        "language_button": "English",
+        "engine_badge": "Moteur de calcul : API Mon-entreprise / URSSAF",
+        "purpose_title": "Objectif",
+        "purpose_text": (
+            "French Labour Cost Lab propose des simulations reproductibles du salaire brut, "
+            "du salaire net, du coût employeur et du coin socio-fiscal en France."
+        ),
+        "method_note": (
+            "<strong>Note méthodologique.</strong> Cette version utilise le moteur de calcul "
+            "Mon-entreprise / URSSAF via son API publique. Les résultats sont calculés sur une grille "
+            "générique de salaires et doivent être interprétés comme un cas de référence, non comme "
+            "un simulateur officiel de fiche de paie. Certains paramètres institutionnels peuvent dépendre "
+            "de la taille de l’entreprise, du secteur, de la convention collective, de la localisation, "
+            "du statut cadre et de régimes spécifiques de cotisations."
+        ),
+        "metric_net_smic": "Salaire net à 1 SMIC",
+        "metric_cost_smic": "Coût employeur à 1 SMIC",
+        "metric_wedge_smic": "Coin social à 1 SMIC",
+        "metric_ratio_2_smic": "Ratio coût/net à 2 SMIC",
+        "table_title": "Points de salaire sélectionnés",
+        "figures_title": "Graphiques interactifs",
+        "interpretation_title": "Interprétation",
+        "interpretation_text": (
+            "L’objet central du projet n’est pas seulement la distinction juridique entre cotisations "
+            "employeur et cotisations salarié, mais l’écart complet entre ce que l’employeur paie et "
+            "ce que le salarié reçoit en salaire net. Cela permet d’étudier non seulement le coût moyen "
+            "du travail, mais aussi la structure implicite des allègements et les incitations marginales "
+            "intégrées au système français de prélèvements sur les salaires."
+        ),
+        "footer": "Dernière mise à jour",
+        "x_axis": "Salaire brut, multiple du SMIC",
+        "y_monthly_amount": "Montant mensuel, euros",
+        "y_rate": "Taux de cotisation",
+        "y_wedge": "Coin social",
+        "y_ratio": "Coût employeur / salaire net",
+        "chart_cost_title": "Du salaire brut au coût employeur",
+        "chart_cost_subtitle": (
+            "Comparaison du salaire brut, du salaire net et du coût total employeur le long de la grille salariale."
+        ),
+        "chart_employer_rate_title": "Taux effectif de cotisations employeur",
+        "chart_employer_rate_subtitle": (
+            "Le taux de cotisations employeur est calculé à partir des sorties Mon-entreprise, "
+            "en rapportant les cotisations employeur au salaire brut."
+        ),
+        "chart_wedge_title": "Coin social en part du coût employeur",
+        "chart_wedge_subtitle": (
+            "Le coin social mesure l’écart entre ce que l’employeur paie et ce que le salarié reçoit."
+        ),
+        "chart_ratio_title": "Ratio coût employeur / salaire net",
+        "chart_ratio_subtitle": (
+            "Ce ratio indique combien l’employeur paie pour un euro de salaire net."
+        ),
+        "employer_cost": "Coût employeur",
+        "net_wage": "Salaire net",
+        "gross_wage": "Salaire brut",
+        "employee_contrib": "Cotisations salarié",
+        "employer_contrib": "Cotisations employeur",
+        "social_wedge": "Coin social",
+        "employee_rate": "Taux salarié",
+        "employer_rate": "Taux employeur",
+        "social_wedge_rate": "Taux de coin social",
+        "cost_net_ratio": "Ratio coût / net",
+        "relief_zone": "Zone d’allègements<br>sur bas salaires",
+    },
+}
 
 
 def euro(value):
@@ -32,7 +167,9 @@ def pct(value):
     return f"{value:.1f}%"
 
 
-def base_layout(title: str, yaxis_title: str, xaxis_title: str = "Gross wage, SMIC multiple"):
+def base_layout(lang: str, title: str, yaxis_title: str):
+    t = TEXT[lang]
+
     return dict(
         title=dict(
             text=title,
@@ -53,7 +190,7 @@ def base_layout(title: str, yaxis_title: str, xaxis_title: str = "Gross wage, SM
             x=1
         ),
         xaxis=dict(
-            title=xaxis_title,
+            title=t["x_axis"],
             showgrid=False,
             zeroline=False
         ),
@@ -66,50 +203,43 @@ def base_layout(title: str, yaxis_title: str, xaxis_title: str = "Gross wage, SM
     )
 
 
-def add_relief_zone(fig):
+def add_relief_zone(fig, lang: str):
+    t = TEXT[lang]
+
     fig.add_vrect(
         x0=1.0,
         x1=1.6,
         fillcolor=COLOR_LIGHT_BLUE,
         line_width=0,
         layer="below",
-        annotation_text="General relief zone<br>around low wages",
+        annotation_text=t["relief_zone"],
         annotation_position="top left",
         annotation_font_size=12,
         annotation_font_color=COLOR_BLUE
     )
 
-    fig.add_vline(
-        x=1.0,
-        line_dash="dash",
-        line_color=COLOR_BLUE,
-        opacity=0.7
-    )
-
-    fig.add_vline(
-        x=1.6,
-        line_dash="dash",
-        line_color=COLOR_BLUE,
-        opacity=0.7
-    )
+    fig.add_vline(x=1.0, line_dash="dash", line_color=COLOR_BLUE, opacity=0.7)
+    fig.add_vline(x=1.6, line_dash="dash", line_color=COLOR_BLUE, opacity=0.7)
 
 
-def make_cost_chart(df):
+def make_cost_chart(df, lang: str):
+    t = TEXT[lang]
     fig = go.Figure()
 
     fig.add_trace(
         go.Scatter(
             x=df["smic_multiple"],
             y=df["employer_cost_monthly_eur"],
-            mode="lines",
-            name="Employer cost",
+            mode="lines+markers",
+            name=t["employer_cost"],
             line=dict(color=COLOR_BLUE, width=3),
+            marker=dict(size=5),
             customdata=df[["gross_monthly_eur", "net_monthly_eur"]],
             hovertemplate=(
-                "<b>%{x:.2f}× SMIC</b><br>"
-                "Gross wage: %{customdata[0]:,.0f} €<br>"
-                "Net wage: %{customdata[1]:,.0f} €<br>"
-                "Employer cost: %{y:,.0f} €"
+                "<b>%{x:.1f}× SMIC</b><br>"
+                + f"{t['gross_wage']}: " + "%{customdata[0]:,.0f} €<br>"
+                + f"{t['net_wage']}: " + "%{customdata[1]:,.0f} €<br>"
+                + f"{t['employer_cost']}: " + "%{y:,.0f} €"
                 "<extra></extra>"
             )
         )
@@ -119,132 +249,123 @@ def make_cost_chart(df):
         go.Scatter(
             x=df["smic_multiple"],
             y=df["net_monthly_eur"],
-            mode="lines",
-            name="Net wage",
+            mode="lines+markers",
+            name=t["net_wage"],
             line=dict(color=COLOR_ORANGE, width=3),
+            marker=dict(size=5),
             customdata=df[["gross_monthly_eur", "employer_cost_monthly_eur"]],
             hovertemplate=(
-                "<b>%{x:.2f}× SMIC</b><br>"
-                "Gross wage: %{customdata[0]:,.0f} €<br>"
-                "Net wage: %{y:,.0f} €<br>"
-                "Employer cost: %{customdata[1]:,.0f} €"
+                "<b>%{x:.1f}× SMIC</b><br>"
+                + f"{t['gross_wage']}: " + "%{customdata[0]:,.0f} €<br>"
+                + f"{t['net_wage']}: " + "%{y:,.0f} €<br>"
+                + f"{t['employer_cost']}: " + "%{customdata[1]:,.0f} €"
                 "<extra></extra>"
             )
         )
     )
 
     fig.update_layout(
-        **base_layout(
-            title="From gross wage to employer cost",
-            yaxis_title="Monthly amount, euros"
-        )
+        **base_layout(lang, t["chart_cost_title"], t["y_monthly_amount"])
     )
-
     fig.update_yaxes(ticksuffix=" €")
-    add_relief_zone(fig)
+    add_relief_zone(fig, lang)
 
     return fig
 
 
-def make_employer_rate_chart(df):
+def make_employer_rate_chart(df, lang: str):
+    t = TEXT[lang]
     fig = go.Figure()
 
     fig.add_trace(
         go.Scatter(
             x=df["smic_multiple"],
             y=df["employer_contribution_rate"] * 100,
-            mode="lines",
-            name="Employer contribution rate",
+            mode="lines+markers",
+            name=t["employer_rate"],
             line=dict(color=COLOR_BLUE, width=3),
+            marker=dict(size=5),
             customdata=df[["employer_contributions_monthly_eur", "gross_monthly_eur"]],
             hovertemplate=(
-                "<b>%{x:.2f}× SMIC</b><br>"
-                "Gross wage: %{customdata[1]:,.0f} €<br>"
-                "Employer contributions: %{customdata[0]:,.0f} €<br>"
-                "Employer contribution rate: %{y:.1f}%"
+                "<b>%{x:.1f}× SMIC</b><br>"
+                + f"{t['gross_wage']}: " + "%{customdata[1]:,.0f} €<br>"
+                + f"{t['employer_contrib']}: " + "%{customdata[0]:,.0f} €<br>"
+                + f"{t['employer_rate']}: " + "%{y:.1f}%"
                 "<extra></extra>"
             )
         )
     )
 
     fig.update_layout(
-        **base_layout(
-            title="Effective employer contribution rate",
-            yaxis_title="Contribution rate"
-        )
+        **base_layout(lang, t["chart_employer_rate_title"], t["y_rate"])
     )
-
     fig.update_yaxes(ticksuffix="%")
-    add_relief_zone(fig)
+    add_relief_zone(fig, lang)
 
     return fig
 
 
-def make_social_wedge_chart(df):
+def make_social_wedge_chart(df, lang: str):
+    t = TEXT[lang]
     fig = go.Figure()
 
     fig.add_trace(
         go.Scatter(
             x=df["smic_multiple"],
             y=df["social_wedge_rate"] * 100,
-            mode="lines",
-            name="Social wedge",
+            mode="lines+markers",
+            name=t["social_wedge"],
             line=dict(color=COLOR_TEAL, width=3),
+            marker=dict(size=5),
             fill="tozeroy",
             fillcolor="rgba(8, 145, 178, 0.12)",
             customdata=df[["social_wedge_monthly_eur", "employer_cost_monthly_eur"]],
             hovertemplate=(
-                "<b>%{x:.2f}× SMIC</b><br>"
-                "Employer cost: %{customdata[1]:,.0f} €<br>"
-                "Social wedge: %{customdata[0]:,.0f} €<br>"
-                "Social wedge rate: %{y:.1f}%"
+                "<b>%{x:.1f}× SMIC</b><br>"
+                + f"{t['employer_cost']}: " + "%{customdata[1]:,.0f} €<br>"
+                + f"{t['social_wedge']}: " + "%{customdata[0]:,.0f} €<br>"
+                + f"{t['social_wedge_rate']}: " + "%{y:.1f}%"
                 "<extra></extra>"
             )
         )
     )
 
     fig.update_layout(
-        **base_layout(
-            title="Social wedge as a share of employer cost",
-            yaxis_title="Social wedge"
-        )
+        **base_layout(lang, t["chart_wedge_title"], t["y_wedge"])
     )
-
     fig.update_yaxes(ticksuffix="%")
-    add_relief_zone(fig)
+    add_relief_zone(fig, lang)
 
     return fig
 
 
-def make_cost_to_net_chart(df):
+def make_cost_to_net_chart(df, lang: str):
+    t = TEXT[lang]
     fig = go.Figure()
 
     fig.add_trace(
         go.Scatter(
             x=df["smic_multiple"],
             y=df["cost_to_net_ratio"],
-            mode="lines",
-            name="Employer cost / net wage",
+            mode="lines+markers",
+            name=t["cost_net_ratio"],
             line=dict(color=COLOR_RED, width=3),
+            marker=dict(size=5),
             customdata=df[["employer_cost_monthly_eur", "net_monthly_eur"]],
             hovertemplate=(
-                "<b>%{x:.2f}× SMIC</b><br>"
-                "Employer cost: %{customdata[0]:,.0f} €<br>"
-                "Net wage: %{customdata[1]:,.0f} €<br>"
-                "Cost-to-net ratio: %{y:.2f}"
+                "<b>%{x:.1f}× SMIC</b><br>"
+                + f"{t['employer_cost']}: " + "%{customdata[0]:,.0f} €<br>"
+                + f"{t['net_wage']}: " + "%{customdata[1]:,.0f} €<br>"
+                + f"{t['cost_net_ratio']}: " + "%{y:.2f}"
                 "<extra></extra>"
             )
         )
     )
 
     fig.update_layout(
-        **base_layout(
-            title="Employer cost to net wage ratio",
-            yaxis_title="Employer cost / net wage"
-        )
+        **base_layout(lang, t["chart_ratio_title"], t["y_ratio"])
     )
-
-    add_relief_zone(fig)
+    add_relief_zone(fig, lang)
 
     return fig
 
@@ -257,19 +378,16 @@ def fig_to_html(fig):
         config={
             "displaylogo": False,
             "responsive": True,
-            "modeBarButtonsToRemove": [
-                "select2d",
-                "lasso2d",
-                "autoScale2d"
-            ]
+            "modeBarButtonsToRemove": ["select2d", "lasso2d", "autoScale2d"]
         }
     )
 
 
-def build_table(df):
-    sample_rows = df[
-        df["smic_multiple"].isin([1.0, 1.2, 1.6, 2.0, 2.5, 3.0])
-    ].copy()
+def build_table(df, lang: str):
+    t = TEXT[lang]
+
+    selected_points = [1.0, 1.2, 1.6, 2.0, 2.5, 3.0]
+    sample_rows = df[df["smic_multiple"].isin(selected_points)].copy()
 
     sample_rows = sample_rows[[
         "smic_multiple",
@@ -286,32 +404,32 @@ def build_table(df):
     ]]
 
     sample_rows = sample_rows.rename(columns={
-        "smic_multiple": "SMIC multiple",
-        "gross_monthly_eur": "Gross wage (€)",
-        "net_monthly_eur": "Net wage (€)",
-        "employer_cost_monthly_eur": "Employer cost (€)",
-        "employee_contributions_monthly_eur": "Employee contrib. (€)",
-        "employer_contributions_monthly_eur": "Employer contrib. (€)",
-        "social_wedge_monthly_eur": "Social wedge (€)",
-        "employee_contribution_rate": "Employee rate",
-        "employer_contribution_rate": "Employer rate",
-        "social_wedge_rate": "Social wedge rate",
-        "cost_to_net_ratio": "Cost / net ratio"
+        "smic_multiple": "SMIC",
+        "gross_monthly_eur": f"{t['gross_wage']} (€)",
+        "net_monthly_eur": f"{t['net_wage']} (€)",
+        "employer_cost_monthly_eur": f"{t['employer_cost']} (€)",
+        "employee_contributions_monthly_eur": f"{t['employee_contrib']} (€)",
+        "employer_contributions_monthly_eur": f"{t['employer_contrib']} (€)",
+        "social_wedge_monthly_eur": f"{t['social_wedge']} (€)",
+        "employee_contribution_rate": t["employee_rate"],
+        "employer_contribution_rate": t["employer_rate"],
+        "social_wedge_rate": t["social_wedge_rate"],
+        "cost_to_net_ratio": t["cost_net_ratio"]
     })
 
     money_columns = [
-        "Gross wage (€)",
-        "Net wage (€)",
-        "Employer cost (€)",
-        "Employee contrib. (€)",
-        "Employer contrib. (€)",
-        "Social wedge (€)"
+        f"{t['gross_wage']} (€)",
+        f"{t['net_wage']} (€)",
+        f"{t['employer_cost']} (€)",
+        f"{t['employee_contrib']} (€)",
+        f"{t['employer_contrib']} (€)",
+        f"{t['social_wedge']} (€)"
     ]
 
     rate_columns = [
-        "Employee rate",
-        "Employer rate",
-        "Social wedge rate"
+        t["employee_rate"],
+        t["employer_rate"],
+        t["social_wedge_rate"]
     ]
 
     for col in money_columns:
@@ -320,7 +438,7 @@ def build_table(df):
     for col in rate_columns:
         sample_rows[col] = sample_rows[col].map(lambda x: pct(float(x) * 100))
 
-    sample_rows["Cost / net ratio"] = sample_rows["Cost / net ratio"].map(lambda x: f"{float(x):.2f}")
+    sample_rows[t["cost_net_ratio"]] = sample_rows[t["cost_net_ratio"]].map(lambda x: f"{float(x):.2f}")
 
     return sample_rows.to_html(
         index=False,
@@ -332,36 +450,131 @@ def build_table(df):
 
 def build_key_metrics(df):
     point_1 = df.loc[(df["smic_multiple"] - 1.0).abs().idxmin()]
-    point_16 = df.loc[(df["smic_multiple"] - 1.6).abs().idxmin()]
     point_2 = df.loc[(df["smic_multiple"] - 2.0).abs().idxmin()]
 
     return {
         "smic_net": euro(point_1["net_monthly_eur"]),
         "smic_cost": euro(point_1["employer_cost_monthly_eur"]),
         "smic_wedge": pct(point_1["social_wedge_rate"] * 100),
-        "smic_employer_rate": pct(point_1["employer_contribution_rate"] * 100),
-
-        "smic_16_employer_rate": pct(point_16["employer_contribution_rate"] * 100),
         "smic_2_cost_net_ratio": f"{point_2['cost_to_net_ratio']:.2f}"
     }
+
+
+def build_language_section(df, lang: str, updated_at: str):
+    t = TEXT[lang]
+
+    table_html = build_table(df, lang)
+    metrics = build_key_metrics(df)
+
+    cost_chart = fig_to_html(make_cost_chart(df, lang))
+    employer_rate_chart = fig_to_html(make_employer_rate_chart(df, lang))
+    social_wedge_chart = fig_to_html(make_social_wedge_chart(df, lang))
+    cost_to_net_chart = fig_to_html(make_cost_to_net_chart(df, lang))
+
+    return f"""
+    <div class="language-section" id="section-{lang}">
+        <header>
+            <div>
+                <h1>{t["page_title"]}</h1>
+                <p>{t["subtitle"]}</p>
+            </div>
+            <button class="language-toggle" onclick="switchLanguage()">{t["language_button"]}</button>
+        </header>
+
+        <main>
+            <section>
+                <div class="badge">{t["engine_badge"]}</div>
+                <h2>{t["purpose_title"]}</h2>
+                <p>{t["purpose_text"]}</p>
+                <div class="method-box">
+                    {t["method_note"]}
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">{t["metric_net_smic"]}</div>
+                        <div class="metric-value">{metrics["smic_net"]}</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">{t["metric_cost_smic"]}</div>
+                        <div class="metric-value">{metrics["smic_cost"]}</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">{t["metric_wedge_smic"]}</div>
+                        <div class="metric-value">{metrics["smic_wedge"]}</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">{t["metric_ratio_2_smic"]}</div>
+                        <div class="metric-value">{metrics["smic_2_cost_net_ratio"]}</div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2>{t["table_title"]}</h2>
+                <div class="table-wrapper">
+                    {table_html}
+                </div>
+            </section>
+
+            <section>
+                <h2>{t["figures_title"]}</h2>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>{t["chart_cost_title"]}</h3>
+                        <p class="chart-subtitle">{t["chart_cost_subtitle"]}</p>
+                        <div class="plotly-chart">{cost_chart}</div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>{t["chart_employer_rate_title"]}</h3>
+                        <p class="chart-subtitle">{t["chart_employer_rate_subtitle"]}</p>
+                        <div class="plotly-chart">{employer_rate_chart}</div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>{t["chart_wedge_title"]}</h3>
+                        <p class="chart-subtitle">{t["chart_wedge_subtitle"]}</p>
+                        <div class="plotly-chart">{social_wedge_chart}</div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>{t["chart_ratio_title"]}</h3>
+                        <p class="chart-subtitle">{t["chart_ratio_subtitle"]}</p>
+                        <div class="plotly-chart">{cost_to_net_chart}</div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2>{t["interpretation_title"]}</h2>
+                <p class="interpretation">{t["interpretation_text"]}</p>
+            </section>
+        </main>
+
+        <footer>
+            {t["footer"]}: {updated_at}
+        </footer>
+    </div>
+    """
 
 
 def main():
     df = pd.read_csv(DATA_PATH)
 
-    # Sécurité : on conserve uniquement les lignes valides.
     if "status" in df.columns:
         df = df[df["status"] == "ok"].copy()
 
+    df = df.sort_values("smic_multiple").reset_index(drop=True)
+
     updated_at = datetime.now().strftime("%Y-%m-%d %H:%M")
 
-    table_html = build_table(df)
-    metrics = build_key_metrics(df)
-
-    cost_chart = fig_to_html(make_cost_chart(df))
-    employer_rate_chart = fig_to_html(make_employer_rate_chart(df))
-    social_wedge_chart = fig_to_html(make_social_wedge_chart(df))
-    cost_to_net_chart = fig_to_html(make_cost_to_net_chart(df))
+    english_section = build_language_section(df, "en", updated_at)
+    french_section = build_language_section(df, "fr", updated_at)
 
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -379,10 +592,22 @@ def main():
             color: #1f2937;
         }}
 
+        .language-section {{
+            display: none;
+        }}
+
+        .language-section.active {{
+            display: block;
+        }}
+
         header {{
             background: #111827;
             color: white;
             padding: 42px 52px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 24px;
         }}
 
         header h1 {{
@@ -395,6 +620,20 @@ def main():
             margin: 0;
             color: #d1d5db;
             font-size: 18px;
+        }}
+
+        .language-toggle {{
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+            border-radius: 999px;
+            padding: 10px 16px;
+            cursor: pointer;
+            font-weight: 700;
+        }}
+
+        .language-toggle:hover {{
+            background: rgba(255, 255, 255, 0.16);
         }}
 
         main {{
@@ -547,6 +786,7 @@ def main():
         @media (max-width: 980px) {{
             header {{
                 padding: 30px 24px;
+                flex-direction: column;
             }}
 
             header h1 {{
@@ -579,118 +819,40 @@ def main():
     </style>
 </head>
 <body>
-    <header>
-        <h1>French Labour Cost Lab</h1>
-        <p>Open-source research tool for simulating and visualizing labour costs in France.</p>
-    </header>
+    {english_section}
+    {french_section}
 
-    <main>
-        <section>
-            <div class="badge">Calculation engine: Mon-entreprise / URSSAF API</div>
-            <h2>Purpose</h2>
-            <p>
-                French Labour Cost Lab provides reproducible simulations of gross wages,
-                net wages, employer costs and social wedges in France.
-            </p>
-            <div class="method-box">
-                <strong>Methodological note.</strong> This version uses the Mon-entreprise / URSSAF
-                calculation engine through its public API. Results are computed for a generic wage grid
-                and should be interpreted as a reference case, not as an official payslip calculator.
-                Some institutional parameters may depend on firm size, sector, collective agreement,
-                location, executive status and specific contribution regimes.
-            </div>
+    <script>
+        function setLanguage(lang) {{
+            const enSection = document.getElementById("section-en");
+            const frSection = document.getElementById("section-fr");
 
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <div class="metric-label">Net wage at 1 SMIC</div>
-                    <div class="metric-value">{metrics["smic_net"]}</div>
-                </div>
+            enSection.classList.remove("active");
+            frSection.classList.remove("active");
 
-                <div class="metric-card">
-                    <div class="metric-label">Employer cost at 1 SMIC</div>
-                    <div class="metric-value">{metrics["smic_cost"]}</div>
-                </div>
+            if (lang === "fr") {{
+                frSection.classList.add("active");
+                document.documentElement.lang = "fr";
+            }} else {{
+                enSection.classList.add("active");
+                document.documentElement.lang = "en";
+            }}
 
-                <div class="metric-card">
-                    <div class="metric-label">Social wedge at 1 SMIC</div>
-                    <div class="metric-value">{metrics["smic_wedge"]}</div>
-                </div>
+            localStorage.setItem("flcl_language", lang);
 
-                <div class="metric-card">
-                    <div class="metric-label">Cost/net ratio at 2 SMIC</div>
-                    <div class="metric-value">{metrics["smic_2_cost_net_ratio"]}</div>
-                </div>
-            </div>
-        </section>
+            setTimeout(function() {{
+                window.dispatchEvent(new Event("resize"));
+            }}, 100);
+        }}
 
-        <section>
-            <h2>Selected salary points</h2>
-            <div class="table-wrapper">
-                {table_html}
-            </div>
-        </section>
+        function switchLanguage() {{
+            const current = localStorage.getItem("flcl_language") || "en";
+            setLanguage(current === "en" ? "fr" : "en");
+        }}
 
-        <section>
-            <h2>Interactive figures</h2>
-
-            <div class="charts-grid">
-                <div class="chart-card">
-                    <h3>From gross wage to employer cost</h3>
-                    <p class="chart-subtitle">
-                        Compare monthly gross wage, net wage and total employer cost across the wage grid.
-                    </p>
-                    <div class="plotly-chart">
-                        {cost_chart}
-                    </div>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Effective employer contribution rate</h3>
-                    <p class="chart-subtitle">
-                        Employer contribution rates are computed from Mon-entreprise outputs as employer contributions divided by gross wage.
-                    </p>
-                    <div class="plotly-chart">
-                        {employer_rate_chart}
-                    </div>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Social wedge as a share of employer cost</h3>
-                    <p class="chart-subtitle">
-                        The social wedge measures the gap between what the employer pays and what the employee receives.
-                    </p>
-                    <div class="plotly-chart">
-                        {social_wedge_chart}
-                    </div>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Employer cost to net wage ratio</h3>
-                    <p class="chart-subtitle">
-                        This ratio summarizes how many euros the employer pays for one euro of net wage.
-                    </p>
-                    <div class="plotly-chart">
-                        {cost_to_net_chart}
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section>
-            <h2>Interpretation</h2>
-            <p class="interpretation">
-                The central object of the project is not only the legal distinction between employer
-                and employee contributions, but the full wedge between what the employer pays and what
-                the employee receives as net wage. This makes it possible to study not only average
-                labour costs, but also the implicit structure of contribution relief and the marginal
-                incentives embedded in the French payroll system.
-            </p>
-        </section>
-    </main>
-
-    <footer>
-        Last updated: {updated_at}
-    </footer>
+        const savedLanguage = localStorage.getItem("flcl_language") || "en";
+        setLanguage(savedLanguage);
+    </script>
 </body>
 </html>
 """
