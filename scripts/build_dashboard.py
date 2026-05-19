@@ -18,6 +18,7 @@ COLOR_ORANGE = "#f97316"
 COLOR_TEAL = "#0891b2"
 COLOR_RED = "#dc2626"
 COLOR_PURPLE = "#7c3aed"
+COLOR_GREEN = "#16a34a"
 COLOR_LIGHT_BLUE = "rgba(37, 99, 235, 0.10)"
 
 
@@ -28,23 +29,41 @@ TEXT = {
         "subtitle": "Open-source research tool for simulating and visualizing labour costs in France.",
         "language_button": "Français",
         "engine_badge": "Calculation engine: Mon-entreprise / URSSAF API",
+
         "purpose_title": "Purpose",
         "purpose_text": (
             "French Labour Cost Lab provides reproducible simulations of gross wages, "
             "net wages, employer costs, employer contribution reliefs and social wedges in France."
         ),
+
         "method_note": (
             "<strong>Methodological note.</strong> This version uses the Mon-entreprise / URSSAF "
             "calculation engine through its public API. Results are computed for a generic wage grid "
             "and should be interpreted as a reference case, not as an official payslip calculator. "
             "Some institutional parameters may depend on firm size, sector, collective agreement, "
-            "location, executive status and specific contribution regimes. The contribution relief "
-            "shown here is labelled as RGDU 2026 in the dashboard."
+            "location, executive status and specific contribution regimes."
         ),
+
+        "methodology_title": "Methodology",
+        "methodology_intro": (
+            "The dashboard is built from a reproducible wage grid evaluated through the "
+            "Mon-entreprise / URSSAF API. The objective is not to reproduce a full payslip, "
+            "but to isolate economically meaningful indicators of labour cost formation."
+        ),
+        "methodology_points": [
+            "<strong>Source.</strong> Calculations are obtained from the public Mon-entreprise / URSSAF API.",
+            "<strong>Wage grid.</strong> Gross monthly wages are expressed as multiples of the gross monthly SMIC, from 0.8 to 3.5 SMIC.",
+            "<strong>Reference case.</strong> The simulation corresponds to a generic private-sector employee case. It does not encode every sectoral, local or contractual specificity.",
+            "<strong>Indicators.</strong> Employer cost, net wage, employer contributions, employee contributions, RGDU 2026, social wedge and cost-to-net ratios are derived from API outputs.",
+            "<strong>Marginal indicators.</strong> The marginal employer-cost rate is computed as the finite difference between two adjacent points of the wage grid: Δ employer cost / Δ gross wage.",
+            "<strong>Limitations.</strong> Results can vary with firm size, AT/MP rates, Alsace-Moselle regime, collective agreements, executive status, exemptions and other contribution regimes."
+        ],
+
         "metric_net_smic": "Net wage at 1 SMIC",
         "metric_cost_smic": "Employer cost at 1 SMIC",
         "metric_rgdu_smic": "RGDU 2026 at 1 SMIC",
         "metric_ratio_2_smic": "Cost/net ratio at 2 SMIC",
+
         "table_title": "Selected salary points",
         "figures_title": "Interactive figures",
         "interpretation_title": "Interpretation",
@@ -52,8 +71,10 @@ TEXT = {
             "The central object of the project is not only the legal distinction between employer "
             "and employee contributions, but the full wedge between what the employer pays and what "
             "the employee receives as net wage. The RGDU 2026 graph isolates the employer contribution "
-            "relief component, which is central to the non-linear structure of labour costs in France."
+            "relief component, while the marginal chart shows how the cost of an additional euro of gross wage "
+            "varies along the wage distribution."
         ),
+
         "footer": "Last updated",
         "x_axis": "Gross wage, SMIC multiple",
         "y_monthly_amount": "Monthly amount, euros",
@@ -61,6 +82,8 @@ TEXT = {
         "y_wedge": "Social wedge",
         "y_ratio": "Employer cost / net wage",
         "y_rgdu": "Monthly relief amount, euros",
+        "y_marginal": "Marginal rate",
+
         "chart_cost_title": "From gross wage to employer cost",
         "chart_cost_subtitle": (
             "Compare monthly gross wage, net wage and total employer cost across the wage grid."
@@ -72,8 +95,8 @@ TEXT = {
         ),
         "chart_rgdu_title": "Employer contribution relief — RGDU 2026",
         "chart_rgdu_subtitle": (
-            "Monthly amount of the 2026 single degressive general reduction computed from "
-            "the Mon-entreprise / URSSAF engine."
+            "Monthly or annual amount of the 2026 single degressive general reduction computed from "
+            "the Mon-entreprise / URSSAF engine. The right axis shows the amount as a share of gross wage."
         ),
         "chart_wedge_title": "Social wedge as a share of employer cost",
         "chart_wedge_subtitle": (
@@ -83,6 +106,11 @@ TEXT = {
         "chart_ratio_subtitle": (
             "This ratio summarizes how many euros the employer pays for one euro of net wage."
         ),
+        "chart_marginal_title": "Marginal cost of gross wage increases",
+        "chart_marginal_subtitle": (
+            "This chart shows how employer cost and net wage react locally to an additional euro of gross wage."
+        ),
+
         "employer_cost": "Employer cost",
         "net_wage": "Net wage",
         "gross_wage": "Gross wage",
@@ -96,31 +124,60 @@ TEXT = {
         "rgdu": "RGDU 2026",
         "rgdu_rate": "RGDU / gross wage",
         "rgdu_zone": "RGDU 2026<br>degressive area",
+        "marginal_cost_rate": "Δ employer cost / Δ gross wage",
+        "marginal_net_retention": "Δ net wage / Δ employer cost",
+
+        "monthly": "Monthly",
+        "annual": "Annual",
+        "monthly_amount": "Monthly amount",
+        "annual_amount": "Annual amount",
+        "y_monthly_rgdu": "Monthly relief amount, euros",
+        "y_annual_rgdu": "Annual relief amount, euros",
+        "y2_rgdu": "RGDU / gross wage",
     },
+
     "fr": {
         "html_lang": "fr",
         "page_title": "French Labour Cost Lab",
         "subtitle": "Outil open source de simulation et de visualisation du coût du travail en France.",
         "language_button": "English",
         "engine_badge": "Moteur de calcul : API Mon-entreprise / URSSAF",
+
         "purpose_title": "Objectif",
         "purpose_text": (
             "French Labour Cost Lab propose des simulations reproductibles du salaire brut, "
             "du salaire net, du coût employeur, des allègements de charges et du coin socio-fiscal en France."
         ),
+
         "method_note": (
             "<strong>Note méthodologique.</strong> Cette version utilise le moteur de calcul "
             "Mon-entreprise / URSSAF via son API publique. Les résultats sont calculés sur une grille "
             "générique de salaires et doivent être interprétés comme un cas de référence, non comme "
             "un simulateur officiel de fiche de paie. Certains paramètres institutionnels peuvent dépendre "
             "de la taille de l’entreprise, du secteur, de la convention collective, de la localisation, "
-            "du statut cadre et de régimes spécifiques de cotisations. L’allègement représenté ici est "
-            "désigné dans le tableau de bord comme RGDU 2026."
+            "du statut cadre et de régimes spécifiques de cotisations."
         ),
+
+        "methodology_title": "Méthodologie",
+        "methodology_intro": (
+            "Le tableau de bord est construit à partir d’une grille salariale reproductible évaluée via "
+            "l’API Mon-entreprise / URSSAF. L’objectif n’est pas de reproduire une fiche de paie complète, "
+            "mais d’isoler des indicateurs économiquement interprétables de formation du coût du travail."
+        ),
+        "methodology_points": [
+            "<strong>Source.</strong> Les calculs sont obtenus à partir de l’API publique Mon-entreprise / URSSAF.",
+            "<strong>Grille salariale.</strong> Les salaires bruts mensuels sont exprimés en multiples du SMIC brut mensuel, de 0,8 à 3,5 SMIC.",
+            "<strong>Cas de référence.</strong> La simulation correspond à un cas générique de salarié du secteur privé. Elle n’intègre pas toutes les spécificités sectorielles, locales ou contractuelles.",
+            "<strong>Indicateurs.</strong> Coût employeur, salaire net, cotisations employeur, cotisations salarié, RGDU 2026, coin social et ratio coût/net sont dérivés des sorties de l’API.",
+            "<strong>Indicateurs marginaux.</strong> Le taux marginal de coût employeur est calculé par différence finie entre deux points adjacents de la grille : Δ coût employeur / Δ salaire brut.",
+            "<strong>Limites.</strong> Les résultats peuvent varier selon la taille de l’entreprise, le taux AT/MP, le régime Alsace-Moselle, la convention collective, le statut cadre, les exonérations et les régimes spécifiques."
+        ],
+
         "metric_net_smic": "Salaire net à 1 SMIC",
         "metric_cost_smic": "Coût employeur à 1 SMIC",
         "metric_rgdu_smic": "RGDU 2026 à 1 SMIC",
         "metric_ratio_2_smic": "Ratio coût/net à 2 SMIC",
+
         "table_title": "Points de salaire sélectionnés",
         "figures_title": "Graphiques interactifs",
         "interpretation_title": "Interprétation",
@@ -128,8 +185,10 @@ TEXT = {
             "L’objet central du projet n’est pas seulement la distinction juridique entre cotisations "
             "employeur et cotisations salarié, mais l’écart complet entre ce que l’employeur paie et "
             "ce que le salarié reçoit en salaire net. Le graphique RGDU 2026 isole la composante "
-            "d’allègement de charges, qui joue un rôle central dans la non-linéarité du coût du travail en France."
+            "d’allègement de charges, tandis que le graphique marginal montre comment le coût d’un euro "
+            "supplémentaire de salaire brut varie le long de la distribution salariale."
         ),
+
         "footer": "Dernière mise à jour",
         "x_axis": "Salaire brut, multiple du SMIC",
         "y_monthly_amount": "Montant mensuel, euros",
@@ -137,6 +196,8 @@ TEXT = {
         "y_wedge": "Coin social",
         "y_ratio": "Coût employeur / salaire net",
         "y_rgdu": "Montant mensuel d’allègement, euros",
+        "y_marginal": "Taux marginal",
+
         "chart_cost_title": "Du salaire brut au coût employeur",
         "chart_cost_subtitle": (
             "Comparaison du salaire brut, du salaire net et du coût total employeur le long de la grille salariale."
@@ -148,8 +209,8 @@ TEXT = {
         ),
         "chart_rgdu_title": "Allègements de charges — RGDU 2026",
         "chart_rgdu_subtitle": (
-            "Montant mensuel de réduction générale dégressive unique calculé à partir du moteur "
-            "Mon-entreprise / URSSAF."
+            "Montant mensuel ou annuel de réduction générale dégressive unique calculé à partir du moteur "
+            "Mon-entreprise / URSSAF. L’axe de droite indique le montant rapporté au salaire brut."
         ),
         "chart_wedge_title": "Coin social en part du coût employeur",
         "chart_wedge_subtitle": (
@@ -159,6 +220,12 @@ TEXT = {
         "chart_ratio_subtitle": (
             "Ce ratio indique combien l’employeur paie pour un euro de salaire net."
         ),
+        "chart_marginal_title": "Coût marginal des hausses de salaire brut",
+        "chart_marginal_subtitle": (
+            "Ce graphique montre comment le coût employeur et le salaire net réagissent localement "
+            "à un euro supplémentaire de salaire brut."
+        ),
+
         "employer_cost": "Coût employeur",
         "net_wage": "Salaire net",
         "gross_wage": "Salaire brut",
@@ -172,6 +239,16 @@ TEXT = {
         "rgdu": "RGDU 2026",
         "rgdu_rate": "RGDU / salaire brut",
         "rgdu_zone": "RGDU 2026<br>zone dégressive",
+        "marginal_cost_rate": "Δ coût employeur / Δ salaire brut",
+        "marginal_net_retention": "Δ salaire net / Δ coût employeur",
+
+        "monthly": "Mensuel",
+        "annual": "Annuel",
+        "monthly_amount": "Montant mensuel",
+        "annual_amount": "Montant annuel",
+        "y_monthly_rgdu": "Montant mensuel d’allègement, euros",
+        "y_annual_rgdu": "Montant annuel d’allègement, euros",
+        "y2_rgdu": "RGDU / salaire brut",
     },
 }
 
@@ -325,36 +402,18 @@ def make_rgdu_chart(df, lang: str):
     if "rgdu_rate_gross" not in df.columns:
         df["rgdu_rate_gross"] = 0.0
 
-    # La RGDU est représentée uniquement à partir de 1 SMIC.
     df_rgdu = df[df["smic_multiple"] >= 1.0].copy()
 
-    # Par convention graphique, on force l'extinction à zéro à partir de 3 SMIC.
     df_rgdu.loc[df_rgdu["smic_multiple"] >= 3.0, "rgdu_monthly_eur"] = 0.0
     df_rgdu.loc[df_rgdu["smic_multiple"] >= 3.0, "rgdu_rate_gross"] = 0.0
 
     df_rgdu["rgdu_annual_eur"] = df_rgdu["rgdu_monthly_eur"] * 12
     df_rgdu["rgdu_rate_percent"] = df_rgdu["rgdu_rate_gross"] * 100
 
-    if lang == "fr":
-        monthly_label = "Montant mensuel"
-        annual_label = "Montant annuel"
-        percent_label = "RGDU / salaire brut"
-        y_monthly_title = "Montant mensuel d’allègement, euros"
-        y_annual_title = "Montant annuel d’allègement, euros"
-        y2_title = "RGDU / salaire brut"
-        button_monthly = "Mensuel"
-        button_annual = "Annuel"
-    else:
-        monthly_label = "Monthly amount"
-        annual_label = "Annual amount"
-        percent_label = "RGDU / gross wage"
-        y_monthly_title = "Monthly relief amount, euros"
-        y_annual_title = "Annual relief amount, euros"
-        y2_title = "RGDU / gross wage"
-        button_monthly = "Monthly"
-        button_annual = "Annual"
+    monthly_label = t["monthly_amount"]
+    annual_label = t["annual_amount"]
+    percent_label = t["rgdu_rate"]
 
-    # Trace 1 : montant mensuel
     fig.add_trace(
         go.Scatter(
             x=df_rgdu["smic_multiple"],
@@ -381,7 +440,6 @@ def make_rgdu_chart(df, lang: str):
         )
     )
 
-    # Trace 2 : montant annuel, caché par défaut
     fig.add_trace(
         go.Scatter(
             x=df_rgdu["smic_multiple"],
@@ -409,7 +467,6 @@ def make_rgdu_chart(df, lang: str):
         )
     )
 
-    # Trace 3 : taux RGDU / brut sur axe droit
     fig.add_trace(
         go.Scatter(
             x=df_rgdu["smic_multiple"],
@@ -434,7 +491,6 @@ def make_rgdu_chart(df, lang: str):
         )
     )
 
-    # Base graphique, mais sans titre interne pour éviter les chevauchements.
     fig.update_layout(
         template="plotly_white",
         height=500,
@@ -457,14 +513,14 @@ def make_rgdu_chart(df, lang: str):
             range=[0.95, 3.5]
         ),
         yaxis=dict(
-            title=y_monthly_title,
+            title=t["y_monthly_rgdu"],
             ticksuffix=" €",
             showgrid=True,
             gridcolor="#e5e7eb",
             zeroline=False
         ),
         yaxis2=dict(
-            title=y2_title,
+            title=t["y2_rgdu"],
             overlaying="y",
             side="right",
             ticksuffix="%",
@@ -481,23 +537,23 @@ def make_rgdu_chart(df, lang: str):
                 yanchor="top",
                 buttons=[
                     dict(
-                        label=button_monthly,
+                        label=t["monthly"],
                         method="update",
                         args=[
                             {"visible": [True, False, True]},
                             {
-                                "yaxis.title.text": y_monthly_title,
+                                "yaxis.title.text": t["y_monthly_rgdu"],
                                 "yaxis.ticksuffix": " €"
                             }
                         ]
                     ),
                     dict(
-                        label=button_annual,
+                        label=t["annual"],
                         method="update",
                         args=[
                             {"visible": [False, True, True]},
                             {
-                                "yaxis.title.text": y_annual_title,
+                                "yaxis.title.text": t["y_annual_rgdu"],
                                 "yaxis.ticksuffix": " €"
                             }
                         ]
@@ -571,6 +627,83 @@ def make_cost_to_net_chart(df, lang: str):
     )
 
     fig.update_layout(**base_layout(lang, t["chart_ratio_title"], t["y_ratio"]))
+    add_rgdu_zone(fig, lang)
+
+    return fig
+
+
+def compute_marginal_indicators(df):
+    df_m = df.sort_values("smic_multiple").copy()
+
+    df_m["delta_gross"] = df_m["gross_monthly_eur"].diff()
+    df_m["delta_employer_cost"] = df_m["employer_cost_monthly_eur"].diff()
+    df_m["delta_net"] = df_m["net_monthly_eur"].diff()
+
+    df_m["marginal_employer_cost_rate"] = df_m["delta_employer_cost"] / df_m["delta_gross"]
+    df_m["marginal_net_retention_rate"] = df_m["delta_net"] / df_m["delta_employer_cost"]
+
+    df_m = df_m.dropna(subset=[
+        "marginal_employer_cost_rate",
+        "marginal_net_retention_rate"
+    ]).copy()
+
+    return df_m
+
+
+def make_marginal_chart(df, lang: str):
+    t = TEXT[lang]
+    df_m = compute_marginal_indicators(df)
+
+    fig = go.Figure()
+
+    fig.add_trace(
+        go.Scatter(
+            x=df_m["smic_multiple"],
+            y=df_m["marginal_employer_cost_rate"] * 100,
+            mode="lines",
+            name=t["marginal_cost_rate"],
+            line=dict(color=COLOR_GREEN, width=3),
+            customdata=df_m[[
+                "gross_monthly_eur",
+                "delta_gross",
+                "delta_employer_cost"
+            ]],
+            hovertemplate=(
+                "<b>%{x:.2f}× SMIC</b><br>"
+                + f"{t['gross_wage']}: " + "%{customdata[0]:,.0f} €<br>"
+                "Δ gross wage: %{customdata[1]:,.0f} €<br>"
+                "Δ employer cost: %{customdata[2]:,.0f} €<br>"
+                + f"{t['marginal_cost_rate']}: " + "%{y:.1f}%"
+                "<extra></extra>"
+            )
+        )
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x=df_m["smic_multiple"],
+            y=df_m["marginal_net_retention_rate"] * 100,
+            mode="lines",
+            name=t["marginal_net_retention"],
+            line=dict(color=COLOR_ORANGE, width=3, dash="dot"),
+            customdata=df_m[[
+                "gross_monthly_eur",
+                "delta_net",
+                "delta_employer_cost"
+            ]],
+            hovertemplate=(
+                "<b>%{x:.2f}× SMIC</b><br>"
+                + f"{t['gross_wage']}: " + "%{customdata[0]:,.0f} €<br>"
+                "Δ net wage: %{customdata[1]:,.0f} €<br>"
+                "Δ employer cost: %{customdata[2]:,.0f} €<br>"
+                + f"{t['marginal_net_retention']}: " + "%{y:.1f}%"
+                "<extra></extra>"
+            )
+        )
+    )
+
+    fig.update_layout(**base_layout(lang, t["chart_marginal_title"], t["y_marginal"]))
+    fig.update_yaxes(ticksuffix="%")
     add_rgdu_zone(fig, lang)
 
     return fig
@@ -672,17 +805,32 @@ def build_key_metrics(df):
     }
 
 
+def build_methodology_list(lang: str):
+    t = TEXT[lang]
+
+    items = "\n".join([f"<li>{item}</li>" for item in t["methodology_points"]])
+
+    return f"""
+    <p>{t["methodology_intro"]}</p>
+    <ul class="methodology-list">
+        {items}
+    </ul>
+    """
+
+
 def build_language_section(df, lang: str, updated_at: str):
     t = TEXT[lang]
 
     table_html = build_table(df, lang)
     metrics = build_key_metrics(df)
+    methodology_html = build_methodology_list(lang)
 
     cost_chart = fig_to_html(make_cost_chart(df, lang))
     employer_rate_chart = fig_to_html(make_employer_rate_chart(df, lang))
     rgdu_chart = fig_to_html(make_rgdu_chart(df, lang))
     social_wedge_chart = fig_to_html(make_social_wedge_chart(df, lang))
     cost_to_net_chart = fig_to_html(make_cost_to_net_chart(df, lang))
+    marginal_chart = fig_to_html(make_marginal_chart(df, lang))
 
     return f"""
     <div class="language-section" id="section-{lang}">
@@ -727,6 +875,11 @@ def build_language_section(df, lang: str, updated_at: str):
             </section>
 
             <section>
+                <h2>{t["methodology_title"]}</h2>
+                {methodology_html}
+            </section>
+
+            <section>
                 <h2>{t["table_title"]}</h2>
                 <div class="table-wrapper">
                     {table_html}
@@ -761,10 +914,16 @@ def build_language_section(df, lang: str, updated_at: str):
                         <div class="plotly-chart">{social_wedge_chart}</div>
                     </div>
 
-                    <div class="chart-card chart-card-wide">
+                    <div class="chart-card">
                         <h3>{t["chart_ratio_title"]}</h3>
                         <p class="chart-subtitle">{t["chart_ratio_subtitle"]}</p>
                         <div class="plotly-chart">{cost_to_net_chart}</div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>{t["chart_marginal_title"]}</h3>
+                        <p class="chart-subtitle">{t["chart_marginal_subtitle"]}</p>
+                        <div class="plotly-chart">{marginal_chart}</div>
                     </div>
                 </div>
             </section>
@@ -920,6 +1079,17 @@ def main():
             line-height: 1.55;
         }}
 
+        .methodology-list {{
+            margin: 18px 0 0 0;
+            padding-left: 22px;
+            color: #334155;
+            line-height: 1.65;
+        }}
+
+        .methodology-list li {{
+            margin-bottom: 8px;
+        }}
+
         .metrics-grid {{
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -988,10 +1158,6 @@ def main():
             min-width: 0;
         }}
 
-        .chart-card-wide {{
-            grid-column: 1 / -1;
-        }}
-
         .chart-subtitle {{
             margin: 0 0 10px 0;
             color: #64748b;
@@ -1036,10 +1202,6 @@ def main():
 
             .charts-grid {{
                 grid-template-columns: 1fr;
-            }}
-
-            .chart-card-wide {{
-                grid-column: auto;
             }}
 
             .metrics-grid {{
