@@ -7,6 +7,7 @@ import yaml
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 CONFIG_PATH = BASE_DIR / "config" / "scenarios.yml"
+PROFILES_PATH = BASE_DIR / "config" / "profiles.yml"
 DATA_DIR = BASE_DIR / "data"
 OUTPUT_PATH = DATA_DIR / "labour_cost_grid_mon_entreprise.csv"
 
@@ -31,9 +32,27 @@ RGDU_CANDIDATE_EXPRESSIONS = [
 ]
 
 
-def load_config():
-    with open(CONFIG_PATH, "r", encoding="utf-8") as file:
+def load_yaml(path: Path):
+    with open(path, "r", encoding="utf-8") as file:
         return yaml.safe_load(file)
+
+
+def load_config():
+    return load_yaml(CONFIG_PATH)
+
+
+def load_profiles():
+    if not PROFILES_PATH.exists():
+        raise FileNotFoundError(
+            f"Missing profile configuration file: {PROFILES_PATH}"
+        )
+
+    profiles_config = load_yaml(PROFILES_PATH)
+
+    if "profiles" not in profiles_config:
+        raise ValueError("profiles.yml must contain a top-level 'profiles' key.")
+
+    return profiles_config["profiles"]
 
 
 def build_smic_grid():
@@ -55,14 +74,23 @@ def build_smic_grid():
     return monthly_smic_gross, multiples
 
 
-def make_payload(gross_monthly, expressions):
+def make_situation(gross_monthly, profile_situation=None):
+    situation = {
+        "salarié . contrat . salaire brut": {
+            "valeur": gross_monthly,
+            "unité": "€/mois"
+        }
+    }
+
+    if profile_situation:
+        situation.update(profile_situation)
+
+    return situation
+
+
+def make_payload(gross_monthly, expressions, profile_situation=None):
     return {
-        "situation": {
-            "salarié . contrat . salaire brut": {
-                "valeur": gross_monthly,
-                "unité": "€/mois"
-            }
-        },
+        "situation": make_situation(gross_monthly, profile_situation),
         "expressions": expressions
     }
 
@@ -94,7 +122,7 @@ def count_missing_variables(result, index):
         return None
 
 
-def select_rgdu_expression(test_gross_monthly):
+def select_rgdu_expression(test_gross_monthly, profile_situation=None):
     """
     Mon-entreprise rule names may evolve. We test several plausible names
     and keep the first expression returning a numerical value.
@@ -104,7 +132,11 @@ def select_rgdu_expression(test_gross_monthly):
 
     for candidate in RGDU_CANDIDATE_EXPRESSIONS:
         expressions = BASE_EXPRESSIONS + [candidate]
-        payload = make_payload(test_gross_monthly, expressions)
+        payload = make_payload(
+            test_gross_monthly,
+            expressions,
+            profile_situation=profile_situation
+        )
 
         try:
             result = post_payload(payload)
@@ -123,13 +155,23 @@ def select_rgdu_expression(test_gross_monthly):
     return None
 
 
-def evaluate_salary(gross_monthly, rgdu_expression=None, max_retries=3, pause_seconds=0.5):
+def evaluate_salary(
+    gross_monthly,
+    profile_situation=None,
+    rgdu_expression=None,
+    max_retries=3,
+    pause_seconds=0.5
+):
     expressions = BASE_EXPRESSIONS.copy()
 
     if rgdu_expression:
         expressions.append(rgdu_expression)
 
-    payload = make_payload(gross_monthly, expressions)
+    payload = make_payload(
+        gross_monthly,
+        expressions,
+        profile_situation=profile_situation
+    )
 
     last_error = None
 
@@ -224,97 +266,175 @@ def safe_round(value, digits=2):
     return round(float(value), digits)
 
 
+def make_success_row(
+    profile_id,
+    profile,
+    multiple,
+    result,
+    gross_monthly,
+    rgdu_expression
+):
+    indicators = compute_indicators(
+        result,
+        gross_monthly,
+        rgdu_expression=rgdu_expression
+    )
+
+    return {
+        "source": "mon-entreprise",
+        "engine": "api/v1/evaluate",
+        "profile_id": profile_id,
+        "profile_label_fr": profile.get("label_fr", profile_id),
+        "profile_label_en": profile.get("label_en", profile_id),
+        "rgdu_expression_used": rgdu_expression or "",
+        "smic_multiple": multiple,
+
+        "gross_monthly_eur": safe_round(indicators["gross_used"], 2),
+        "net_monthly_eur": safe_round(indicators["net_monthly"], 2),
+        "employer_cost_monthly_eur": safe_round(indicators["employer_cost"], 2),
+
+        "employee_contributions_monthly_eur": safe_round(indicators["employee_contributions"], 2),
+        "employer_contributions_monthly_eur": safe_round(indicators["employer_contributions"], 2),
+        "social_wedge_monthly_eur": safe_round(indicators["social_wedge"], 2),
+
+        "employee_contribution_rate": safe_round(indicators["employee_rate"], 4),
+        "employer_contribution_rate": safe_round(indicators["employer_rate"], 4),
+        "social_wedge_rate": safe_round(indicators["social_wedge_rate"], 4),
+        "cost_to_net_ratio": safe_round(indicators["cost_to_net_ratio"], 4),
+
+        "rgdu_monthly_eur": safe_round(indicators["rgdu_monthly"], 2),
+        "rgdu_rate_gross": safe_round(indicators["rgdu_rate_gross"], 4),
+        "rgdu_rate_employer_cost": safe_round(indicators["rgdu_rate_employer_cost"], 4),
+
+        "api_total_contributions_monthly_eur": safe_round(indicators["total_contributions_api"], 2),
+        "api_employer_contributions_monthly_eur": safe_round(indicators["employer_contributions_api"], 2),
+        "api_employee_contributions_monthly_eur": safe_round(indicators["employee_contributions_api"], 2),
+
+        "missing_variables_gross": count_missing_variables(result, 0),
+        "missing_variables_net": count_missing_variables(result, 1),
+        "missing_variables_employer_cost": count_missing_variables(result, 2),
+
+        "status": "ok",
+        "error": ""
+    }
+
+
+def make_error_row(
+    profile_id,
+    profile,
+    multiple,
+    gross_monthly,
+    rgdu_expression,
+    error
+):
+    return {
+        "source": "mon-entreprise",
+        "engine": "api/v1/evaluate",
+        "profile_id": profile_id,
+        "profile_label_fr": profile.get("label_fr", profile_id),
+        "profile_label_en": profile.get("label_en", profile_id),
+        "rgdu_expression_used": rgdu_expression or "",
+        "smic_multiple": multiple,
+
+        "gross_monthly_eur": gross_monthly,
+        "net_monthly_eur": None,
+        "employer_cost_monthly_eur": None,
+
+        "employee_contributions_monthly_eur": None,
+        "employer_contributions_monthly_eur": None,
+        "social_wedge_monthly_eur": None,
+
+        "employee_contribution_rate": None,
+        "employer_contribution_rate": None,
+        "social_wedge_rate": None,
+        "cost_to_net_ratio": None,
+
+        "rgdu_monthly_eur": None,
+        "rgdu_rate_gross": None,
+        "rgdu_rate_employer_cost": None,
+
+        "api_total_contributions_monthly_eur": None,
+        "api_employer_contributions_monthly_eur": None,
+        "api_employee_contributions_monthly_eur": None,
+
+        "missing_variables_gross": None,
+        "missing_variables_net": None,
+        "missing_variables_employer_cost": None,
+
+        "status": "error",
+        "error": str(error)
+    }
+
+
 def build_dataset():
     monthly_smic_gross, smic_multiples = build_smic_grid()
+    profiles = load_profiles()
 
-    rgdu_expression = select_rgdu_expression(monthly_smic_gross)
+    if not profiles:
+        raise ValueError("No profiles found in config/profiles.yml")
+
+    first_profile = next(iter(profiles.values()))
+    first_profile_situation = first_profile.get("situation", {})
+
+    rgdu_expression = select_rgdu_expression(
+        monthly_smic_gross,
+        profile_situation=first_profile_situation
+    )
 
     rows = []
 
-    for i, multiple in enumerate(smic_multiples, start=1):
-        gross_monthly = round(monthly_smic_gross * multiple, 2)
+    total_iterations = len(profiles) * len(smic_multiples)
+    iteration = 0
 
-        print(
-            f"[{i}/{len(smic_multiples)}] "
-            f"Evaluating {multiple:.2f} SMIC = {gross_monthly:.2f} € gross/month"
-        )
+    for profile_id, profile in profiles.items():
+        profile_situation = profile.get("situation", {})
+        profile_label = profile.get("label_fr", profile_id)
 
-        try:
-            result = evaluate_salary(gross_monthly, rgdu_expression=rgdu_expression)
-            indicators = compute_indicators(result, gross_monthly, rgdu_expression=rgdu_expression)
+        print()
+        print("=" * 90)
+        print(f"Profile: {profile_id} — {profile_label}")
+        print("=" * 90)
 
-            rows.append({
-                "source": "mon-entreprise",
-                "engine": "api/v1/evaluate",
-                "rgdu_expression_used": rgdu_expression or "",
-                "smic_multiple": multiple,
+        for multiple in smic_multiples:
+            iteration += 1
+            gross_monthly = round(monthly_smic_gross * multiple, 2)
 
-                "gross_monthly_eur": safe_round(indicators["gross_used"], 2),
-                "net_monthly_eur": safe_round(indicators["net_monthly"], 2),
-                "employer_cost_monthly_eur": safe_round(indicators["employer_cost"], 2),
+            print(
+                f"[{iteration}/{total_iterations}] "
+                f"{profile_id} | {multiple:.2f} SMIC = {gross_monthly:.2f} € gross/month"
+            )
 
-                "employee_contributions_monthly_eur": safe_round(indicators["employee_contributions"], 2),
-                "employer_contributions_monthly_eur": safe_round(indicators["employer_contributions"], 2),
-                "social_wedge_monthly_eur": safe_round(indicators["social_wedge"], 2),
+            try:
+                result = evaluate_salary(
+                    gross_monthly,
+                    profile_situation=profile_situation,
+                    rgdu_expression=rgdu_expression
+                )
 
-                "employee_contribution_rate": safe_round(indicators["employee_rate"], 4),
-                "employer_contribution_rate": safe_round(indicators["employer_rate"], 4),
-                "social_wedge_rate": safe_round(indicators["social_wedge_rate"], 4),
-                "cost_to_net_ratio": safe_round(indicators["cost_to_net_ratio"], 4),
+                rows.append(
+                    make_success_row(
+                        profile_id=profile_id,
+                        profile=profile,
+                        multiple=multiple,
+                        result=result,
+                        gross_monthly=gross_monthly,
+                        rgdu_expression=rgdu_expression
+                    )
+                )
 
-                "rgdu_monthly_eur": safe_round(indicators["rgdu_monthly"], 2),
-                "rgdu_rate_gross": safe_round(indicators["rgdu_rate_gross"], 4),
-                "rgdu_rate_employer_cost": safe_round(indicators["rgdu_rate_employer_cost"], 4),
+            except Exception as exc:
+                rows.append(
+                    make_error_row(
+                        profile_id=profile_id,
+                        profile=profile,
+                        multiple=multiple,
+                        gross_monthly=gross_monthly,
+                        rgdu_expression=rgdu_expression,
+                        error=exc
+                    )
+                )
 
-                "api_total_contributions_monthly_eur": safe_round(indicators["total_contributions_api"], 2),
-                "api_employer_contributions_monthly_eur": safe_round(indicators["employer_contributions_api"], 2),
-                "api_employee_contributions_monthly_eur": safe_round(indicators["employee_contributions_api"], 2),
-
-                "missing_variables_gross": count_missing_variables(result, 0),
-                "missing_variables_net": count_missing_variables(result, 1),
-                "missing_variables_employer_cost": count_missing_variables(result, 2),
-
-                "status": "ok",
-                "error": ""
-            })
-
-        except Exception as exc:
-            rows.append({
-                "source": "mon-entreprise",
-                "engine": "api/v1/evaluate",
-                "rgdu_expression_used": rgdu_expression or "",
-                "smic_multiple": multiple,
-
-                "gross_monthly_eur": gross_monthly,
-                "net_monthly_eur": None,
-                "employer_cost_monthly_eur": None,
-
-                "employee_contributions_monthly_eur": None,
-                "employer_contributions_monthly_eur": None,
-                "social_wedge_monthly_eur": None,
-
-                "employee_contribution_rate": None,
-                "employer_contribution_rate": None,
-                "social_wedge_rate": None,
-                "cost_to_net_ratio": None,
-
-                "rgdu_monthly_eur": None,
-                "rgdu_rate_gross": None,
-                "rgdu_rate_employer_cost": None,
-
-                "api_total_contributions_monthly_eur": None,
-                "api_employer_contributions_monthly_eur": None,
-                "api_employee_contributions_monthly_eur": None,
-
-                "missing_variables_gross": None,
-                "missing_variables_net": None,
-                "missing_variables_employer_cost": None,
-
-                "status": "error",
-                "error": str(exc)
-            })
-
-        time.sleep(0.10)
+            time.sleep(0.08)
 
     df = pd.DataFrame(rows)
 
@@ -329,10 +449,14 @@ def build_dataset():
     print("Status counts:")
     print(df["status"].value_counts(dropna=False))
 
+    print()
+    print("Status by profile:")
+    print(df.groupby(["profile_id", "status"]).size())
+
     if "rgdu_monthly_eur" in df.columns:
         print()
-        print("RGDU summary:")
-        print(df["rgdu_monthly_eur"].describe())
+        print("RGDU summary by profile:")
+        print(df.groupby("profile_id")["rgdu_monthly_eur"].describe())
 
 
 if __name__ == "__main__":

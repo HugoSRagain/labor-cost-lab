@@ -1,0 +1,28 @@
+profiles:
+  non_cadre_standard:
+    label_fr: "Non-cadre standard"
+    label_en: "Standard non-executive employee"
+    situation:
+      salarié . contrat . statut cadre: "non"
+      salarié . régimes spécifiques . alsace moselle: "non"
+
+  cadre_standard:
+    label_fr: "Cadre standard"
+    label_en: "Standard executive employee"
+    situation:
+      salarié . contrat . statut cadre: "oui"
+      salarié . régimes spécifiques . alsace moselle: "non"
+
+  non_cadre_alsace_moselle:
+    label_fr: "Non-cadre Alsace-Moselle"
+    label_en: "Non-executive employee, Alsace-Moselle"
+    situation:
+      salarié . contrat . statut cadre: "non"
+      salarié . régimes spécifiques . alsace moselle: "oui"
+
+  cadre_alsace_moselle:
+    label_fr: "Cadre Alsace-Moselle"
+    label_en: "Executive employee, Alsace-Moselle"
+    situation:
+      salarié . contrat . statut cadre: "oui"
+      salarié . régimes spécifiques . alsace moselle: "oui"
