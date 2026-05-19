@@ -50,6 +50,7 @@ TEXT = {
             "<strong>Source.</strong> Calculations are obtained from the public Mon-entreprise / URSSAF API.",
             "<strong>Wage grid.</strong> Gross monthly wages are expressed as multiples of the gross monthly SMIC, from 0.8 to 3.5 SMIC.",
             "<strong>Profiles.</strong> The dashboard compares different employee profiles, including non-executive/executive status and Alsace-Moselle regime.",
+	    "<strong>Effective employer contribution rate.</strong> The rate shown in the chart is not the gross statutory employer contribution schedule. It is an apparent rate after employer contribution 	                        	    reliefs, computed as net employer contributions divided by gross wage.",
             "<strong>Indicators.</strong> Employer cost, net wage, employer contributions, employee contributions, RGDU 2026, social wedge and cost-to-net ratios are derived from API outputs.",
             "<strong>Marginal indicators.</strong> The marginal employer-cost rate is computed as the finite difference between two adjacent points of the wage grid: Δ employer cost / Δ gross wage.",
             "<strong>Limitations.</strong> Results can vary with firm size, AT/MP rates, collective agreements, executive status, exemptions and other contribution regimes."
@@ -136,6 +137,7 @@ TEXT = {
             "<strong>Source.</strong> Les calculs sont obtenus à partir de l’API publique Mon-entreprise / URSSAF.",
             "<strong>Grille salariale.</strong> Les salaires bruts mensuels sont exprimés en multiples du SMIC brut mensuel, de 0,8 à 3,5 SMIC.",
             "<strong>Profils.</strong> Le tableau de bord compare plusieurs profils salariés, notamment selon le statut cadre/non-cadre et le régime Alsace-Moselle.",
+	    "<strong>Taux effectif de cotisations employeur.</strong> Le taux affiché dans le graphique ne correspond pas au barème légal brut de cotisations patronales. Il s’agit d’un taux apparent après 		    allègements de charges, calculé comme cotisations employeur nettes rapportées au salaire brut.",
             "<strong>Indicateurs.</strong> Coût employeur, salaire net, cotisations employeur, cotisations salarié, RGDU 2026, coin social et ratio coût/net sont dérivés des sorties de l’API.",
             "<strong>Indicateurs marginaux.</strong> Le taux marginal de coût employeur est calculé par différence finie entre deux points adjacents de la grille : Δ coût employeur / Δ salaire brut.",
             "<strong>Limites.</strong> Les résultats peuvent varier selon la taille de l’entreprise, le taux AT/MP, la convention collective, le statut cadre, les exonérations et les régimes spécifiques."
@@ -784,13 +786,14 @@ def build_language_section(df, lang: str, updated_at: str):
 
     return f"""
     <div class="language-section" id="section-{lang}" data-default-profile="{default_profile}">
-        <header>
-            <div>
-                <h1>{t["page_title"]}</h1>
-                <p>{t["subtitle"]}</p>
-            </div>
-            <button class="language-toggle" onclick="switchLanguage()">{t["language_button"]}</button>
-        </header>
+	<header>
+    		<div>
+        		<h1>{t["page_title"]}</h1>
+        		<p>{t["subtitle"]}</p>
+        		<p class="author-line">Par Hugo Spring-Ragain, Économiste, CEDS Paris</p>
+    		</div>
+    		<button class="language-toggle" onclick="switchLanguage()">{t["language_button"]}</button>
+	</header>
 
         <main>
             <section>
@@ -854,276 +857,7 @@ def main():
     <meta charset="UTF-8">
     <title>French Labour Cost Lab</title>
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
-
-    <style>
-        body {{
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background: #f4f5f7;
-            color: #1f2937;
-        }}
-
-        .language-section,
-        .profile-panel {{
-            display: none;
-        }}
-
-        .language-section.active,
-        .profile-panel.active {{
-            display: block;
-        }}
-
-        header {{
-            background: #111827;
-            color: white;
-            padding: 42px 52px;
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 24px;
-        }}
-
-        header h1 {{
-            margin: 0 0 10px 0;
-            font-size: 42px;
-            letter-spacing: -0.03em;
-        }}
-
-        header p {{
-            margin: 0;
-            color: #d1d5db;
-            font-size: 18px;
-        }}
-
-        .language-toggle {{
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            background: rgba(255, 255, 255, 0.08);
-            color: white;
-            border-radius: 999px;
-            padding: 10px 16px;
-            cursor: pointer;
-            font-weight: 700;
-        }}
-
-        main {{
-            max-width: 1220px;
-            margin: 34px auto;
-            padding: 0 24px;
-        }}
-
-        section {{
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 18px;
-            padding: 30px;
-            margin-bottom: 26px;
-            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
-            overflow: hidden;
-        }}
-
-        h2 {{
-            margin-top: 0;
-            margin-bottom: 18px;
-            font-size: 25px;
-            color: #0f172a;
-            letter-spacing: -0.02em;
-        }}
-
-        h3 {{
-            margin-top: 0;
-            margin-bottom: 8px;
-            font-size: 18px;
-            color: #0f172a;
-        }}
-
-        p {{
-            line-height: 1.55;
-        }}
-
-        .badge {{
-            display: inline-block;
-            background: #dbeafe;
-            color: #1d4ed8;
-            padding: 6px 10px;
-            border-radius: 999px;
-            font-size: 13px;
-            font-weight: 700;
-            margin-bottom: 16px;
-        }}
-
-        .method-box {{
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 16px 18px;
-            color: #475569;
-            font-size: 14px;
-            line-height: 1.55;
-        }}
-
-        .profile-selector {{
-            margin-top: 22px;
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
-        }}
-
-        .profile-selector label {{
-            font-weight: 700;
-            color: #0f172a;
-        }}
-
-        .profile-selector select {{
-            min-width: 280px;
-            border: 1px solid #cbd5e1;
-            border-radius: 10px;
-            padding: 10px 12px;
-            background: white;
-            color: #0f172a;
-            font-weight: 600;
-        }}
-
-        .methodology-list {{
-            margin: 18px 0 0 0;
-            padding-left: 22px;
-            color: #334155;
-            line-height: 1.65;
-        }}
-
-        .methodology-list li {{
-            margin-bottom: 8px;
-        }}
-
-        .metrics-grid {{
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 26px;
-        }}
-
-        .metric-card {{
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 16px;
-        }}
-
-        .metric-label {{
-            color: #64748b;
-            font-size: 13px;
-            margin-bottom: 8px;
-        }}
-
-        .metric-value {{
-            color: #0f172a;
-            font-size: 24px;
-            font-weight: 800;
-            letter-spacing: -0.03em;
-        }}
-
-        .table-wrapper {{
-            width: 100%;
-            overflow-x: auto;
-            padding-bottom: 6px;
-        }}
-
-        .data-table {{
-            width: 100%;
-            min-width: 1180px;
-            border-collapse: collapse;
-            font-size: 13px;
-        }}
-
-        .data-table th,
-        .data-table td {{
-            border-bottom: 1px solid #e5e7eb;
-            padding: 9px 10px;
-            text-align: right;
-            white-space: nowrap;
-        }}
-
-        .data-table th {{
-            background: #f9fafb;
-            font-weight: 700;
-            color: #0f172a;
-        }}
-
-        .charts-grid {{
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-        }}
-
-        .chart-card {{
-            border: 1px solid #e5e7eb;
-            border-radius: 16px;
-            padding: 18px 18px 10px 18px;
-            background: #ffffff;
-            min-width: 0;
-        }}
-
-        .chart-subtitle {{
-            margin: 0 0 10px 0;
-            color: #64748b;
-            font-size: 14px;
-            line-height: 1.45;
-        }}
-
-        .plotly-chart {{
-            width: 100%;
-        }}
-
-        .interpretation {{
-            color: #334155;
-            font-size: 15px;
-        }}
-
-        footer {{
-            text-align: center;
-            color: #6b7280;
-            padding: 30px;
-            font-size: 13px;
-        }}
-
-        @media (max-width: 980px) {{
-            header {{
-                padding: 30px 24px;
-                flex-direction: column;
-            }}
-
-            header h1 {{
-                font-size: 34px;
-            }}
-
-            main {{
-                margin: 24px auto;
-                padding: 0 16px;
-            }}
-
-            section {{
-                padding: 22px;
-            }}
-
-            .charts-grid {{
-                grid-template-columns: 1fr;
-            }}
-
-            .metrics-grid {{
-                grid-template-columns: 1fr 1fr;
-            }}
-        }}
-
-        @media (max-width: 620px) {{
-            .metrics-grid {{
-                grid-template-columns: 1fr;
-            }}
-
-            .profile-selector select {{
-                min-width: 100%;
-            }}
-        }}
-    </style>
+    <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
     {english_section}
