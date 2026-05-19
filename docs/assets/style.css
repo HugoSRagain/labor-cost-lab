@@ -19,6 +19,25 @@
     --radius-md: 10px;
 }
 
+
+body.dark-mode {
+    --bg-main: #0f172a;
+    --bg-card: #111827;
+
+    --text-main: #f9fafb;
+    --text-muted: #d1d5db;
+    --text-soft: #9ca3af;
+
+    --blue: #60a5fa;
+    --blue-dark: #bfdbfe;
+    --blue-soft: #1e3a5f;
+
+    --border: #374151;
+    --border-soft: #1f2937;
+
+    --shadow-card: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
 * {
     box-sizing: border-box;
 }
@@ -109,7 +128,7 @@ section {
     padding: 28px;
     margin-bottom: 24px;
     box-shadow: var(--shadow-card);
-    overflow: hidden;
+    overflow: visible;
 }
 
 /* Typography */
@@ -213,6 +232,109 @@ p {
     margin-bottom: 8px;
 }
 
+body.dark-mode {
+    background: #0f172a;
+}
+
+body.dark-mode header {
+    background: #020617;
+    border-bottom-color: #2563eb;
+}
+
+body.dark-mode section,
+body.dark-mode .chart-card,
+body.dark-mode .metric-card {
+    background: #111827;
+    border-color: #374151;
+}
+
+body.dark-mode .method-box,
+body.dark-mode .profile-selector {
+    background: #0f172a;
+    border-color: #374151;
+}
+
+body.dark-mode .profile-selector select {
+    background: #111827;
+    color: #f9fafb;
+    border-color: #4b5563;
+}
+
+body.dark-mode .table-wrapper {
+    background: #111827;
+    border-color: #374151;
+}
+
+body.dark-mode .data-table th {
+    background: #1f2937;
+    color: #f9fafb;
+}
+
+body.dark-mode .data-table td {
+    color: #e5e7eb;
+    border-bottom-color: #374151;
+}
+
+body.dark-mode .data-table tbody tr:nth-child(even) {
+    background: #151f2e;
+}
+
+body.dark-mode .data-table tbody tr:hover {
+    background: #1e293b;
+}
+
+body.dark-mode .badge {
+    background: #1e3a5f;
+    color: #dbeafe;
+    border-color: #2563eb;
+}
+
+
+body.dark-mode .plotly-chart {
+    background: #111827;
+}
+
+body.dark-mode .js-plotly-plot,
+body.dark-mode .plot-container,
+body.dark-mode .svg-container {
+    background: #111827 !important;
+}
+
+body.dark-mode .modebar {
+    background: transparent !important;
+}
+
+.theme-toggle {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #8da4bc;
+    background: transparent;
+    color: white;
+    border-radius: 999px;
+    padding: 0;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
 /* Metrics */
 
 .metrics-grid {
@@ -310,6 +432,13 @@ p {
 
 .plotly-chart {
     width: 100%;
+    overflow: visible;
+}
+
+.js-plotly-plot,
+.plot-container,
+.svg-container {
+    overflow: visible !important;
 }
 
 /* Interpretation */

@@ -792,7 +792,11 @@ def build_language_section(df, lang: str, updated_at: str):
         		<p>{t["subtitle"]}</p>
         		<p class="author-line">Par Hugo Spring-Ragain, Économiste, CEDS Paris</p>
     		</div>
-    		<button class="language-toggle" onclick="switchLanguage()">{t["language_button"]}</button>
+
+    		<div class="header-actions">
+    			<button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle theme">🌙</button>
+    			<button class="language-toggle" onclick="switchLanguage()">{t["language_button"]}</button>
+		</div>
 	</header>
 
         <main>
@@ -922,6 +926,99 @@ def main():
             }}, 150);
         }}
 
+        function updatePlotlyTheme(theme) {{
+            const isDark = theme === "dark";
+
+            const axisColor = isDark ? "#e5e7eb" : "#111827";
+            const gridColor = isDark ? "#374151" : "#d1d5db";
+            const paperColor = isDark ? "#111827" : "#ffffff";
+            const plotColor = isDark ? "#111827" : "#ffffff";
+
+            const layoutUpdate = {{
+                "paper_bgcolor": paperColor,
+                "plot_bgcolor": plotColor,
+                "font.color": axisColor,
+
+                "legend.bgcolor": "rgba(0,0,0,0)",
+                "legend.font.color": axisColor,
+
+                "xaxis.color": axisColor,
+                "xaxis.gridcolor": gridColor,
+                "xaxis.zerolinecolor": gridColor,
+                "xaxis.linecolor": axisColor,
+                "xaxis.tickfont.color": axisColor,
+                "xaxis.title.font.color": axisColor,
+
+                "yaxis.color": axisColor,
+                "yaxis.gridcolor": gridColor,
+                "yaxis.zerolinecolor": gridColor,
+                "yaxis.linecolor": axisColor,
+                "yaxis.tickfont.color": axisColor,
+                "yaxis.title.font.color": axisColor,
+
+                "yaxis2.color": axisColor,
+                "yaxis2.gridcolor": gridColor,
+                "yaxis2.zerolinecolor": gridColor,
+                "yaxis2.linecolor": axisColor,
+                "yaxis2.tickfont.color": axisColor,
+                "yaxis2.title.font.color": axisColor,
+
+                /*
+                Important : on réaffirme ces paramètres pour ne pas casser
+                l'axe droit du graphique RGDU.
+                */
+                "yaxis2.overlaying": "y",
+                "yaxis2.side": "right",
+                "yaxis2.showgrid": false
+            }};
+
+            const plots = document.querySelectorAll(".js-plotly-plot");
+
+            plots.forEach(function(plot) {{
+                Plotly.relayout(plot, layoutUpdate);
+            }});
+        }}
+
+        function applyTheme(theme) {{
+            if (theme === "dark") {{
+                document.body.classList.add("dark-mode");
+            }} else {{
+                document.body.classList.remove("dark-mode");
+            }}
+
+            localStorage.setItem("flcl_theme", theme);
+            updateThemeButtons(theme);
+            updatePlotlyTheme(theme);
+
+            setTimeout(function() {{
+                window.dispatchEvent(new Event("resize"));
+            }}, 150);
+        }}
+
+        function toggleTheme() {{
+            const current = localStorage.getItem("flcl_theme") || "light";
+            applyTheme(current === "light" ? "dark" : "light");
+        }}
+
+        function updateThemeButtons(theme) {{
+            const buttons = document.querySelectorAll(".theme-toggle");
+
+            buttons.forEach(function(button) {{
+                if (theme === "dark") {{
+                    button.textContent = "☀️";
+                    button.title = "Light mode";
+                    button.setAttribute("aria-label", "Light mode");
+                }} else {{
+                    button.textContent = "🌙";
+                    button.title = "Dark mode";
+                    button.setAttribute("aria-label", "Dark mode");
+                }}
+            }});
+        }}
+
+        const savedTheme = localStorage.getItem("flcl_theme") || "light";
+        applyTheme(savedTheme);
+
         const savedLanguage = localStorage.getItem("flcl_language") || "en";
         setLanguage(savedLanguage);
     </script>
@@ -936,3 +1033,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
