@@ -1390,51 +1390,61 @@ def build_methodology_list(lang: str):
 def build_profile_panel(df_profile, profile_id, lang: str):
     t = TEXT[lang]
 
-
     return f"""
-    <div class="profile-panel" id="panel-{lang}-{safe_id(profile_id)}">
-
+    <div class="profile-panel active" id="panel-{lang}">
         <section>
             <h2>{t["figures_title"]}</h2>
+
             <div class="charts-grid">
                 <div class="chart-card">
                     <h3>{t["chart_cost_title"]}</h3>
                     <p class="chart-subtitle">{t["chart_cost_subtitle"]}</p>
-                    <div class="plotly-chart">{fig_to_html(make_cost_chart(df_profile, lang))}</div>
+                    <div id="chart-cost-{lang}" class="plotly-chart lazy-chart"></div>
                 </div>
 
                 <div class="chart-card">
                     <h3>{t["chart_employer_rate_title"]}</h3>
                     <p class="chart-subtitle">{t["chart_employer_rate_subtitle"]}</p>
-                    <div class="plotly-chart">{fig_to_html(make_employer_rate_chart(df_profile, lang))}</div>
+                    <div id="chart-employer-rate-{lang}" class="plotly-chart lazy-chart"></div>
                 </div>
 
                 <div class="chart-card">
                     <h3>{t["chart_rgdu_title"]}</h3>
                     <p class="chart-subtitle">{t["chart_rgdu_subtitle"]}</p>
-                    <div class="plotly-chart">{fig_to_html(make_rgdu_chart(df_profile, lang))}</div>
+                    <div id="chart-rgdu-{lang}" class="plotly-chart lazy-chart"></div>
                 </div>
 
                 <div class="chart-card">
                     <h3>{t["chart_wedge_title"]}</h3>
                     <p class="chart-subtitle">{t["chart_wedge_subtitle"]}</p>
-                    <div class="plotly-chart">{fig_to_html(make_social_wedge_chart(df_profile, lang))}</div>
+                    <div id="chart-wedge-{lang}" class="plotly-chart lazy-chart"></div>
                 </div>
 
                 <div class="chart-card">
                     <h3>{t["chart_ratio_title"]}</h3>
                     <p class="chart-subtitle">{t["chart_ratio_subtitle"]}</p>
-                    <div class="plotly-chart">{fig_to_html(make_cost_to_net_chart(df_profile, lang))}</div>
+                    <div id="chart-ratio-{lang}" class="plotly-chart lazy-chart"></div>
                 </div>
 
                 <div class="chart-card">
                     <h3>{t["chart_marginal_title"]}</h3>
                     <p class="chart-subtitle">{t["chart_marginal_subtitle"]}</p>
-                    <div class="plotly-chart">{fig_to_html(make_marginal_chart(df_profile, lang))}</div>
+                    <div id="chart-marginal-{lang}" class="plotly-chart lazy-chart"></div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>{t["chart_total_levy_title"]}</h3>
+                    <p class="chart-subtitle">{t["chart_total_levy_subtitle"]}</p>
+                    <div id="chart-total-levy-{lang}" class="plotly-chart lazy-chart"></div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>{t["chart_net_gross_return_title"]}</h3>
+                    <p class="chart-subtitle">{t["chart_net_gross_return_subtitle"]}</p>
+                    <div id="chart-net-gross-return-{lang}" class="plotly-chart lazy-chart"></div>
                 </div>
             </div>
         </section>
-
     </div>
     """
 def build_comparison_panels(df, lang: str):
@@ -1714,15 +1724,10 @@ def build_language_section(df, lang: str, updated_at: str):
     )
 
     default_profile = profiles[0]["profile_id"]
-    decomposition_panels_html = build_decomposition_panels(df, lang, default_profile)
+  
 
-    panels = []
-    for row in profiles:
-        profile_id = row["profile_id"]
-        df_profile = df[df["profile_id"] == profile_id].copy()
-        panels.append(build_profile_panel(df_profile, profile_id, lang))
+    panels_html = build_profile_panel(None, "current", lang)
 
-    panels_html = "\n".join(panels)
     comparison_panels_html = build_comparison_panels(df, lang)
     data_panels_html = build_data_panels(df, lang)
     metrics_panels_html = build_metrics_panels(df, lang)
@@ -1760,21 +1765,21 @@ def build_language_section(df, lang: str, updated_at: str):
                     <div class="profile-selector profile-selector-grid">
                         <div class="selector-field">
                             <label for="status-select-{lang}">{t["status_label"]}</label>
-                            <select id="status-select-{lang}" onchange="switchCombinatorialProfile('{lang}')">
+                            <select id="status-select-{lang}" onchange="switchCombinatorialProfile('{lang}'); renderSimulation('{lang}');">
                                 {status_options}
                             </select>
                         </div>
 
                         <div class="selector-field">
                             <label for="territory-select-{lang}">{t["territory_label"]}</label>
-                            <select id="territory-select-{lang}" onchange="switchCombinatorialProfile('{lang}')">
+                            <select id="territory-select-{lang}" onchange="switchCombinatorialProfile('{lang}'); renderSimulation('{lang}');">
                                 {territory_options}
                             </select>
                         </div>
 
                         <div class="selector-field">
                             <label for="atmp-select-{lang}">{t["atmp_label"]}</label>
-                            <select id="atmp-select-{lang}" onchange="switchCombinatorialProfile('{lang}')">
+                            <select id="atmp-select-{lang}" onchange="switchCombinatorialProfile('{lang}'); renderSimulation('{lang}');">
                                 {atmp_options}
                             </select>
                         </div>
@@ -1792,17 +1797,17 @@ def build_language_section(df, lang: str, updated_at: str):
                     <div class="profile-selector decomposition-selector">
                         <div class="selector-field">
                             <label for="decomposition-wage-select-{lang}">{t["decomposition_wage_label"]}</label>
-                            <select id="decomposition-wage-select-{lang}" onchange="showDecomposition('{lang}')">
-                                <option value="1_00">1 SMIC</option>
-                                <option value="1_60">1.6 SMIC</option>
-                                <option value="2_00" selected>2 SMIC</option>
-                                <option value="3_00">3 SMIC</option>
+                            <select id="decomposition-wage-select-{lang}" onchange="renderSimulation('{lang}')">
+                                <option value="1.00">1 SMIC</option>
+                                <option value="1.60">1,6 SMIC</option>
+                                <option value="2.00" selected>2 SMIC</option>
+                                <option value="3.00">3 SMIC</option>
                             </select>
                         </div>
                     </div>
 
-                    <div id="decomposition-panels-{lang}" class="decomposition-panels-wrapper">
-                        {decomposition_panels_html}
+                    <div class="chart-card chart-card-full decomposition-chart-card">
+                        <div id="chart-decomposition-{lang}" class="plotly-chart lazy-chart"></div>
                     </div>
                 </section>
 
@@ -1912,13 +1917,15 @@ def main():
     english_section = build_language_section(df, "en", updated_at)
     french_section = build_language_section(df, "fr", updated_at)
 
-    html = f"""<!DOCTYPE html>
+html = f"""<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title>French Labour Cost Lab</title>
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
-    <link rel="stylesheet" href="assets/style.css?v=10">
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <link rel="stylesheet" href="assets/style.css?v=12">
+    <script defer src="assets/app.js?v=1"></script>
 </head>
 <body>
     {english_section}
