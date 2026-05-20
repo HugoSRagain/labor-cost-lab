@@ -140,6 +140,9 @@ TEXT = {
         "social_wedge": "Social wedge",
         "employee_rate": "Employee rate",
         "employer_rate": "Employer rate",
+	"decomp_employer_contrib_before_relief": "Employer contributions before reliefs",
+	"decomp_contribution_relief": "Contribution reliefs",
+	"decomp_effective_cost": "Effective employer cost",
         "social_wedge_rate": "Social wedge rate",
         "cost_net_ratio": "Cost / net ratio",
         "rgdu": "RGDU 2026",
@@ -156,8 +159,8 @@ TEXT = {
         "y2_rgdu": "RGDU / gross wage",
 	"decomposition_title": "Employer cost decomposition",
 	"decomposition_subtitle": (
-    		"This chart decomposes total employer cost at a selected wage point. "
-    		"Employer contributions are shown after contribution reliefs."
+    		"This chart decomposes employer cost at a selected wage point. "
+    		"Contribution reliefs are shown as a reduction in theoretical employer contributions."
 	),
 	"decomposition_wage_label": "Selected wage point",
 	"decomp_net_wage": "Net wage",
@@ -281,6 +284,9 @@ TEXT = {
         "social_wedge": "Coin social",
         "employee_rate": "Taux salarié",
         "employer_rate": "Taux employeur",
+	"decomp_employer_contrib_before_relief": "Cotisations employeur avant allègements",
+	"decomp_contribution_relief": "Allègements de cotisations",
+	"decomp_effective_cost": "Coût employeur effectif",
         "social_wedge_rate": "Taux de coin social",
         "cost_net_ratio": "Ratio coût / net",
         "rgdu": "RGDU 2026",
@@ -297,8 +303,8 @@ TEXT = {
         "y2_rgdu": "RGDU / salaire brut",
 	"decomposition_title": "Décomposition du coût employeur",
 	"decomposition_subtitle": (
-    		"Ce graphique décompose le coût total employeur à un point de salaire donné. "
-    		"Les cotisations employeur sont présentées après allègements de charges."
+    		"Ce graphique décompose le coût employeur à un point de salaire donné. "
+    		"Les allègements de cotisations sont représentés comme une réduction des cotisations employeur théoriques."
 	),
 	"decomposition_wage_label": "Point de salaire sélectionné",
 	"decomp_net_wage": "Salaire net",
@@ -702,55 +708,112 @@ def make_employer_cost_decomposition_chart(row, lang: str):
 
     net_wage = float(row["net_monthly_eur"])
     employee_contrib = float(row["employee_contributions_monthly_eur"])
-    employer_contrib = float(row["employer_contributions_monthly_eur"])
+    employer_contrib_net = float(row["employer_contributions_monthly_eur"])
     employer_cost = float(row["employer_cost_monthly_eur"])
     gross_wage = float(row["gross_monthly_eur"])
     rgdu = float(row.get("rgdu_monthly_eur", 0.0))
     smic_multiple = float(row["smic_multiple"])
 
+    # Cotisations patronales théoriques avant allègements
+    employer_contrib_before_relief = employer_contrib_net + rgdu
+
+    # Coût théorique avant allègements
+    theoretical_total_cost = employer_cost + rgdu
+
     fig = go.Figure()
 
+    # IMPORTANT :
+    # L'ordre des traces = ordre d'empilement du bas vers le haut.
+    # Donc ici on obtient bien du haut vers le bas :
+    # allègements > cotisations patronales > cotisations salariales > salaire net
     components = [
         (t["decomp_net_wage"], net_wage, COLOR_BLUE),
         (t["decomp_employee_contrib"], employee_contrib, COLOR_ORANGE),
-        (t["decomp_employer_contrib"], employer_contrib, COLOR_GREEN),
+        (t["decomp_employer_contrib"], employer_contrib_net, COLOR_GREEN),
+        (t["decomp_contribution_relief"], rgdu, COLOR_RED),
     ]
 
     for label, value, color in components:
         fig.add_trace(
             go.Bar(
-                x=[t["decomp_total_cost"]],
+                x=[""],
                 y=[value],
                 name=label,
                 marker=dict(color=color),
-                customdata=[[gross_wage, employer_cost, rgdu, smic_multiple]],
+                customdata=[[
+                    gross_wage,
+                    employer_cost,
+                    rgdu,
+                    smic_multiple,
+                    employer_contrib_net,
+                    employer_contrib_before_relief,
+                    theoretical_total_cost
+                ]],
                 hovertemplate=(
                     "<b>%{fullData.name}</b><br>"
                     + f"{t['x_axis']}: " + "%{customdata[3]:.2f}× SMIC<br>"
                     + f"{t['gross_wage']}: " + "%{customdata[0]:,.0f} €<br>"
-                    + f"{t['decomp_total_cost']}: " + "%{customdata[1]:,.0f} €<br>"
-                    + f"{t['rgdu']}: " + "%{customdata[2]:,.0f} €<br>"
-                    + "Montant: %{y:,.0f} €"
+                    + f"{t['decomp_effective_cost']}: " + "%{customdata[1]:,.0f} €<br>"
+                    + f"{t['decomp_contribution_relief']}: " + "%{customdata[2]:,.0f} €<br>"
+                    + f"{t['decomp_employer_contrib']}: " + "%{customdata[4]:,.0f} €<br>"
+                    + f"{t['decomp_employer_contrib_before_relief']}: " + "%{customdata[5]:,.0f} €<br>"
+                    + ("Coût avant allègements : " if lang == "fr" else "Cost before reliefs: ")
+                    + "%{customdata[6]:,.0f} €"
+                    + "<br>Montant : %{y:,.0f} €"
                     + "<extra></extra>"
                 )
             )
         )
 
+    # Ligne du salaire brut
     fig.add_hline(
         y=gross_wage,
         line_width=2,
         line_dash="dash",
-        line_color=COLOR_RED,
-        annotation_text=f"{t['decomp_gross_wage']}: {euro(gross_wage)}",
-        annotation_position="top right",
-        annotation_font_size=12,
-        annotation_font_color=COLOR_RED,
+        line_color=COLOR_RED
     )
+
+    # Ligne du coût employeur effectif (après allègements)
+    fig.add_hline(
+        y=employer_cost,
+        line_width=2,
+        line_dash="dot",
+        line_color=COLOR_NAVY
+    )
+
+    # Annotations séparées pour éviter les chevauchements
+    fig.add_annotation(
+        x=0.98,
+        xref="paper",
+        y=gross_wage,
+        yref="y",
+        text=f"{t['decomp_gross_wage']}: {euro(gross_wage)}",
+        showarrow=False,
+        xanchor="right",
+        yanchor="bottom",
+        font=dict(size=12, color=COLOR_RED),
+        bgcolor="rgba(255,255,255,0.80)"
+    )
+
+    fig.add_annotation(
+        x=0.98,
+        xref="paper",
+        y=employer_cost,
+        yref="y",
+        text=f"{t['decomp_effective_cost']}: {euro(employer_cost)}",
+        showarrow=False,
+        xanchor="right",
+        yanchor="top",
+        font=dict(size=12, color=COLOR_NAVY),
+        bgcolor="rgba(255,255,255,0.80)"
+    )
+
+    y_max = max(theoretical_total_cost, gross_wage)
 
     fig.update_layout(
         template="plotly_white",
-        height=430,
-        margin=dict(l=70, r=45, t=35, b=75),
+        height=470,
+        margin=dict(l=70, r=70, t=35, b=95),
         barmode="stack",
         font=dict(family="Arial", size=13, color=COLOR_NAVY),
         hovermode="closest",
@@ -761,18 +824,22 @@ def make_employer_cost_decomposition_chart(row, lang: str):
             y=-0.18,
             xanchor="center",
             x=0.5,
-            font=dict(size=12)
+            font=dict(size=12),
+            traceorder="reversed"
         ),
         xaxis=dict(
+            title="",
             showgrid=False,
-            zeroline=False
+            zeroline=False,
+            showticklabels=False
         ),
         yaxis=dict(
             title=t["y_monthly_amount"],
             ticksuffix=" €",
             showgrid=True,
             gridcolor="#e5e7eb",
-            zeroline=False
+            zeroline=False,
+            range=[0, y_max * 1.18]
         )
     )
 
