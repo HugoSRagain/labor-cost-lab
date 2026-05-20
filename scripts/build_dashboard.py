@@ -860,9 +860,26 @@ def build_language_section(df, lang: str, updated_at: str):
                 <h2>{t["purpose_title"]}</h2>
                 <p>{t["purpose_text"]}</p>
                 <div class="method-box">{t["method_note"]}</div>
-		<div class="download-row">
-    			<a class="download-link" href="data/labour_cost_grid_mon_entreprise.csv" download>
-        			{t["download_csv"]}
+		<div class="download-row" style="margin-top: 18px;">
+    			<a
+        			class="download-link"
+        			href="data/labour_cost_grid_mon_entreprise.csv"
+        			download
+        			style="
+            				display: inline-flex;
+            				align-items: center;
+            				gap: 8px;
+            				padding: 10px 14px;
+            				border-radius: 6px;
+            				border: 1px solid #60a5fa;
+            				background: #1f2937;
+            				color: #f9fafb;
+            				font-size: 14px;
+            				font-weight: 700;
+            				text-decoration: none;
+        			       "
+    				>
+        			       ⬇ {t["download_csv"]}
     			</a>
 		</div>
 
@@ -937,7 +954,7 @@ def main():
     <meta charset="UTF-8">
     <title>French Labour Cost Lab</title>
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
-    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="assets/style.css?v=10">
 </head>
 <body>
     {english_section}

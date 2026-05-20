@@ -539,33 +539,60 @@ footer {
         grid-template-columns: 1fr;
     }
 }
+/* CSV download button */
+
 .download-row {
-    margin-top: 16px;
+    margin-top: 18px !important;
 }
 
-.download-link {
-    display: inline-block;
-    border: 1px solid var(--blue);
-    color: var(--blue-dark);
-    background: #ffffff;
-    padding: 9px 12px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 650;
-    text-decoration: none;
+.download-row a,
+.download-row a:link,
+.download-row a:visited,
+a.download-link,
+a.download-link:link,
+a.download-link:visited {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 10px 14px !important;
+    border-radius: 6px !important;
+    border: 1px solid var(--blue) !important;
+    background: #ffffff !important;
+    color: var(--blue-dark) !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
 }
 
-.download-link:hover {
-    background: var(--blue-soft);
+.download-row a::before,
+a.download-link::before {
+    content: "⬇";
+    font-size: 13px;
 }
 
-body.dark-mode .download-link {
-    background: #111827;
-    color: #dbeafe;
-    border-color: #60a5fa;
+.download-row a:hover,
+a.download-link:hover {
+    background: var(--blue-soft) !important;
+    color: var(--blue-dark) !important;
+    text-decoration: none !important;
 }
 
-body.dark-mode .download-link:hover {
-    background: #1e293b;
+body.dark-mode .download-row a,
+body.dark-mode .download-row a:link,
+body.dark-mode .download-row a:visited,
+body.dark-mode a.download-link,
+body.dark-mode a.download-link:link,
+body.dark-mode a.download-link:visited {
+    background: #1f2937 !important;
+    color: #f9fafb !important;
+    border-color: #60a5fa !important;
+    text-decoration: none !important;
+}
+
+body.dark-mode .download-row a:hover,
+body.dark-mode a.download-link:hover {
+    background: #263445 !important;
+    color: #ffffff !important;
+    border-color: #93c5fd !important;
 }
 }
