@@ -31,6 +31,14 @@ TEXT = {
         "language_button": "Français",
         "engine_badge": "Calculation engine: Mon-entreprise / URSSAF API",
         "profile_label": "Employee profile",
+	"tab_simulation": "Simulation",
+	"tab_comparisons": "Comparisons",
+	"tab_data": "Data",
+	"tab_methodology": "Methodology",
+	"comparisons_title": "Comparisons",
+	"comparisons_intro": "Comparative charts will be added here to compare AT/MP scenarios, employee status and territorial regimes.",
+	"data_title": "Data",
+	"data_intro": "The full simulation dataset can be downloaded as a CSV file. It contains all wage points and all combinations of employee status, territorial regime and AT/MP scenarios.",
 	"status_label": "Employee status",
 	"territory_label": "Territorial regime",
 	"download_csv": "Download simulation dataset (CSV)",
@@ -125,6 +133,14 @@ TEXT = {
         "language_button": "English",
         "engine_badge": "Moteur de calcul : API Mon-entreprise / URSSAF",
         "profile_label": "Profil salarié",
+	"tab_simulation": "Simulation",
+	"tab_comparisons": "Comparaisons",
+	"tab_data": "Données",
+	"tab_methodology": "Méthodologie",
+	"comparisons_title": "Comparaisons",
+	"comparisons_intro": "Des graphiques comparatifs seront ajoutés ici pour comparer les scénarios AT/MP, le statut salarié et les régimes territoriaux.",
+	"data_title": "Données",
+	"data_intro": "Le jeu de données complet peut être téléchargé au format CSV. Il contient tous les points de salaire et toutes les combinaisons de statut salarié, régime territorial et scénario AT/MP.",
 	"status_label": "Statut salarié",
 	"territory_label": "Régime territorial",
 	"download_csv": "Télécharger les données de simulation (CSV)",
@@ -855,66 +871,92 @@ def build_language_section(df, lang: str, updated_at: str):
         </header>
 
         <main>
-            <section>
-                <div class="badge">{t["engine_badge"]}</div>
-                <h2>{t["purpose_title"]}</h2>
-                <p>{t["purpose_text"]}</p>
-                <div class="method-box">{t["method_note"]}</div>
-		<div class="download-row" style="margin-top: 18px;">
-    			<a
-        			class="download-link"
-        			href="data/labour_cost_grid_mon_entreprise.csv"
-        			download
-        			style="
-            				display: inline-flex;
-            				align-items: center;
-            				gap: 8px;
-            				padding: 10px 14px;
-            				border-radius: 6px;
-            				border: 1px solid #60a5fa;
-            				background: #1f2937;
-            				color: #f9fafb;
-            				font-size: 14px;
-            				font-weight: 700;
-            				text-decoration: none;
-        			       "
-    				>
-        			       ⬇ {t["download_csv"]}
-    			</a>
-		</div>
+            <nav class="tabs" aria-label="Dashboard sections">
+                <button class="tab-button active" data-tab="simulation" onclick="showTab('{lang}', 'simulation')">{t["tab_simulation"]}</button>
+                <button class="tab-button" data-tab="comparisons" onclick="showTab('{lang}', 'comparisons')">{t["tab_comparisons"]}</button>
+                <button class="tab-button" data-tab="data" onclick="showTab('{lang}', 'data')">{t["tab_data"]}</button>
+                <button class="tab-button" data-tab="methodology" onclick="showTab('{lang}', 'methodology')">{t["tab_methodology"]}</button>
+            </nav>
 
-                <div class="profile-selector profile-selector-grid">
-                    <div class="selector-field">
-                        <label for="status-select-{lang}">{t["status_label"]}</label>
-                        <select id="status-select-{lang}" onchange="switchCombinatorialProfile('{lang}')">
-                            {status_options}
-                        </select>
-                    </div>
+            <div class="tab-panel active" id="tab-{lang}-simulation">
+                <section>
+                    <div class="badge">{t["engine_badge"]}</div>
+                    <h2>{t["purpose_title"]}</h2>
+                    <p>{t["purpose_text"]}</p>
+                    <div class="method-box">{t["method_note"]}</div>
 
-                    <div class="selector-field">
-                        <label for="territory-select-{lang}">{t["territory_label"]}</label>
-                        <select id="territory-select-{lang}" onchange="switchCombinatorialProfile('{lang}')">
-                            {territory_options}
-                        </select>
-                    </div>
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="status-select-{lang}">{t["status_label"]}</label>
+                            <select id="status-select-{lang}" onchange="switchCombinatorialProfile('{lang}')">
+                                {status_options}
+                            </select>
+                        </div>
 
-                    <div class="selector-field">
-                        <label for="atmp-select-{lang}">{t["atmp_label"]}</label>
-                        <select id="atmp-select-{lang}" onchange="switchCombinatorialProfile('{lang}')">
-                            {atmp_options}
-                        </select>
+                        <div class="selector-field">
+                            <label for="territory-select-{lang}">{t["territory_label"]}</label>
+                            <select id="territory-select-{lang}" onchange="switchCombinatorialProfile('{lang}')">
+                                {territory_options}
+                            </select>
+                        </div>
+
+                        <div class="selector-field">
+                            <label for="atmp-select-{lang}">{t["atmp_label"]}</label>
+                            <select id="atmp-select-{lang}" onchange="switchCombinatorialProfile('{lang}')">
+                                {atmp_options}
+                            </select>
+                        </div>
                     </div>
+                </section>
+
+                <div id="profile-panels-{lang}">
+                    {panels_html}
                 </div>
-            </section>
-
-            <div id="profile-panels-{lang}">
-                {panels_html}
             </div>
 
-            <section>
-                <h2>{t["methodology_title"]}</h2>
-                {methodology_html}
-            </section>
+            <div class="tab-panel" id="tab-{lang}-comparisons">
+                <section>
+                    <h2>{t["comparisons_title"]}</h2>
+                    <p class="interpretation">{t["comparisons_intro"]}</p>
+                </section>
+            </div>
+
+            <div class="tab-panel" id="tab-{lang}-data">
+                <section>
+                    <h2>{t["data_title"]}</h2>
+                    <p class="interpretation">{t["data_intro"]}</p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="data/labour_cost_grid_mon_entreprise.csv"
+                            download
+                            style="
+                                display: inline-flex;
+                                align-items: center;
+                                gap: 8px;
+                                padding: 10px 14px;
+                                border-radius: 6px;
+                                border: 1px solid #60a5fa;
+                                background: #1f2937;
+                                color: #f9fafb;
+                                font-size: 14px;
+                                font-weight: 700;
+                                text-decoration: none;
+                            "
+                        >
+                            ⬇ {t["download_csv"]}
+                        </a>
+                    </div>
+                </section>
+            </div>
+
+            <div class="tab-panel" id="tab-{lang}-methodology">
+                <section>
+                    <h2>{t["methodology_title"]}</h2>
+                    {methodology_html}
+                </section>
+            </div>
         </main>
 
         <footer>{t["footer"]}: {updated_at}</footer>
@@ -979,6 +1021,7 @@ def main():
 
             const selectedProfile = restoreCombinatorialSelectors(lang);
             showProfile(lang, selectedProfile);
+	    restoreTab(lang);
         }}
 
         function switchLanguage() {{
@@ -1141,6 +1184,42 @@ def main():
             }});
         }}
 
+        function showTab(lang, tabName) {{
+            const panels = document.querySelectorAll("#section-" + lang + " .tab-panel");
+            const buttons = document.querySelectorAll("#section-" + lang + " .tab-button");
+
+            panels.forEach(function(panel) {{
+                panel.classList.remove("active");
+            }});
+
+            buttons.forEach(function(button) {{
+                button.classList.remove("active");
+            }});
+
+            const targetPanel = document.getElementById("tab-" + lang + "-" + tabName);
+            const targetButton = document.querySelector(
+                "#section-" + lang + " .tab-button[data-tab='" + tabName + "']"
+            );
+
+            if (targetPanel) {{
+                targetPanel.classList.add("active");
+            }}
+
+            if (targetButton) {{
+                targetButton.classList.add("active");
+            }}
+
+            localStorage.setItem("flcl_tab_" + lang, tabName);
+
+            setTimeout(function() {{
+                window.dispatchEvent(new Event("resize"));
+            }}, 150);
+        }}
+
+        function restoreTab(lang) {{
+            const savedTab = localStorage.getItem("flcl_tab_" + lang) || "simulation";
+            showTab(lang, savedTab);
+        }}
         const savedTheme = localStorage.getItem("flcl_theme") || "light";
         applyTheme(savedTheme);
 
