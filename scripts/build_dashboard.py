@@ -29,6 +29,9 @@ TEXT = {
         "language_button": "Français",
         "engine_badge": "Calculation engine: Mon-entreprise / URSSAF API",
         "profile_label": "Employee profile",
+	"status_label": "Employee status",
+	"territory_label": "Territorial regime",
+	"atmp_label": "AT/MP risk scenario",
         "purpose_title": "Purpose",
         "purpose_text": (
             "French Labour Cost Lab provides reproducible simulations of gross wages, net wages, "
@@ -116,6 +119,9 @@ TEXT = {
         "language_button": "English",
         "engine_badge": "Moteur de calcul : API Mon-entreprise / URSSAF",
         "profile_label": "Profil salarié",
+	"status_label": "Statut salarié",
+	"territory_label": "Régime territorial",
+	"atmp_label": "Scénario AT/MP",
         "purpose_title": "Objectif",
         "purpose_text": (
             "French Labour Cost Lab propose des simulations reproductibles du salaire brut, du salaire net, "
@@ -758,23 +764,63 @@ def build_profile_panel(df_profile, profile_id, lang: str):
     """
 
 
+def build_dimension_options(df, dimension_column, label_map, lang):
+    values = (
+        df[[dimension_column]]
+        .drop_duplicates()
+        .sort_values(dimension_column)
+        [dimension_column]
+        .tolist()
+    )
+
+    options = []
+    for value in values:
+        label = label_map.get(value, value)
+        options.append(f'<option value="{value}">{label}</option>')
+
+    return "\n".join(options)
+
+
 def build_language_section(df, lang: str, updated_at: str):
     t = TEXT[lang]
     methodology_html = build_methodology_list(lang)
 
+    status_labels = {
+        "non_cadre": "Non-cadre" if lang == "fr" else "Non-executive",
+        "cadre": "Cadre" if lang == "fr" else "Executive",
+    }
+
+    territory_labels = {
+        "standard": "Hors Alsace-Moselle" if lang == "fr" else "Outside Alsace-Moselle",
+        "alsace_moselle": "Alsace-Moselle",
+    }
+
+    atmp_labels = {
+        "standard": "AT/MP standard" if lang == "fr" else "Standard AT/MP",
+        "atmp_1": "AT/MP 1 %",
+        "atmp_4": "AT/MP 4 %",
+        "fonctions_support": "Fonctions support" if lang == "fr" else "Support functions",
+    }
+
+    status_options = build_dimension_options(df, "dimension_status", status_labels, lang)
+    territory_options = build_dimension_options(df, "dimension_territory", territory_labels, lang)
+    atmp_options = build_dimension_options(df, "dimension_atmp", atmp_labels, lang)
+
     profiles = (
-        df[["profile_id", f"profile_label_{lang}"]]
+        df[[
+            "profile_id",
+            "profile_label_fr",
+            "profile_label_en",
+            "dimension_status",
+            "dimension_territory",
+            "dimension_atmp"
+        ]]
         .drop_duplicates()
         .sort_values("profile_id")
         .to_dict("records")
     )
 
     default_profile = profiles[0]["profile_id"]
-
-    options = "\n".join([
-        f'<option value="{row["profile_id"]}">{row[f"profile_label_{lang}"]}</option>'
-        for row in profiles
-    ])
 
     panels = []
     for row in profiles:
@@ -786,18 +832,17 @@ def build_language_section(df, lang: str, updated_at: str):
 
     return f"""
     <div class="language-section" id="section-{lang}" data-default-profile="{default_profile}">
-	<header>
-    		<div>
-        		<h1>{t["page_title"]}</h1>
-        		<p>{t["subtitle"]}</p>
-        		<p class="author-line">Par Hugo Spring-Ragain, Économiste, CEDS Paris</p>
-    		</div>
-
-    		<div class="header-actions">
-    			<button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle theme">🌙</button>
-    			<button class="language-toggle" onclick="switchLanguage()">{t["language_button"]}</button>
-		</div>
-	</header>
+        <header>
+            <div>
+                <h1>{t["page_title"]}</h1>
+                <p>{t["subtitle"]}</p>
+                <p class="author-line">Par Hugo Spring-Ragain, Économiste, CEDS Paris</p>
+            </div>
+            <div class="header-actions">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Dark mode" aria-label="Dark mode">🌙</button>
+                <button class="language-toggle" onclick="switchLanguage()">{t["language_button"]}</button>
+            </div>
+        </header>
 
         <main>
             <section>
@@ -806,11 +851,27 @@ def build_language_section(df, lang: str, updated_at: str):
                 <p>{t["purpose_text"]}</p>
                 <div class="method-box">{t["method_note"]}</div>
 
-                <div class="profile-selector">
-                    <label for="profile-select-{lang}">{t["profile_label"]}</label>
-                    <select id="profile-select-{lang}" onchange="switchProfile('{lang}')">
-                        {options}
-                    </select>
+                <div class="profile-selector profile-selector-grid">
+                    <div class="selector-field">
+                        <label for="status-select-{lang}">{t["status_label"]}</label>
+                        <select id="status-select-{lang}" onchange="switchCombinatorialProfile('{lang}')">
+                            {status_options}
+                        </select>
+                    </div>
+
+                    <div class="selector-field">
+                        <label for="territory-select-{lang}">{t["territory_label"]}</label>
+                        <select id="territory-select-{lang}" onchange="switchCombinatorialProfile('{lang}')">
+                            {territory_options}
+                        </select>
+                    </div>
+
+                    <div class="selector-field">
+                        <label for="atmp-select-{lang}">{t["atmp_label"]}</label>
+                        <select id="atmp-select-{lang}" onchange="switchCombinatorialProfile('{lang}')">
+                            {atmp_options}
+                        </select>
+                    </div>
                 </div>
             </section>
 
@@ -889,14 +950,7 @@ def main():
 
             localStorage.setItem("flcl_language", lang);
 
-            const selectedProfile = localStorage.getItem("flcl_profile_" + lang)
-                || document.getElementById("section-" + lang).dataset.defaultProfile;
-
-            const select = document.getElementById("profile-select-" + lang);
-            if (select) {{
-                select.value = selectedProfile;
-            }}
-
+            const selectedProfile = restoreCombinatorialSelectors(lang);
             showProfile(lang, selectedProfile);
         }}
 
@@ -905,11 +959,46 @@ def main():
             setLanguage(current === "en" ? "fr" : "en");
         }}
 
-        function switchProfile(lang) {{
-            const select = document.getElementById("profile-select-" + lang);
-            const profileId = select.value;
-            localStorage.setItem("flcl_profile_" + lang, profileId);
+        function getSelectedCombinatorialProfile(lang) {{
+            const status = document.getElementById("status-select-" + lang).value;
+            const territory = document.getElementById("territory-select-" + lang).value;
+            const atmp = document.getElementById("atmp-select-" + lang).value;
+
+            return status + "__" + territory + "__" + atmp;
+        }}
+
+        function switchCombinatorialProfile(lang) {{
+            const profileId = getSelectedCombinatorialProfile(lang);
+
+            localStorage.setItem("flcl_status_" + lang, document.getElementById("status-select-" + lang).value);
+            localStorage.setItem("flcl_territory_" + lang, document.getElementById("territory-select-" + lang).value);
+            localStorage.setItem("flcl_atmp_" + lang, document.getElementById("atmp-select-" + lang).value);
+
             showProfile(lang, profileId);
+        }}
+
+        function restoreCombinatorialSelectors(lang) {{
+            const statusSelect = document.getElementById("status-select-" + lang);
+            const territorySelect = document.getElementById("territory-select-" + lang);
+            const atmpSelect = document.getElementById("atmp-select-" + lang);
+
+            const savedStatus = localStorage.getItem("flcl_status_" + lang);
+            const savedTerritory = localStorage.getItem("flcl_territory_" + lang);
+            const savedAtmp = localStorage.getItem("flcl_atmp_" + lang);
+
+            if (savedStatus && statusSelect.querySelector('option[value="' + savedStatus + '"]')) {{
+                statusSelect.value = savedStatus;
+            }}
+
+            if (savedTerritory && territorySelect.querySelector('option[value="' + savedTerritory + '"]')) {{
+                territorySelect.value = savedTerritory;
+            }}
+
+            if (savedAtmp && atmpSelect.querySelector('option[value="' + savedAtmp + '"]')) {{
+                atmpSelect.value = savedAtmp;
+            }}
+
+            return getSelectedCombinatorialProfile(lang);
         }}
 
         function showProfile(lang, profileId) {{
@@ -917,8 +1006,17 @@ def main():
             panels.forEach(panel => panel.classList.remove("active"));
 
             const target = document.getElementById("panel-" + lang + "-" + safeId(profileId));
+
             if (target) {{
                 target.classList.add("active");
+            }} else {{
+                const section = document.getElementById("section-" + lang);
+                const defaultProfile = section.dataset.defaultProfile;
+                const fallback = document.getElementById("panel-" + lang + "-" + safeId(defaultProfile));
+
+                if (fallback) {{
+                    fallback.classList.add("active");
+                }}
             }}
 
             setTimeout(function() {{
