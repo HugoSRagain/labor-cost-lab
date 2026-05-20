@@ -154,6 +154,17 @@ TEXT = {
         "y_monthly_rgdu": "Monthly relief amount, euros",
         "y_annual_rgdu": "Annual relief amount, euros",
         "y2_rgdu": "RGDU / gross wage",
+	"decomposition_title": "Employer cost decomposition",
+	"decomposition_subtitle": (
+    		"This chart decomposes total employer cost at a selected wage point. "
+    		"Employer contributions are shown after contribution reliefs."
+	),
+	"decomposition_wage_label": "Selected wage point",
+	"decomp_net_wage": "Net wage",
+	"decomp_employee_contrib": "Employee contributions",
+	"decomp_employer_contrib": "Employer contributions after reliefs",
+	"decomp_total_cost": "Total employer cost",
+	"decomp_gross_wage": "Gross wage",
     },
     "fr": {
         "page_title": "French Labour Cost Lab",
@@ -284,6 +295,17 @@ TEXT = {
         "y_monthly_rgdu": "Montant mensuel d’allègement, euros",
         "y_annual_rgdu": "Montant annuel d’allègement, euros",
         "y2_rgdu": "RGDU / salaire brut",
+	"decomposition_title": "Décomposition du coût employeur",
+	"decomposition_subtitle": (
+    		"Ce graphique décompose le coût total employeur à un point de salaire donné. "
+    		"Les cotisations employeur sont présentées après allègements de charges."
+	),
+	"decomposition_wage_label": "Point de salaire sélectionné",
+	"decomp_net_wage": "Salaire net",
+	"decomp_employee_contrib": "Cotisations salarié",
+	"decomp_employer_contrib": "Cotisations employeur après allègements",
+	"decomp_total_cost": "Coût total employeur",
+	"decomp_gross_wage": "Salaire brut",
     },
 }
 
@@ -674,6 +696,89 @@ def make_marginal_chart(df, lang: str):
     add_rgdu_zone(fig, lang)
 
     return fig
+
+def make_employer_cost_decomposition_chart(row, lang: str):
+    t = TEXT[lang]
+
+    net_wage = float(row["net_monthly_eur"])
+    employee_contrib = float(row["employee_contributions_monthly_eur"])
+    employer_contrib = float(row["employer_contributions_monthly_eur"])
+    employer_cost = float(row["employer_cost_monthly_eur"])
+    gross_wage = float(row["gross_monthly_eur"])
+    rgdu = float(row.get("rgdu_monthly_eur", 0.0))
+    smic_multiple = float(row["smic_multiple"])
+
+    fig = go.Figure()
+
+    components = [
+        (t["decomp_net_wage"], net_wage, COLOR_BLUE),
+        (t["decomp_employee_contrib"], employee_contrib, COLOR_ORANGE),
+        (t["decomp_employer_contrib"], employer_contrib, COLOR_GREEN),
+    ]
+
+    for label, value, color in components:
+        fig.add_trace(
+            go.Bar(
+                x=[t["decomp_total_cost"]],
+                y=[value],
+                name=label,
+                marker=dict(color=color),
+                customdata=[[gross_wage, employer_cost, rgdu, smic_multiple]],
+                hovertemplate=(
+                    "<b>%{fullData.name}</b><br>"
+                    + f"{t['x_axis']}: " + "%{customdata[3]:.2f}× SMIC<br>"
+                    + f"{t['gross_wage']}: " + "%{customdata[0]:,.0f} €<br>"
+                    + f"{t['decomp_total_cost']}: " + "%{customdata[1]:,.0f} €<br>"
+                    + f"{t['rgdu']}: " + "%{customdata[2]:,.0f} €<br>"
+                    + "Montant: %{y:,.0f} €"
+                    + "<extra></extra>"
+                )
+            )
+        )
+
+    fig.add_hline(
+        y=gross_wage,
+        line_width=2,
+        line_dash="dash",
+        line_color=COLOR_RED,
+        annotation_text=f"{t['decomp_gross_wage']}: {euro(gross_wage)}",
+        annotation_position="top right",
+        annotation_font_size=12,
+        annotation_font_color=COLOR_RED,
+    )
+
+    fig.update_layout(
+        template="plotly_white",
+        height=430,
+        margin=dict(l=70, r=45, t=35, b=75),
+        barmode="stack",
+        font=dict(family="Arial", size=13, color=COLOR_NAVY),
+        hovermode="closest",
+        showlegend=True,
+        legend=dict(
+            orientation="h",
+            yanchor="top",
+            y=-0.18,
+            xanchor="center",
+            x=0.5,
+            font=dict(size=12)
+        ),
+        xaxis=dict(
+            showgrid=False,
+            zeroline=False
+        ),
+        yaxis=dict(
+            title=t["y_monthly_amount"],
+            ticksuffix=" €",
+            showgrid=True,
+            gridcolor="#e5e7eb",
+            zeroline=False
+        )
+    )
+
+    return fig
+
+
 
 def make_atmp_comparison_chart(df_subset, lang: str):
     t = TEXT[lang]
@@ -1217,7 +1322,6 @@ def build_methodology_list(lang: str):
 
 def build_profile_panel(df_profile, profile_id, lang: str):
     t = TEXT[lang]
-    metrics = build_key_metrics(df_profile)
 
 
     return f"""
@@ -1260,31 +1364,6 @@ def build_profile_panel(df_profile, profile_id, lang: str):
                     <h3>{t["chart_marginal_title"]}</h3>
                     <p class="chart-subtitle">{t["chart_marginal_subtitle"]}</p>
                     <div class="plotly-chart">{fig_to_html(make_marginal_chart(df_profile, lang))}</div>
-                </div>
-            </div>
-        </section>
-
-        <section>
-            <h2>{t["key_metrics_title"]}</h2>
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <div class="metric-label">{t["metric_net_smic"]}</div>
-                    <div class="metric-value">{metrics["smic_net"]}</div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-label">{t["metric_cost_smic"]}</div>
-                    <div class="metric-value">{metrics["smic_cost"]}</div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-label">{t["metric_rgdu_smic"]}</div>
-                    <div class="metric-value">{metrics["smic_rgdu"]}</div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-label">{t["metric_ratio_2_smic"]}</div>
-                    <div class="metric-value">{metrics["smic_2_cost_net_ratio"]}</div>
                 </div>
             </div>
         </section>
@@ -1417,6 +1496,100 @@ def build_data_panels(df, lang: str):
 
     return "\n".join(panels)
 
+def wage_point_key(value):
+    return f"{float(value):.2f}".replace(".", "_")
+
+
+def build_decomposition_panels(df, lang: str, default_profile: str):
+    wage_points = [1.0, 1.6, 2.0, 3.0]
+
+    profiles = (
+        df[["profile_id"]]
+        .drop_duplicates()
+        .sort_values("profile_id")
+        .to_dict("records")
+    )
+
+    panels = []
+
+    for profile in profiles:
+        profile_id = profile["profile_id"]
+        df_profile = df[df["profile_id"] == profile_id].copy()
+
+        for point in wage_points:
+            idx = (df_profile["smic_multiple"] - point).abs().idxmin()
+            row = df_profile.loc[idx]
+            point_key = wage_point_key(point)
+
+            chart_html = fig_to_html(
+                make_employer_cost_decomposition_chart(row, lang)
+            )
+
+            active_class = ""
+            if profile_id == default_profile and abs(point - 2.0) < 0.001:
+                active_class = " active"
+
+            panels.append(f"""
+            <div
+                class="decomposition-panel{active_class}"
+                id="decomposition-{lang}-{safe_id(profile_id)}-{point_key}"
+            >
+                <div class="chart-card chart-card-full decomposition-chart-card">
+                    <div class="plotly-chart">{chart_html}</div>
+                </div>
+            </div>
+            """)
+
+    return "\n".join(panels)
+
+def build_metrics_panels(df, lang: str):
+    t = TEXT[lang]
+
+    profiles = (
+        df[["profile_id"]]
+        .drop_duplicates()
+        .sort_values("profile_id")
+        .to_dict("records")
+    )
+
+    panels = []
+
+    for profile in profiles:
+        profile_id = profile["profile_id"]
+        df_profile = df[df["profile_id"] == profile_id].copy()
+        metrics = build_key_metrics(df_profile)
+
+        panels.append(f"""
+        <div class="metrics-panel" id="metrics-{lang}-{safe_id(profile_id)}">
+            <section>
+                <h2>{t["key_metrics_title"]}</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">{t["metric_net_smic"]}</div>
+                        <div class="metric-value">{metrics["smic_net"]}</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">{t["metric_cost_smic"]}</div>
+                        <div class="metric-value">{metrics["smic_cost"]}</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">{t["metric_rgdu_smic"]}</div>
+                        <div class="metric-value">{metrics["smic_rgdu"]}</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">{t["metric_ratio_2_smic"]}</div>
+                        <div class="metric-value">{metrics["smic_2_cost_net_ratio"]}</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        """)
+
+    return "\n".join(panels)
+
 def build_dimension_options(df, dimension_column, label_map, lang):
     values = (
         df[[dimension_column]]
@@ -1474,6 +1647,7 @@ def build_language_section(df, lang: str, updated_at: str):
     )
 
     default_profile = profiles[0]["profile_id"]
+    decomposition_panels_html = build_decomposition_panels(df, lang, default_profile)
 
     panels = []
     for row in profiles:
@@ -1484,7 +1658,7 @@ def build_language_section(df, lang: str, updated_at: str):
     panels_html = "\n".join(panels)
     comparison_panels_html = build_comparison_panels(df, lang)
     data_panels_html = build_data_panels(df, lang)
-    
+    metrics_panels_html = build_metrics_panels(df, lang)
 
     return f"""
 
@@ -1542,6 +1716,31 @@ def build_language_section(df, lang: str, updated_at: str):
 
                 <div id="profile-panels-{lang}">
                     {panels_html}
+                </div>
+
+                <section>
+                    <h2>{t["decomposition_title"]}</h2>
+                    <p class="chart-subtitle">{t["decomposition_subtitle"]}</p>
+
+                    <div class="profile-selector decomposition-selector">
+                        <div class="selector-field">
+                            <label for="decomposition-wage-select-{lang}">{t["decomposition_wage_label"]}</label>
+                            <select id="decomposition-wage-select-{lang}" onchange="showDecomposition('{lang}')">
+                                <option value="1_00">1 SMIC</option>
+                                <option value="1_60">1.6 SMIC</option>
+                                <option value="2_00" selected>2 SMIC</option>
+                                <option value="3_00">3 SMIC</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="decomposition-panels-{lang}" class="decomposition-panels-wrapper">
+                        {decomposition_panels_html}
+                    </div>
+                </section>
+
+                <div id="metrics-panels-{lang}">
+                    {metrics_panels_html}
                 </div>
             </div>
 
@@ -1684,9 +1883,61 @@ def main():
             showProfile(lang, selectedProfile);
             showComparison(lang);
             showStatusComparison(lang);
+            showTerritoryComparison(lang);
             syncDataSelectorsFromSimulation(lang);
             showDataPanel(lang);
+            showDecomposition(lang);
+	    showMetricsPanel(lang);
             restoreTab(lang);
+        }}
+
+        function showDecomposition(lang) {{
+            const profileId = getSelectedCombinatorialProfile(lang);
+            const wageSelect = document.getElementById("decomposition-wage-select-" + lang);
+
+            if (wageSelect && !wageSelect.value) {{
+                wageSelect.value = "2_00";
+            }}
+
+            const wageKey = wageSelect ? wageSelect.value : "2_00";
+
+            const panels = document.querySelectorAll("#decomposition-panels-" + lang + " .decomposition-panel");
+
+            panels.forEach(function(panel) {{
+                panel.classList.remove("active");
+            }});
+
+            const target = document.getElementById(
+                "decomposition-" + lang + "-" + safeId(profileId) + "-" + wageKey
+            );
+
+            if (target) {{
+                target.classList.add("active");
+            }} else if (panels.length > 0) {{
+                panels[0].classList.add("active");
+            }}
+
+            setTimeout(function() {{
+                window.dispatchEvent(new Event("resize"));
+            }}, 200);
+        }}
+
+        function showMetricsPanel(lang) {{
+            const profileId = getSelectedCombinatorialProfile(lang);
+
+            const panels = document.querySelectorAll("#metrics-panels-" + lang + " .metrics-panel");
+
+            panels.forEach(function(panel) {{
+                panel.classList.remove("active");
+            }});
+
+            const target = document.getElementById("metrics-" + lang + "-" + safeId(profileId));
+
+            if (target) {{
+                target.classList.add("active");
+            }} else if (panels.length > 0) {{
+                panels[0].classList.add("active");
+            }}
         }}
 
         function showDataPanel(lang) {{
@@ -1779,7 +2030,10 @@ def main():
             showProfile(lang, profileId);
             showComparison(lang);
             showStatusComparison(lang);
+            showTerritoryComparison(lang);
             showDataPanel(lang);
+            showDecomposition(lang);
+	    showMetricsPanel(lang);
         }}
 
         function switchCombinatorialProfile(lang) {{
@@ -1792,8 +2046,11 @@ def main():
             showProfile(lang, profileId);
             showComparison(lang);
             showStatusComparison(lang);
+            showTerritoryComparison(lang);
             syncDataSelectorsFromSimulation(lang);
             showDataPanel(lang);
+            showDecomposition(lang);
+	    showMetricsPanel(lang);
         }}
 
         function restoreCombinatorialSelectors(lang) {{
@@ -1901,6 +2158,11 @@ def main():
             setTimeout(function() {{
                 window.dispatchEvent(new Event("resize"));
             }}, 200);
+        }}
+
+
+        function showTerritoryComparison(lang) {{
+            return;
         }}
 
         function updatePlotlyTheme(theme) {{
@@ -2036,9 +2298,12 @@ def main():
         setLanguage(savedLanguage);
 
         setTimeout(function() {{
-    		showComparison(savedLanguage);
-    		showStatusComparison(savedLanguage);
-	}}, 300);
+            showComparison(savedLanguage);
+            showStatusComparison(savedLanguage);
+            showTerritoryComparison(savedLanguage);
+            showDecomposition(savedLanguage);
+            showMetricsPanel(savedLanguage);
+        }}, 300);
     </script>
 </body>
 </html>

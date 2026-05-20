@@ -720,5 +720,32 @@ footer {
 .status-comparison-panel.active {
     display: block;
 }
+/* Employer cost decomposition */
+
+.decomposition-panel {
+    display: none;
+}
+
+.decomposition-panel.active {
+    display: block;
+}
+
+.decomposition-selector {
+    width: fit-content;
+    max-width: 100%;
+}
+.metrics-panel {
+    display: none;
+}
+
+.metrics-panel.active {
+    display: block;
+}
+.decomposition-panels-wrapper {
+    margin-top: 18px;
+}
+.decomposition-chart-card {
+    margin-top: 0;
+}
 
 }
