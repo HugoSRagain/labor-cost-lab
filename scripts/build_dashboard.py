@@ -912,11 +912,6 @@ def build_language_section(df, lang: str, updated_at: str):
             </div>
 
             <section>
-                <h2>{t["interpretation_title"]}</h2>
-                <p class="interpretation">{t["interpretation_text"]}</p>
-            </section>
-
-            <section>
                 <h2>{t["methodology_title"]}</h2>
                 {methodology_html}
             </section>
