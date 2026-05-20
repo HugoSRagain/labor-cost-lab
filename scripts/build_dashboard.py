@@ -10,6 +10,8 @@ BASE_DIR = Path(__file__).resolve().parents[1]
 DATA_PATH = BASE_DIR / "data" / "labour_cost_grid_mon_entreprise.csv"
 DOCS_DIR = BASE_DIR / "docs"
 OUTPUT_PATH = DOCS_DIR / "index.html"
+DOCS_DATA_DIR = DOCS_DIR / "data"
+DOCS_DATA_PATH = DOCS_DATA_DIR / "labour_cost_grid_mon_entreprise.csv"
 
 
 COLOR_NAVY = "#0f172a"
@@ -31,6 +33,7 @@ TEXT = {
         "profile_label": "Employee profile",
 	"status_label": "Employee status",
 	"territory_label": "Territorial regime",
+	"download_csv": "Download simulation dataset (CSV)",
 	"atmp_label": "AT/MP risk scenario",
         "purpose_title": "Purpose",
         "purpose_text": (
@@ -50,14 +53,17 @@ TEXT = {
             "but to isolate economically meaningful indicators of labour cost formation."
         ),
         "methodology_points": [
-            "<strong>Source.</strong> Calculations are obtained from the public Mon-entreprise / URSSAF API.",
-            "<strong>Wage grid.</strong> Gross monthly wages are expressed as multiples of the gross monthly SMIC, from 0.8 to 3.5 SMIC.",
-            "<strong>Profiles.</strong> The dashboard compares different employee profiles, including non-executive/executive status and Alsace-Moselle regime.",
-	    "<strong>Effective employer contribution rate.</strong> The rate shown in the chart is not the gross statutory employer contribution schedule. It is an apparent rate after employer contribution 	                        	    reliefs, computed as net employer contributions divided by gross wage.",
-            "<strong>Indicators.</strong> Employer cost, net wage, employer contributions, employee contributions, RGDU 2026, social wedge and cost-to-net ratios are derived from API outputs.",
-            "<strong>Marginal indicators.</strong> The marginal employer-cost rate is computed as the finite difference between two adjacent points of the wage grid: Δ employer cost / Δ gross wage.",
-            "<strong>Limitations.</strong> Results can vary with firm size, AT/MP rates, collective agreements, executive status, exemptions and other contribution regimes."
-        ],
+    		"<strong>Source.</strong> Les calculs sont obtenus à partir de l’API publique Mon-entreprise / URSSAF.",
+    		"<strong>Grille salariale.</strong> Les salaires bruts mensuels sont exprimés en multiples du SMIC brut mensuel, de 0,8 à 3,5 SMIC, avec un pas de 0,01 SMIC.",
+    		"<strong>Simulation combinatoire.</strong> L’utilisateur peut combiner trois dimensions : statut salarié, régime territorial et scénario de risque AT/MP.",
+    		"<strong>Statut salarié.</strong> La dimension de statut distingue les salariés non-cadres et cadres.",
+    		"<strong>Régime territorial.</strong> La dimension territoriale distingue le régime général du régime Alsace-Moselle.",
+    		"<strong>Scénarios AT/MP.</strong> La dimension AT/MP doit être interprétée comme un scénario de taux de risque, et non comme une profession ou un secteur précis. Les taux explicites, par exemple 1 % ou 4 %, sont directement transmis au moteur Mon-		entreprise. Le scénario fonctions support repose sur une règle signalée comme expérimentale par l’API.",
+    		"<strong>Indicateurs.</strong> Coût employeur, salaire net, cotisations employeur, cotisations salarié, RGDU 2026, coin social et ratio coût/net sont dérivés des sorties de l’API.",
+    		"<strong>Taux effectif de cotisations employeur.</strong> Le taux affiché dans le graphique ne correspond pas au barème légal brut de cotisations patronales. Il s’agit d’un taux apparent après allègements de charges, calculé comme cotisations employeur 		nettes rapportées au salaire brut.",
+    		"<strong>Indicateurs marginaux.</strong> Le taux marginal de coût employeur est calculé par différence finie entre deux points adjacents de la grille : Δ coût employeur / Δ salaire brut.",
+    		"<strong>Limites.</strong> Les résultats sont des simulations de référence, non des calculs officiels de fiche de paie. Ils peuvent varier selon la taille de l’entreprise, les conventions collectives, la classification AT/MP précise, les exonérations et 		les régimes spécifiques."
+	],
         "metric_net_smic": "Net wage at 1 SMIC",
         "metric_cost_smic": "Employer cost at 1 SMIC",
         "metric_rgdu_smic": "RGDU 2026 at 1 SMIC",
@@ -121,6 +127,7 @@ TEXT = {
         "profile_label": "Profil salarié",
 	"status_label": "Statut salarié",
 	"territory_label": "Régime territorial",
+	"download_csv": "Télécharger les données de simulation (CSV)",
 	"atmp_label": "Scénario AT/MP",
         "purpose_title": "Objectif",
         "purpose_text": (
@@ -139,15 +146,18 @@ TEXT = {
             "l’API Mon-entreprise / URSSAF. L’objectif n’est pas de reproduire une fiche de paie complète, "
             "mais d’isoler des indicateurs économiquement interprétables de formation du coût du travail."
         ),
-        "methodology_points": [
-            "<strong>Source.</strong> Les calculs sont obtenus à partir de l’API publique Mon-entreprise / URSSAF.",
-            "<strong>Grille salariale.</strong> Les salaires bruts mensuels sont exprimés en multiples du SMIC brut mensuel, de 0,8 à 3,5 SMIC.",
-            "<strong>Profils.</strong> Le tableau de bord compare plusieurs profils salariés, notamment selon le statut cadre/non-cadre et le régime Alsace-Moselle.",
-	    "<strong>Taux effectif de cotisations employeur.</strong> Le taux affiché dans le graphique ne correspond pas au barème légal brut de cotisations patronales. Il s’agit d’un taux apparent après 		    allègements de charges, calculé comme cotisations employeur nettes rapportées au salaire brut.",
-            "<strong>Indicateurs.</strong> Coût employeur, salaire net, cotisations employeur, cotisations salarié, RGDU 2026, coin social et ratio coût/net sont dérivés des sorties de l’API.",
-            "<strong>Indicateurs marginaux.</strong> Le taux marginal de coût employeur est calculé par différence finie entre deux points adjacents de la grille : Δ coût employeur / Δ salaire brut.",
-            "<strong>Limites.</strong> Les résultats peuvent varier selon la taille de l’entreprise, le taux AT/MP, la convention collective, le statut cadre, les exonérations et les régimes spécifiques."
-        ],
+	"methodology_points": [
+    		"<strong>Source.</strong> Les calculs sont obtenus à partir de l’API publique Mon-entreprise / URSSAF.",
+    		"<strong>Grille salariale.</strong> Les salaires bruts mensuels sont exprimés en multiples du SMIC brut mensuel, de 0,8 à 3,5 SMIC, avec un pas de 0,01 SMIC.",
+    		"<strong>Simulation combinatoire.</strong> L’utilisateur peut combiner trois dimensions : statut salarié, régime territorial et scénario de risque AT/MP.",
+    		"<strong>Statut salarié.</strong> La dimension de statut distingue les salariés non-cadres et cadres.",
+    		"<strong>Régime territorial.</strong> La dimension territoriale distingue le régime général du régime Alsace-Moselle.",
+    		"<strong>Scénarios AT/MP.</strong> La dimension AT/MP doit être interprétée comme un scénario de taux de risque, et non comme une profession ou un secteur précis. Les taux explicites, par exemple 1 % ou 4 %, sont directement transmis au moteur Mon-		entreprise. Le scénario fonctions support repose sur une règle signalée comme expérimentale par l’API.",
+    		"<strong>Indicateurs.</strong> Coût employeur, salaire net, cotisations employeur, cotisations salarié, RGDU 2026, coin social et ratio coût/net sont dérivés des sorties de l’API.",
+    		"<strong>Taux effectif de cotisations employeur.</strong> Le taux affiché dans le graphique ne correspond pas au barème légal brut de cotisations patronales. Il s’agit d’un taux apparent après allègements de charges, calculé comme cotisations employeur 		nettes rapportées au salaire brut.",
+    		"<strong>Indicateurs marginaux.</strong> Le taux marginal de coût employeur est calculé par différence finie entre deux points adjacents de la grille : Δ coût employeur / Δ salaire brut.",
+    		"<strong>Limites.</strong> Les résultats sont des simulations de référence, non des calculs officiels de fiche de paie. Ils peuvent varier selon la taille de l’entreprise, les conventions collectives, la classification AT/MP précise, les exonérations et 		les régimes spécifiques."
+	],
         "metric_net_smic": "Salaire net à 1 SMIC",
         "metric_cost_smic": "Coût employeur à 1 SMIC",
         "metric_rgdu_smic": "RGDU 2026 à 1 SMIC",
@@ -850,6 +860,11 @@ def build_language_section(df, lang: str, updated_at: str):
                 <h2>{t["purpose_title"]}</h2>
                 <p>{t["purpose_text"]}</p>
                 <div class="method-box">{t["method_note"]}</div>
+		<div class="download-row">
+    			<a class="download-link" href="data/labour_cost_grid_mon_entreprise.csv" download>
+        			{t["download_csv"]}
+    			</a>
+		</div>
 
                 <div class="profile-selector profile-selector-grid">
                     <div class="selector-field">
@@ -1125,6 +1140,8 @@ def main():
 """
 
     DOCS_DIR.mkdir(parents=True, exist_ok=True)
+    DOCS_DATA_DIR.mkdir(parents=True, exist_ok=True)
+    df.to_csv(DOCS_DATA_PATH, index=False, encoding="utf-8-sig")
     OUTPUT_PATH.write_text(html, encoding="utf-8")
     print(f"Dashboard created: {OUTPUT_PATH}")
 
