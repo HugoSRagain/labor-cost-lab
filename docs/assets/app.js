@@ -650,51 +650,226 @@ function renderTotalLevyChart(data, lang) {
     plot("chart-total-levy-" + lang, traces, layout);
 }
 
-const INCOME_TAX_2026_BRACKETS = [
-    { threshold: 0, rate: 0.00 },
-    { threshold: 11600, rate: 0.11 },
-    { threshold: 29579, rate: 0.30 },
-    { threshold: 84577, rate: 0.41 },
-    { threshold: 181917, rate: 0.45 }
-];
+const INCOME_TAX_2026_PARAMETERS = {
+    year: 2026,
+    incomeYear: 2025,
 
-function computeProgressiveIncomeTax2026(taxableIncome, parts = 1) {
-    const safeParts = Math.max(1, num(parts));
-    const incomePerPart = Math.max(0, num(taxableIncome) / safeParts);
+    /*
+        Official 2026 income tax schedule for 2025 income.
+        Thresholds are expressed per tax unit.
+    */
+    brackets: [
+        { threshold: 0, rate: 0.00 },
+        { threshold: 11600, rate: 0.11 },
+        { threshold: 29579, rate: 0.30 },
+        { threshold: 84577, rate: 0.41 },
+        { threshold: 181917, rate: 0.45 }
+    ],
 
-    let taxPerPart = 0;
+    /*
+        Decote for 2026 taxation of 2025 income.
+        Individual taxation: decote = 897 - 45.25% × gross tax,
+        if gross tax is below the eligibility ceiling.
+        Joint taxation: decote = 1483 - 45.25% × gross tax,
+        if gross tax is below the eligibility ceiling.
+    */
+    decote: {
+        individualCeiling: 1982,
+        jointCeiling: 3277,
+        individualFixedAmount: 897,
+        jointFixedAmount: 1483,
+        rate: 0.4525
+    },
 
-    for (let i = 0; i < INCOME_TAX_2026_BRACKETS.length; i++) {
-        const current = INCOME_TAX_2026_BRACKETS[i];
-        const next = INCOME_TAX_2026_BRACKETS[i + 1];
+    /*
+        Low tax recovery threshold.
+        In practice, income tax below this amount is not collected.
+        This is included as a conservative public-finance convention.
+    */
+    minimumRecoveryAmount: 61
+};
+
+const DEFAULT_FISCAL_PROFILE = {
+    label: "single_one_part",
+    maritalStatus: "single",
+    taxUnits: 1,
+    standardAllowanceRate: 0.10,
+    minimumStandardAllowance: 0,
+    maximumStandardAllowance: Infinity,
+    otherTaxableIncomeAnnual: 0,
+    applyDecote: true,
+    applyMinimumRecoveryThreshold: true
+};
+
+function clampNumber(value, minValue = -Infinity, maxValue = Infinity) {
+    const safeValue = num(value);
+
+    return Math.min(Math.max(safeValue, minValue), maxValue);
+}
+
+function computeProfessionalAllowance(annualNetWage, fiscalProfile = DEFAULT_FISCAL_PROFILE) {
+    const allowanceRate = clampNumber(fiscalProfile.standardAllowanceRate ?? 0.10, 0, 1);
+    const minimumAllowance = Math.max(0, num(fiscalProfile.minimumStandardAllowance ?? 0));
+    const maximumAllowance = fiscalProfile.maximumStandardAllowance === Infinity
+        ? Infinity
+        : Math.max(0, num(fiscalProfile.maximumStandardAllowance ?? Infinity));
+
+    const proportionalAllowance = Math.max(0, num(annualNetWage)) * allowanceRate;
+
+    return Math.min(
+        Math.max(proportionalAllowance, minimumAllowance),
+        maximumAllowance
+    );
+}
+
+function computeTaxableEmploymentIncomeFromNetAnnual(annualNetWage, fiscalProfile = DEFAULT_FISCAL_PROFILE) {
+    const safeAnnualNetWage = Math.max(0, num(annualNetWage));
+    const allowance = computeProfessionalAllowance(safeAnnualNetWage, fiscalProfile);
+
+    return Math.max(0, safeAnnualNetWage - allowance);
+}
+
+function computeProgressiveIncomeTaxFromTaxableIncome(taxableIncome, fiscalProfile = DEFAULT_FISCAL_PROFILE) {
+    const parameters = INCOME_TAX_2026_PARAMETERS;
+    const taxUnits = Math.max(1, num(fiscalProfile.taxUnits ?? 1));
+    const taxableIncomePerUnit = Math.max(0, num(taxableIncome)) / taxUnits;
+
+    let taxPerUnit = 0;
+    let marginalRate = 0;
+
+    for (let i = 0; i < parameters.brackets.length; i++) {
+        const current = parameters.brackets[i];
+        const next = parameters.brackets[i + 1];
 
         const lower = current.threshold;
         const upper = next ? next.threshold : Infinity;
 
-        if (incomePerPart > lower) {
-            const taxableSlice = Math.min(incomePerPart, upper) - lower;
-            taxPerPart += taxableSlice * current.rate;
+        if (taxableIncomePerUnit > lower) {
+            const taxableSlice = Math.min(taxableIncomePerUnit, upper) - lower;
+            taxPerUnit += taxableSlice * current.rate;
+            marginalRate = current.rate;
         }
     }
 
-    return taxPerPart * safeParts;
+    return {
+        grossTax: taxPerUnit * taxUnits,
+        taxableIncomePerUnit,
+        marginalRate
+    };
+}
+
+function computeIncomeTaxDecote(grossTax, fiscalProfile = DEFAULT_FISCAL_PROFILE) {
+    if (!fiscalProfile.applyDecote) {
+        return 0;
+    }
+
+    const parameters = INCOME_TAX_2026_PARAMETERS.decote;
+    const safeGrossTax = Math.max(0, num(grossTax));
+    const isJointTaxation = fiscalProfile.maritalStatus === "couple";
+
+    const ceiling = isJointTaxation
+        ? parameters.jointCeiling
+        : parameters.individualCeiling;
+
+    const fixedAmount = isJointTaxation
+        ? parameters.jointFixedAmount
+        : parameters.individualFixedAmount;
+
+    if (safeGrossTax <= 0 || safeGrossTax >= ceiling) {
+        return 0;
+    }
+
+    return Math.min(
+        safeGrossTax,
+        Math.max(0, fixedAmount - parameters.rate * safeGrossTax)
+    );
+}
+
+function applyMinimumRecoveryThreshold(incomeTaxAfterDecote, fiscalProfile = DEFAULT_FISCAL_PROFILE) {
+    const tax = Math.max(0, num(incomeTaxAfterDecote));
+
+    if (!fiscalProfile.applyMinimumRecoveryThreshold) {
+        return tax;
+    }
+
+    const threshold = INCOME_TAX_2026_PARAMETERS.minimumRecoveryAmount;
+
+    return tax < threshold ? 0 : tax;
+}
+
+function computeReferenceIncomeTaxFromNetAnnual(annualNetWage, fiscalProfile = DEFAULT_FISCAL_PROFILE) {
+    const safeAnnualNetWage = Math.max(0, num(annualNetWage));
+    const otherTaxableIncome = Math.max(0, num(fiscalProfile.otherTaxableIncomeAnnual ?? 0));
+
+    const taxableEmploymentIncome =
+        computeTaxableEmploymentIncomeFromNetAnnual(safeAnnualNetWage, fiscalProfile);
+
+    const totalTaxableIncome = taxableEmploymentIncome + otherTaxableIncome;
+
+    const progressiveTax =
+        computeProgressiveIncomeTaxFromTaxableIncome(totalTaxableIncome, fiscalProfile);
+
+    const grossTax = progressiveTax.grossTax;
+    const decote = computeIncomeTaxDecote(grossTax, fiscalProfile);
+    const taxAfterDecote = Math.max(0, grossTax - decote);
+    const netTax = applyMinimumRecoveryThreshold(taxAfterDecote, fiscalProfile);
+
+    return {
+        annualNetWage: safeAnnualNetWage,
+        taxableEmploymentIncome,
+        otherTaxableIncome,
+        totalTaxableIncome,
+        taxUnits: Math.max(1, num(fiscalProfile.taxUnits ?? 1)),
+        taxableIncomePerUnit: progressiveTax.taxableIncomePerUnit,
+        marginalRate: progressiveTax.marginalRate,
+        grossTax,
+        decote,
+        taxAfterDecote,
+        netTax,
+        averageTaxRateOnNetWage: safeAnnualNetWage > 0
+            ? netTax / safeAnnualNetWage
+            : 0,
+        disposableIncomeAnnual: safeAnnualNetWage - netTax
+    };
+}
+
+function computeReferenceIncomeTaxFromNetMonthly(netMonthly, fiscalProfile = DEFAULT_FISCAL_PROFILE) {
+    return computeReferenceIncomeTaxFromNetAnnual(
+        num(netMonthly) * 12,
+        fiscalProfile
+    );
 }
 
 function computeSimplifiedAnnualIncomeTaxFromNetMonthly(netMonthly) {
-    const annualNet = num(netMonthly) * 12;
-
     /*
-        Simplified fiscal scenario:
+        Backward-compatible function used by the dashboard charts.
+
+        Reference fiscal scenario:
         - single taxpayer;
         - 1 tax unit;
-        - no other income;
-        - no tax credits or reductions;
-        - 10% professional-expense allowance approximated from annual net wage.
-        This is not an official income-tax simulation.
-    */
-    const taxableIncome = annualNet * 0.90;
+        - employee with no other income;
+        - 10% standard professional-expense allowance;
+        - 2026 income tax schedule on 2025 income;
+        - decote included;
+        - minimum recovery threshold included;
+        - no tax credits, reductions, real expenses or additional income.
 
-    return computeProgressiveIncomeTax2026(taxableIncome, 1);
+        This is an indicative reference-case tax simulation,
+        not an official tax assessment.
+    */
+    return computeReferenceIncomeTaxFromNetMonthly(
+        netMonthly,
+        DEFAULT_FISCAL_PROFILE
+    ).netTax;
+}
+
+function computeAnnualDisposableIncomeFromNetMonthly(netMonthly) {
+    const result = computeReferenceIncomeTaxFromNetMonthly(
+        netMonthly,
+        DEFAULT_FISCAL_PROFILE
+    );
+
+    return result.disposableIncomeAnnual;
 }
 
 function computeAnnualDisposableIncomeFromNetMonthly(netMonthly) {
@@ -704,13 +879,111 @@ function computeAnnualDisposableIncomeFromNetMonthly(netMonthly) {
     return annualNet - annualTax;
 }
 
+const ACTIVITY_BENEFIT_2026_PARAMETERS = {
+    /*
+        Prime d’activité — scénario indicatif 2026.
+
+        Reference scenario:
+        - single person;
+        - no children;
+        - no other income;
+        - no housing benefit;
+        - no forfait logement applied by default;
+        - monthly earned income approximated by net monthly wage.
+
+        Formula:
+        prime = forfait + 59.85% * earned income + individual bonus - household resources
+
+        With no other income and no housing forfait:
+        prime = forfait + bonus - 40.15% * earned income
+
+        This is an indicative approximation, not an official CAF simulation.
+    */
+    forfaitSingleMonthly: 638.28,
+    earnedIncomeShare: 0.5985,
+    bonusLowerBoundMonthly: 709.18,
+    bonusUpperBoundMonthly: 1658.76,
+    bonusMaxMonthly: 240.63,
+    housingForfaitSingleMonthly: 76.59
+};
+
+const DEFAULT_ACTIVITY_BENEFIT_PROFILE = {
+    label: "single_no_child_no_housing_benefit",
+    householdType: "single",
+    applyHousingForfait: false,
+    otherMonthlyResources: 0
+};
+
+function computeActivityBenefitIndividualBonus2026(earnedIncomeMonthly) {
+    const p = ACTIVITY_BENEFIT_2026_PARAMETERS;
+    const income = Math.max(0, num(earnedIncomeMonthly));
+
+    if (income < p.bonusLowerBoundMonthly) {
+        return 0;
+    }
+
+    if (income >= p.bonusUpperBoundMonthly) {
+        return p.bonusMaxMonthly;
+    }
+
+    const progress =
+        (income - p.bonusLowerBoundMonthly) /
+        (p.bonusUpperBoundMonthly - p.bonusLowerBoundMonthly);
+
+    return p.bonusMaxMonthly * progress;
+}
+
+function computeEstimatedActivityBenefitMonthly(
+    netMonthly,
+    activityProfile = DEFAULT_ACTIVITY_BENEFIT_PROFILE
+) {
+    const p = ACTIVITY_BENEFIT_2026_PARAMETERS;
+    const earnedIncome = Math.max(0, num(netMonthly));
+    const otherResources = Math.max(0, num(activityProfile.otherMonthlyResources ?? 0));
+
+    const housingForfait = activityProfile.applyHousingForfait
+        ? p.housingForfaitSingleMonthly
+        : 0;
+
+    const individualBonus =
+        computeActivityBenefitIndividualBonus2026(earnedIncome);
+
+    const theoreticalBenefit =
+        p.forfaitSingleMonthly
+        + p.earnedIncomeShare * earnedIncome
+        + individualBonus
+        - earnedIncome
+        - otherResources
+        - housingForfait;
+
+    return Math.max(0, theoreticalBenefit);
+}
+
+function computeEstimatedSocioFiscalDisposableIncomeAnnual(
+    netMonthly,
+    fiscalProfile = DEFAULT_FISCAL_PROFILE,
+    activityProfile = DEFAULT_ACTIVITY_BENEFIT_PROFILE
+) {
+    const annualNet = num(netMonthly) * 12;
+
+    const incomeTax = computeReferenceIncomeTaxFromNetMonthly(
+        netMonthly,
+        fiscalProfile
+    ).netTax;
+
+    const activityBenefitAnnual =
+        computeEstimatedActivityBenefitMonthly(netMonthly, activityProfile) * 12;
+
+    return annualNet - incomeTax + activityBenefitAnnual;
+}
+
 function renderNetGrossReturnChart(data, lang) {
     const t = getText(lang);
 
     const x = [];
     const beforeIncomeTaxReturn = [];
-    const afterIncomeTaxReturn = [];
-    const incomeTaxBite = [];
+    const afterSocioFiscalReturn = [];
+    const socioFiscalBite = [];
     const totalMarginalLevy = [];
 
     for (let i = 1; i < data.length; i++) {
@@ -721,24 +994,24 @@ function renderNetGrossReturnChart(data, lang) {
             num(data[i].net_monthly_eur) - num(data[i - 1].net_monthly_eur);
 
         const disposableAnnualCurrent =
-            computeAnnualDisposableIncomeFromNetMonthly(data[i].net_monthly_eur);
+            computeEstimatedSocioFiscalDisposableIncomeAnnual(data[i].net_monthly_eur);
 
         const disposableAnnualPrevious =
-            computeAnnualDisposableIncomeFromNetMonthly(data[i - 1].net_monthly_eur);
+            computeEstimatedSocioFiscalDisposableIncomeAnnual(data[i - 1].net_monthly_eur);
 
         const deltaDisposableMonthly =
             (disposableAnnualCurrent - disposableAnnualPrevious) / 12;
 
         if (deltaGrossMonthly !== 0) {
             const beforeIR = (deltaNetMonthly / deltaGrossMonthly) * 100;
-            const afterIR = (deltaDisposableMonthly / deltaGrossMonthly) * 100;
-            const irBite = beforeIR - afterIR;
-            const totalLevy = 100 - afterIR;
+            const afterSocioFiscal = (deltaDisposableMonthly / deltaGrossMonthly) * 100;
+            const bite = beforeIR - afterSocioFiscal;
+            const totalLevy = 100 - afterSocioFiscal;
 
             x.push(num(data[i].smic_multiple));
             beforeIncomeTaxReturn.push(beforeIR);
-            afterIncomeTaxReturn.push(afterIR);
-            incomeTaxBite.push(irBite);
+            afterSocioFiscalReturn.push(afterSocioFiscal);
+            socioFiscalBite.push(bite);
             totalMarginalLevy.push(totalLevy);
         }
     }
@@ -760,9 +1033,11 @@ function renderNetGrossReturnChart(data, lang) {
         },
         {
             x,
-            y: afterIncomeTaxReturn,
+            y: afterSocioFiscalReturn,
             mode: "lines",
-            name: lang === "fr" ? "Après IR" : "After PIT",
+            name: lang === "fr"
+                ? "Après IR + prime d’activité estimée"
+                : "After PIT + estimated in-work benefit",
             line: {
                 color: COLORS.blue,
                 width: 3
@@ -774,9 +1049,11 @@ function renderNetGrossReturnChart(data, lang) {
         },
         {
             x,
-            y: incomeTaxBite,
+            y: socioFiscalBite,
             mode: "lines",
-            name: lang === "fr" ? "Effet marginal IR" : "Marginal PIT effect",
+            name: lang === "fr"
+                ? "Effet marginal socio-fiscal"
+                : "Marginal socio-fiscal effect",
             line: {
                 color: COLORS.red,
                 width: 2.5,
@@ -791,7 +1068,9 @@ function renderNetGrossReturnChart(data, lang) {
             x,
             y: totalMarginalLevy,
             mode: "lines",
-            name: lang === "fr" ? "Prélèvement marginal total" : "Total marginal levy",
+            name: lang === "fr"
+                ? "Prélèvement marginal total estimé"
+                : "Estimated total marginal levy",
             line: {
                 color: COLORS.purple,
                 width: 2.5,
@@ -815,13 +1094,13 @@ function renderNetGrossReturnChart(data, lang) {
         lang
     );
 
-    layout.height = 520;
+    layout.height = 540;
 
     layout.margin = {
         l: 78,
         r: 36,
         t: 34,
-        b: 125
+        b: 135
     };
 
     layout.xaxis.title = {
@@ -832,7 +1111,7 @@ function renderNetGrossReturnChart(data, lang) {
     };
 
     layout.yaxis.ticksuffix = "%";
-    layout.yaxis.range = [0, 100];
+    layout.yaxis.range = [-60, 140];
 
     layout.legend = {
         orientation: "h",

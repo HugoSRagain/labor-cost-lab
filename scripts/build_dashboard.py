@@ -134,10 +134,11 @@ TEXT = {
         "chart_marginal_subtitle": "This chart shows how employer cost and net wage react locally to an additional euro of gross wage.",
 	"chart_total_levy_title": "Total contribution rate on labour",
         "chart_total_levy_subtitle": "Employee and employer contributions expressed as a share of total employer cost.",
-        "chart_net_gross_return_title": "Disposable return of a gross wage increase",
+        "chart_net_gross_return_title": "Socio-fiscal return of a gross wage increase",
 	"chart_net_gross_return_subtitle": (
-    		"Share of one additional euro of gross wage converted into disposable income, "
-    		"before and after personal income tax. Simplified tax scenario: single taxpayer, 1 tax unit, no other income."
+    		"Share of one additional euro of gross wage converted into disposable income after "
+    		"employee contributions, estimated personal income tax and estimated in-work benefit. "
+    		"Reference scenario: single taxpayer, 1 tax unit, no other income, no housing benefit."
 	),
         "employer_cost": "Employer cost",
         "net_wage": "Net wage",
@@ -297,10 +298,11 @@ TEXT = {
         "chart_marginal_subtitle": "Ce graphique montre comment le coût employeur et le salaire net réagissent localement à un euro supplémentaire de salaire brut.",
 	"chart_total_levy_title": "Taux de prélèvement total sur le travail",
         "chart_total_levy_subtitle": "Cotisations salarié et employeur rapportées au coût total employeur.",
-        "chart_net_gross_return_title": "Rendement disponible d’une hausse de salaire brut",
+        "chart_net_gross_return_title": "Rendement socio-fiscal d’une hausse de salaire brut",
 	"chart_net_gross_return_subtitle": (
-    		"Part d’un euro supplémentaire de salaire brut qui se transforme en revenu disponible, "
-    		"avant et après impôt sur le revenu. Scénario fiscal simplifié : célibataire, 1 part, sans autre revenu."
+    		"Part d’un euro supplémentaire de salaire brut qui se transforme en revenu disponible "
+    		"après cotisations salariées, impôt sur le revenu estimé et prime d’activité estimée. "
+    		"Scénario de référence : célibataire, 1 part, sans autre revenu, sans aide au logement."
 	),
         "employer_cost": "Coût employeur",
         "net_wage": "Salaire net",
