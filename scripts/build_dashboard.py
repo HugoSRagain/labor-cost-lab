@@ -132,6 +132,13 @@ TEXT = {
         "chart_ratio_subtitle": "This ratio summarizes how many euros the employer pays for one euro of net wage.",
         "chart_marginal_title": "Marginal cost of gross wage increases",
         "chart_marginal_subtitle": "This chart shows how employer cost and net wage react locally to an additional euro of gross wage.",
+	"chart_total_levy_title": "Total contribution rate on labour",
+        "chart_total_levy_subtitle": "Employee and employer contributions expressed as a share of total employer cost.",
+        "chart_net_gross_return_title": "Disposable return of a gross wage increase",
+	"chart_net_gross_return_subtitle": (
+    		"Share of one additional euro of gross wage converted into disposable income, "
+    		"before and after personal income tax. Simplified tax scenario: single taxpayer, 1 tax unit, no other income."
+	),
         "employer_cost": "Employer cost",
         "net_wage": "Net wage",
         "gross_wage": "Gross wage",
@@ -276,6 +283,13 @@ TEXT = {
         "chart_ratio_subtitle": "Ce ratio indique combien l’employeur paie pour un euro de salaire net.",
         "chart_marginal_title": "Coût marginal des hausses de salaire brut",
         "chart_marginal_subtitle": "Ce graphique montre comment le coût employeur et le salaire net réagissent localement à un euro supplémentaire de salaire brut.",
+	"chart_total_levy_title": "Taux de prélèvement total sur le travail",
+        "chart_total_levy_subtitle": "Cotisations salarié et employeur rapportées au coût total employeur.",
+        "chart_net_gross_return_title": "Rendement disponible d’une hausse de salaire brut",
+	"chart_net_gross_return_subtitle": (
+    		"Part d’un euro supplémentaire de salaire brut qui se transforme en revenu disponible, "
+    		"avant et après impôt sur le revenu. Scénario fiscal simplifié : célibataire, 1 part, sans autre revenu."
+	),
         "employer_cost": "Coût employeur",
         "net_wage": "Salaire net",
         "gross_wage": "Salaire brut",
@@ -1917,7 +1931,7 @@ def main():
     english_section = build_language_section(df, "en", updated_at)
     french_section = build_language_section(df, "fr", updated_at)
 
-html = f"""<!DOCTYPE html>
+    html = f"""<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -1925,7 +1939,7 @@ html = f"""<!DOCTYPE html>
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <link rel="stylesheet" href="assets/style.css?v=12">
-    <script defer src="assets/app.js?v=1"></script>
+    <script defer src="assets/app.js?v=7"></script>
 </head>
 <body>
     {english_section}
@@ -1934,114 +1948,6 @@ html = f"""<!DOCTYPE html>
     <script>
         function safeId(value) {{
             return String(value).replaceAll(" ", "_").replaceAll("-", "_");
-        }}
-
-        function setLanguage(lang) {{
-            const enSection = document.getElementById("section-en");
-            const frSection = document.getElementById("section-fr");
-
-            enSection.classList.remove("active");
-            frSection.classList.remove("active");
-
-            if (lang === "fr") {{
-                frSection.classList.add("active");
-                document.documentElement.lang = "fr";
-            }} else {{
-                enSection.classList.add("active");
-                document.documentElement.lang = "en";
-            }}
-
-            localStorage.setItem("flcl_language", lang);
-
-            const selectedProfile = restoreCombinatorialSelectors(lang);
-            showProfile(lang, selectedProfile);
-            showComparison(lang);
-            showStatusComparison(lang);
-            showTerritoryComparison(lang);
-            syncDataSelectorsFromSimulation(lang);
-            showDataPanel(lang);
-            showDecomposition(lang);
-	    showMetricsPanel(lang);
-            restoreTab(lang);
-        }}
-
-        function showDecomposition(lang) {{
-            const profileId = getSelectedCombinatorialProfile(lang);
-            const wageSelect = document.getElementById("decomposition-wage-select-" + lang);
-
-            if (wageSelect && !wageSelect.value) {{
-                wageSelect.value = "2_00";
-            }}
-
-            const wageKey = wageSelect ? wageSelect.value : "2_00";
-
-            const panels = document.querySelectorAll("#decomposition-panels-" + lang + " .decomposition-panel");
-
-            panels.forEach(function(panel) {{
-                panel.classList.remove("active");
-            }});
-
-            const target = document.getElementById(
-                "decomposition-" + lang + "-" + safeId(profileId) + "-" + wageKey
-            );
-
-            if (target) {{
-                target.classList.add("active");
-            }} else if (panels.length > 0) {{
-                panels[0].classList.add("active");
-            }}
-
-            setTimeout(function() {{
-                window.dispatchEvent(new Event("resize"));
-            }}, 200);
-        }}
-
-        function showMetricsPanel(lang) {{
-            const profileId = getSelectedCombinatorialProfile(lang);
-
-            const panels = document.querySelectorAll("#metrics-panels-" + lang + " .metrics-panel");
-
-            panels.forEach(function(panel) {{
-                panel.classList.remove("active");
-            }});
-
-            const target = document.getElementById("metrics-" + lang + "-" + safeId(profileId));
-
-            if (target) {{
-                target.classList.add("active");
-            }} else if (panels.length > 0) {{
-                panels[0].classList.add("active");
-            }}
-        }}
-
-        function showDataPanel(lang) {{
-            let profileId;
-
-            const dataStatus = document.getElementById("data-status-select-" + lang);
-
-            if (dataStatus) {{
-                profileId = getSelectedDataProfile(lang);
-            }} else {{
-                profileId = getSelectedCombinatorialProfile(lang);
-            }}
-
-            const panels = document.querySelectorAll("#data-panels-" + lang + " .data-panel");
-            panels.forEach(function(panel) {{
-                panel.classList.remove("active");
-            }});
-
-            const target = document.getElementById("data-panel-" + lang + "-" + safeId(profileId));
-
-            if (target) {{
-                target.classList.add("active");
-            }} else if (panels.length > 0) {{
-                panels[0].classList.add("active");
-            }}
-        }}
-
-        function switchLanguage() {{
-            const current = localStorage.getItem("flcl_language") || "en";
-            setLanguage(current === "en" ? "fr" : "en");
         }}
 
         function getSelectedCombinatorialProfile(lang) {{
@@ -2058,6 +1964,30 @@ html = f"""<!DOCTYPE html>
             const atmp = document.getElementById("data-atmp-select-" + lang).value;
 
             return status + "__" + territory + "__" + atmp;
+        }}
+
+        function restoreCombinatorialSelectors(lang) {{
+            const statusSelect = document.getElementById("status-select-" + lang);
+            const territorySelect = document.getElementById("territory-select-" + lang);
+            const atmpSelect = document.getElementById("atmp-select-" + lang);
+
+            const savedStatus = localStorage.getItem("flcl_status_" + lang);
+            const savedTerritory = localStorage.getItem("flcl_territory_" + lang);
+            const savedAtmp = localStorage.getItem("flcl_atmp_" + lang);
+
+            if (savedStatus && statusSelect.querySelector('option[value="' + savedStatus + '"]')) {{
+                statusSelect.value = savedStatus;
+            }}
+
+            if (savedTerritory && territorySelect.querySelector('option[value="' + savedTerritory + '"]')) {{
+                territorySelect.value = savedTerritory;
+            }}
+
+            if (savedAtmp && atmpSelect.querySelector('option[value="' + savedAtmp + '"]')) {{
+                atmpSelect.value = savedAtmp;
+            }}
+
+            return getSelectedCombinatorialProfile(lang);
         }}
 
         function syncDataSelectorsFromSimulation(lang) {{
@@ -2096,84 +2026,29 @@ html = f"""<!DOCTYPE html>
             localStorage.setItem("flcl_atmp_" + lang, atmp);
         }}
 
-        function switchDataCombinatorialProfile(lang) {{
-            syncSimulationSelectorsFromData(lang);
-
-            const profileId = getSelectedDataProfile(lang);
-
-            showProfile(lang, profileId);
-            showComparison(lang);
-            showStatusComparison(lang);
-            showTerritoryComparison(lang);
-            showDataPanel(lang);
-            showDecomposition(lang);
-	    showMetricsPanel(lang);
-        }}
-
-        function switchCombinatorialProfile(lang) {{
-            const profileId = getSelectedCombinatorialProfile(lang);
-
-            localStorage.setItem("flcl_status_" + lang, document.getElementById("status-select-" + lang).value);
-            localStorage.setItem("flcl_territory_" + lang, document.getElementById("territory-select-" + lang).value);
-            localStorage.setItem("flcl_atmp_" + lang, document.getElementById("atmp-select-" + lang).value);
-
-            showProfile(lang, profileId);
-            showComparison(lang);
-            showStatusComparison(lang);
-            showTerritoryComparison(lang);
-            syncDataSelectorsFromSimulation(lang);
-            showDataPanel(lang);
-            showDecomposition(lang);
-	    showMetricsPanel(lang);
-        }}
-
-        function restoreCombinatorialSelectors(lang) {{
-            const statusSelect = document.getElementById("status-select-" + lang);
-            const territorySelect = document.getElementById("territory-select-" + lang);
-            const atmpSelect = document.getElementById("atmp-select-" + lang);
-
-            const savedStatus = localStorage.getItem("flcl_status_" + lang);
-            const savedTerritory = localStorage.getItem("flcl_territory_" + lang);
-            const savedAtmp = localStorage.getItem("flcl_atmp_" + lang);
-
-            if (savedStatus && statusSelect.querySelector('option[value="' + savedStatus + '"]')) {{
-                statusSelect.value = savedStatus;
-            }}
-
-            if (savedTerritory && territorySelect.querySelector('option[value="' + savedTerritory + '"]')) {{
-                territorySelect.value = savedTerritory;
-            }}
-
-            if (savedAtmp && atmpSelect.querySelector('option[value="' + savedAtmp + '"]')) {{
-                atmpSelect.value = savedAtmp;
-            }}
-
-            return getSelectedCombinatorialProfile(lang);
-        }}
-
         function showProfile(lang, profileId) {{
             const panels = document.querySelectorAll("#profile-panels-" + lang + " .profile-panel");
-            panels.forEach(panel => panel.classList.remove("active"));
 
-            const target = document.getElementById("panel-" + lang + "-" + safeId(profileId));
+            panels.forEach(function(panel) {{
+                panel.classList.remove("active");
+            }});
 
-            if (target) {{
-                target.classList.add("active");
-            }} else {{
-                const section = document.getElementById("section-" + lang);
-                const defaultProfile = section.dataset.defaultProfile;
-                const fallback = document.getElementById("panel-" + lang + "-" + safeId(defaultProfile));
+            const directTarget = document.getElementById("panel-" + lang);
+            const oldTarget = document.getElementById("panel-" + lang + "-" + safeId(profileId));
 
-                if (fallback) {{
-                    fallback.classList.add("active");
-                }}
+            if (directTarget) {{
+                directTarget.classList.add("active");
+            }} else if (oldTarget) {{
+                oldTarget.classList.add("active");
+            }} else if (panels.length > 0) {{
+                panels[0].classList.add("active");
             }}
 
             setTimeout(function() {{
                 window.dispatchEvent(new Event("resize"));
             }}, 150);
         }}
-	
+
         function showComparison(lang) {{
             const panels = document.querySelectorAll("#comparison-panels-" + lang + " .comparison-panel");
 
@@ -2234,99 +2109,88 @@ html = f"""<!DOCTYPE html>
             }}, 200);
         }}
 
-
         function showTerritoryComparison(lang) {{
             return;
         }}
 
-        function updatePlotlyTheme(theme) {{
-            const isDark = theme === "dark";
+        function showDataPanel(lang) {{
+            let profileId;
 
-            const axisColor = isDark ? "#e5e7eb" : "#111827";
-            const gridColor = isDark ? "#374151" : "#d1d5db";
-            const paperColor = isDark ? "#111827" : "#ffffff";
-            const plotColor = isDark ? "#111827" : "#ffffff";
+            const dataStatus = document.getElementById("data-status-select-" + lang);
 
-            const layoutUpdate = {{
-                "paper_bgcolor": paperColor,
-                "plot_bgcolor": plotColor,
-                "font.color": axisColor,
-
-                "legend.bgcolor": "rgba(0,0,0,0)",
-                "legend.font.color": axisColor,
-
-                "xaxis.color": axisColor,
-                "xaxis.gridcolor": gridColor,
-                "xaxis.zerolinecolor": gridColor,
-                "xaxis.linecolor": axisColor,
-                "xaxis.tickfont.color": axisColor,
-                "xaxis.title.font.color": axisColor,
-
-                "yaxis.color": axisColor,
-                "yaxis.gridcolor": gridColor,
-                "yaxis.zerolinecolor": gridColor,
-                "yaxis.linecolor": axisColor,
-                "yaxis.tickfont.color": axisColor,
-                "yaxis.title.font.color": axisColor,
-
-                "yaxis2.color": axisColor,
-                "yaxis2.gridcolor": gridColor,
-                "yaxis2.zerolinecolor": gridColor,
-                "yaxis2.linecolor": axisColor,
-                "yaxis2.tickfont.color": axisColor,
-                "yaxis2.title.font.color": axisColor,
-
-                /*
-                Important : on réaffirme ces paramètres pour ne pas casser
-                l'axe droit du graphique RGDU.
-                */
-                "yaxis2.overlaying": "y",
-                "yaxis2.side": "right",
-                "yaxis2.showgrid": false
-            }};
-
-            const plots = document.querySelectorAll(".js-plotly-plot");
-
-            plots.forEach(function(plot) {{
-                Plotly.relayout(plot, layoutUpdate);
-            }});
-        }}
-
-        function applyTheme(theme) {{
-            if (theme === "dark") {{
-                document.body.classList.add("dark-mode");
+            if (dataStatus) {{
+                profileId = getSelectedDataProfile(lang);
             }} else {{
-                document.body.classList.remove("dark-mode");
+                profileId = getSelectedCombinatorialProfile(lang);
             }}
 
-            localStorage.setItem("flcl_theme", theme);
-            updateThemeButtons(theme);
-            updatePlotlyTheme(theme);
+            const panels = document.querySelectorAll("#data-panels-" + lang + " .data-panel");
 
-            setTimeout(function() {{
-                window.dispatchEvent(new Event("resize"));
-            }}, 150);
-        }}
-
-        function toggleTheme() {{
-            const current = localStorage.getItem("flcl_theme") || "light";
-            applyTheme(current === "light" ? "dark" : "light");
-        }}
-
-        function updateThemeButtons(theme) {{
-            const buttons = document.querySelectorAll(".theme-toggle");
-
-            buttons.forEach(function(button) {{
-                if (theme === "dark") {{
-                    button.textContent = "☀️";
-                    button.title = "Light mode";
-                    button.setAttribute("aria-label", "Light mode");
-                }} else {{
-                    button.textContent = "🌙";
-                    button.title = "Dark mode";
-                    button.setAttribute("aria-label", "Dark mode");
-                }}
+            panels.forEach(function(panel) {{
+                panel.classList.remove("active");
             }});
+
+            const target = document.getElementById("data-panel-" + lang + "-" + safeId(profileId));
+
+            if (target) {{
+                target.classList.add("active");
+            }} else if (panels.length > 0) {{
+                panels[0].classList.add("active");
+            }}
+        }}
+
+        function showMetricsPanel(lang) {{
+            const profileId = getSelectedCombinatorialProfile(lang);
+            const panels = document.querySelectorAll("#metrics-panels-" + lang + " .metrics-panel");
+
+            panels.forEach(function(panel) {{
+                panel.classList.remove("active");
+            }});
+
+            const target = document.getElementById("metrics-" + lang + "-" + safeId(profileId));
+
+            if (target) {{
+                target.classList.add("active");
+            }} else if (panels.length > 0) {{
+                panels[0].classList.add("active");
+            }}
+        }}
+
+        function switchCombinatorialProfile(lang) {{
+            const profileId = getSelectedCombinatorialProfile(lang);
+
+            localStorage.setItem("flcl_status_" + lang, document.getElementById("status-select-" + lang).value);
+            localStorage.setItem("flcl_territory_" + lang, document.getElementById("territory-select-" + lang).value);
+            localStorage.setItem("flcl_atmp_" + lang, document.getElementById("atmp-select-" + lang).value);
+
+            showProfile(lang, profileId);
+            showComparison(lang);
+            showStatusComparison(lang);
+            showTerritoryComparison(lang);
+            syncDataSelectorsFromSimulation(lang);
+            showDataPanel(lang);
+            showMetricsPanel(lang);
+
+            if (typeof renderSimulation === "function") {{
+                renderSimulation(lang);
+            }}
+        }}
+
+        function switchDataCombinatorialProfile(lang) {{
+            syncSimulationSelectorsFromData(lang);
+
+            const profileId = getSelectedDataProfile(lang);
+
+            showProfile(lang, profileId);
+            showComparison(lang);
+            showStatusComparison(lang);
+            showTerritoryComparison(lang);
+            showDataPanel(lang);
+            showMetricsPanel(lang);
+
+            if (typeof renderSimulation === "function") {{
+                renderSimulation(lang);
+            }}
         }}
 
         function showTab(lang, tabName) {{
@@ -2356,6 +2220,12 @@ html = f"""<!DOCTYPE html>
 
             localStorage.setItem("flcl_tab_" + lang, tabName);
 
+            if (tabName === "simulation" && typeof renderSimulation === "function") {{
+                setTimeout(function() {{
+                    renderSimulation(lang);
+                }}, 150);
+            }}
+
             setTimeout(function() {{
                 window.dispatchEvent(new Event("resize"));
             }}, 150);
@@ -2365,19 +2235,125 @@ html = f"""<!DOCTYPE html>
             const savedTab = localStorage.getItem("flcl_tab_" + lang) || "simulation";
             showTab(lang, savedTab);
         }}
+
+        function switchLanguage() {{
+            const current = localStorage.getItem("flcl_language") || "fr";
+            setLanguage(current === "fr" ? "en" : "fr");
+        }}
+
+        function updateThemeButtons(theme) {{
+            const buttons = document.querySelectorAll(".theme-toggle");
+
+            buttons.forEach(function(button) {{
+                if (theme === "dark") {{
+                    button.textContent = "☀️";
+                    button.title = "Light mode";
+                    button.setAttribute("aria-label", "Light mode");
+                }} else {{
+                    button.textContent = "🌙";
+                    button.title = "Dark mode";
+                    button.setAttribute("aria-label", "Dark mode");
+                }}
+            }});
+        }}
+
+        function updatePlotlyTheme(theme) {{
+            if (typeof Plotly === "undefined") {{
+                return;
+            }}
+
+            const isDark = theme === "dark";
+            const axisColor = isDark ? "#e5e7eb" : "#111827";
+            const gridColor = isDark ? "#374151" : "#d1d5db";
+            const paperColor = isDark ? "#111827" : "#ffffff";
+            const plotColor = isDark ? "#111827" : "#ffffff";
+
+            const layoutUpdate = {{
+                "paper_bgcolor": paperColor,
+                "plot_bgcolor": plotColor,
+                "font.color": axisColor,
+                "legend.bgcolor": "rgba(0,0,0,0)",
+                "legend.font.color": axisColor,
+                "xaxis.color": axisColor,
+                "xaxis.gridcolor": gridColor,
+                "xaxis.zerolinecolor": gridColor,
+                "yaxis.color": axisColor,
+                "yaxis.gridcolor": gridColor,
+                "yaxis.zerolinecolor": gridColor,
+                "yaxis2.color": axisColor,
+                "yaxis2.gridcolor": gridColor,
+                "yaxis2.zerolinecolor": gridColor,
+                "yaxis2.overlaying": "y",
+                "yaxis2.side": "right",
+                "yaxis2.showgrid": false
+            }};
+
+            document.querySelectorAll(".js-plotly-plot").forEach(function(plot) {{
+                Plotly.relayout(plot, layoutUpdate);
+            }});
+        }}
+
+        function applyTheme(theme) {{
+            if (theme === "dark") {{
+                document.body.classList.add("dark-mode");
+            }} else {{
+                document.body.classList.remove("dark-mode");
+            }}
+
+            localStorage.setItem("flcl_theme", theme);
+            updateThemeButtons(theme);
+            updatePlotlyTheme(theme);
+
+            setTimeout(function() {{
+                window.dispatchEvent(new Event("resize"));
+            }}, 150);
+        }}
+
+        function toggleTheme() {{
+            const current = localStorage.getItem("flcl_theme") || "light";
+            applyTheme(current === "light" ? "dark" : "light");
+        }}
+
+        function setLanguage(lang) {{
+            const enSection = document.getElementById("section-en");
+            const frSection = document.getElementById("section-fr");
+
+            enSection.classList.remove("active");
+            frSection.classList.remove("active");
+
+            if (lang === "fr") {{
+                frSection.classList.add("active");
+                document.documentElement.lang = "fr";
+            }} else {{
+                enSection.classList.add("active");
+                document.documentElement.lang = "en";
+            }}
+
+            localStorage.setItem("flcl_language", lang);
+
+            const selectedProfile = restoreCombinatorialSelectors(lang);
+
+            showProfile(lang, selectedProfile);
+            showComparison(lang);
+            showStatusComparison(lang);
+            showTerritoryComparison(lang);
+            syncDataSelectorsFromSimulation(lang);
+            showDataPanel(lang);
+            showMetricsPanel(lang);
+            restoreTab(lang);
+
+            if (typeof renderSimulation === "function") {{
+                setTimeout(function() {{
+                    renderSimulation(lang);
+                }}, 300);
+            }}
+        }}
+
         const savedTheme = localStorage.getItem("flcl_theme") || "light";
         applyTheme(savedTheme);
 
         const savedLanguage = localStorage.getItem("flcl_language") || "fr";
         setLanguage(savedLanguage);
-
-        setTimeout(function() {{
-            showComparison(savedLanguage);
-            showStatusComparison(savedLanguage);
-            showTerritoryComparison(savedLanguage);
-            showDecomposition(savedLanguage);
-            showMetricsPanel(savedLanguage);
-        }}, 300);
     </script>
 </body>
 </html>
@@ -2392,4 +2368,3 @@ html = f"""<!DOCTYPE html>
 
 if __name__ == "__main__":
     main()
-
