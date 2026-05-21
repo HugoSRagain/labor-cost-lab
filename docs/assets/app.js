@@ -1501,6 +1501,170 @@ function renderComparisons(lang = getActiveLanguage()) {
     renderStatusComparisonGap(lang);
 }
 
+function maxAbs(values) {
+    if (!values.length) {
+        return 0;
+    }
+
+    return Math.max(...values.map(value => Math.abs(num(value))));
+}
+
+function meanAbs(values) {
+    if (!values.length) {
+        return 0;
+    }
+
+    const total = values.reduce((sum, value) => sum + Math.abs(num(value)), 0);
+    return total / values.length;
+}
+
+function formatCheckError(value, unit) {
+    const safeValue = Math.abs(num(value));
+
+    if (unit === "pct") {
+        return safeValue.toFixed(4) + " pt";
+    }
+
+    if (safeValue < 0.01) {
+        return "< 0,01 €";
+    }
+
+    return safeValue.toFixed(2).replace(".", ",") + " €";
+}
+
+function renderConsistencyChecks(lang = getActiveLanguage()) {
+    const target = document.getElementById("consistency-checks-" + lang);
+
+    if (!target) {
+        return;
+    }
+
+    const rows = DATA.filter(row => row.profile_id);
+
+    if (!rows.length) {
+        target.innerHTML = "";
+        return;
+    }
+
+    const netErrors = rows.map(row =>
+        num(row.gross_monthly_eur)
+        - num(row.employee_contributions_monthly_eur)
+        - num(row.net_monthly_eur)
+    );
+
+    const employerCostErrors = rows.map(row =>
+        num(row.gross_monthly_eur)
+        + num(row.employer_contributions_monthly_eur)
+        - num(row.employer_cost_monthly_eur)
+    );
+
+    const wedgeErrors = rows.map(row =>
+        num(row.employer_cost_monthly_eur)
+        - num(row.net_monthly_eur)
+        - num(row.social_wedge_monthly_eur)
+    );
+
+    const ratioErrors = rows.map(row => {
+        const net = num(row.net_monthly_eur);
+        const expected = net > 0
+            ? num(row.employer_cost_monthly_eur) / net
+            : 0;
+
+        return expected - num(row.cost_to_net_ratio);
+    });
+
+    const rgduRateErrors = rows.map(row => {
+        const gross = num(row.gross_monthly_eur);
+        const expected = gross > 0
+            ? num(row.rgdu_monthly_eur) / gross
+            : 0;
+
+        return expected - num(row.rgdu_rate_gross);
+    });
+
+    const checks = [
+        {
+            label: lang === "fr"
+                ? "Salaire net = salaire brut - cotisations salarié"
+                : "Net wage = gross wage - employee contributions",
+            maxError: maxAbs(netErrors),
+            meanError: meanAbs(netErrors),
+            unit: "eur"
+        },
+        {
+            label: lang === "fr"
+                ? "Coût employeur = salaire brut + cotisations employeur"
+                : "Employer cost = gross wage + employer contributions",
+            maxError: maxAbs(employerCostErrors),
+            meanError: meanAbs(employerCostErrors),
+            unit: "eur"
+        },
+        {
+            label: lang === "fr"
+                ? "Coin social = coût employeur - salaire net"
+                : "Social wedge = employer cost - net wage",
+            maxError: maxAbs(wedgeErrors),
+            meanError: meanAbs(wedgeErrors),
+            unit: "eur"
+        },
+        {
+            label: lang === "fr"
+                ? "Ratio coût/net = coût employeur / salaire net"
+                : "Cost/net ratio = employer cost / net wage",
+            maxError: maxAbs(ratioErrors),
+            meanError: meanAbs(ratioErrors),
+            unit: "ratio"
+        },
+        {
+            label: lang === "fr"
+                ? "Taux RGDU/brut = RGDU / salaire brut"
+                : "RGDU/gross rate = RGDU / gross wage",
+            maxError: maxAbs(rgduRateErrors) * 100,
+            meanError: meanAbs(rgduRateErrors) * 100,
+            unit: "pct"
+        }
+    ];
+
+    target.innerHTML = checks.map(check => {
+        const ok = check.unit === "ratio"
+            ? check.maxError < 0.0001
+            : check.unit === "pct"
+                ? check.maxError < 0.001
+                : check.maxError < 0.05;
+
+        const statusLabel = ok
+            ? (lang === "fr" ? "OK" : "OK")
+            : (lang === "fr" ? "À vérifier" : "Check");
+
+        const statusClass = ok ? "ok" : "warning";
+
+        const maxError = check.unit === "ratio"
+            ? check.maxError.toFixed(6)
+            : formatCheckError(check.maxError, check.unit);
+
+        const meanError = check.unit === "ratio"
+            ? check.meanError.toFixed(6)
+            : formatCheckError(check.meanError, check.unit);
+
+        return `
+            <div class="consistency-card">
+                <div class="consistency-status ${statusClass}">${statusLabel}</div>
+                <div class="consistency-label">${check.label}</div>
+                <div class="consistency-values">
+                    <div>
+                        <span>${lang === "fr" ? "Erreur max." : "Max error"}</span>
+                        <strong>${maxError}</strong>
+                    </div>
+                    <div>
+                        <span>${lang === "fr" ? "Erreur moyenne" : "Mean error"}</span>
+                        <strong>${meanError}</strong>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
 function updateAll(lang = getActiveLanguage()) {
     currentLanguage = lang;
     currentTab = localStorage.getItem("flcl_tab_" + lang) || currentTab || "simulation";
@@ -1515,6 +1679,9 @@ function updateAll(lang = getActiveLanguage()) {
 
     if (currentTab === "comparisons") {
         renderComparisons(lang);
+    }
+    if (currentTab === "methodology") {
+    	renderConsistencyChecks(lang);
     }
 }
 

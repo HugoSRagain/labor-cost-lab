@@ -166,6 +166,11 @@ TEXT = {
         "marginal_net_retention": "Δ net wage / Δ employer cost",
         "monthly": "Monthly",
         "annual": "Annual",
+	"consistency_title": "Internal consistency checks",
+	"consistency_intro": (
+    		"These checks verify that the main derived indicators satisfy the expected accounting "
+    		"identities over the full simulated dataset."
+	),
         "monthly_amount": "Monthly amount",
         "annual_amount": "Annual amount",
         "y_monthly_rgdu": "Monthly relief amount, euros",
@@ -324,6 +329,11 @@ TEXT = {
         "marginal_net_retention": "Δ salaire net / Δ coût employeur",
         "monthly": "Mensuel",
         "annual": "Annuel",
+	"consistency_title": "Contrôles de cohérence interne",
+	"consistency_intro": (
+    		"Ces contrôles vérifient que les principaux indicateurs dérivés respectent les identités "
+    		"comptables attendues sur l’ensemble du jeu de données simulé."
+	),
         "monthly_amount": "Montant mensuel",
         "annual_amount": "Montant annuel",
         "y_monthly_rgdu": "Montant mensuel d’allègement, euros",
@@ -1933,6 +1943,13 @@ def build_language_section(df, lang: str, updated_at: str):
                     <h2>{t["methodology_title"]}</h2>
                     {methodology_html}
                 </section>
+
+                <section>
+                    <h2>{t["consistency_title"]}</h2>
+                    <p class="interpretation">{t["consistency_intro"]}</p>
+
+                    <div id="consistency-checks-{lang}" class="consistency-checks-grid"></div>
+                </section>
             </div>
 
             <div class="tab-panel" id="tab-{lang}-working-paper">
@@ -2289,6 +2306,12 @@ def main():
             if (tabName === "comparisons" && typeof renderComparisons === "function") {{
                 setTimeout(function() {{
                     renderComparisons(lang);
+                }}, 150);
+            }}
+
+            if (tabName === "methodology" && typeof renderConsistencyChecks === "function") {{
+                setTimeout(function() {{
+                    renderConsistencyChecks(lang);
                 }}, 150);
             }}
 

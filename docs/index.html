@@ -710,6 +710,13 @@
     </ul>
     
                 </section>
+
+                <section>
+                    <h2>Internal consistency checks</h2>
+                    <p class="interpretation">These checks verify that the main derived indicators satisfy the expected accounting identities over the full simulated dataset.</p>
+
+                    <div id="consistency-checks-en" class="consistency-checks-grid"></div>
+                </section>
             </div>
 
             <div class="tab-panel" id="tab-en-working-paper">
@@ -742,7 +749,7 @@
             </div>
         </main>
 
-        <footer>Last updated: 2026-05-21 15:06</footer>
+        <footer>Last updated: 2026-05-21 15:24</footer>
     </div>
     
     
@@ -1446,6 +1453,13 @@
     </ul>
     
                 </section>
+
+                <section>
+                    <h2>Contrôles de cohérence interne</h2>
+                    <p class="interpretation">Ces contrôles vérifient que les principaux indicateurs dérivés respectent les identités comptables attendues sur l’ensemble du jeu de données simulé.</p>
+
+                    <div id="consistency-checks-fr" class="consistency-checks-grid"></div>
+                </section>
             </div>
 
             <div class="tab-panel" id="tab-fr-working-paper">
@@ -1478,7 +1492,7 @@
             </div>
         </main>
 
-        <footer>Dernière mise à jour: 2026-05-21 15:06</footer>
+        <footer>Dernière mise à jour: 2026-05-21 15:24</footer>
     </div>
     
 
@@ -1766,6 +1780,12 @@
             if (tabName === "comparisons" && typeof renderComparisons === "function") {
                 setTimeout(function() {
                     renderComparisons(lang);
+                }, 150);
+            }
+
+            if (tabName === "methodology" && typeof renderConsistencyChecks === "function") {
+                setTimeout(function() {
+                    renderConsistencyChecks(lang);
                 }, 150);
             }
 
