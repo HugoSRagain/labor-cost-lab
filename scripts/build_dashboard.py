@@ -152,6 +152,13 @@ TEXT = {
 	"decomp_effective_cost": "Effective employer cost",
         "social_wedge_rate": "Social wedge rate",
         "cost_net_ratio": "Cost / net ratio",
+	"tab_working_paper": "Working Paper",
+        "working_paper_title": "Working Paper",
+        "working_paper_intro": (
+            "This working paper documents the French Labour Cost Lab, its methodology, "
+            "indicators, internal consistency checks and limitations."
+        ),
+        "working_paper_download": "Download the working paper (PDF)",
         "rgdu": "RGDU 2026",
         "rgdu_rate": "RGDU / gross wage",
         "rgdu_zone": "RGDU 2026<br>degressive area",
@@ -303,6 +310,13 @@ TEXT = {
 	"decomp_effective_cost": "Coût employeur effectif",
         "social_wedge_rate": "Taux de coin social",
         "cost_net_ratio": "Ratio coût / net",
+	"tab_working_paper": "Working Paper",
+        "working_paper_title": "Working Paper",
+        "working_paper_intro": (
+            "Ce working paper documente le French Labour Cost Lab, sa méthodologie, "
+            "ses indicateurs, ses contrôles de cohérence interne et ses limites."
+        ),
+        "working_paper_download": "Télécharger le working paper (PDF)",
         "rgdu": "RGDU 2026",
         "rgdu_rate": "RGDU / salaire brut",
         "rgdu_zone": "RGDU 2026<br>zone dégressive",
@@ -1767,6 +1781,7 @@ def build_language_section(df, lang: str, updated_at: str):
                 <button class="tab-button" data-tab="comparisons" onclick="showTab('{lang}', 'comparisons')">{t["tab_comparisons"]}</button>
                 <button class="tab-button" data-tab="data" onclick="showTab('{lang}', 'data')">{t["tab_data"]}</button>
                 <button class="tab-button" data-tab="methodology" onclick="showTab('{lang}', 'methodology')">{t["tab_methodology"]}</button>
+                <button class="tab-button" data-tab="working-paper" onclick="showTab('{lang}', 'working-paper')">{t["tab_working_paper"]}</button>
             </nav>
 
             <div class="tab-panel active" id="tab-{lang}-simulation">
@@ -1907,6 +1922,36 @@ def build_language_section(df, lang: str, updated_at: str):
 
         <footer>{t["footer"]}: {updated_at}</footer>
     </div>
+
+            <div class="tab-panel" id="tab-{lang}-working-paper">
+                <section class="working-paper-section">
+                    <div class="working-paper-header">
+                        <div>
+                            <h2>{t["working_paper_title"]}</h2>
+                            <p class="interpretation">{t["working_paper_intro"]}</p>
+                        </div>
+
+                        <a
+                            class="download-link working-paper-download"
+                            href="assets/french_labour_cost_lab_working_paper.pdf"
+                            download
+                        >
+                            ⬇ {t["working_paper_download"]}
+                        </a>
+                    </div>
+
+                    <div class="working-paper-card">
+                        <div class="pdf-viewer-wrapper">
+                            <iframe
+                                class="pdf-viewer"
+                                src="assets/french_labour_cost_lab_working_paper.pdf#view=FitH"
+                                title="French Labour Cost Lab Working Paper"
+                            ></iframe>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
     """
 
 
