@@ -39,8 +39,15 @@ body.dark-mode {
     --shadow-card: 0 4px 14px rgba(0, 0, 0, 0.25);
 }
 
+/* Base */
+
 * {
     box-sizing: border-box;
+}
+
+html,
+body {
+    min-height: 100%;
 }
 
 body {
@@ -49,19 +56,58 @@ body {
     min-height: 100vh;
     background: var(--bg-main);
     color: var(--text-main);
+    overflow-x: hidden;
 }
 
-/* Visibility */
+/* Visibility rules */
 
-.language-section,
-.profile-panel,
+.language-section {
+    display: none;
+}
+
+.language-section.active {
+    display: block;
+}
+
 .tab-panel {
     display: none;
 }
 
-.language-section.active,
-.profile-panel.active,
 .tab-panel.active {
+    display: block;
+}
+
+.profile-panel {
+    display: none;
+}
+
+.profile-panel.active {
+    display: block;
+}
+
+.metrics-panel {
+    display: none;
+}
+
+.metrics-panel.active {
+    display: block;
+}
+
+.data-panel {
+    display: none;
+}
+
+.data-panel.active {
+    display: block;
+}
+
+.comparison-panel,
+.status-comparison-panel {
+    display: none;
+}
+
+.comparison-panel.active,
+.status-comparison-panel.active {
     display: block;
 }
 
@@ -466,6 +512,25 @@ body.dark-mode .data-table tbody tr:hover {
     background: #1e293b;
 }
 
+.table-wrapper-full {
+    max-height: 620px;
+    overflow: auto;
+}
+
+.data-table-full {
+    min-width: 1280px;
+}
+
+.table-wrapper-full .data-table th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.data-profile-selector {
+    margin-top: 18px;
+}
+
 /* Charts */
 
 .charts-grid {
@@ -482,6 +547,10 @@ body.dark-mode .data-table tbody tr:hover {
     min-width: 0;
 }
 
+.chart-card-full {
+    width: 100%;
+}
+
 .chart-subtitle {
     margin: 0 0 12px 0;
     color: var(--text-soft);
@@ -491,6 +560,7 @@ body.dark-mode .data-table tbody tr:hover {
 
 .plotly-chart {
     width: 100%;
+    min-height: 420px;
     overflow: visible;
 }
 
@@ -524,7 +594,7 @@ body.dark-mode .modebar {
     margin-bottom: 0;
 }
 
-/* CSV download button */
+/* CSV / PDF download button */
 
 .download-row {
     margin-top: 18px;
@@ -581,172 +651,25 @@ body.dark-mode a.download-link:hover {
     border-color: #93c5fd !important;
 }
 
-/* Footer */
-
-footer {
-    text-align: center;
-    color: var(--text-soft);
-    padding: 30px;
-    font-size: 13px;
-}
-
-/* Responsive */
-
-@media (max-width: 980px) {
-    header {
-        padding: 32px 24px 36px 24px;
-        flex-direction: column;
-    }
-
-    header h1 {
-        font-size: 34px;
-    }
-
-    main {
-        margin: 24px auto 32px auto;
-        padding: 0 16px;
-    }
-
-    section {
-        padding: 22px;
-    }
-
-    .charts-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .metrics-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .profile-selector-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 620px) {
-    header p {
-        font-size: 16px;
-    }
-
-    .metrics-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .profile-selector {
-        width: 100%;
-    }
-
-    .profile-selector select {
-        min-width: 100%;
-        width: 100%;
-    }
-
-    section {
-        padding: 18px;
-    }
-
-    .tabs {
-        width: 100%;
-    }
-
-    button.tab-button {
-        flex: 1 1 auto;
-        text-align: center;
-        padding: 10px 12px;
-    }
-}
-
 /* Comparison panels */
 
-.comparison-panel {
-    display: none;
-}
-
-.comparison-panel.active {
-    display: block;
-}
-
-.chart-card-full {
-    width: 100%;
-}
-
-/* Data panels */
-
-.data-panel {
-    display: none;
-}
-
-.data-panel.active {
-    display: block;
-}
-
-.table-wrapper-full {
-    max-height: 620px;
-    overflow: auto;
-}
-
-.data-table-full {
-    min-width: 1280px;
-}
-
-.table-wrapper-full .data-table th {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-}
-.data-profile-selector {
-    margin-top: 18px;
-}
-.comparison-panel {
-    display: none;
-}
-
-.comparison-panel.active {
-    display: block;
-}
 #comparison-panels-fr .chart-card,
 #comparison-panels-en .chart-card {
     min-width: 0;
 }
-/* Comparison panels */
 
-.comparison-panel,
-.status-comparison-panel {
-    display: none;
-}
-
-.comparison-panel.active,
-.status-comparison-panel.active {
-    display: block;
-}
-/* Employer cost decomposition */
-
-.decomposition-panel {
-    display: none;
-}
-
-.decomposition-panel.active {
-    display: block;
-}
+/* Decomposition */
 
 .decomposition-selector {
     width: fit-content;
     max-width: 100%;
 }
-.metrics-panel {
-    display: none;
-}
 
-.metrics-panel.active {
-    display: block;
-}
-.decomposition-panels-wrapper {
-    margin-top: 18px;
-}
 .decomposition-chart-card {
     margin-top: 0;
 }
+
+/* Working paper */
 
 .working-paper-section {
     padding: 28px;
@@ -808,7 +731,48 @@ body.dark-mode .pdf-viewer-wrapper {
     background: #0f172a;
 }
 
-@media (max-width: 900px) {
+/* Footer */
+
+footer {
+    text-align: center;
+    color: var(--text-soft);
+    padding: 30px;
+    font-size: 13px;
+}
+
+/* Responsive */
+
+@media (max-width: 980px) {
+    header {
+        padding: 32px 24px 36px 24px;
+        flex-direction: column;
+    }
+
+    header h1 {
+        font-size: 34px;
+    }
+
+    main {
+        margin: 24px auto 32px auto;
+        padding: 0 16px;
+    }
+
+    section {
+        padding: 22px;
+    }
+
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .metrics-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .profile-selector-grid {
+        grid-template-columns: 1fr;
+    }
+
     .working-paper-section {
         padding: 18px;
     }
@@ -827,4 +791,36 @@ body.dark-mode .pdf-viewer-wrapper {
         min-height: 560px;
     }
 }
+
+@media (max-width: 620px) {
+    header p {
+        font-size: 16px;
+    }
+
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-selector {
+        width: 100%;
+    }
+
+    .profile-selector select {
+        min-width: 100%;
+        width: 100%;
+    }
+
+    section {
+        padding: 18px;
+    }
+
+    .tabs {
+        width: 100%;
+    }
+
+    button.tab-button {
+        flex: 1 1 auto;
+        text-align: center;
+        padding: 10px 12px;
+    }
 }

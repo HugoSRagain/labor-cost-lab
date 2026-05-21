@@ -1757,12 +1757,11 @@ def build_language_section(df, lang: str, updated_at: str):
     panels_html = build_profile_panel(None, "current", lang)
 
     comparison_panels_html = build_comparison_panels(df, lang)
-    data_panels_html = build_data_panels(df, lang)
     metrics_panels_html = build_metrics_panels(df, lang)
 
     return f"""
 
-    <div class="language-section" id="section-{lang}" data-default-profile="{default_profile}">
+    <div class="language-section {'active' if lang == 'fr' else ''}" id="section-{lang}" data-default-profile="{default_profile}">
         <header>
             <div>
                 <h1>{t["page_title"]}</h1>
@@ -1866,41 +1865,29 @@ def build_language_section(df, lang: str, updated_at: str):
                             class="download-link"
                             href="data/labour_cost_grid_mon_entreprise.csv"
                             download
-                            style="
-                                display: inline-flex;
-                                align-items: center;
-                                gap: 8px;
-                                padding: 10px 14px;
-                                border-radius: 6px;
-                                border: 1px solid #60a5fa;
-                                background: #1f2937;
-                                color: #f9fafb;
-                                font-size: 14px;
-                                font-weight: 700;
-                                text-decoration: none;
-                            "
                         >
                             ⬇ {t["download_csv"]}
                         </a>
                     </div>
+
                     <div class="profile-selector profile-selector-grid data-profile-selector">
                         <div class="selector-field">
                             <label for="data-status-select-{lang}">{t["status_label"]}</label>
-                            <select id="data-status-select-{lang}" onchange="switchDataCombinatorialProfile('{lang}')">
+                            <select id="data-status-select-{lang}" onchange="switchDataCombinatorialProfile('{lang}'); renderDataTable('{lang}')">
                                 {status_options}
                             </select>
                         </div>
 
                         <div class="selector-field">
                             <label for="data-territory-select-{lang}">{t["territory_label"]}</label>
-                            <select id="data-territory-select-{lang}" onchange="switchDataCombinatorialProfile('{lang}')">
+                            <select id="data-territory-select-{lang}" onchange="switchDataCombinatorialProfile('{lang}'); renderDataTable('{lang}')">
                                 {territory_options}
                             </select>
                         </div>
 
                         <div class="selector-field">
                             <label for="data-atmp-select-{lang}">{t["atmp_label"]}</label>
-                            <select id="data-atmp-select-{lang}" onchange="switchDataCombinatorialProfile('{lang}')">
+                            <select id="data-atmp-select-{lang}" onchange="switchDataCombinatorialProfile('{lang}'); renderDataTable('{lang}')">
                                 {atmp_options}
                             </select>
                         </div>
@@ -1908,7 +1895,14 @@ def build_language_section(df, lang: str, updated_at: str):
                 </section>
 
                 <div id="data-panels-{lang}">
-                    {data_panels_html}
+                    <section>
+                        <h2>{t["profile_data_title"]}</h2>
+                        <p class="interpretation" id="data-profile-label-{lang}"></p>
+
+                        <div class="table-wrapper table-wrapper-full">
+                            <table class="data-table data-table-full" id="data-table-{lang}"></table>
+                        </div>
+                    </section>
                 </div>
             </div>
 
@@ -1918,10 +1912,6 @@ def build_language_section(df, lang: str, updated_at: str):
                     {methodology_html}
                 </section>
             </div>
-        </main>
-
-        <footer>{t["footer"]}: {updated_at}</footer>
-    </div>
 
             <div class="tab-panel" id="tab-{lang}-working-paper">
                 <section class="working-paper-section">
@@ -1951,7 +1941,10 @@ def build_language_section(df, lang: str, updated_at: str):
                     </div>
                 </section>
             </div>
+        </main>
 
+        <footer>{t["footer"]}: {updated_at}</footer>
+    </div>
     """
 
 
@@ -1983,8 +1976,8 @@ def main():
     <title>French Labour Cost Lab</title>
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-    <link rel="stylesheet" href="assets/style.css?v=12">
-    <script defer src="assets/app.js?v=7"></script>
+    <link rel="stylesheet" href="assets/style.css?v=18">
+    <script defer src="assets/app.js?v=8"></script>
 </head>
 <body>
     {english_section}
@@ -2278,7 +2271,14 @@ def main():
 
         function restoreTab(lang) {{
             const savedTab = localStorage.getItem("flcl_tab_" + lang) || "simulation";
-            showTab(lang, savedTab);
+            const targetPanel = document.getElementById("tab-" + lang + "-" + savedTab);
+
+            if (targetPanel) {{
+                showTab(lang, savedTab);
+            }} else {{
+                localStorage.setItem("flcl_tab_" + lang, "simulation");
+                showTab(lang, "simulation");
+            }}
         }}
 
         function switchLanguage() {{
@@ -2362,6 +2362,11 @@ def main():
         function setLanguage(lang) {{
             const enSection = document.getElementById("section-en");
             const frSection = document.getElementById("section-fr");
+
+            if (!enSection || !frSection) {{
+                console.error("Language sections not found.");
+                return;
+            }}
 
             enSection.classList.remove("active");
             frSection.classList.remove("active");

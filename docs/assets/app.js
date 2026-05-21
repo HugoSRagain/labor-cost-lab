@@ -1060,8 +1060,103 @@ function renderSimulation(lang = getActiveLanguage()) {
     renderDecompositionChart(data, lang);
 }
 
+function formatRate(value) {
+    return (num(value) * 100).toFixed(1) + "%";
+}
+
+function formatRatio(value) {
+    return num(value).toFixed(2);
+}
+
 function renderDataTable(lang = getActiveLanguage()) {
-    return;
+    const t = getText(lang);
+    const data = getProfileData(lang);
+    const table = document.getElementById("data-table-" + lang);
+    const label = document.getElementById("data-profile-label-" + lang);
+
+    if (!table) {
+        return;
+    }
+
+    if (!data.length) {
+        table.innerHTML = "";
+        if (label) {
+            label.textContent = lang === "fr"
+                ? "Aucune donnée disponible pour ce profil."
+                : "No data available for this profile.";
+        }
+        return;
+    }
+
+    const statusSelect = getElement("status-select", lang);
+    const territorySelect = getElement("territory-select", lang);
+    const atmpSelect = getElement("atmp-select", lang);
+
+    const statusText = statusSelect && statusSelect.selectedOptions.length
+        ? statusSelect.selectedOptions[0].textContent
+        : "";
+
+    const territoryText = territorySelect && territorySelect.selectedOptions.length
+        ? territorySelect.selectedOptions[0].textContent
+        : "";
+
+    const atmpText = atmpSelect && atmpSelect.selectedOptions.length
+        ? atmpSelect.selectedOptions[0].textContent
+        : "";
+
+    if (label) {
+        label.textContent = [statusText, territoryText, atmpText]
+            .filter(Boolean)
+            .join(" — ");
+    }
+
+    const headers = [
+        "SMIC",
+        `${t.gross_wage} (€)`,
+        `${t.net_wage} (€)`,
+        `${t.employer_cost} (€)`,
+        `${t.employee_contrib} (€)`,
+        `${t.employer_contrib} (€)`,
+        `${t.rgdu} (€)`,
+        `${t.social_wedge} (€)`,
+        lang === "fr" ? "Taux salarié" : "Employee rate",
+        lang === "fr" ? "Taux employeur" : "Employer rate",
+        lang === "fr" ? "RGDU / brut" : "RGDU / gross",
+        lang === "fr" ? "Coin social" : "Social wedge",
+        t.cost_net_ratio
+    ];
+
+    const thead = `
+        <thead>
+            <tr>
+                ${headers.map(header => `<th>${header}</th>`).join("")}
+            </tr>
+        </thead>
+    `;
+
+    const tbody = `
+        <tbody>
+            ${data.map(row => `
+                <tr>
+                    <td>${num(row.smic_multiple).toFixed(2)}</td>
+                    <td>${euro(row.gross_monthly_eur)}</td>
+                    <td>${euro(row.net_monthly_eur)}</td>
+                    <td>${euro(row.employer_cost_monthly_eur)}</td>
+                    <td>${euro(row.employee_contributions_monthly_eur)}</td>
+                    <td>${euro(row.employer_contributions_monthly_eur)}</td>
+                    <td>${euro(row.rgdu_monthly_eur)}</td>
+                    <td>${euro(row.social_wedge_monthly_eur)}</td>
+                    <td>${formatRate(row.employee_contribution_rate)}</td>
+                    <td>${formatRate(row.employer_contribution_rate)}</td>
+                    <td>${formatRate(row.rgdu_rate_gross)}</td>
+                    <td>${formatRate(row.social_wedge_rate)}</td>
+                    <td>${formatRatio(row.cost_to_net_ratio)}</td>
+                </tr>
+            `).join("")}
+        </tbody>
+    `;
+
+    table.innerHTML = thead + tbody;
 }
 
 function renderComparisons(lang = getActiveLanguage()) {
