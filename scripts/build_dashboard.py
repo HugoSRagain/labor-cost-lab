@@ -1756,7 +1756,7 @@ def build_language_section(df, lang: str, updated_at: str):
 
     panels_html = build_profile_panel(None, "current", lang)
 
-    comparison_panels_html = build_comparison_panels(df, lang)
+ 
     metrics_panels_html = build_metrics_panels(df, lang)
 
     return f"""
@@ -1848,11 +1848,33 @@ def build_language_section(df, lang: str, updated_at: str):
                 <section>
                     <h2>{t["comparisons_title"]}</h2>
                     <p class="interpretation">{t["comparisons_intro"]}</p>
-                </section>
 
-                <div id="comparison-panels-{lang}">
-                    {comparison_panels_html}
-                </div>
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <h3>{t["comparison_atmp_title"]}</h3>
+                            <p class="chart-subtitle">{t["comparison_atmp_subtitle"]}</p>
+                            <div id="chart-comparison-atmp-level-{lang}" class="plotly-chart lazy-chart"></div>
+                        </div>
+
+                        <div class="chart-card">
+                            <h3>{t["comparison_atmp_gap_title"]}</h3>
+                            <p class="chart-subtitle">{t["comparison_atmp_gap_subtitle"]}</p>
+                            <div id="chart-comparison-atmp-gap-{lang}" class="plotly-chart lazy-chart"></div>
+                        </div>
+
+                        <div class="chart-card">
+                            <h3>{t["comparison_status_title"]}</h3>
+                            <p class="chart-subtitle">{t["comparison_status_subtitle"]}</p>
+                            <div id="chart-comparison-status-level-{lang}" class="plotly-chart lazy-chart"></div>
+                        </div>
+
+                        <div class="chart-card">
+                            <h3>{t["comparison_status_gap_title"]}</h3>
+                            <p class="chart-subtitle">{t["comparison_status_gap_subtitle"]}</p>
+                            <div id="chart-comparison-status-gap-{lang}" class="plotly-chart lazy-chart"></div>
+                        </div>
+                    </div>
+                </section>
             </div>
 
             <div class="tab-panel" id="tab-{lang}-data">
@@ -2261,6 +2283,12 @@ def main():
             if (tabName === "simulation" && typeof renderSimulation === "function") {{
                 setTimeout(function() {{
                     renderSimulation(lang);
+                }}, 150);
+            }}
+
+            if (tabName === "comparisons" && typeof renderComparisons === "function") {{
+                setTimeout(function() {{
+                    renderComparisons(lang);
                 }}, 150);
             }}
 

@@ -1159,8 +1159,346 @@ function renderDataTable(lang = getActiveLanguage()) {
     table.innerHTML = thead + tbody;
 }
 
+function getComparisonLabels(lang) {
+    return {
+        atmp: {
+            standard: lang === "fr" ? "AT/MP standard" : "Standard AT/MP",
+            atmp_1: "AT/MP 1 %",
+            atmp_4: "AT/MP 4 %",
+            fonctions_support: lang === "fr" ? "Fonctions support" : "Support functions"
+        },
+        status: {
+            non_cadre: lang === "fr" ? "Non-cadre" : "Non-executive",
+            cadre: lang === "fr" ? "Cadre" : "Executive"
+        }
+    };
+}
+
+function getComparisonColors() {
+    return {
+        standard: COLORS.blue,
+        atmp_1: COLORS.green,
+        atmp_4: COLORS.red,
+        fonctions_support: COLORS.purple,
+        non_cadre: COLORS.blue,
+        cadre: COLORS.orange
+    };
+}
+
+function renderAtmpComparisonLevel(lang) {
+    const t = getText(lang);
+    const profile = getSelectedProfile(lang);
+    const labels = getComparisonLabels(lang);
+    const colors = getComparisonColors();
+
+    const atmpValues = ["standard", "atmp_1", "atmp_4", "fonctions_support"];
+
+    const traces = atmpValues.map(atmp => {
+        const lineData = DATA
+            .filter(row =>
+                row.dimension_status === profile.status &&
+                row.dimension_territory === profile.territory &&
+                row.dimension_atmp === atmp
+            )
+            .sort((a, b) => num(a.smic_multiple) - num(b.smic_multiple));
+
+        return {
+            x: lineData.map(d => num(d.smic_multiple)),
+            y: lineData.map(d => num(d.employer_cost_monthly_eur)),
+            mode: "lines",
+            name: labels.atmp[atmp] || atmp,
+            line: {
+                color: colors[atmp] || COLORS.blue,
+                width: 3
+            },
+            customdata: lineData.map(d => [
+                num(d.gross_monthly_eur),
+                num(d.net_monthly_eur),
+                num(d.employer_contributions_monthly_eur),
+                num(d.rgdu_monthly_eur)
+            ]),
+            hovertemplate:
+                "<b>%{x:.2f}× SMIC</b><br>" +
+                `${t.gross_wage}: %{customdata[0]:,.0f} €<br>` +
+                `${t.net_wage}: %{customdata[1]:,.0f} €<br>` +
+                `${t.employer_cost}: %{y:,.0f} €<br>` +
+                `${t.employer_contrib}: %{customdata[2]:,.0f} €<br>` +
+                `${t.rgdu}: %{customdata[3]:,.0f} €` +
+                "<extra></extra>",
+            type: "scatter"
+        };
+    }).filter(trace => trace.x.length > 0);
+
+    const layout = addRgduZone(baseLayout(lang, t.y_amount), lang);
+    layout.height = 460;
+    layout.margin.b = 95;
+    layout.yaxis.ticksuffix = " €";
+    layout.legend.y = -0.22;
+
+    plot("chart-comparison-atmp-level-" + lang, traces, layout);
+}
+
+function renderAtmpComparisonGap(lang) {
+    const t = getText(lang);
+    const profile = getSelectedProfile(lang);
+    const labels = getComparisonLabels(lang);
+    const colors = getComparisonColors();
+
+    const standardData = DATA
+        .filter(row =>
+            row.dimension_status === profile.status &&
+            row.dimension_territory === profile.territory &&
+            row.dimension_atmp === "standard"
+        )
+        .sort((a, b) => num(a.smic_multiple) - num(b.smic_multiple));
+
+    const standardMap = new Map(
+        standardData.map(row => [
+            num(row.smic_multiple).toFixed(2),
+            num(row.employer_cost_monthly_eur)
+        ])
+    );
+
+    const atmpValues = ["atmp_1", "atmp_4", "fonctions_support"];
+
+    const traces = atmpValues.map(atmp => {
+        const lineData = DATA
+            .filter(row =>
+                row.dimension_status === profile.status &&
+                row.dimension_territory === profile.territory &&
+                row.dimension_atmp === atmp
+            )
+            .sort((a, b) => num(a.smic_multiple) - num(b.smic_multiple));
+
+        const x = [];
+        const y = [];
+        const customdata = [];
+
+        lineData.forEach(d => {
+            const key = num(d.smic_multiple).toFixed(2);
+            const standardCost = standardMap.get(key);
+
+            if (standardCost !== undefined) {
+                const employerCost = num(d.employer_cost_monthly_eur);
+                const gap = employerCost - standardCost;
+
+                x.push(num(d.smic_multiple));
+                y.push(gap);
+                customdata.push([
+                    num(d.gross_monthly_eur),
+                    employerCost,
+                    standardCost,
+                    gap
+                ]);
+            }
+        });
+
+        return {
+            x,
+            y,
+            customdata,
+            mode: "lines",
+            name: labels.atmp[atmp] || atmp,
+            line: {
+                color: colors[atmp] || COLORS.blue,
+                width: 3
+            },
+            hovertemplate:
+                "<b>%{x:.2f}× SMIC</b><br>" +
+                `${t.gross_wage}: %{customdata[0]:,.0f} €<br>` +
+                `${t.employer_cost}: %{customdata[1]:,.0f} €<br>` +
+                `${labels.atmp.standard}: %{customdata[2]:,.0f} €<br>` +
+                `${lang === "fr" ? "Écart" : "Gap"}: %{customdata[3]:,.0f} €` +
+                "<extra></extra>",
+            type: "scatter"
+        };
+    }).filter(trace => trace.x.length > 0);
+
+    const layout = addRgduZone(baseLayout(lang, lang === "fr" ? "Écart de coût employeur" : "Employer cost gap"), lang);
+    layout.height = 460;
+    layout.margin.b = 95;
+    layout.yaxis.ticksuffix = " €";
+    layout.legend.y = -0.22;
+    layout.shapes = layout.shapes || [];
+    layout.shapes.push({
+        type: "line",
+        xref: "paper",
+        yref: "y",
+        x0: 0,
+        x1: 1,
+        y0: 0,
+        y1: 0,
+        line: {
+            color: COLORS.gray,
+            dash: "dash",
+            width: 1.5
+        }
+    });
+
+    plot("chart-comparison-atmp-gap-" + lang, traces, layout);
+}
+
+function renderStatusComparisonLevel(lang) {
+    const t = getText(lang);
+    const profile = getSelectedProfile(lang);
+    const labels = getComparisonLabels(lang);
+    const colors = getComparisonColors();
+
+    const statusValues = ["non_cadre", "cadre"];
+
+    const traces = statusValues.map(status => {
+        const lineData = DATA
+            .filter(row =>
+                row.dimension_status === status &&
+                row.dimension_territory === profile.territory &&
+                row.dimension_atmp === profile.atmp
+            )
+            .sort((a, b) => num(a.smic_multiple) - num(b.smic_multiple));
+
+        return {
+            x: lineData.map(d => num(d.smic_multiple)),
+            y: lineData.map(d => num(d.employer_cost_monthly_eur)),
+            mode: "lines",
+            name: labels.status[status] || status,
+            line: {
+                color: colors[status] || COLORS.blue,
+                width: 3
+            },
+            customdata: lineData.map(d => [
+                num(d.gross_monthly_eur),
+                num(d.net_monthly_eur),
+                num(d.employer_contributions_monthly_eur),
+                num(d.rgdu_monthly_eur)
+            ]),
+            hovertemplate:
+                "<b>%{x:.2f}× SMIC</b><br>" +
+                `${t.gross_wage}: %{customdata[0]:,.0f} €<br>` +
+                `${t.net_wage}: %{customdata[1]:,.0f} €<br>` +
+                `${t.employer_cost}: %{y:,.0f} €<br>` +
+                `${t.employer_contrib}: %{customdata[2]:,.0f} €<br>` +
+                `${t.rgdu}: %{customdata[3]:,.0f} €` +
+                "<extra></extra>",
+            type: "scatter"
+        };
+    }).filter(trace => trace.x.length > 0);
+
+    const layout = addRgduZone(baseLayout(lang, t.y_amount), lang);
+    layout.height = 460;
+    layout.margin.b = 95;
+    layout.yaxis.ticksuffix = " €";
+    layout.legend.y = -0.22;
+
+    plot("chart-comparison-status-level-" + lang, traces, layout);
+}
+
+function renderStatusComparisonGap(lang) {
+    const profile = getSelectedProfile(lang);
+    const labels = getComparisonLabels(lang);
+
+    const nonCadreData = DATA
+        .filter(row =>
+            row.dimension_status === "non_cadre" &&
+            row.dimension_territory === profile.territory &&
+            row.dimension_atmp === profile.atmp
+        )
+        .sort((a, b) => num(a.smic_multiple) - num(b.smic_multiple));
+
+    const nonCadreMap = new Map(
+        nonCadreData.map(row => [
+            num(row.smic_multiple).toFixed(2),
+            num(row.employer_cost_monthly_eur)
+        ])
+    );
+
+    const cadreData = DATA
+        .filter(row =>
+            row.dimension_status === "cadre" &&
+            row.dimension_territory === profile.territory &&
+            row.dimension_atmp === profile.atmp
+        )
+        .sort((a, b) => num(a.smic_multiple) - num(b.smic_multiple));
+
+    const x = [];
+    const y = [];
+    const customdata = [];
+
+    cadreData.forEach(d => {
+        const key = num(d.smic_multiple).toFixed(2);
+        const nonCadreCost = nonCadreMap.get(key);
+
+        if (nonCadreCost !== undefined) {
+            const cadreCost = num(d.employer_cost_monthly_eur);
+            const gap = cadreCost - nonCadreCost;
+
+            x.push(num(d.smic_multiple));
+            y.push(gap);
+            customdata.push([
+                num(d.gross_monthly_eur),
+                cadreCost,
+                nonCadreCost,
+                gap
+            ]);
+        }
+    });
+
+    const traces = [
+        {
+            x,
+            y,
+            customdata,
+            mode: "lines",
+            name: lang === "fr" ? "Écart cadre - non-cadre" : "Executive cost gap",
+            line: {
+                color: COLORS.red,
+                width: 3
+            },
+            hovertemplate:
+                "<b>%{x:.2f}× SMIC</b><br>" +
+                `${lang === "fr" ? "Salaire brut" : "Gross wage"}: %{customdata[0]:,.0f} €<br>` +
+                `${labels.status.cadre}: %{customdata[1]:,.0f} €<br>` +
+                `${labels.status.non_cadre}: %{customdata[2]:,.0f} €<br>` +
+                `${lang === "fr" ? "Écart" : "Gap"}: %{customdata[3]:,.0f} €` +
+                "<extra></extra>",
+            type: "scatter"
+        }
+    ];
+
+    const layout = addRgduZone(
+        baseLayout(
+            lang,
+            lang === "fr" ? "Écart de coût employeur" : "Employer cost gap"
+        ),
+        lang
+    );
+
+    layout.height = 460;
+    layout.margin.b = 95;
+    layout.yaxis.ticksuffix = " €";
+    layout.showlegend = false;
+    layout.shapes = layout.shapes || [];
+    layout.shapes.push({
+        type: "line",
+        xref: "paper",
+        yref: "y",
+        x0: 0,
+        x1: 1,
+        y0: 0,
+        y1: 0,
+        line: {
+            color: COLORS.gray,
+            dash: "dash",
+            width: 1.5
+        }
+    });
+
+    plot("chart-comparison-status-gap-" + lang, traces, layout);
+}
+
 function renderComparisons(lang = getActiveLanguage()) {
-    return;
+    renderAtmpComparisonLevel(lang);
+    renderAtmpComparisonGap(lang);
+    renderStatusComparisonLevel(lang);
+    renderStatusComparisonGap(lang);
 }
 
 function updateAll(lang = getActiveLanguage()) {
