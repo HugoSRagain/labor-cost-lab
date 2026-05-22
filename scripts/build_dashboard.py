@@ -34,6 +34,7 @@ TEXT = {
 	"tab_simulation": "Simulation",
 	"tab_comparisons": "Comparisons",
 	"tab_data": "Data",
+	"tab_contact": "Contact",
 	"tab_methodology": "Methodology",
 	"profile_data_title": "Data for selected profile",
 	"comparisons_title": "Comparisons",
@@ -199,6 +200,7 @@ TEXT = {
 	"tab_comparisons": "Comparaisons",
 	"tab_data": "Données",
 	"tab_methodology": "Méthodologie",
+	"tab_contact": "Contact",
 	"profile_data_title": "Données du profil sélectionné",
 	"comparisons_title": "Comparaisons",
 	"comparisons_intro": "Des graphiques comparatifs seront ajoutés ici pour comparer les scénarios AT/MP, le statut salarié et les régimes territoriaux.",
@@ -1764,12 +1766,23 @@ def build_language_section(df, lang: str, updated_at: str):
     )
 
     default_profile = profiles[0]["profile_id"]
-  
-
     panels_html = build_profile_panel(None, "current", lang)
-
- 
     metrics_panels_html = build_metrics_panels(df, lang)
+
+    contact_intro = (
+        "Pour toute remarque, correction, suggestion méthodologique, proposition de source "
+        "ou demande d’échange autour du French Labour Cost Lab, vous pouvez utiliser le formulaire ci-dessous."
+        if lang == "fr"
+        else
+        "For any comment, correction, methodological suggestion, data-source proposal "
+        "or request for discussion about the French Labour Cost Lab, you can use the form below."
+    )
+
+    contact_name = "Nom" if lang == "fr" else "Name"
+    contact_email = "Adresse e-mail" if lang == "fr" else "Email address"
+    contact_subject = "Objet" if lang == "fr" else "Subject"
+    contact_message = "Message"
+    contact_send = "Envoyer" if lang == "fr" else "Send"
 
     return f"""
 
@@ -1793,6 +1806,7 @@ def build_language_section(df, lang: str, updated_at: str):
                 <button class="tab-button" data-tab="data" onclick="showTab('{lang}', 'data')">{t["tab_data"]}</button>
                 <button class="tab-button" data-tab="methodology" onclick="showTab('{lang}', 'methodology')">{t["tab_methodology"]}</button>
                 <button class="tab-button" data-tab="working-paper" onclick="showTab('{lang}', 'working-paper')">{t["tab_working_paper"]}</button>
+                <button class="tab-button" data-tab="contact" onclick="showTab('{lang}', 'contact')">{t["tab_contact"]}</button>
             </nav>
 
             <div class="tab-panel active" id="tab-{lang}-simulation">
@@ -1895,11 +1909,7 @@ def build_language_section(df, lang: str, updated_at: str):
                     <p class="interpretation">{t["data_intro"]}</p>
 
                     <div class="download-row" style="margin-top: 18px;">
-                        <a
-                            class="download-link"
-                            href="data/labour_cost_grid_mon_entreprise.csv"
-                            download
-                        >
+                        <a class="download-link" href="data/labour_cost_grid_mon_entreprise.csv" download>
                             ⬇ {t["download_csv"]}
                         </a>
                     </div>
@@ -1962,11 +1972,7 @@ def build_language_section(df, lang: str, updated_at: str):
                             <p class="interpretation">{t["working_paper_intro"]}</p>
                         </div>
 
-                        <a
-                            class="download-link working-paper-download"
-                            href="assets/french_labour_cost_lab_working_paper.pdf"
-                            download
-                        >
+                        <a class="download-link working-paper-download" href="assets/french_labour_cost_lab_working_paper.pdf" download>
                             ⬇ {t["working_paper_download"]}
                         </a>
                     </div>
@@ -1980,6 +1986,31 @@ def build_language_section(df, lang: str, updated_at: str):
                             ></iframe>
                         </div>
                     </div>
+                </section>
+            </div>
+
+            <div class="tab-panel" id="tab-{lang}-contact">
+                <section class="contact-section">
+                    <h2>Contact</h2>
+                    <p class="interpretation">{contact_intro}</p>
+
+                    <form action="https://formspree.io/f/xnjrvjlr" method="POST" class="contact-form">
+                        <input type="hidden" name="_subject" value="Nouveau message — French Labour Cost Lab">
+
+                        <label for="name-{lang}">{contact_name}</label>
+                        <input type="text" id="name-{lang}" name="name" required>
+
+                        <label for="email-{lang}">{contact_email}</label>
+                        <input type="email" id="email-{lang}" name="email" required>
+
+                        <label for="subject-{lang}">{contact_subject}</label>
+                        <input type="text" id="subject-{lang}" name="subject" required>
+
+                        <label for="message-{lang}">{contact_message}</label>
+                        <textarea id="message-{lang}" name="message" rows="7" required></textarea>
+
+                        <button type="submit" class="download-link">{contact_send}</button>
+                    </form>
                 </section>
             </div>
         </main>

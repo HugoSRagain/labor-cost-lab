@@ -31,6 +31,7 @@
                 <button class="tab-button" data-tab="data" onclick="showTab('en', 'data')">Data</button>
                 <button class="tab-button" data-tab="methodology" onclick="showTab('en', 'methodology')">Methodology</button>
                 <button class="tab-button" data-tab="working-paper" onclick="showTab('en', 'working-paper')">Working Paper</button>
+                <button class="tab-button" data-tab="contact" onclick="showTab('en', 'contact')">Contact</button>
             </nav>
 
             <div class="tab-panel active" id="tab-en-simulation">
@@ -641,11 +642,7 @@
                     <p class="interpretation">The full simulation dataset can be downloaded as a CSV file. It contains all wage points and all combinations of employee status, territorial regime and AT/MP scenarios.</p>
 
                     <div class="download-row" style="margin-top: 18px;">
-                        <a
-                            class="download-link"
-                            href="data/labour_cost_grid_mon_entreprise.csv"
-                            download
-                        >
+                        <a class="download-link" href="data/labour_cost_grid_mon_entreprise.csv" download>
                             ⬇ Download simulation dataset (CSV)
                         </a>
                     </div>
@@ -727,11 +724,7 @@
                             <p class="interpretation">This working paper documents the French Labour Cost Lab, its methodology, indicators, internal consistency checks and limitations.</p>
                         </div>
 
-                        <a
-                            class="download-link working-paper-download"
-                            href="assets/french_labour_cost_lab_working_paper.pdf"
-                            download
-                        >
+                        <a class="download-link working-paper-download" href="assets/french_labour_cost_lab_working_paper.pdf" download>
                             ⬇ Download the working paper (PDF)
                         </a>
                     </div>
@@ -747,9 +740,34 @@
                     </div>
                 </section>
             </div>
+
+            <div class="tab-panel" id="tab-en-contact">
+                <section class="contact-section">
+                    <h2>Contact</h2>
+                    <p class="interpretation">For any comment, correction, methodological suggestion, data-source proposal or request for discussion about the French Labour Cost Lab, you can use the form below.</p>
+
+                    <form action="https://formspree.io/f/xnjrvjlr" method="POST" class="contact-form">
+                        <input type="hidden" name="_subject" value="Nouveau message — French Labour Cost Lab">
+
+                        <label for="name-en">Name</label>
+                        <input type="text" id="name-en" name="name" required>
+
+                        <label for="email-en">Email address</label>
+                        <input type="email" id="email-en" name="email" required>
+
+                        <label for="subject-en">Subject</label>
+                        <input type="text" id="subject-en" name="subject" required>
+
+                        <label for="message-en">Message</label>
+                        <textarea id="message-en" name="message" rows="7" required></textarea>
+
+                        <button type="submit" class="download-link">Send</button>
+                    </form>
+                </section>
+            </div>
         </main>
 
-        <footer>Last updated: 2026-05-21 22:01</footer>
+        <footer>Last updated: 2026-05-22 15:28</footer>
     </div>
     
     
@@ -774,6 +792,7 @@
                 <button class="tab-button" data-tab="data" onclick="showTab('fr', 'data')">Données</button>
                 <button class="tab-button" data-tab="methodology" onclick="showTab('fr', 'methodology')">Méthodologie</button>
                 <button class="tab-button" data-tab="working-paper" onclick="showTab('fr', 'working-paper')">Working Paper</button>
+                <button class="tab-button" data-tab="contact" onclick="showTab('fr', 'contact')">Contact</button>
             </nav>
 
             <div class="tab-panel active" id="tab-fr-simulation">
@@ -1384,11 +1403,7 @@
                     <p class="interpretation">Le jeu de données complet peut être téléchargé au format CSV. Il contient tous les points de salaire et toutes les combinaisons de statut salarié, régime territorial et scénario AT/MP.</p>
 
                     <div class="download-row" style="margin-top: 18px;">
-                        <a
-                            class="download-link"
-                            href="data/labour_cost_grid_mon_entreprise.csv"
-                            download
-                        >
+                        <a class="download-link" href="data/labour_cost_grid_mon_entreprise.csv" download>
                             ⬇ Télécharger les données de simulation (CSV)
                         </a>
                     </div>
@@ -1470,11 +1485,7 @@
                             <p class="interpretation">Ce working paper documente le French Labour Cost Lab, sa méthodologie, ses indicateurs, ses contrôles de cohérence interne et ses limites.</p>
                         </div>
 
-                        <a
-                            class="download-link working-paper-download"
-                            href="assets/french_labour_cost_lab_working_paper.pdf"
-                            download
-                        >
+                        <a class="download-link working-paper-download" href="assets/french_labour_cost_lab_working_paper.pdf" download>
                             ⬇ Télécharger le working paper (PDF)
                         </a>
                     </div>
@@ -1490,9 +1501,34 @@
                     </div>
                 </section>
             </div>
+
+            <div class="tab-panel" id="tab-fr-contact">
+                <section class="contact-section">
+                    <h2>Contact</h2>
+                    <p class="interpretation">Pour toute remarque, correction, suggestion méthodologique, proposition de source ou demande d’échange autour du French Labour Cost Lab, vous pouvez utiliser le formulaire ci-dessous.</p>
+
+                    <form action="https://formspree.io/f/xnjrvjlr" method="POST" class="contact-form">
+                        <input type="hidden" name="_subject" value="Nouveau message — French Labour Cost Lab">
+
+                        <label for="name-fr">Nom</label>
+                        <input type="text" id="name-fr" name="name" required>
+
+                        <label for="email-fr">Adresse e-mail</label>
+                        <input type="email" id="email-fr" name="email" required>
+
+                        <label for="subject-fr">Objet</label>
+                        <input type="text" id="subject-fr" name="subject" required>
+
+                        <label for="message-fr">Message</label>
+                        <textarea id="message-fr" name="message" rows="7" required></textarea>
+
+                        <button type="submit" class="download-link">Envoyer</button>
+                    </form>
+                </section>
+            </div>
         </main>
 
-        <footer>Dernière mise à jour: 2026-05-21 22:01</footer>
+        <footer>Dernière mise à jour: 2026-05-22 15:28</footer>
     </div>
     
 
