@@ -4,6 +4,7 @@ from datetime import datetime
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.io as pio
+import json
 
 
 BASE_DIR = Path(__file__).resolve().parents[1]
@@ -12,6 +13,7 @@ DOCS_DIR = BASE_DIR / "docs"
 OUTPUT_PATH = DOCS_DIR / "index.html"
 DOCS_DATA_DIR = DOCS_DIR / "data"
 DOCS_DATA_PATH = DOCS_DATA_DIR / "labour_cost_grid_mon_entreprise.csv"
+PARAMETERS_PATH = BASE_DIR / "config" / "parameters" / "parameters_latest.json"
 
 
 COLOR_NAVY = "#0f172a"
@@ -2019,9 +2021,21 @@ def build_language_section(df, lang: str, updated_at: str):
     </div>
     """
 
+def load_parameters():
+    if not PARAMETERS_PATH.exists():
+        return {
+            "version": "unknown",
+            "effective_from": "unknown",
+            "last_updated": "unknown"
+        }
+
+    with open(PARAMETERS_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)
+
 
 def main():
     df = pd.read_csv(DATA_PATH)
+    parameters = load_parameters()
 
     if "status" in df.columns:
         df = df[df["status"] == "ok"].copy()
