@@ -2119,7 +2119,7 @@ def main():
 <head>
     <meta charset="UTF-8">
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F430KVB7BT"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-N46D6NCQJ9"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){{dataLayer.push(arguments);}}
