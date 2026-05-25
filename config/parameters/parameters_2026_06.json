@@ -1,0 +1,42 @@
+{
+  "version": "2026-06-draft",
+  "country": "FR",
+  "effective_from": "2026-06-01",
+  "last_updated": "2026-05-25",
+  "status": "draft_not_yet_active"
+  "description": "Parameter file used to document the regulatory assumptions of the French Labour Cost Lab.",
+
+  "smic": {
+    "gross_hourly_eur": null,
+    "gross_monthly_35h_eur": null,
+    "source": "À compléter"
+  },
+
+  "reliefs": {
+    "rgdu_2026": {
+      "status": "current_before_june_update",
+      "threshold_reference": "current_smic",
+      "comment": "À mettre à jour au 1er juin 2026 si le SMIC augmente et si les paramètres d’allègements sont gelés."
+    }
+  },
+
+  "pmss": {
+    "monthly_eur": null,
+    "source": "À compléter"
+  },
+
+  "atmp": {
+    "scenarios": {
+      "standard": null,
+      "atmp_1": 0.01,
+      "atmp_4": 0.04,
+      "fonctions_support": null
+    }
+  },
+
+  "notes": [
+    "Ce fichier documente les paramètres réglementaires associés aux simulations.",
+    "Les calculs restent produits par l’API Mon-entreprise / URSSAF.",
+    "Les valeurs null doivent être complétées ou vérifiées avant usage comme source de vérité."
+  ]
+}

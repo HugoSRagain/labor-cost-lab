@@ -1961,16 +1961,49 @@ def build_language_section(
             <div class="tab-panel" id="tab-{lang}-methodology">
                 <section>
                     <h2>{t["methodology_title"]}</h2>
+
                     {methodology_html}
-                </section>
 
-                <section>
-                    <h2>{t["consistency_title"]}</h2>
-                    <p class="interpretation">{t["consistency_intro"]}</p>
+                    <div class="methodology-versioning">
+                        <h3>
+                            {"Version des paramètres réglementaires" if lang == "fr" else "Regulatory parameter versioning"}
+                        </h3>
 
-                    <div id="consistency-checks-{lang}" class="consistency-checks-grid"></div>
+                        <div class="methodology-versioning-card">
+                            <p>
+                                <strong>
+                                    {"Version utilisée" if lang == "fr" else "Version used"} :
+                                </strong>
+                                {parameter_version}
+                            </p>
+
+                            <p>
+                                <strong>
+                                    {"Date d’effet" if lang == "fr" else "Effective date"} :
+                                </strong>
+                                {parameter_effective_from}
+                            </p>
+
+                            <p>
+                                <strong>
+                                    {"Source des calculs" if lang == "fr" else "Calculation source"} :
+                                </strong>
+                                {"API Mon-entreprise / URSSAF" if lang == "fr" else "Mon-entreprise / URSSAF API"}
+                            </p>
+
+                            <p class="interpretation">
+                                {
+                                    "Les simulations reposent actuellement sur les paramètres réglementaires et calculs fournis par l’API Mon-entreprise / 				     URSSAF. "
+                                    "Le système de versioning permet de documenter les hypothèses réglementaires utilisées pour chaque version du 					    dashboard."
+                                    if lang == "fr"
+                                    else
+                                    "Simulations currently rely on regulatory parameters and calculations provided by the Mon-entreprise / URSSAF API. "
+                                    "The versioning system documents the regulatory assumptions associated with each dashboard version."
+                                }
+                            </p>
+                        </div>
+                    </div>
                 </section>
-            </div>
 
             <div class="tab-panel" id="tab-{lang}-working-paper">
                 <section class="working-paper-section">

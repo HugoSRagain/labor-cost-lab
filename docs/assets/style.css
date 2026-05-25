@@ -992,3 +992,26 @@ footer {
         justify-content: center;
     }
 }
+
+.methodology-versioning {
+    margin-top: 32px;
+}
+
+.methodology-versioning-card {
+    margin-top: 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    background: #f8fafc;
+}
+
+.methodology-versioning-card p {
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+
+body.dark-mode .methodology-versioning-card {
+    background: #0f172a;
+    border-color: #374151;
+}
+}
