@@ -5,7 +5,7 @@ metadata:
   note: "Official dataset is generated through the Mon-entreprise / URSSAF API."
 
 baseline:
-  monthly_smic_gross: 1801.80
+  monthly_smic_gross: 1867.02
   min_smic_multiple: 0.8
   max_smic_multiple: 3.5
   step_smic_multiple: 0.01
