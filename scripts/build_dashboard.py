@@ -2187,8 +2187,8 @@ def main():
     <title>French Labour Cost Lab</title>
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-    <link rel="stylesheet" href="assets/style.css?v=18">
-    <script defer src="assets/app.js?v=8"></script>
+    <link rel="stylesheet" href="assets/style.css?v=19">
+    <script defer src="assets/app.js?v=9"></script>
 </head>
 <body>
     {english_section}
