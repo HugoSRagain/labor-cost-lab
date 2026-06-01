@@ -1884,9 +1884,6 @@ def build_language_section(
                     {panels_html}
                 </div>
 
-                <section>
-                    <h2>{t["waterfall_title"]}</h2>
-                    <p class="chart-subtitle">{t["waterfall_subtitle"]}</p>
 
                 <section>
                     <h2>{t["waterfall_title"]}</h2>
