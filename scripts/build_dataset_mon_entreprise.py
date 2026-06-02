@@ -18,9 +18,29 @@ BASE_EXPRESSIONS = [
     "salarié . contrat . salaire brut",
     "salarié . rémunération . net",
     "salarié . coût total employeur",
+
     "salarié . cotisations",
     "salarié . cotisations . employeur",
     "salarié . cotisations . salarié",
+
+    # Salarié
+    "salarié . cotisations . CSG-CRDS",
+    "salarié . cotisations . vieillesse . salarié",
+    "salarié . cotisations . retraite complémentaire-CEG-CET . salarié",
+
+    # Employeur
+    "salarié . cotisations . vieillesse . employeur",
+    "salarié . cotisations . retraite complémentaire-CEG-CET . employeur",
+    "salarié . cotisations . maladie . employeur",
+    "salarié . cotisations . allocations familiales",
+    "salarié . cotisations . assurance chômage",
+    "salarié . cotisations . AGS",
+    "salarié . cotisations . ATMP",
+    "salarié . cotisations . FNAL",
+    "salarié . cotisations . CSA",
+    "salarié . cotisations . formation professionnelle",
+    "salarié . cotisations . taxe d'apprentissage",
+    "salarié . cotisations . contribution au dialogue social",
 ]
 
 
@@ -255,8 +275,26 @@ def compute_indicators(result, gross_monthly, rgdu_expression=None):
     employer_contributions_api = extract_value(result, 4)
     employee_contributions_api = extract_value(result, 5)
 
+    # Detailed contribution expressions added after the 6 base expressions
+    employee_csg_crds = extract_value(result, 6)
+    employee_old_age = extract_value(result, 7)
+    employee_retirement_complementary_ceg_cet = extract_value(result, 8)
+
+    employer_old_age = extract_value(result, 9)
+    employer_retirement_complementary_ceg_cet = extract_value(result, 10)
+    employer_health = extract_value(result, 11)
+    employer_family = extract_value(result, 12)
+    employer_unemployment = extract_value(result, 13)
+    employer_ags = extract_value(result, 14)
+    employer_atmp = extract_value(result, 15)
+    employer_fnal = extract_value(result, 16)
+    employer_csa = extract_value(result, 17)
+    employer_training = extract_value(result, 18)
+    employer_apprenticeship_tax = extract_value(result, 19)
+    employer_social_dialogue = extract_value(result, 20)
+
     if rgdu_expression:
-        rgdu_monthly = extract_value(result, 6)
+        rgdu_monthly = extract_value(result, 21)
     else:
         rgdu_monthly = 0.0
 
@@ -301,6 +339,42 @@ def compute_indicators(result, gross_monthly, rgdu_expression=None):
     if rgdu_monthly is not None and employer_cost:
         rgdu_rate_employer_cost = rgdu_monthly / employer_cost
 
+    def safe(value):
+        return 0.0 if value is None else value
+
+    employee_identified = (
+        safe(employee_csg_crds)
+        + safe(employee_old_age)
+        + safe(employee_retirement_complementary_ceg_cet)
+    )
+
+    employee_other = None
+    if employee_contributions is not None:
+        employee_other = employee_contributions - employee_identified
+
+    employer_identified = (
+        safe(employer_old_age)
+        + safe(employer_retirement_complementary_ceg_cet)
+        + safe(employer_health)
+        + safe(employer_family)
+        + safe(employer_unemployment)
+        + safe(employer_ags)
+        + safe(employer_atmp)
+        + safe(employer_fnal)
+        + safe(employer_csa)
+        + safe(employer_training)
+        + safe(employer_apprenticeship_tax)
+        + safe(employer_social_dialogue)
+    )
+
+    employer_contributions_before_relief = None
+    if employer_contributions is not None:
+        employer_contributions_before_relief = employer_contributions + rgdu_monthly
+
+    employer_other = None
+    if employer_contributions_before_relief is not None:
+        employer_other = employer_contributions_before_relief - employer_identified
+
     return {
         "gross_used": gross_used,
         "net_monthly": net_monthly,
@@ -318,6 +392,27 @@ def compute_indicators(result, gross_monthly, rgdu_expression=None):
         "rgdu_monthly": rgdu_monthly,
         "rgdu_rate_gross": rgdu_rate_gross,
         "rgdu_rate_employer_cost": rgdu_rate_employer_cost,
+
+        # Detailed decomposition
+        "employee_csg_crds": employee_csg_crds,
+        "employee_old_age": employee_old_age,
+        "employee_retirement_complementary_ceg_cet": employee_retirement_complementary_ceg_cet,
+        "employee_other": employee_other,
+
+        "employer_old_age": employer_old_age,
+        "employer_retirement_complementary_ceg_cet": employer_retirement_complementary_ceg_cet,
+        "employer_health": employer_health,
+        "employer_family": employer_family,
+        "employer_unemployment": employer_unemployment,
+        "employer_ags": employer_ags,
+        "employer_atmp": employer_atmp,
+        "employer_fnal": employer_fnal,
+        "employer_csa": employer_csa,
+        "employer_training": employer_training,
+        "employer_apprenticeship_tax": employer_apprenticeship_tax,
+        "employer_social_dialogue": employer_social_dialogue,
+        "employer_other": employer_other,
+        "employer_contributions_before_relief": employer_contributions_before_relief,
     }
 
 
@@ -370,6 +465,26 @@ def make_success_row(
         "rgdu_rate_gross": safe_round(indicators["rgdu_rate_gross"], 4),
         "rgdu_rate_employer_cost": safe_round(indicators["rgdu_rate_employer_cost"], 4),
 
+        "employee_csg_crds_monthly_eur": safe_round(indicators["employee_csg_crds"], 2),
+        "employee_old_age_monthly_eur": safe_round(indicators["employee_old_age"], 2),
+        "employee_retirement_complementary_ceg_cet_monthly_eur": safe_round(indicators["employee_retirement_complementary_ceg_cet"], 2),
+        "employee_other_monthly_eur": safe_round(indicators["employee_other"], 2),
+
+        "employer_old_age_monthly_eur": safe_round(indicators["employer_old_age"], 2),
+        "employer_retirement_complementary_ceg_cet_monthly_eur": safe_round(indicators["employer_retirement_complementary_ceg_cet"], 2),
+        "employer_health_monthly_eur": safe_round(indicators["employer_health"], 2),
+        "employer_family_monthly_eur": safe_round(indicators["employer_family"], 2),
+        "employer_unemployment_monthly_eur": safe_round(indicators["employer_unemployment"], 2),
+        "employer_ags_monthly_eur": safe_round(indicators["employer_ags"], 2),
+        "employer_atmp_monthly_eur": safe_round(indicators["employer_atmp"], 2),
+        "employer_fnal_monthly_eur": safe_round(indicators["employer_fnal"], 2),
+        "employer_csa_monthly_eur": safe_round(indicators["employer_csa"], 2),
+        "employer_training_monthly_eur": safe_round(indicators["employer_training"], 2),
+        "employer_apprenticeship_tax_monthly_eur": safe_round(indicators["employer_apprenticeship_tax"], 2),
+        "employer_social_dialogue_monthly_eur": safe_round(indicators["employer_social_dialogue"], 2),
+        "employer_other_monthly_eur": safe_round(indicators["employer_other"], 2),
+        "employer_contributions_before_relief_monthly_eur": safe_round(indicators["employer_contributions_before_relief"], 2),
+
         "api_total_contributions_monthly_eur": safe_round(indicators["total_contributions_api"], 2),
         "api_employer_contributions_monthly_eur": safe_round(indicators["employer_contributions_api"], 2),
         "api_employee_contributions_monthly_eur": safe_round(indicators["employee_contributions_api"], 2),
@@ -414,6 +529,25 @@ def make_error_row(
         "cost_to_net_ratio": None,
 
         "rgdu_monthly_eur": None,
+        "employee_csg_crds_monthly_eur": None,
+        "employee_old_age_monthly_eur": None,
+        "employee_retirement_complementary_ceg_cet_monthly_eur": None,
+        "employee_other_monthly_eur": None,
+
+        "employer_old_age_monthly_eur": None,
+        "employer_retirement_complementary_ceg_cet_monthly_eur": None,
+        "employer_health_monthly_eur": None,
+        "employer_family_monthly_eur": None,
+        "employer_unemployment_monthly_eur": None,
+        "employer_ags_monthly_eur": None,
+        "employer_atmp_monthly_eur": None,
+        "employer_fnal_monthly_eur": None,
+        "employer_csa_monthly_eur": None,
+        "employer_training_monthly_eur": None,
+        "employer_apprenticeship_tax_monthly_eur": None,
+        "employer_social_dialogue_monthly_eur": None,
+        "employer_other_monthly_eur": None,
+        "employer_contributions_before_relief_monthly_eur": None,
         "rgdu_rate_gross": None,
         "rgdu_rate_employer_cost": None,
 

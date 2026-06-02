@@ -1302,7 +1302,6 @@ function renderNetGrossReturnChart(data, lang) {
 }
 
 function renderWaterfallChart(data, lang) {
-    const t = getText(lang);
     const wageSelect = getElement("waterfall-wage-select", lang);
     const targetSmic = wageSelect ? num(wageSelect.value) : 2.0;
 
@@ -1323,58 +1322,127 @@ function renderWaterfallChart(data, lang) {
     }
 
     const netWage = num(row.net_monthly_eur);
-    const employeeContrib = num(row.employee_contributions_monthly_eur);
     const grossWage = num(row.gross_monthly_eur);
-    const employerContribNet = num(row.employer_contributions_monthly_eur);
-    const rgdu = num(row.rgdu_monthly_eur);
-    const employerContribGross = employerContribNet + rgdu;
     const employerCost = num(row.employer_cost_monthly_eur);
+
+    const employeeCsgCrds = num(row.employee_csg_crds_monthly_eur);
+    const employeeOldAge = num(row.employee_old_age_monthly_eur);
+    const employeeRetirement = num(row.employee_retirement_complementary_ceg_cet_monthly_eur);
+    const employeeOther = num(row.employee_other_monthly_eur);
+
+    const employerOldAge = num(row.employer_old_age_monthly_eur);
+    const employerRetirement = num(row.employer_retirement_complementary_ceg_cet_monthly_eur);
+    const employerHealth = num(row.employer_health_monthly_eur);
+    const employerFamily = num(row.employer_family_monthly_eur);
+    const employerUnemployment = num(row.employer_unemployment_monthly_eur) + num(row.employer_ags_monthly_eur);
+    const employerAtmp = num(row.employer_atmp_monthly_eur);
+    const employerFnalCsa = num(row.employer_fnal_monthly_eur) + num(row.employer_csa_monthly_eur);
+    const employerTraining = (
+        num(row.employer_training_monthly_eur)
+        + num(row.employer_apprenticeship_tax_monthly_eur)
+        + num(row.employer_social_dialogue_monthly_eur)
+    );
+    const employerOther = num(row.employer_other_monthly_eur);
+    const rgdu = num(row.rgdu_monthly_eur);
+
+    const labels = lang === "fr"
+        ? [
+            "Salaire net",
+            "CSG-CRDS",
+            "Vieillesse salarié",
+            "Retraite compl. salarié",
+            "Autres cotisations salarié",
+            "Salaire brut",
+            "Vieillesse employeur",
+            "Retraite compl. employeur",
+            "Maladie employeur",
+            "Famille",
+            "Chômage + AGS",
+            "AT-MP",
+            "FNAL + CSA",
+            "Formation / apprentissage",
+            "Autres cotisations employeur",
+            "Allègements RGDU",
+            "Coût employeur"
+        ]
+        : [
+            "Net wage",
+            "CSG-CRDS",
+            "Employee old-age",
+            "Employee supplementary pension",
+            "Other employee contributions",
+            "Gross wage",
+            "Employer old-age",
+            "Employer supplementary pension",
+            "Employer health",
+            "Family",
+            "Unemployment + AGS",
+            "AT-MP",
+            "FNAL + CSA",
+            "Training / apprenticeship",
+            "Other employer contributions",
+            "RGDU reliefs",
+            "Employer cost"
+        ];
+
+    const values = [
+        netWage,
+        employeeCsgCrds,
+        employeeOldAge,
+        employeeRetirement,
+        employeeOther,
+        grossWage,
+        employerOldAge,
+        employerRetirement,
+        employerHealth,
+        employerFamily,
+        employerUnemployment,
+        employerAtmp,
+        employerFnalCsa,
+        employerTraining,
+        employerOther,
+        -rgdu,
+        employerCost
+    ];
+
+    const measures = [
+        "absolute",
+        "relative",
+        "relative",
+        "relative",
+        "relative",
+        "total",
+        "relative",
+        "relative",
+        "relative",
+        "relative",
+        "relative",
+        "relative",
+        "relative",
+        "relative",
+        "relative",
+        "relative",
+        "total"
+    ];
 
     const traces = [
         {
             type: "waterfall",
             orientation: "v",
-            measure: [
-                "absolute",
-                "relative",
-                "total",
-                "relative",
-                "relative",
-                "total"
-            ],
-            x: lang === "fr"
-                ? [
-                    "Salaire net",
-                    "Cotisations salarié",
-                    "Salaire brut",
-                    "Cotisations employeur brutes",
-                    "Allègements RGDU",
-                    "Coût employeur"
-                ]
-                : [
-                    "Net wage",
-                    "Employee contributions",
-                    "Gross wage",
-                    "Gross employer contributions",
-                    "RGDU reliefs",
-                    "Employer cost"
-                ],
-            y: [
-                netWage,
-                employeeContrib,
-                grossWage,
-                employerContribGross,
-                -rgdu,
-                employerCost
-            ],
-            text: [
-                euro(netWage),
-                "+" + euro(employeeContrib),
-                euro(grossWage),
-                "+" + euro(employerContribGross),
-                "-" + euro(rgdu),
-                euro(employerCost)
-            ],
+            measure: measures,
+            x: labels,
+            y: values,
+            text: values.map(value => {
+                if (value > 0) {
+                    return "+" + euro(value);
+                }
+
+                if (value < 0) {
+                    return "-" + euro(Math.abs(value));
+                }
+
+                return euro(value);
+            }),
             textposition: "outside",
             connector: {
                 line: {
@@ -1399,7 +1467,8 @@ function renderWaterfallChart(data, lang) {
             },
             hovertemplate:
                 "<b>%{x}</b><br>" +
-                (lang === "fr" ? "Montant" : "Amount") + ": %{y:,.0f} €<extra></extra>"
+                (lang === "fr" ? "Montant" : "Amount") +
+                ": %{y:,.0f} €<extra></extra>"
         }
     ];
 
@@ -1408,20 +1477,20 @@ function renderWaterfallChart(data, lang) {
         lang === "fr" ? "Montant mensuel, euros" : "Monthly amount, euros"
     );
 
-    layout.height = 520;
+    layout.height = 620;
     layout.margin = {
         l: 72,
         r: 42,
         t: 40,
-        b: 120
+        b: 165
     };
     layout.xaxis.title = "";
+    layout.xaxis.tickangle = -35;
     layout.yaxis.ticksuffix = " €";
     layout.showlegend = false;
 
     plot("chart-waterfall-" + lang, traces, layout);
 }
-
 function renderDecompositionChart(data, lang) {
     const t = getText(lang);
     const wageSelect = getElement("decomposition-wage-select", lang);
