@@ -2047,6 +2047,31 @@ def build_language_section(
                                 <div class="metric-caption" id="flcl-r-caption-{lang}"></div>
                             </div>
                         </div>
+                        <div class="metrics-grid" style="margin-top: 24px;">
+                            <div class="metric-card">
+                                <div class="metric-label">Transmission marginale</div>
+                                <div class="metric-value" id="flcl-transmission-value-{lang}">—</div>
+                                <div class="metric-caption" id="flcl-transmission-caption-{lang}"></div>
+                            </div>
+
+                            <div class="metric-card">
+                                <div class="metric-label">Captation marginale</div>
+                                <div class="metric-value" id="flcl-captation-value-{lang}">—</div>
+                                <div class="metric-caption" id="flcl-captation-caption-{lang}"></div>
+                            </div>
+
+                            <div class="metric-card">
+                                <div class="metric-label">Progressivité implicite</div>
+                                <div class="metric-value" id="flcl-progressivity-value-{lang}">—</div>
+                                <div class="metric-caption" id="flcl-progressivity-caption-{lang}"></div>
+                            </div>
+
+                            <div class="metric-card">
+                                <div class="metric-label">Soutien bas salaires</div>
+                                <div class="metric-value" id="flcl-support-value-{lang}">—</div>
+                                <div class="metric-caption" id="flcl-support-caption-{lang}"></div>
+                            </div>
+                        </div>
 
                         <div class="chart-card chart-card-full" style="margin-top: 22px;">
                             <h3>{t["tab_flcl_index"]}</h3>
@@ -2054,6 +2079,33 @@ def build_language_section(
                                 FLCL-E = 100 × salaire net / coût employeur.
                             </p>
                             <div id="chart-flcl-e-{lang}" class="plotly-chart lazy-chart"></div>
+                        </div>
+                        <div class="chart-card chart-card-full" style="margin-top: 22px;">
+                            <h3>FLCL-R</h3>
+                            <p class="chart-subtitle">
+                                {"Effet des allègements généraux sur l’efficacité salariale." if lang == "fr" else "Effect of general contribution reliefs on wage efficiency."}
+                            </p>
+                            <div id="chart-flcl-r-{lang}" class="plotly-chart lazy-chart"></div>
+                        </div>
+
+                        <div class="chart-card chart-card-full" style="margin-top: 22px;">
+                            <h3>
+                                {"Transmission marginale" if lang == "fr" else "Marginal transmission"}
+                            </h3>
+                            <p class="chart-subtitle">
+                                {"Part d’un euro supplémentaire de coût employeur allant au salaire net." if lang == "fr" else "Share of one additional employer-cost euro reaching net wage."}
+                            </p>
+                            <div id="chart-flcl-marginal-{lang}" class="plotly-chart lazy-chart"></div>
+                        </div>
+
+                        <div class="chart-card chart-card-full" style="margin-top: 22px;">
+                            <h3>
+                                {"Décomposition pour 100 € de coût employeur" if lang == "fr" else "Breakdown per €100 of employer cost"}
+                            </h3>
+                            <p class="chart-subtitle">
+                                {"Lecture normalisée du passage du coût employeur au salaire net." if lang == "fr" else "Normalised view of how employer cost is transformed into net wage."}
+                            </p>
+                            <div id="chart-flcl-100-{lang}" class="plotly-chart lazy-chart"></div>
                         </div>
                     </div>
                 </section>

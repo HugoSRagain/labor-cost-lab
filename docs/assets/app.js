@@ -1838,6 +1838,80 @@ function renderFlclEfficiencyChart(data, lang) {
 function renderFlclIndex(data, lang) {
     renderFlclIndexCards(data, lang);
     renderFlclEfficiencyChart(data, lang);
+    const marginalRows = [];
+
+    for (let i = 1; i < data.length; i++) {
+        const deltaNet = num(data[i].net_monthly_eur) - num(data[i - 1].net_monthly_eur);
+        const deltaCost = num(data[i].employer_cost_monthly_eur) - num(data[i - 1].employer_cost_monthly_eur);
+        const deltaSmic = num(data[i].smic_multiple) - num(data[i - 1].smic_multiple);
+
+        if (deltaCost !== 0 && deltaSmic !== 0) {
+            const currentIndicators = computeFlclIndicators(data[i]);
+            const previousIndicators = computeFlclIndicators(data[i - 1]);
+
+            marginalRows.push({
+                smic: num(data[i].smic_multiple),
+                transmission: deltaNet / deltaCost,
+                captation: 1 - deltaNet / deltaCost,
+                progressivity: (currentIndicators.flclE - previousIndicators.flclE) / deltaSmic
+            });
+        }
+    }
+
+    const rowAtOne = findClosestSmicRow(marginalRows, 1.0);
+    const smic1 = computeFlclIndicators(findClosestSmicRow(data, 1.0));
+    const smic3 = computeFlclIndicators(findClosestSmicRow(data, 3.0));
+    const support = smic1.flclE - smic3.flclE;
+
+    const transmissionValue = document.getElementById("flcl-transmission-value-" + lang);
+    const captationValue = document.getElementById("flcl-captation-value-" + lang);
+    const progressivityValue = document.getElementById("flcl-progressivity-value-" + lang);
+    const supportValue = document.getElementById("flcl-support-value-" + lang);
+
+    const transmissionCaption = document.getElementById("flcl-transmission-caption-" + lang);
+    const captationCaption = document.getElementById("flcl-captation-caption-" + lang);
+    const progressivityCaption = document.getElementById("flcl-progressivity-caption-" + lang);
+    const supportCaption = document.getElementById("flcl-support-caption-" + lang);
+
+    if (transmissionValue) {
+        transmissionValue.textContent = (rowAtOne.transmission * 100).toFixed(1) + "%";
+    }
+
+    if (captationValue) {
+        captationValue.textContent = (rowAtOne.captation * 100).toFixed(1) + "%";
+    }
+
+    if (progressivityValue) {
+        progressivityValue.textContent = rowAtOne.progressivity.toFixed(1) + " pts";
+    }
+
+    if (supportValue) {
+        supportValue.textContent = support.toFixed(1) + " pts";
+    }
+
+    if (transmissionCaption) {
+        transmissionCaption.textContent = lang === "fr"
+            ? "Part d’un euro supplémentaire de coût employeur allant au salarié net."
+            : "Share of one additional employer-cost euro reaching net wage.";
+    }
+
+    if (captationCaption) {
+        captationCaption.textContent = lang === "fr"
+            ? "Part d’un euro supplémentaire captée par le système socio-fiscal."
+            : "Share of one additional euro captured by the socio-fiscal system.";
+    }
+
+    if (progressivityCaption) {
+        progressivityCaption.textContent = lang === "fr"
+            ? "Variation locale de FLCL-E autour de 1 SMIC."
+            : "Local change in FLCL-E around 1 SMIC.";
+    }
+
+    if (supportCaption) {
+        supportCaption.textContent = lang === "fr"
+            ? "Écart FLCL-E entre 1 SMIC et 3 SMIC."
+            : "FLCL-E gap between 1 SMIC and 3 SMIC.";
+    }
 }
 
 function renderSimulation(lang = getActiveLanguage()) {
@@ -1867,6 +1941,9 @@ function renderSimulation(lang = getActiveLanguage()) {
     renderWaterfallChart(data, lang);
     renderDecompositionChart(data, lang);
     renderFlclIndex(data, lang);
+    renderFlclRgduEffectChart(data, lang);
+    renderFlclMarginalChart(data, lang);
+    renderFlclHundredEuroChart(data, lang);
 }
 
 function formatRate(value) {

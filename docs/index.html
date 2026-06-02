@@ -36,6 +36,7 @@
             <nav class="tabs" aria-label="Dashboard sections">
                 <button class="tab-button active" data-tab="simulation" onclick="showTab('en', 'simulation')">Simulation</button>
                 <button class="tab-button" data-tab="comparisons" onclick="showTab('en', 'comparisons')">Comparisons</button>
+		<button class="tab-button" data-tab="flcl-index" onclick="showTab('en', 'flcl-index')">FLCL Index</button>
                 <button class="tab-button" data-tab="data" onclick="showTab('en', 'data')">Data</button>
                 <button class="tab-button" data-tab="methodology" onclick="showTab('en', 'methodology')">Methodology</button>
                 <button class="tab-button" data-tab="working-paper" onclick="showTab('en', 'working-paper')">Working Paper</button>
@@ -697,6 +698,98 @@
                 </section>
             </div>
 
+            <div class="tab-panel" id="tab-en-flcl-index">
+                <section class="chart-card">
+                    <h2>FLCL Index</h2>
+		    <p class="chart-subtitle">
+    		    	Labour cost efficiency indicators.
+		    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="flcl-status-select-en">Employee status</label>
+                            <select id="flcl-status-select-en" onchange="syncFlclSelectorsToSimulation('en'); renderFlclIndex(getProfileData('en'), 'en')">
+                                <option value="cadre">Executive</option>
+<option value="non_cadre" selected>Non-executive</option>
+                            </select>
+                        </div>
+
+                        <div class="selector-field">
+                            <label for="flcl-territory-select-en">Territorial regime</label>
+                            <select id="flcl-territory-select-en" onchange="syncFlclSelectorsToSimulation('en'); renderFlclIndex(getProfileData('en'), 'en')">
+                                <option value="alsace_moselle">Alsace-Moselle</option>
+<option value="standard" selected>Outside Alsace-Moselle</option>
+                            </select>
+                        </div>
+
+                        <div class="selector-field">
+                            <label for="flcl-atmp-select-en">AT/MP risk scenario</label>
+                            <select id="flcl-atmp-select-en" onchange="syncFlclSelectorsToSimulation('en'); renderFlclIndex(getProfileData('en'), 'en')">
+                                <option value="atmp_1">AT/MP 1 %</option>
+<option value="atmp_4">AT/MP 4 %</option>
+<option value="fonctions_support">Support functions</option>
+<option value="standard" selected>Standard AT/MP</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="flcl-index-container-en">
+                        <div class="metrics-grid" style="margin-top: 24px;">
+                            <div class="metric-card">
+                                <div class="metric-label">FLCL Index · E</div>
+                                <div class="metric-value" id="flcl-e-value-en">—</div>
+                                <div class="metric-caption" id="flcl-e-caption-en"></div>
+                            </div>
+
+                            <div class="metric-card">
+                                <div class="metric-label">FLCL Index · B</div>
+                                <div class="metric-value" id="flcl-b-value-en">—</div>
+                                <div class="metric-caption" id="flcl-b-caption-en"></div>
+                            </div>
+
+                            <div class="metric-card">
+                                <div class="metric-label">FLCL Index · R</div>
+                                <div class="metric-value" id="flcl-r-value-en">—</div>
+                                <div class="metric-caption" id="flcl-r-caption-en"></div>
+                            </div>
+                        </div>
+                        <div class="metrics-grid" style="margin-top: 24px;">
+                            <div class="metric-card">
+                                <div class="metric-label">Transmission marginale</div>
+                                <div class="metric-value" id="flcl-transmission-value-en">—</div>
+                                <div class="metric-caption" id="flcl-transmission-caption-en"></div>
+                            </div>
+
+                            <div class="metric-card">
+                                <div class="metric-label">Captation marginale</div>
+                                <div class="metric-value" id="flcl-captation-value-en">—</div>
+                                <div class="metric-caption" id="flcl-captation-caption-en"></div>
+                            </div>
+
+                            <div class="metric-card">
+                                <div class="metric-label">Progressivité implicite</div>
+                                <div class="metric-value" id="flcl-progressivity-value-en">—</div>
+                                <div class="metric-caption" id="flcl-progressivity-caption-en"></div>
+                            </div>
+
+                            <div class="metric-card">
+                                <div class="metric-label">Soutien bas salaires</div>
+                                <div class="metric-value" id="flcl-support-value-en">—</div>
+                                <div class="metric-caption" id="flcl-support-caption-en"></div>
+                            </div>
+                        </div>
+
+                        <div class="chart-card chart-card-full" style="margin-top: 22px;">
+                            <h3>FLCL Index</h3>
+                            <p class="chart-subtitle">
+                                FLCL-E = 100 × salaire net / coût employeur.
+                            </p>
+                            <div id="chart-flcl-e-en" class="plotly-chart lazy-chart"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
             <div class="tab-panel" id="tab-en-data">
                 <section>
                     <h2>Data</h2>
@@ -868,7 +961,7 @@
         </main>
 
         <footer>
-    		Last updated: 2026-06-02 14:38
+    		Last updated: 2026-06-02 21:59
     		· Paramètres réglementaires: 2026-05
     		· Date d’effet: 2026-05-01
         </footer>
@@ -893,6 +986,7 @@
             <nav class="tabs" aria-label="Dashboard sections">
                 <button class="tab-button active" data-tab="simulation" onclick="showTab('fr', 'simulation')">Simulation</button>
                 <button class="tab-button" data-tab="comparisons" onclick="showTab('fr', 'comparisons')">Comparaisons</button>
+		<button class="tab-button" data-tab="flcl-index" onclick="showTab('fr', 'flcl-index')">Indice FLCL</button>
                 <button class="tab-button" data-tab="data" onclick="showTab('fr', 'data')">Données</button>
                 <button class="tab-button" data-tab="methodology" onclick="showTab('fr', 'methodology')">Méthodologie</button>
                 <button class="tab-button" data-tab="working-paper" onclick="showTab('fr', 'working-paper')">Working Paper</button>
@@ -1554,6 +1648,98 @@
                 </section>
             </div>
 
+            <div class="tab-panel" id="tab-fr-flcl-index">
+                <section class="chart-card">
+                    <h2>Indice FLCL</h2>
+		    <p class="chart-subtitle">
+    		    	Indicateurs d’efficacité salariale du coût du travail.
+		    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="flcl-status-select-fr">Statut salarié</label>
+                            <select id="flcl-status-select-fr" onchange="syncFlclSelectorsToSimulation('fr'); renderFlclIndex(getProfileData('fr'), 'fr')">
+                                <option value="cadre">Cadre</option>
+<option value="non_cadre" selected>Non-cadre</option>
+                            </select>
+                        </div>
+
+                        <div class="selector-field">
+                            <label for="flcl-territory-select-fr">Régime territorial</label>
+                            <select id="flcl-territory-select-fr" onchange="syncFlclSelectorsToSimulation('fr'); renderFlclIndex(getProfileData('fr'), 'fr')">
+                                <option value="alsace_moselle">Alsace-Moselle</option>
+<option value="standard" selected>Hors Alsace-Moselle</option>
+                            </select>
+                        </div>
+
+                        <div class="selector-field">
+                            <label for="flcl-atmp-select-fr">Scénario AT/MP</label>
+                            <select id="flcl-atmp-select-fr" onchange="syncFlclSelectorsToSimulation('fr'); renderFlclIndex(getProfileData('fr'), 'fr')">
+                                <option value="atmp_1">AT/MP 1 %</option>
+<option value="atmp_4">AT/MP 4 %</option>
+<option value="fonctions_support">Fonctions support</option>
+<option value="standard" selected>AT/MP standard</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="flcl-index-container-fr">
+                        <div class="metrics-grid" style="margin-top: 24px;">
+                            <div class="metric-card">
+                                <div class="metric-label">Indice FLCL · E</div>
+                                <div class="metric-value" id="flcl-e-value-fr">—</div>
+                                <div class="metric-caption" id="flcl-e-caption-fr"></div>
+                            </div>
+
+                            <div class="metric-card">
+                                <div class="metric-label">Indice FLCL · B</div>
+                                <div class="metric-value" id="flcl-b-value-fr">—</div>
+                                <div class="metric-caption" id="flcl-b-caption-fr"></div>
+                            </div>
+
+                            <div class="metric-card">
+                                <div class="metric-label">Indice FLCL · R</div>
+                                <div class="metric-value" id="flcl-r-value-fr">—</div>
+                                <div class="metric-caption" id="flcl-r-caption-fr"></div>
+                            </div>
+                        </div>
+                        <div class="metrics-grid" style="margin-top: 24px;">
+                            <div class="metric-card">
+                                <div class="metric-label">Transmission marginale</div>
+                                <div class="metric-value" id="flcl-transmission-value-fr">—</div>
+                                <div class="metric-caption" id="flcl-transmission-caption-fr"></div>
+                            </div>
+
+                            <div class="metric-card">
+                                <div class="metric-label">Captation marginale</div>
+                                <div class="metric-value" id="flcl-captation-value-fr">—</div>
+                                <div class="metric-caption" id="flcl-captation-caption-fr"></div>
+                            </div>
+
+                            <div class="metric-card">
+                                <div class="metric-label">Progressivité implicite</div>
+                                <div class="metric-value" id="flcl-progressivity-value-fr">—</div>
+                                <div class="metric-caption" id="flcl-progressivity-caption-fr"></div>
+                            </div>
+
+                            <div class="metric-card">
+                                <div class="metric-label">Soutien bas salaires</div>
+                                <div class="metric-value" id="flcl-support-value-fr">—</div>
+                                <div class="metric-caption" id="flcl-support-caption-fr"></div>
+                            </div>
+                        </div>
+
+                        <div class="chart-card chart-card-full" style="margin-top: 22px;">
+                            <h3>Indice FLCL</h3>
+                            <p class="chart-subtitle">
+                                FLCL-E = 100 × salaire net / coût employeur.
+                            </p>
+                            <div id="chart-flcl-e-fr" class="plotly-chart lazy-chart"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
             <div class="tab-panel" id="tab-fr-data">
                 <section>
                     <h2>Données</h2>
@@ -1725,7 +1911,7 @@
         </main>
 
         <footer>
-    		Dernière mise à jour: 2026-06-02 14:38
+    		Dernière mise à jour: 2026-06-02 21:59
     		· Paramètres réglementaires: 2026-05
     		· Date d’effet: 2026-05-01
         </footer>
