@@ -63,6 +63,10 @@ TEXT = {
 	"territory_label": "Territorial regime",
 	"download_csv": "Download simulation dataset (CSV)",
 	"atmp_label": "AT/MP risk scenario",
+	"atmp_help": (
+    		"AT/MP refers to occupational accidents and diseases. "
+    		"The rate depends on the sector and the establishment risk profile."
+	),
 	"comparison_atmp_title": "Employer cost by AT/MP scenario",
 	"comparison_atmp_subtitle": (
     		"For the selected employee status and territorial regime, this chart compares "
@@ -245,6 +249,10 @@ TEXT = {
 	),
 	"download_csv": "Télécharger les données de simulation (CSV)",
 	"atmp_label": "Scénario AT/MP",
+	"atmp_help": (
+    		"AT/MP = accidents du travail et maladies professionnelles. "
+    		"Le taux dépend du secteur d'activité et du niveau de risque de l'établissement."
+	),
         "purpose_title": "Objectif",
         "purpose_text": (
             "French Labour Cost Lab propose des simulations reproductibles du salaire brut, du salaire net, "
@@ -1743,7 +1751,7 @@ def build_metrics_panels(df, lang: str):
 
     return "\n".join(panels)
 
-def build_dimension_options(df, dimension_column, label_map, lang):
+def build_dimension_options(df, dimension_column, label_map, lang, default_value=None):
     values = (
         df[[dimension_column]]
         .drop_duplicates()
@@ -1755,7 +1763,8 @@ def build_dimension_options(df, dimension_column, label_map, lang):
     options = []
     for value in values:
         label = label_map.get(value, value)
-        options.append(f'<option value="{value}">{label}</option>')
+        selected = " selected" if default_value is not None and value == default_value else ""
+        options.append(f'<option value="{value}"{selected}>{label}</option>')
 
     return "\n".join(options)
 
@@ -1787,9 +1796,15 @@ def build_language_section(
         "fonctions_support": "Fonctions support" if lang == "fr" else "Support functions",
     }
 
-    status_options = build_dimension_options(df, "dimension_status", status_labels, lang)
-    territory_options = build_dimension_options(df, "dimension_territory", territory_labels, lang)
-    atmp_options = build_dimension_options(df, "dimension_atmp", atmp_labels, lang)
+    status_options = build_dimension_options(
+    	df, "dimension_status", status_labels, lang, default_value="non_cadre"
+    )
+    territory_options = build_dimension_options(
+    	df, "dimension_territory", territory_labels, lang, default_value="standard"
+    )
+    atmp_options = build_dimension_options(
+    	df, "dimension_atmp", atmp_labels, lang, default_value="standard"
+    )
 
     profiles = (
         df[[
@@ -1895,7 +1910,19 @@ def build_language_section(
                         </div>
 
                         <div class="selector-field">
-                            <label for="atmp-select-{lang}">{t["atmp_label"]}</label>
+                            <label for="atmp-select-{lang}">
+    				{t["atmp_label"]}
+    				<a
+        				class="info-tooltip"
+        				href="https://www.ameli.fr/entreprise/votre-entreprise/cotisation-atmp"
+        				target="_blank"
+        				rel="noopener noreferrer"
+        				title="{t['atmp_help']}"
+        				aria-label="{t['atmp_help']}"
+    				>
+        				ⓘ
+    				</a>
+			    </label>
                             <select id="atmp-select-{lang}" onchange="switchCombinatorialProfile('{lang}'); renderSimulation('{lang}');">
                                 {atmp_options}
                             </select>
@@ -1994,7 +2021,19 @@ def build_language_section(
                         </div>
 
                         <div class="selector-field">
-                            <label for="data-atmp-select-{lang}">{t["atmp_label"]}</label>
+                            <label for="data-atmp-select-{lang}">
+    				{t["atmp_label"]}
+    				<a
+        				class="info-tooltip"
+        				href="https://www.ameli.fr/entreprise/votre-entreprise/cotisation-atmp"
+        				target="_blank"
+        				rel="noopener noreferrer"
+        				title="{t['atmp_help']}"
+        				aria-label="{t['atmp_help']}"
+    				>
+        				ⓘ
+    				</a>
+			    </label>
                             <select id="data-atmp-select-{lang}" onchange="switchDataCombinatorialProfile('{lang}'); renderDataTable('{lang}')">
                                 {atmp_options}
                             </select>

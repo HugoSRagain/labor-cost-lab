@@ -77,7 +77,7 @@
                             <label for="status-select-en">Employee status</label>
                             <select id="status-select-en" onchange="switchCombinatorialProfile('en'); renderSimulation('en');">
                                 <option value="cadre">Executive</option>
-<option value="non_cadre">Non-executive</option>
+<option value="non_cadre" selected>Non-executive</option>
                             </select>
                         </div>
 
@@ -85,17 +85,29 @@
                             <label for="territory-select-en">Territorial regime</label>
                             <select id="territory-select-en" onchange="switchCombinatorialProfile('en'); renderSimulation('en');">
                                 <option value="alsace_moselle">Alsace-Moselle</option>
-<option value="standard">Outside Alsace-Moselle</option>
+<option value="standard" selected>Outside Alsace-Moselle</option>
                             </select>
                         </div>
 
                         <div class="selector-field">
-                            <label for="atmp-select-en">AT/MP risk scenario</label>
+                            <label for="atmp-select-en">
+    				AT/MP risk scenario
+    				<a
+        				class="info-tooltip"
+        				href="https://www.ameli.fr/entreprise/votre-entreprise/cotisation-atmp"
+        				target="_blank"
+        				rel="noopener noreferrer"
+        				title="AT/MP refers to occupational accidents and diseases. The rate depends on the sector and the establishment risk profile."
+        				aria-label="AT/MP refers to occupational accidents and diseases. The rate depends on the sector and the establishment risk profile."
+    				>
+        				ⓘ
+    				</a>
+			    </label>
                             <select id="atmp-select-en" onchange="switchCombinatorialProfile('en'); renderSimulation('en');">
                                 <option value="atmp_1">AT/MP 1 %</option>
 <option value="atmp_4">AT/MP 4 %</option>
 <option value="fonctions_support">Support functions</option>
-<option value="standard">Standard AT/MP</option>
+<option value="standard" selected>Standard AT/MP</option>
                             </select>
                         </div>
                     </div>
@@ -701,7 +713,7 @@
                             <label for="data-status-select-en">Employee status</label>
                             <select id="data-status-select-en" onchange="switchDataCombinatorialProfile('en'); renderDataTable('en')">
                                 <option value="cadre">Executive</option>
-<option value="non_cadre">Non-executive</option>
+<option value="non_cadre" selected>Non-executive</option>
                             </select>
                         </div>
 
@@ -709,17 +721,29 @@
                             <label for="data-territory-select-en">Territorial regime</label>
                             <select id="data-territory-select-en" onchange="switchDataCombinatorialProfile('en'); renderDataTable('en')">
                                 <option value="alsace_moselle">Alsace-Moselle</option>
-<option value="standard">Outside Alsace-Moselle</option>
+<option value="standard" selected>Outside Alsace-Moselle</option>
                             </select>
                         </div>
 
                         <div class="selector-field">
-                            <label for="data-atmp-select-en">AT/MP risk scenario</label>
+                            <label for="data-atmp-select-en">
+    				AT/MP risk scenario
+    				<a
+        				class="info-tooltip"
+        				href="https://www.ameli.fr/entreprise/votre-entreprise/cotisation-atmp"
+        				target="_blank"
+        				rel="noopener noreferrer"
+        				title="AT/MP refers to occupational accidents and diseases. The rate depends on the sector and the establishment risk profile."
+        				aria-label="AT/MP refers to occupational accidents and diseases. The rate depends on the sector and the establishment risk profile."
+    				>
+        				ⓘ
+    				</a>
+			    </label>
                             <select id="data-atmp-select-en" onchange="switchDataCombinatorialProfile('en'); renderDataTable('en')">
                                 <option value="atmp_1">AT/MP 1 %</option>
 <option value="atmp_4">AT/MP 4 %</option>
 <option value="fonctions_support">Support functions</option>
-<option value="standard">Standard AT/MP</option>
+<option value="standard" selected>Standard AT/MP</option>
                             </select>
                         </div>
                     </div>
@@ -844,7 +868,7 @@
         </main>
 
         <footer>
-    		Last updated: 2026-06-02 14:04
+    		Last updated: 2026-06-02 14:38
     		· Paramètres réglementaires: 2026-05
     		· Date d’effet: 2026-05-01
         </footer>
@@ -910,7 +934,7 @@
                             <label for="status-select-fr">Statut salarié</label>
                             <select id="status-select-fr" onchange="switchCombinatorialProfile('fr'); renderSimulation('fr');">
                                 <option value="cadre">Cadre</option>
-<option value="non_cadre">Non-cadre</option>
+<option value="non_cadre" selected>Non-cadre</option>
                             </select>
                         </div>
 
@@ -918,17 +942,29 @@
                             <label for="territory-select-fr">Régime territorial</label>
                             <select id="territory-select-fr" onchange="switchCombinatorialProfile('fr'); renderSimulation('fr');">
                                 <option value="alsace_moselle">Alsace-Moselle</option>
-<option value="standard">Hors Alsace-Moselle</option>
+<option value="standard" selected>Hors Alsace-Moselle</option>
                             </select>
                         </div>
 
                         <div class="selector-field">
-                            <label for="atmp-select-fr">Scénario AT/MP</label>
+                            <label for="atmp-select-fr">
+    				Scénario AT/MP
+    				<a
+        				class="info-tooltip"
+        				href="https://www.ameli.fr/entreprise/votre-entreprise/cotisation-atmp"
+        				target="_blank"
+        				rel="noopener noreferrer"
+        				title="AT/MP = accidents du travail et maladies professionnelles. Le taux dépend du secteur d'activité et du niveau de risque de l'établissement."
+        				aria-label="AT/MP = accidents du travail et maladies professionnelles. Le taux dépend du secteur d'activité et du niveau de risque de l'établissement."
+    				>
+        				ⓘ
+    				</a>
+			    </label>
                             <select id="atmp-select-fr" onchange="switchCombinatorialProfile('fr'); renderSimulation('fr');">
                                 <option value="atmp_1">AT/MP 1 %</option>
 <option value="atmp_4">AT/MP 4 %</option>
 <option value="fonctions_support">Fonctions support</option>
-<option value="standard">AT/MP standard</option>
+<option value="standard" selected>AT/MP standard</option>
                             </select>
                         </div>
                     </div>
@@ -1534,7 +1570,7 @@
                             <label for="data-status-select-fr">Statut salarié</label>
                             <select id="data-status-select-fr" onchange="switchDataCombinatorialProfile('fr'); renderDataTable('fr')">
                                 <option value="cadre">Cadre</option>
-<option value="non_cadre">Non-cadre</option>
+<option value="non_cadre" selected>Non-cadre</option>
                             </select>
                         </div>
 
@@ -1542,17 +1578,29 @@
                             <label for="data-territory-select-fr">Régime territorial</label>
                             <select id="data-territory-select-fr" onchange="switchDataCombinatorialProfile('fr'); renderDataTable('fr')">
                                 <option value="alsace_moselle">Alsace-Moselle</option>
-<option value="standard">Hors Alsace-Moselle</option>
+<option value="standard" selected>Hors Alsace-Moselle</option>
                             </select>
                         </div>
 
                         <div class="selector-field">
-                            <label for="data-atmp-select-fr">Scénario AT/MP</label>
+                            <label for="data-atmp-select-fr">
+    				Scénario AT/MP
+    				<a
+        				class="info-tooltip"
+        				href="https://www.ameli.fr/entreprise/votre-entreprise/cotisation-atmp"
+        				target="_blank"
+        				rel="noopener noreferrer"
+        				title="AT/MP = accidents du travail et maladies professionnelles. Le taux dépend du secteur d'activité et du niveau de risque de l'établissement."
+        				aria-label="AT/MP = accidents du travail et maladies professionnelles. Le taux dépend du secteur d'activité et du niveau de risque de l'établissement."
+    				>
+        				ⓘ
+    				</a>
+			    </label>
                             <select id="data-atmp-select-fr" onchange="switchDataCombinatorialProfile('fr'); renderDataTable('fr')">
                                 <option value="atmp_1">AT/MP 1 %</option>
 <option value="atmp_4">AT/MP 4 %</option>
 <option value="fonctions_support">Fonctions support</option>
-<option value="standard">AT/MP standard</option>
+<option value="standard" selected>AT/MP standard</option>
                             </select>
                         </div>
                     </div>
@@ -1677,7 +1725,7 @@
         </main>
 
         <footer>
-    		Dernière mise à jour: 2026-06-02 14:04
+    		Dernière mise à jour: 2026-06-02 14:38
     		· Paramètres réglementaires: 2026-05
     		· Date d’effet: 2026-05-01
         </footer>
