@@ -48,7 +48,30 @@
                     <h2>Purpose</h2>
                     <p>French Labour Cost Lab provides reproducible simulations of gross wages, net wages, employer costs, employer contribution reliefs and social wedges in France.</p>
                     <div class="method-box"><strong>Methodological note.</strong> This version uses the Mon-entreprise / URSSAF calculation engine through its public API. Results are computed over a wage grid and by employee profile. They should be interpreted as reference simulations, not as official payslip calculations.</div>
+                </section>
 
+                <section>
+                    <h2>From net wage to employer cost</h2>
+                    <p class="chart-subtitle">Simplified and robust decomposition from net wage to total employer cost.</p>
+
+                    <div class="profile-selector decomposition-selector">
+                        <div class="selector-field">
+                            <label for="waterfall-wage-select-en">Selected wage point</label>
+                            <select id="waterfall-wage-select-en" onchange="renderWaterfallChart(getProfileData('en'), 'en')">
+                                <option value="1.00">1 SMIC</option>
+                                <option value="1.50">1,5 SMIC</option>
+                                <option value="2.00" selected>2 SMIC</option>
+                                <option value="3.00">3 SMIC</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <div id="chart-waterfall-en" class="plotly-chart lazy-chart"></div>
+                    </div>
+                </section>
+
+                <section>
                     <div class="profile-selector profile-selector-grid">
                         <div class="selector-field">
                             <label for="status-select-en">Employee status</label>
@@ -154,28 +177,6 @@
     </div>
     
                 </div>
-
-
-                <section>
-                    <h2>From net wage to employer cost</h2>
-                    <p class="chart-subtitle">Simplified and robust decomposition from net wage to total employer cost.</p>
-
-                    <div class="profile-selector decomposition-selector">
-                        <div class="selector-field">
-                            <label for="waterfall-wage-select-en">Selected wage point</label>
-                            <select id="waterfall-wage-select-en" onchange="renderWaterfallChart(getProfileData('en'), 'en')">
-                                <option value="1.00">1 SMIC</option>
-                                <option value="1.50">1,5 SMIC</option>
-                                <option value="2.00" selected>2 SMIC</option>
-                                <option value="3.00">3 SMIC</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="chart-card chart-card-full">
-                        <div id="chart-waterfall-en" class="plotly-chart lazy-chart"></div>
-                    </div>
-                </section>
 
                 <section>
                     <h2>Employer cost decomposition</h2>
@@ -843,7 +844,7 @@
         </main>
 
         <footer>
-    		Last updated: 2026-06-02 07:52
+    		Last updated: 2026-06-02 14:04
     		· Paramètres réglementaires: 2026-05
     		· Date d’effet: 2026-05-01
         </footer>
@@ -880,7 +881,30 @@
                     <h2>Objectif</h2>
                     <p>French Labour Cost Lab propose des simulations reproductibles du salaire brut, du salaire net, du coût employeur, des allègements de charges et du coin socio-fiscal en France.</p>
                     <div class="method-box"><strong>Note méthodologique.</strong> Cette version utilise le moteur de calcul Mon-entreprise / URSSAF via son API publique. Les résultats sont calculés sur une grille salariale et par profil de salarié. Ils doivent être interprétés comme des simulations de référence, non comme des calculs officiels de fiche de paie.</div>
+                </section>
 
+                <section>
+                    <h2>Du salaire net au coût employeur</h2>
+                    <p class="chart-subtitle">Décomposition simplifiée et robuste du passage du salaire net au coût total employeur.</p>
+
+                    <div class="profile-selector decomposition-selector">
+                        <div class="selector-field">
+                            <label for="waterfall-wage-select-fr">Point de salaire sélectionné</label>
+                            <select id="waterfall-wage-select-fr" onchange="renderWaterfallChart(getProfileData('fr'), 'fr')">
+                                <option value="1.00">1 SMIC</option>
+                                <option value="1.50">1,5 SMIC</option>
+                                <option value="2.00" selected>2 SMIC</option>
+                                <option value="3.00">3 SMIC</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <div id="chart-waterfall-fr" class="plotly-chart lazy-chart"></div>
+                    </div>
+                </section>
+
+                <section>
                     <div class="profile-selector profile-selector-grid">
                         <div class="selector-field">
                             <label for="status-select-fr">Statut salarié</label>
@@ -986,28 +1010,6 @@
     </div>
     
                 </div>
-
-
-                <section>
-                    <h2>Du salaire net au coût employeur</h2>
-                    <p class="chart-subtitle">Décomposition simplifiée et robuste du passage du salaire net au coût total employeur.</p>
-
-                    <div class="profile-selector decomposition-selector">
-                        <div class="selector-field">
-                            <label for="waterfall-wage-select-fr">Point de salaire sélectionné</label>
-                            <select id="waterfall-wage-select-fr" onchange="renderWaterfallChart(getProfileData('fr'), 'fr')">
-                                <option value="1.00">1 SMIC</option>
-                                <option value="1.50">1,5 SMIC</option>
-                                <option value="2.00" selected>2 SMIC</option>
-                                <option value="3.00">3 SMIC</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="chart-card chart-card-full">
-                        <div id="chart-waterfall-fr" class="plotly-chart lazy-chart"></div>
-                    </div>
-                </section>
 
                 <section>
                     <h2>Décomposition du coût employeur</h2>
@@ -1675,7 +1677,7 @@
         </main>
 
         <footer>
-    		Dernière mise à jour: 2026-06-02 07:52
+    		Dernière mise à jour: 2026-06-02 14:04
     		· Paramètres réglementaires: 2026-05
     		· Date d’effet: 2026-05-01
         </footer>

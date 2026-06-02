@@ -1855,7 +1855,30 @@ def build_language_section(
                     <h2>{t["purpose_title"]}</h2>
                     <p>{t["purpose_text"]}</p>
                     <div class="method-box">{t["method_note"]}</div>
+                </section>
 
+                <section>
+                    <h2>{t["waterfall_title"]}</h2>
+                    <p class="chart-subtitle">{t["waterfall_subtitle"]}</p>
+
+                    <div class="profile-selector decomposition-selector">
+                        <div class="selector-field">
+                            <label for="waterfall-wage-select-{lang}">{t["decomposition_wage_label"]}</label>
+                            <select id="waterfall-wage-select-{lang}" onchange="renderWaterfallChart(getProfileData('{lang}'), '{lang}')">
+                                <option value="1.00">1 SMIC</option>
+                                <option value="1.50">1,5 SMIC</option>
+                                <option value="2.00" selected>2 SMIC</option>
+                                <option value="3.00">3 SMIC</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <div id="chart-waterfall-{lang}" class="plotly-chart lazy-chart"></div>
+                    </div>
+                </section>
+
+                <section>
                     <div class="profile-selector profile-selector-grid">
                         <div class="selector-field">
                             <label for="status-select-{lang}">{t["status_label"]}</label>
@@ -1883,28 +1906,6 @@ def build_language_section(
                 <div id="profile-panels-{lang}">
                     {panels_html}
                 </div>
-
-
-                <section>
-                    <h2>{t["waterfall_title"]}</h2>
-                    <p class="chart-subtitle">{t["waterfall_subtitle"]}</p>
-
-                    <div class="profile-selector decomposition-selector">
-                        <div class="selector-field">
-                            <label for="waterfall-wage-select-{lang}">{t["decomposition_wage_label"]}</label>
-                            <select id="waterfall-wage-select-{lang}" onchange="renderWaterfallChart(getProfileData('{lang}'), '{lang}')">
-                                <option value="1.00">1 SMIC</option>
-                                <option value="1.50">1,5 SMIC</option>
-                                <option value="2.00" selected>2 SMIC</option>
-                                <option value="3.00">3 SMIC</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="chart-card chart-card-full">
-                        <div id="chart-waterfall-{lang}" class="plotly-chart lazy-chart"></div>
-                    </div>
-                </section>
 
                 <section>
                     <h2>{t["decomposition_title"]}</h2>
