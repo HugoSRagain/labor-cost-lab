@@ -38,6 +38,7 @@ TEXT = {
 	"tab_data": "Data",
 	"tab_contact": "Contact",
 	"tab_methodology": "Methodology",
+	"tab_flcl_index": "FLCL Index",
 	"profile_data_title": "Data for selected profile",
 	"comparisons_title": "Comparisons",
 	"comparisons_intro": "Comparative charts will be added here to compare AT/MP scenarios, employee status and territorial regimes.",
@@ -212,6 +213,7 @@ TEXT = {
 	"tab_comparisons": "Comparaisons",
 	"tab_data": "Données",
 	"tab_methodology": "Méthodologie",
+	"tab_flcl_index": "Indice FLCL",
 	"tab_contact": "Contact",
 	"profile_data_title": "Données du profil sélectionné",
 	"comparisons_title": "Comparaisons",
@@ -1858,6 +1860,7 @@ def build_language_section(
             <nav class="tabs" aria-label="Dashboard sections">
                 <button class="tab-button active" data-tab="simulation" onclick="showTab('{lang}', 'simulation')">{t["tab_simulation"]}</button>
                 <button class="tab-button" data-tab="comparisons" onclick="showTab('{lang}', 'comparisons')">{t["tab_comparisons"]}</button>
+		<button class="tab-button" data-tab="flcl-index" onclick="showTab('{lang}', 'flcl-index')">{t["tab_flcl_index"]}</button>
                 <button class="tab-button" data-tab="data" onclick="showTab('{lang}', 'data')">{t["tab_data"]}</button>
                 <button class="tab-button" data-tab="methodology" onclick="showTab('{lang}', 'methodology')">{t["tab_methodology"]}</button>
                 <button class="tab-button" data-tab="working-paper" onclick="showTab('{lang}', 'working-paper')">{t["tab_working_paper"]}</button>
@@ -1989,6 +1992,68 @@ def build_language_section(
                             <h3>{t["comparison_status_gap_title"]}</h3>
                             <p class="chart-subtitle">{t["comparison_status_gap_subtitle"]}</p>
                             <div id="chart-comparison-status-gap-{lang}" class="plotly-chart lazy-chart"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="tab-panel" id="tab-{lang}-flcl-index">
+                <section class="chart-card">
+                    <h2>{t["tab_flcl_index"]}</h2>
+		    <p class="chart-subtitle">
+    		    	{"Indicateurs d’efficacité salariale du coût du travail." if lang == "fr" else "Labour cost efficiency indicators."}
+		    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="flcl-status-select-{lang}">{t["status_label"]}</label>
+                            <select id="flcl-status-select-{lang}" onchange="syncFlclSelectorsToSimulation('{lang}'); renderFlclIndex(getProfileData('{lang}'), '{lang}')">
+                                {status_options}
+                            </select>
+                        </div>
+
+                        <div class="selector-field">
+                            <label for="flcl-territory-select-{lang}">{t["territory_label"]}</label>
+                            <select id="flcl-territory-select-{lang}" onchange="syncFlclSelectorsToSimulation('{lang}'); renderFlclIndex(getProfileData('{lang}'), '{lang}')">
+                                {territory_options}
+                            </select>
+                        </div>
+
+                        <div class="selector-field">
+                            <label for="flcl-atmp-select-{lang}">{t["atmp_label"]}</label>
+                            <select id="flcl-atmp-select-{lang}" onchange="syncFlclSelectorsToSimulation('{lang}'); renderFlclIndex(getProfileData('{lang}'), '{lang}')">
+                                {atmp_options}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="flcl-index-container-{lang}">
+                        <div class="metrics-grid" style="margin-top: 24px;">
+                            <div class="metric-card">
+                                <div class="metric-label">{t["tab_flcl_index"]} · E</div>
+                                <div class="metric-value" id="flcl-e-value-{lang}">—</div>
+                                <div class="metric-caption" id="flcl-e-caption-{lang}"></div>
+                            </div>
+
+                            <div class="metric-card">
+                                <div class="metric-label">{t["tab_flcl_index"]} · B</div>
+                                <div class="metric-value" id="flcl-b-value-{lang}">—</div>
+                                <div class="metric-caption" id="flcl-b-caption-{lang}"></div>
+                            </div>
+
+                            <div class="metric-card">
+                                <div class="metric-label">{t["tab_flcl_index"]} · R</div>
+                                <div class="metric-value" id="flcl-r-value-{lang}">—</div>
+                                <div class="metric-caption" id="flcl-r-caption-{lang}"></div>
+                            </div>
+                        </div>
+
+                        <div class="chart-card chart-card-full" style="margin-top: 22px;">
+                            <h3>{t["tab_flcl_index"]}</h3>
+                            <p class="chart-subtitle">
+                                FLCL-E = 100 × salaire net / coût employeur.
+                            </p>
+                            <div id="chart-flcl-e-{lang}" class="plotly-chart lazy-chart"></div>
                         </div>
                     </div>
                 </section>
@@ -2190,6 +2255,21 @@ def main():
     df[["rgdu_monthly_eur", "rgdu_rate_gross", "rgdu_rate_employer_cost"]] = (
         df[["rgdu_monthly_eur", "rgdu_rate_gross", "rgdu_rate_employer_cost"]].fillna(0.0)
     )
+
+
+    # FLCL Index indicators
+    df["flcl_e"] = 100 * df["net_monthly_eur"] / df["employer_cost_monthly_eur"]
+    df["flcl_b"] = 100 - df["flcl_e"]
+
+    df["employer_cost_without_rgdu_monthly_eur"] = (
+        df["employer_cost_monthly_eur"] + df["rgdu_monthly_eur"]
+    )
+
+    df["flcl_e_without_rgdu"] = (
+        100 * df["net_monthly_eur"] / df["employer_cost_without_rgdu_monthly_eur"]
+    )
+
+    df["flcl_r"] = df["flcl_e"] - df["flcl_e_without_rgdu"]
 
     updated_at = datetime.now().strftime("%Y-%m-%d %H:%M")
 
