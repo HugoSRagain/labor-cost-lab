@@ -2100,11 +2100,21 @@ def build_language_section(
 
                         <div class="chart-card chart-card-full" style="margin-top: 22px;">
                             <h3>
-                                {"Décomposition pour 100 € de coût employeur" if lang == "fr" else "Breakdown per €100 of employer cost"}
+                                {"Progressivité implicite" if lang == "fr" else "Implicit progressivity"}
                             </h3>
                             <p class="chart-subtitle">
-                                {"Lecture normalisée du passage du coût employeur au salaire net." if lang == "fr" else "Normalised view of how employer cost is transformed into net wage."}
+                                {"Variation de FLCL-E lorsque le niveau de salaire augmente." if lang == "fr" else "Change in FLCL-E when the wage level increases."}
                             </p>
+                            <div id="chart-flcl-progressivity-{lang}" class="plotly-chart lazy-chart"></div>
+                        </div>
+
+                        <div class="chart-card chart-card-full" style="margin-top: 22px;">
+                            <h3>
+    				{"Destination marginale d’un euro supplémentaire de coût employeur" if lang == "fr" else "Marginal destination of one additional employer-cost euro"}
+			    </h3>
+                            <p class="chart-subtitle">
+    				{"Répartition marginale d’un euro supplémentaire entre salaire net, cotisations salarié et cotisations employeur." if lang == "fr" else "Marginal allocation of one additional euro between net wage, employee contributions and employer contributions."}
+			    </p>
                             <div id="chart-flcl-100-{lang}" class="plotly-chart lazy-chart"></div>
                         </div>
                     </div>

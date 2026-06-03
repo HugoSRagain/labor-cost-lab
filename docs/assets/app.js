@@ -1838,6 +1838,10 @@ function renderFlclEfficiencyChart(data, lang) {
 function renderFlclIndex(data, lang) {
     renderFlclIndexCards(data, lang);
     renderFlclEfficiencyChart(data, lang);
+    renderFlclRgduEffectChart(data, lang);
+    renderFlclMarginalChart(data, lang);
+    renderFlclProgressivityChart(data, lang);
+    renderFlclMarginalDestinationChart(data, lang);
     const marginalRows = [];
 
     for (let i = 1; i < data.length; i++) {
@@ -1914,6 +1918,303 @@ function renderFlclIndex(data, lang) {
     }
 }
 
+function renderFlclRgduEffectChart(data, lang) {
+    const traces = [
+        {
+            x: data.map(d => num(d.smic_multiple)),
+            y: data.map(d => {
+                const smic = num(d.smic_multiple);
+
+                if (smic < 1.0) {
+                    return 0;
+                }
+
+                const net = num(d.net_monthly_eur);
+                const employerCost = num(d.employer_cost_monthly_eur);
+                const rgdu = num(d.rgdu_monthly_eur);
+
+                if (employerCost <= 0 || employerCost + rgdu <= 0) {
+                    return 0;
+                }
+
+                const flclE = 100 * net / employerCost;
+                const flclEWithoutRgdu = 100 * net / (employerCost + rgdu);
+
+                return flclE - flclEWithoutRgdu;
+            }),
+            mode: "lines",
+            line: {
+                color: COLORS.red,
+                width: 3
+            },
+            name: "FLCL-R",
+            type: "scatter"
+        }
+    ];
+
+    const rgduZone = getRgduZoneFromData(data);
+    const layout = addRgduZone(
+        baseLayout(
+            lang,
+            lang === "fr"
+                ? "Gain d’efficacité, points"
+                : "Efficiency gain, points"
+        ),
+        lang,
+        rgduZone.x0,
+        rgduZone.x1
+    );
+
+    layout.height = 450;
+    layout.margin.b = 95;
+
+    plot("chart-flcl-r-" + lang, traces, layout);
+}
+
+function renderFlclMarginalChart(data, lang) {
+
+    const x = [];
+    const transmission = [];
+    const captation = [];
+
+    for (let i = 1; i < data.length; i++) {
+
+        const deltaNet =
+            num(data[i].net_monthly_eur)
+            - num(data[i - 1].net_monthly_eur);
+
+        const deltaCost =
+            num(data[i].employer_cost_monthly_eur)
+            - num(data[i - 1].employer_cost_monthly_eur);
+
+        if (deltaCost === 0) {
+            continue;
+        }
+
+        const t = deltaNet / deltaCost;
+
+        x.push(num(data[i].smic_multiple));
+        transmission.push(t * 100);
+        captation.push((1 - t) * 100);
+    }
+
+    const traces = [
+        {
+            x: x,
+            y: transmission,
+            mode: "lines",
+            name: lang === "fr"
+                ? "Transmission"
+                : "Transmission",
+            line: {
+                color: COLORS.green,
+                width: 3
+            }
+        },
+        {
+            x: x,
+            y: captation,
+            mode: "lines",
+            name: lang === "fr"
+                ? "Captation"
+                : "Capture",
+            line: {
+                color: COLORS.orange,
+                width: 3
+            }
+        }
+    ];
+
+    const layout = baseLayout(
+        lang,
+        "%"
+    );
+
+    layout.height = 450;
+    layout.margin.b = 95;
+
+    plot("chart-flcl-marginal-" + lang, traces, layout);
+}
+
+function renderFlclProgressivityChart(data, lang) {
+    const x = [];
+    const progressivity = [];
+
+    for (let i = 1; i < data.length; i++) {
+        const current = computeFlclIndicators(data[i]);
+        const previous = computeFlclIndicators(data[i - 1]);
+
+        const deltaSmic =
+            num(data[i].smic_multiple)
+            - num(data[i - 1].smic_multiple);
+
+        if (deltaSmic === 0) {
+            continue;
+        }
+
+        x.push(num(data[i].smic_multiple));
+        progressivity.push(
+            (current.flclE - previous.flclE) / deltaSmic
+        );
+    }
+
+    const traces = [
+        {
+            x: x,
+            y: progressivity,
+            mode: "lines",
+            name: lang === "fr"
+                ? "Progressivité implicite"
+                : "Implicit progressivity",
+            line: {
+                color: COLORS.purple,
+                width: 3
+            },
+            hovertemplate:
+                "<b>%{x:.2f}× SMIC</b><br>" +
+                (lang === "fr"
+                    ? "Variation de FLCL-E"
+                    : "Change in FLCL-E") +
+                ": %{y:.2f} points / SMIC" +
+                "<extra></extra>",
+            type: "scatter"
+        }
+    ];
+
+    const rgduZone = getRgduZoneFromData(data);
+    const layout = addRgduZone(
+        baseLayout(
+            lang,
+            lang === "fr"
+                ? "Points de FLCL-E par SMIC"
+                : "FLCL-E points per SMIC"
+        ),
+        lang,
+        rgduZone.x0,
+        rgduZone.x1
+    );
+
+    layout.height = 450;
+    layout.margin.b = 95;
+
+    layout.shapes = layout.shapes || [];
+    layout.shapes.push({
+        type: "line",
+        xref: "paper",
+        yref: "y",
+        x0: 0,
+        x1: 1,
+        y0: 0,
+        y1: 0,
+        line: {
+            color: COLORS.gray,
+            dash: "dash",
+            width: 1.5
+        }
+    });
+
+    plot("chart-flcl-progressivity-" + lang, traces, layout);
+}
+
+function renderFlclMarginalDestinationChart(data, lang) {
+    const x = [];
+    const netShare = [];
+    const employeeShare = [];
+    const employerShare = [];
+
+    for (let i = 1; i < data.length; i++) {
+        const deltaCost =
+            num(data[i].employer_cost_monthly_eur)
+            - num(data[i - 1].employer_cost_monthly_eur);
+
+        if (deltaCost === 0) {
+            continue;
+        }
+
+        const deltaNet =
+            num(data[i].net_monthly_eur)
+            - num(data[i - 1].net_monthly_eur);
+
+        const deltaEmployee =
+            num(data[i].employee_contributions_monthly_eur)
+            - num(data[i - 1].employee_contributions_monthly_eur);
+
+        const deltaEmployer =
+            num(data[i].employer_contributions_monthly_eur)
+            - num(data[i - 1].employer_contributions_monthly_eur);
+
+        x.push(num(data[i].smic_multiple));
+        netShare.push(100 * deltaNet / deltaCost);
+        employeeShare.push(100 * deltaEmployee / deltaCost);
+        employerShare.push(100 * deltaEmployer / deltaCost);
+    }
+
+    const traces = [
+        {
+            x: x,
+            y: netShare,
+            type: "scatter",
+            mode: "lines",
+            stackgroup: "one",
+            name: lang === "fr"
+                ? "Salaire net"
+                : "Net wage",
+            line: {
+                color: COLORS.blue,
+                width: 2
+            }
+        },
+        {
+            x: x,
+            y: employeeShare,
+            type: "scatter",
+            mode: "lines",
+            stackgroup: "one",
+            name: lang === "fr"
+                ? "Cotisations salarié"
+                : "Employee contributions",
+            line: {
+                color: COLORS.orange,
+                width: 2
+            }
+        },
+        {
+            x: x,
+            y: employerShare,
+            type: "scatter",
+            mode: "lines",
+            stackgroup: "one",
+            name: lang === "fr"
+                ? "Cotisations employeur"
+                : "Employer contributions",
+            line: {
+                color: COLORS.green,
+                width: 2
+            }
+        }
+    ];
+
+    const rgduZone = getRgduZoneFromData(data);
+    const layout = addRgduZone(
+        baseLayout(
+            lang,
+            lang === "fr"
+                ? "Destination marginale d’un euro supplémentaire, %"
+                : "Marginal destination of one additional euro, %"
+        ),
+        lang,
+        rgduZone.x0,
+        rgduZone.x1
+    );
+
+    layout.height = 500;
+    layout.margin.b = 115;
+    layout.yaxis.ticksuffix = "%";
+    layout.yaxis.range = [0, 100];
+
+    plot("chart-flcl-100-" + lang, traces, layout);
+}
+
 function renderSimulation(lang = getActiveLanguage()) {
     currentLanguage = lang;
 
@@ -1943,7 +2244,7 @@ function renderSimulation(lang = getActiveLanguage()) {
     renderFlclIndex(data, lang);
     renderFlclRgduEffectChart(data, lang);
     renderFlclMarginalChart(data, lang);
-    renderFlclHundredEuroChart(data, lang);
+    renderFlclMarginalDestinationChart(data, lang);
 }
 
 function formatRate(value) {
