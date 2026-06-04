@@ -1287,14 +1287,18 @@ function renderNetGrossReturnChart(data, lang) {
         }
     ];
 
+    const rgduZone = getRgduZoneFromData(data);
+
     const layout = addRgduZone(
-        baseLayout(
-            lang,
-            lang === "fr"
-                ? "Part d’un euro supplémentaire de salaire brut"
-                : "Share of one additional euro of gross wage"
-        ),
-        lang
+    	baseLayout(
+        lang,
+        lang === "fr"
+            ? "Part d’un euro supplémentaire de salaire brut"
+            : "Share of one additional euro of gross wage"
+    ),
+    lang,
+    rgduZone.x0,
+    rgduZone.x1
     );
 
     layout.height = 540;
@@ -1527,6 +1531,7 @@ function renderWaterfallChart(data, lang) {
 
     plot("chart-waterfall-" + lang, traces, layout);
 }
+
 function renderDecompositionChart(data, lang) {
     const t = getText(lang);
     const wageSelect = getElement("decomposition-wage-select", lang);
