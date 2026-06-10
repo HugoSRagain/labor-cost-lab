@@ -1776,6 +1776,35 @@ def build_dimension_options(df, dimension_column, label_map, lang, default_value
 
     return "\n".join(options)
 
+def build_wage_point_options(
+    min_smic: float = 1.0,
+    max_smic: float = 3.5,
+    step: float = 0.1,
+    default_value: float = 2.0,
+    lang: str = "fr"
+):
+    values = []
+    current = min_smic
+
+    while current <= max_smic + 1e-9:
+        values.append(round(current, 2))
+        current += step
+
+    options = []
+
+    for value in values:
+        selected = " selected" if abs(value - default_value) < 1e-9 else ""
+
+        if lang == "fr":
+            label = f"{value:.2f}".replace(".", ",").rstrip("0").rstrip(",") + " SMIC"
+        else:
+            label = f"{value:.2f}".rstrip("0").rstrip(".") + " SMIC"
+
+        options.append(
+            f'<option value="{value:.2f}"{selected}>{label}</option>'
+        )
+
+    return "\n".join(options)
 
 def build_language_section(
     df,
@@ -1812,6 +1841,18 @@ def build_language_section(
     )
     atmp_options = build_dimension_options(
     	df, "dimension_atmp", atmp_labels, lang, default_value="standard"
+    )
+
+    atmp_options = build_dimension_options(
+        df, "dimension_atmp", atmp_labels, lang, default_value="standard"
+    )
+
+    waterfall_wage_options = build_wage_point_options(
+        min_smic=1.0,
+        max_smic=3.5,
+        step=0.1,
+        default_value=2.0,
+        lang=lang
     )
 
     profiles = (
@@ -1888,11 +1929,8 @@ def build_language_section(
                         <div class="selector-field">
                             <label for="waterfall-wage-select-{lang}">{t["decomposition_wage_label"]}</label>
                             <select id="waterfall-wage-select-{lang}" onchange="renderWaterfallChart(getProfileData('{lang}'), '{lang}')">
-                                <option value="1.00">1 SMIC</option>
-                                <option value="1.50">1,5 SMIC</option>
-                                <option value="2.00" selected>2 SMIC</option>
-                                <option value="3.00">3 SMIC</option>
-                            </select>
+    				{waterfall_wage_options}
+			    </select>
                         </div>
                     </div>
 
