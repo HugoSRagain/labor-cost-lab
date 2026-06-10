@@ -189,7 +189,11 @@ TEXT = {
         "y_annual_rgdu": "Annual relief amount, euros",
         "y2_rgdu": "RGDU / gross wage",
 	"waterfall_title": "From net wage to employer cost",
-	"waterfall_subtitle": "Simplified and robust decomposition from net wage to total employer cost.",
+	"waterfall_subtitle": (
+    		"Simplified and robust decomposition from net wage to total employer cost. "
+    		"Percentages report employee contributions as a share of gross wage, "
+    		"and employer contributions and reliefs as a share of total employer cost."
+	),
 	"decomposition_title": "Employer cost decomposition",
 	"decomposition_subtitle": (
     		"This chart decomposes employer cost at a selected wage point. "
@@ -364,7 +368,11 @@ TEXT = {
         "y_annual_rgdu": "Montant annuel d’allègement, euros",
         "y2_rgdu": "RGDU / salaire brut",
 	"waterfall_title": "Du salaire net au coût employeur",
-	"waterfall_subtitle": "Décomposition simplifiée et robuste du passage du salaire net au coût total employeur.",
+	"waterfall_subtitle": (
+    		"Décomposition simplifiée et robuste du passage du salaire net au coût total employeur. "
+    		"Les pourcentages indiquent la part du salaire brut pour les cotisations salariales, "
+    		"et la part du coût total employeur pour les cotisations patronales et les allègements."
+	),
 	"decomposition_title": "Décomposition du coût employeur",
 	"decomposition_subtitle": (
     		"Ce graphique décompose le coût employeur à un point de salaire donné. "

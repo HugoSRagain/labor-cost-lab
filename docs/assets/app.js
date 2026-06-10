@@ -1425,6 +1425,94 @@ function renderWaterfallChart(data, lang) {
         "total"
     ];
 
+    function percent(value, denominator) {
+        if (!Number.isFinite(value) || !Number.isFinite(denominator) || denominator === 0) {
+            return "";
+        }
+
+        return Math.abs(value / denominator * 100)
+            .toFixed(1)
+            .replace(".", ",") + " %";
+    }
+
+    const employeeIndexes = [1, 2, 3, 4];
+    const employerIndexes = [6, 7, 8, 9, 10, 11, 12, 13, 14];
+    const reliefIndexes = [15];
+
+    const percentLabels = values.map((value, index) => {
+        if (employeeIndexes.includes(index)) {
+            return percent(value, grossWage);
+        }
+
+        if (employerIndexes.includes(index)) {
+            return percent(value, employerCost);
+        }
+
+        if (reliefIndexes.includes(index)) {
+            return percent(value, employerCost);
+        }
+
+        return "";
+    });
+
+    const annotations = [];
+
+    let runningTotal = 0;
+    const yValuesForRange = [0];
+
+    values.forEach((value, index) => {
+        const measure = measures[index];
+
+        let start = 0;
+        let end = value;
+
+        if (measure === "relative") {
+            start = runningTotal;
+            end = runningTotal + value;
+            runningTotal = end;
+        } else if (measure === "absolute") {
+            start = 0;
+            end = value;
+            runningTotal = value;
+        } else if (measure === "total") {
+            start = 0;
+            end = value;
+            runningTotal = value;
+        }
+
+        yValuesForRange.push(start, end);
+
+        const percentLabel = percentLabels[index];
+
+        if (!percentLabel) {
+            return;
+        }
+
+        const barTop = Math.max(start, end);
+        const barBottom = Math.min(start, end);
+        const barHeight = Math.abs(end - start);
+
+        const offset = Math.max(45, barHeight * 0.22);
+
+        const percentY = value >= 0
+            ? barBottom - offset
+            : barTop + offset;
+
+        annotations.push({
+            x: labels[index],
+            y: percentY,
+            text: percentLabel,
+            showarrow: false,
+            font: {
+                size: 11,
+                color: "#64748b"
+            },
+            yanchor: value >= 0 ? "top" : "bottom"
+        });
+
+        yValuesForRange.push(percentY);
+    });
+
     const traces = [
         {
             type: "waterfall",
@@ -1477,6 +1565,10 @@ function renderWaterfallChart(data, lang) {
         lang === "fr" ? "Montant mensuel, euros" : "Monthly amount, euros"
     );
 
+    const yMin = Math.min(...yValuesForRange);
+    const yMax = Math.max(...yValuesForRange);
+    const yPadding = Math.max(150, (yMax - yMin) * 0.12);
+
     layout.height = 620;
     layout.margin = {
         l: 72,
@@ -1487,10 +1579,16 @@ function renderWaterfallChart(data, lang) {
     layout.xaxis.title = "";
     layout.xaxis.tickangle = -35;
     layout.yaxis.ticksuffix = " €";
+    layout.yaxis.range = [
+        Math.min(0, yMin - yPadding),
+        yMax + yPadding
+    ];
     layout.showlegend = false;
+    layout.annotations = annotations;
 
     plot("chart-waterfall-" + lang, traces, layout);
 }
+
 function renderDecompositionChart(data, lang) {
     const t = getText(lang);
     const wageSelect = getElement("decomposition-wage-select", lang);
