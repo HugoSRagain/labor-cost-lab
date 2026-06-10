@@ -170,7 +170,7 @@ function baseLayout(lang, yTitle) {
         margin: {
             l: 64,
             r: 42,
-            t: 24,
+            t: 46,
             b: 70
         },
         font: {
@@ -262,16 +262,17 @@ function addRgduZone(layout, lang, x0 = 1, x1 = 3) {
     layout.annotations.push({
         xref: "x",
         yref: "paper",
-        x: x0 + 0.05,
-        y: 0.97,
+        x: (x0 + x1) / 2,
+        y: 1.08,
         text: lang === "fr"
-            ? `Zone dégressive RGDU<br>${x0.toFixed(2)} à ${x1.toFixed(2)} SMIC`
-            : `RGDU degressive area<br>${x0.toFixed(2)} to ${x1.toFixed(2)} SMIC`,
+            ? `Zone dégressive RGDU : ${x0.toFixed(2)} à ${x1.toFixed(2)} SMIC`
+            : `RGDU degressive area: ${x0.toFixed(2)} to ${x1.toFixed(2)} SMIC`,
         showarrow: false,
-        xanchor: "left",
-        yanchor: "top",
+        xanchor: "center",
+        yanchor: "bottom",
+        align: "center",
         font: {
-            size: 12,
+            size: 11,
             color: COLORS.blue
         }
     });
@@ -1251,6 +1252,8 @@ function renderNetGrossReturnChart(data, lang) {
         }
     ];
 
+    const rgduZone = getRgduZoneFromData(data);
+
     const layout = addRgduZone(
         baseLayout(
             lang,
@@ -1258,15 +1261,19 @@ function renderNetGrossReturnChart(data, lang) {
                 ? "Part d’un euro supplémentaire de salaire brut"
                 : "Share of one additional euro of gross wage"
         ),
-        lang
+        lang,
+        rgduZone.x0,
+        rgduZone.x1
     );
 
+    layout.xaxis = layout.xaxis || {};
+    layout.xaxis.range = [0.75, 6.05];
     layout.height = 540;
 
     layout.margin = {
         l: 78,
         r: 36,
-        t: 34,
+        t: 70,
         b: 135
     };
 

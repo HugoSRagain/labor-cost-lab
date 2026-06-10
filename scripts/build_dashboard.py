@@ -97,7 +97,7 @@ TEXT = {
         ),
 	"methodology_points": [
     		"<strong>Source.</strong> Calculations are obtained from the public Mon-entreprise / URSSAF API.",
-    		"<strong>Wage grid.</strong> Gross monthly wages are expressed as multiples of the gross monthly SMIC, from 0.8 to 3.5 SMIC, with a 0.01 SMIC step.",
+    		"<strong>Wage grid.</strong> Gross monthly wages are expressed as multiples of the gross monthly SMIC, from 0.8 to 6.0 SMIC, with a 0.01 SMIC step.",
     		"<strong>Combinatorial simulation.</strong> Users can combine three dimensions: employee status, territorial regime and AT/MP risk scenario.",
     		"<strong>Employee status.</strong> The status dimension distinguishes non-executive and executive employees.",
     		"<strong>Territorial regime.</strong> The territorial dimension distinguishes the general regime from the Alsace-Moselle regime.",
@@ -276,7 +276,7 @@ TEXT = {
         ),
 	"methodology_points": [
     		"<strong>Source.</strong> Les calculs sont obtenus à partir de l’API publique Mon-entreprise / URSSAF.",
-    		"<strong>Grille salariale.</strong> Les salaires bruts mensuels sont exprimés en multiples du SMIC brut mensuel, de 0,8 à 3,5 SMIC, avec un pas de 0,01 SMIC.",
+    		"<strong>Grille salariale.</strong> Les salaires bruts mensuels sont exprimés en multiples du SMIC brut mensuel, de 0,8 à 6 SMIC, avec un pas de 0,01 SMIC.",
     		"<strong>Simulation combinatoire.</strong> L’utilisateur peut combiner trois dimensions : statut salarié, régime territorial et scénario de risque AT/MP.",
     		"<strong>Statut salarié.</strong> La dimension de statut distingue les salariés non-cadres et cadres.",
     		"<strong>Régime territorial.</strong> La dimension territoriale distingue le régime général du régime Alsace-Moselle.",
@@ -413,7 +413,7 @@ def base_layout(lang: str, title: str, yaxis_title: str):
     return dict(
         template="plotly_white",
         height=420,
-        margin=dict(l=64, r=42, t=28, b=70),
+        margin=dict(l=64, r=42, t=46, b=70),
         font=dict(family="Arial", size=13, color=COLOR_NAVY),
         hovermode="x unified",
         legend=dict(
@@ -440,19 +440,30 @@ def base_layout(lang: str, title: str, yaxis_title: str):
 
 def add_rgdu_zone(fig, lang: str):
     t = TEXT[lang]
+
     fig.add_vrect(
         x0=1.0,
         x1=3.0,
         fillcolor=COLOR_LIGHT_BLUE,
         line_width=0,
         layer="below",
-        annotation_text=t["rgdu_zone"],
-        annotation_position="top left",
-        annotation_font_size=12,
-        annotation_font_color=COLOR_BLUE,
     )
+
     fig.add_vline(x=1.0, line_dash="dash", line_color=COLOR_BLUE, opacity=0.7)
     fig.add_vline(x=3.0, line_dash="dash", line_color=COLOR_BLUE, opacity=0.7)
+
+    fig.add_annotation(
+        x=2.0,
+        y=1.08,
+        xref="x",
+        yref="paper",
+        text=t["rgdu_zone"].replace("<br>", " : "),
+        showarrow=False,
+        xanchor="center",
+        yanchor="bottom",
+        align="center",
+        font=dict(size=11, color=COLOR_BLUE),
+    )
 
 
 def make_cost_chart(df, lang: str):
@@ -600,7 +611,7 @@ def make_rgdu_chart(df, lang: str):
         hovermode="x unified",
         showlegend=True,
         legend=dict(orientation="h", yanchor="top", y=-0.22, xanchor="center", x=0.5, font=dict(size=12)),
-        xaxis=dict(title=t["x_axis"], showgrid=False, zeroline=False, range=[0.95, 3.5]),
+        xaxis=dict(title=t["x_axis"], showgrid=False, zeroline=False, range=[0.95, 6.0]),
         yaxis=dict(title=t["y_monthly_rgdu"], ticksuffix=" €", showgrid=True, gridcolor="#e5e7eb", zeroline=False),
         yaxis2=dict(title=t["y2_rgdu"], overlaying="y", side="right", ticksuffix="%", showgrid=False, zeroline=False),
         updatemenus=[
@@ -1778,7 +1789,7 @@ def build_dimension_options(df, dimension_column, label_map, lang, default_value
 
 def build_wage_point_options(
     min_smic: float = 1.0,
-    max_smic: float = 3.5,
+    max_smic: float = 6.0,
     step: float = 0.1,
     default_value: float = 2.0,
     lang: str = "fr"
@@ -1843,13 +1854,9 @@ def build_language_section(
     	df, "dimension_atmp", atmp_labels, lang, default_value="standard"
     )
 
-    atmp_options = build_dimension_options(
-        df, "dimension_atmp", atmp_labels, lang, default_value="standard"
-    )
-
     waterfall_wage_options = build_wage_point_options(
         min_smic=1.0,
-        max_smic=3.5,
+        max_smic=6.0,
         step=0.1,
         default_value=2.0,
         lang=lang

@@ -7,7 +7,7 @@ metadata:
 baseline:
   monthly_smic_gross: 1867.02
   min_smic_multiple: 0.8
-  max_smic_multiple: 3.5
+  max_smic_multiple: 6.0
   step_smic_multiple: 0.01
 
 assumptions:
