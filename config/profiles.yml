@@ -48,3 +48,38 @@ dimensions:
       label_en: "Support functions"
       situation:
         salarié . cotisations . ATMP . taux fonctions support: "oui"
+
+  firm_size:
+    lt50:
+      label_fr: "Moins de 50 salariés"
+      label_en: "Fewer than 50 employees"
+      situation:
+        entreprise . effectif: 10
+
+    ge50:
+      label_fr: "50 salariés et plus"
+      label_en: "50 employees or more"
+      situation:
+        entreprise . effectif: 50
+
+  working_time:
+    full_time:
+      label_fr: "Temps plein"
+      label_en: "Full-time"
+      working_time_rate: 1.0
+      situation:
+        salarié . contrat . temps de travail . quotité: "100 %"
+
+    part_time_80:
+      label_fr: "80 %"
+      label_en: "80%"
+      working_time_rate: 0.8
+      situation:
+        salarié . contrat . temps de travail . quotité: "80 %"
+
+    part_time_50:
+      label_fr: "50 %"
+      label_en: "50%"
+      working_time_rate: 0.5
+      situation:
+        salarié . contrat . temps de travail . quotité: "50 %"

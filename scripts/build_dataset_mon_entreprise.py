@@ -93,7 +93,7 @@ def load_profiles():
 
     dimensions = profiles_config["dimensions"]
 
-    required_dimensions = ["status", "territory", "atmp"]
+    required_dimensions = ["status", "territory", "firm_size", "atmp", "working_time"]
 
     for dimension in required_dimensions:
         if dimension not in dimensions:
@@ -103,36 +103,52 @@ def load_profiles():
 
     for status_id, status in dimensions["status"].items():
         for territory_id, territory in dimensions["territory"].items():
-            for atmp_id, atmp in dimensions["atmp"].items():
+            for firm_size_id, firm_size in dimensions["firm_size"].items():
+                for atmp_id, atmp in dimensions["atmp"].items():
+                    for working_time_id, working_time in dimensions["working_time"].items():
 
-                profile_id = f"{status_id}__{territory_id}__{atmp_id}"
+                        profile_id = (
+                            f"{status_id}__{territory_id}__{firm_size_id}__"
+                            f"{atmp_id}__{working_time_id}"
+                        )
 
-                label_fr = (
-                    f"{status.get('label_fr', status_id)} · "
-                    f"{territory.get('label_fr', territory_id)} · "
-                    f"{atmp.get('label_fr', atmp_id)}"
-                )
+                        label_fr = (
+                            f"{status.get('label_fr', status_id)} · "
+                            f"{territory.get('label_fr', territory_id)} · "
+                            f"{firm_size.get('label_fr', firm_size_id)} · "
+                            f"{atmp.get('label_fr', atmp_id)} · "
+                            f"{working_time.get('label_fr', working_time_id)}"
+                        )
 
-                label_en = (
-                    f"{status.get('label_en', status_id)} · "
-                    f"{territory.get('label_en', territory_id)} · "
-                    f"{atmp.get('label_en', atmp_id)}"
-                )
+                        label_en = (
+                            f"{status.get('label_en', status_id)} · "
+                            f"{territory.get('label_en', territory_id)} · "
+                            f"{firm_size.get('label_en', firm_size_id)} · "
+                            f"{atmp.get('label_en', atmp_id)} · "
+                            f"{working_time.get('label_en', working_time_id)}"
+                        )
 
-                situation = merge_situations(
-                    status.get("situation", {}),
-                    territory.get("situation", {}),
-                    atmp.get("situation", {})
-                )
+                        situation = merge_situations(
+                            status.get("situation", {}),
+                            territory.get("situation", {}),
+                            firm_size.get("situation", {}),
+                            atmp.get("situation", {}),
+                            working_time.get("situation", {})
+                        )
 
-                generated_profiles[profile_id] = {
-                    "label_fr": label_fr,
-                    "label_en": label_en,
-                    "dimension_status": status_id,
-                    "dimension_territory": territory_id,
-                    "dimension_atmp": atmp_id,
-                    "situation": situation
-                }
+                        generated_profiles[profile_id] = {
+                            "label_fr": label_fr,
+                            "label_en": label_en,
+                            "dimension_status": status_id,
+                            "dimension_territory": territory_id,
+                            "dimension_firm_size": firm_size_id,
+                            "dimension_atmp": atmp_id,
+                            "dimension_working_time": working_time_id,
+                            "working_time_rate": float(
+                                working_time.get("working_time_rate", 1.0)
+                            ),
+                            "situation": situation
+                        }
 
     return generated_profiles
 
@@ -436,19 +452,30 @@ def make_success_row(
         rgdu_expression=rgdu_expression
     )
 
+    working_time_rate = float(profile.get("working_time_rate", 1.0))
+    gross_monthly_etp = gross_monthly / working_time_rate if working_time_rate else gross_monthly
+    smic_multiple_etp = multiple
+
     return {
         "source": "mon-entreprise",
         "engine": "api/v1/evaluate",
         "profile_id": profile_id,
         "profile_label_fr": profile.get("label_fr", profile_id),
         "profile_label_en": profile.get("label_en", profile_id),
-	"dimension_status": profile.get("dimension_status", ""),
-	"dimension_territory": profile.get("dimension_territory", ""),
-	"dimension_atmp": profile.get("dimension_atmp", ""),
+        "dimension_status": profile.get("dimension_status", ""),
+        "dimension_territory": profile.get("dimension_territory", ""),
+        "dimension_firm_size": profile.get("dimension_firm_size", ""),
+        "dimension_atmp": profile.get("dimension_atmp", ""),
+        "dimension_working_time": profile.get("dimension_working_time", ""),
+        "working_time_rate": safe_round(working_time_rate, 2),
         "rgdu_expression_used": rgdu_expression or "",
-        "smic_multiple": multiple,
 
-        "gross_monthly_eur": safe_round(indicators["gross_used"], 2),
+        "smic_multiple": smic_multiple_etp,
+        "smic_multiple_etp": smic_multiple_etp,
+
+        "gross_monthly_eur": gross_monthly,
+        "gross_monthly_real_eur": gross_monthly,
+        "gross_monthly_etp_eur": safe_round(gross_monthly_etp, 2),
         "net_monthly_eur": safe_round(indicators["net_monthly"], 2),
         "employer_cost_monthly_eur": safe_round(indicators["employer_cost"], 2),
 
@@ -580,6 +607,7 @@ def build_dataset():
     )
 
     rows = []
+    checkpoint_every = 500
 
     total_iterations = len(profiles) * len(smic_multiples)
     iteration = 0
@@ -595,11 +623,21 @@ def build_dataset():
 
         for multiple in smic_multiples:
             iteration += 1
-            gross_monthly = round(monthly_smic_gross * multiple, 2)
+
+            working_time_rate = float(profile.get("working_time_rate", 1.0))
+
+            # The grid axis remains expressed in full-time equivalent SMIC.
+            gross_monthly_etp = round(monthly_smic_gross * multiple, 2)
+
+            # The amount sent to Mon-entreprise is the actual monthly gross wage paid.
+            # For part-time workers, RGDU must be computed using a prorated SMIC reference
+            # through the working-time situation passed to the engine.
+            gross_monthly = round(gross_monthly_etp * working_time_rate, 2)
 
             print(
                 f"[{iteration}/{total_iterations}] "
-                f"{profile_id} | {multiple:.2f} SMIC = {gross_monthly:.2f} € gross/month"
+                f"{profile_id} | {multiple:.2f} SMIC ETP = "
+                f"{gross_monthly:.2f} € gross/month actual"
             )
 
             try:
@@ -631,6 +669,17 @@ def build_dataset():
                         error=exc
                     )
                 )
+
+
+            if iteration % checkpoint_every == 0:
+                checkpoint_df = pd.DataFrame(rows)
+                DATA_DIR.mkdir(parents=True, exist_ok=True)
+                checkpoint_df.to_csv(
+                    OUTPUT_PATH,
+                    index=False,
+                    encoding="utf-8-sig"
+                )
+                print(f"Checkpoint saved at iteration {iteration}/{total_iterations}")
 
             time.sleep(0.08)
 
