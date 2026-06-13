@@ -53,14 +53,12 @@ dimensions:
     lt50:
       label_fr: "Moins de 50 salariés"
       label_en: "Fewer than 50 employees"
-      situation:
-        entreprise . effectif: 10
+      situation: {}
 
     ge50:
       label_fr: "50 salariés et plus"
       label_en: "50 employees or more"
-      situation:
-        entreprise . effectif: 50
+      situation: {}
 
   working_time:
     full_time:
@@ -68,18 +66,24 @@ dimensions:
       label_en: "Full-time"
       working_time_rate: 1.0
       situation:
-        salarié . contrat . temps de travail . quotité: "100 %"
+        salarié . contrat . temps de travail . quotité:
+          valeur: 100
+          unité: "%"
 
     part_time_80:
       label_fr: "80 %"
       label_en: "80%"
       working_time_rate: 0.8
       situation:
-        salarié . contrat . temps de travail . quotité: "80 %"
+        salarié . contrat . temps de travail . quotité:
+          valeur: 80
+          unité: "%"
 
     part_time_50:
       label_fr: "50 %"
       label_en: "50%"
       working_time_rate: 0.5
       situation:
-        salarié . contrat . temps de travail . quotité: "50 %"
+        salarié . contrat . temps de travail . quotité:
+          valeur: 50
+          unité: "%"

@@ -1,4 +1,5 @@
 from pathlib import Path
+import argparse
 import time
 import requests
 import pandas as pd
@@ -9,6 +10,7 @@ BASE_DIR = Path(__file__).resolve().parents[1]
 CONFIG_PATH = BASE_DIR / "config" / "scenarios.yml"
 PROFILES_PATH = BASE_DIR / "config" / "profiles.yml"
 DATA_DIR = BASE_DIR / "data"
+PARTS_DIR = DATA_DIR / "parts"
 OUTPUT_PATH = DATA_DIR / "labour_cost_grid_mon_entreprise.csv"
 
 API_URL = "https://mon-entreprise.urssaf.fr/api/v1/evaluate"
@@ -45,12 +47,18 @@ BASE_EXPRESSIONS = [
 
 
 RGDU_CANDIDATE_EXPRESSIONS = [
+    "salarié . cotisations . exonérations",
+    "salarié . cotisations . exonérations . employeur",
     "salarié . cotisations . exonérations . RGDU",
+    "salarié . cotisations . exonérations . RGDU . montant",
+    "salarié . cotisations . exonérations . RGDU . réduction",
     "salarié . cotisations . exonérations . réduction générale",
+    "salarié . cotisations . exonérations . réduction générale dégressive",
     "salarié . cotisations . exonérations . réduction générale dégressive unique",
-    "salarié . cotisations . exonérations . réduction générale unique",
+    
 ]
 
+FIXED_RGDU_EXPRESSION = "salarié . cotisations . exonérations"
 
 def load_yaml(path: Path):
     with open(path, "r", encoding="utf-8") as file:
@@ -60,6 +68,14 @@ def load_yaml(path: Path):
 def load_config():
     return load_yaml(CONFIG_PATH)
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--status", required=True)
+    parser.add_argument("--territory", required=True)
+    parser.add_argument("--working-time", required=True)
+
+    return parser.parse_args()
 
 def merge_situations(*situations):
     merged = {}
@@ -221,43 +237,21 @@ def count_missing_variables(result, index):
 
 def select_rgdu_expression(test_gross_monthly, profile_situation=None):
     """
-    Mon-entreprise rule names may evolve. We test several plausible names
-    and keep the first expression returning a numerical value.
+    RGDU expression fixed after API diagnostic.
+    Avoids repeated detection calls and reduces rate-limit risk.
     """
 
-    print("Detecting RGDU 2026 expression...")
+    print("RGDU expression fixed:")
+    print(f"RGDU expression selected: {FIXED_RGDU_EXPRESSION}")
 
-    for candidate in RGDU_CANDIDATE_EXPRESSIONS:
-        expressions = BASE_EXPRESSIONS + [candidate]
-        payload = make_payload(
-            test_gross_monthly,
-            expressions,
-            profile_situation=profile_situation
-        )
-
-        try:
-            result = post_payload(payload)
-            value = extract_value(result, 6)
-
-            if value is not None:
-                print(f"RGDU expression selected: {candidate}")
-                print(f"Test value at 1 SMIC: {value:.2f} € / month")
-                return candidate
-
-        except Exception as exc:
-            print(f"RGDU candidate failed: {candidate}")
-            print(f"  {exc}")
-
-    print("No RGDU expression found. RGDU columns will be set to 0.")
-    return None
-
+    return FIXED_RGDU_EXPRESSION
 
 def evaluate_salary(
     gross_monthly,
     profile_situation=None,
     rgdu_expression=None,
-    max_retries=3,
-    pause_seconds=0.5
+    max_retries=10,
+    pause_seconds=2.0
 ):
     expressions = BASE_EXPRESSIONS.copy()
 
@@ -278,7 +272,21 @@ def evaluate_salary(
 
         except Exception as exc:
             last_error = str(exc)
-            time.sleep(pause_seconds)
+
+            if "HTTP 429" in last_error:
+                wait_seconds = min(90, pause_seconds * attempt * 6)
+                print(
+                    f"Rate limit hit on attempt {attempt}/{max_retries}. "
+                    f"Waiting {wait_seconds:.1f}s before retry..."
+                )
+            else:
+                wait_seconds = pause_seconds * attempt
+                print(
+                    f"API error on attempt {attempt}/{max_retries}. "
+                    f"Waiting {wait_seconds:.1f}s before retry..."
+                )
+
+            time.sleep(wait_seconds)
 
     raise RuntimeError(f"API call failed after {max_retries} attempts: {last_error}")
 
@@ -592,12 +600,35 @@ def make_error_row(
 
 
 def build_dataset():
+    args = parse_args()
+
     monthly_smic_gross, smic_multiples = build_smic_grid()
     profiles = load_profiles()
 
-    if not profiles:
-        raise ValueError("No profiles found in config/profiles.yml")
+    profiles = {
+        profile_id: profile
+        for profile_id, profile in profiles.items()
+        if profile.get("dimension_status") == args.status
+        and profile.get("dimension_territory") == args.territory
+        and profile.get("dimension_working_time") == args.working_time
+    }
 
+    if not profiles:
+        raise ValueError(
+            "No profiles found for filters: "
+            f"status={args.status}, "
+            f"territory={args.territory}, "
+            f"working_time={args.working_time}"
+        )
+
+    PARTS_DIR.mkdir(parents=True, exist_ok=True)
+
+    output_path = PARTS_DIR / (
+        f"labour_cost_grid__{args.status}__"
+        f"{args.territory}__{args.working_time}.csv"
+    )
+
+    
     first_profile = next(iter(profiles.values()))
     first_profile_situation = first_profile.get("situation", {})
 
@@ -607,6 +638,28 @@ def build_dataset():
     )
 
     rows = []
+    existing_keys = set()
+
+    if output_path.exists():
+        existing_df = pd.read_csv(output_path)
+        rows = existing_df.to_dict("records")
+
+        if "smic_multiple_etp" in existing_df.columns:
+            existing_multiple_col = "smic_multiple_etp"
+        else:
+            existing_multiple_col = "smic_multiple"
+
+        existing_keys = set(
+            zip(
+                existing_df["profile_id"].astype(str),
+                existing_df[existing_multiple_col].round(2)
+            )
+        )
+
+        print()
+        print(f"Resume mode: found {len(existing_keys)} existing rows in {output_path}")
+        print()
+
     checkpoint_every = 500
 
     total_iterations = len(profiles) * len(smic_multiples)
@@ -623,6 +676,16 @@ def build_dataset():
 
         for multiple in smic_multiples:
             iteration += 1
+
+            row_key = (profile_id, round(float(multiple), 2))
+
+            if row_key in existing_keys:
+                if iteration % 500 == 0:
+                    print(
+                        f"[{iteration}/{total_iterations}] "
+                        f"Skipping existing row: {profile_id} | {multiple:.2f} SMIC ETP"
+                    )
+                continue
 
             working_time_rate = float(profile.get("working_time_rate", 1.0))
 
@@ -659,6 +722,17 @@ def build_dataset():
                 )
 
             except Exception as exc:
+                if "HTTP 429" in str(exc):
+                    print("HTTP 429 after retries. Saving checkpoint and stopping cleanly.")
+                    checkpoint_df = pd.DataFrame(rows)
+                    DATA_DIR.mkdir(parents=True, exist_ok=True)
+                    checkpoint_df.to_csv(
+                        output_path,
+                        index=False,
+                        encoding="utf-8-sig"
+                    )
+                    raise
+
                 rows.append(
                     make_error_row(
                         profile_id=profile_id,
@@ -675,18 +749,18 @@ def build_dataset():
                 checkpoint_df = pd.DataFrame(rows)
                 DATA_DIR.mkdir(parents=True, exist_ok=True)
                 checkpoint_df.to_csv(
-                    OUTPUT_PATH,
+                    output_path,
                     index=False,
                     encoding="utf-8-sig"
                 )
                 print(f"Checkpoint saved at iteration {iteration}/{total_iterations}")
 
-            time.sleep(0.08)
+            time.sleep(0.80)
 
     df = pd.DataFrame(rows)
 
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    df.to_csv(OUTPUT_PATH, index=False, encoding="utf-8-sig")
+    df.to_csv(output_path, index=False, encoding="utf-8-sig")
 
     print()
     print(f"Dataset created: {OUTPUT_PATH}")
