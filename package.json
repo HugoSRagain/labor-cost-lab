@@ -1,0 +1,19 @@
+{
+  "name": "french-labour-cost-lab",
+  "version": "1.0.0",
+  "description": "**French Labour Cost Lab** is an open-source dashboard for simulating labour costs, employer social contributions, contribution reliefs and socio-fiscal marginal returns in France.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "modele-social": "^10.0.1",
+    "publicodes": "^1.10.1"
+  }
+}

@@ -1,7 +1,9 @@
 from pathlib import Path
 import argparse
+import json
+import subprocess
 import time
-import requests
+
 import pandas as pd
 import yaml
 
@@ -11,9 +13,8 @@ CONFIG_PATH = BASE_DIR / "config" / "scenarios.yml"
 PROFILES_PATH = BASE_DIR / "config" / "profiles.yml"
 DATA_DIR = BASE_DIR / "data"
 PARTS_DIR = DATA_DIR / "parts"
-OUTPUT_PATH = DATA_DIR / "labour_cost_grid_mon_entreprise.csv"
 
-API_URL = "https://mon-entreprise.urssaf.fr/api/v1/evaluate"
+LOCAL_EVALUATOR_PATH = BASE_DIR / "scripts" / "evaluate_mon_entreprise_local.mjs"
 
 
 BASE_EXPRESSIONS = [
@@ -208,14 +209,53 @@ def make_payload(gross_monthly, expressions, profile_situation=None):
     }
 
 
-def post_payload(payload, timeout=30):
-    response = requests.post(API_URL, json=payload, timeout=timeout)
+def post_payload(payload):
+    completed = subprocess.run(
+        [
+            "node",
+            str(LOCAL_EVALUATOR_PATH),
+            json.dumps(payload, ensure_ascii=False),
+        ],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=False,
+    )
 
-    if response.status_code != 200:
-        raise RuntimeError(f"HTTP {response.status_code}: {response.text[:800]}")
+    if completed.returncode != 0:
+        raise RuntimeError(
+            "Local Mon-entreprise evaluation failed:\n"
+            f"STDOUT:\n{completed.stdout}\n\n"
+            f"STDERR:\n{completed.stderr}"
+        )
 
-    return response.json()
+    try:
+        result = json.loads(completed.stdout)
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(
+            "Local Mon-entreprise evaluation returned invalid JSON:\n"
+            f"STDOUT:\n{completed.stdout}\n\n"
+            f"STDERR:\n{completed.stderr}"
+        ) from exc
 
+    # The REST API returned result["evaluate"] as a list.
+    # The local Node evaluator returns result["evaluate"] as a dict keyed by expression.
+    # Convert the local format back to the API-like list format expected by the rest of this script.
+    evaluate = result.get("evaluate", {})
+
+    if isinstance(evaluate, dict):
+        result["evaluate"] = [
+            evaluate.get(
+                expression,
+                {
+                    "nodeValue": None,
+                    "unit": None,
+                },
+            )
+            for expression in payload.get("expressions", [])
+        ]
+
+    return result
 
 def extract_value(result, index):
     try:
@@ -249,9 +289,7 @@ def select_rgdu_expression(test_gross_monthly, profile_situation=None):
 def evaluate_salary(
     gross_monthly,
     profile_situation=None,
-    rgdu_expression=None,
-    max_retries=10,
-    pause_seconds=2.0
+    rgdu_expression=None
 ):
     expressions = BASE_EXPRESSIONS.copy()
 
@@ -264,32 +302,7 @@ def evaluate_salary(
         profile_situation=profile_situation
     )
 
-    last_error = None
-
-    for attempt in range(1, max_retries + 1):
-        try:
-            return post_payload(payload)
-
-        except Exception as exc:
-            last_error = str(exc)
-
-            if "HTTP 429" in last_error:
-                wait_seconds = min(90, pause_seconds * attempt * 6)
-                print(
-                    f"Rate limit hit on attempt {attempt}/{max_retries}. "
-                    f"Waiting {wait_seconds:.1f}s before retry..."
-                )
-            else:
-                wait_seconds = pause_seconds * attempt
-                print(
-                    f"API error on attempt {attempt}/{max_retries}. "
-                    f"Waiting {wait_seconds:.1f}s before retry..."
-                )
-
-            time.sleep(wait_seconds)
-
-    raise RuntimeError(f"API call failed after {max_retries} attempts: {last_error}")
-
+    return post_payload(payload)
 
 def compute_indicators(result, gross_monthly, rgdu_expression=None):
     gross_api = extract_value(result, 0)
@@ -466,7 +479,7 @@ def make_success_row(
 
     return {
         "source": "mon-entreprise",
-        "engine": "api/v1/evaluate",
+        "engine": "publicodes-local",
         "profile_id": profile_id,
         "profile_label_fr": profile.get("label_fr", profile_id),
         "profile_label_en": profile.get("label_en", profile_id),
@@ -543,7 +556,7 @@ def make_error_row(
 ):
     return {
         "source": "mon-entreprise",
-        "engine": "api/v1/evaluate",
+        "engine": "publicodes-local",
         "profile_id": profile_id,
         "profile_label_fr": profile.get("label_fr", profile_id),
         "profile_label_en": profile.get("label_en", profile_id),
@@ -725,7 +738,7 @@ def build_dataset():
                 if "HTTP 429" in str(exc):
                     print("HTTP 429 after retries. Saving checkpoint and stopping cleanly.")
                     checkpoint_df = pd.DataFrame(rows)
-                    DATA_DIR.mkdir(parents=True, exist_ok=True)
+                    output_path.parent.mkdir(parents=True, exist_ok=True)
                     checkpoint_df.to_csv(
                         output_path,
                         index=False,
@@ -747,7 +760,7 @@ def build_dataset():
 
             if iteration % checkpoint_every == 0:
                 checkpoint_df = pd.DataFrame(rows)
-                DATA_DIR.mkdir(parents=True, exist_ok=True)
+                output_path.parent.mkdir(parents=True, exist_ok=True)
                 checkpoint_df.to_csv(
                     output_path,
                     index=False,
@@ -755,15 +768,13 @@ def build_dataset():
                 )
                 print(f"Checkpoint saved at iteration {iteration}/{total_iterations}")
 
-            time.sleep(0.80)
-
     df = pd.DataFrame(rows)
 
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(output_path, index=False, encoding="utf-8-sig")
 
     print()
-    print(f"Dataset created: {OUTPUT_PATH}")
+    print(f"Dataset created: {output_path}")
     print()
     print(df.head())
     print()
