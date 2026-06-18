@@ -136,6 +136,14 @@
                             </select>
                         </div>
 
+			<div class="selector-field">
+                            <label for="firm-size-select-en">Firm size</label>
+                            <select id="firm-size-select-en" onchange="switchCombinatorialProfile('en'); renderSimulation('en');">
+                                <option value="lt50" selected>&lt; 50 employees</option>
+                                <option value="ge50">≥ 50 employees</option>
+                            </select>
+                        </div>
+
                         <div class="selector-field">
                             <label for="atmp-select-en">
     				AT/MP risk scenario
@@ -155,6 +163,15 @@
 <option value="atmp_4">AT/MP 4 %</option>
 <option value="fonctions_support">Support functions</option>
 <option value="standard" selected>Standard AT/MP</option>
+                            </select>
+                        </div>
+
+                        <div class="selector-field">
+                            <label for="working-time-select-en">Working time</label>
+                            <select id="working-time-select-en" onchange="switchCombinatorialProfile('en'); renderSimulation('en');">
+                                <option value="full_time" selected>Full-time</option>
+                                <option value="part_time_80">Part-time 80 %</option>
+                                <option value="part_time_50">Part-time 50 %</option>
                             </select>
                         </div>
                     </div>
@@ -773,6 +790,14 @@
                         </div>
 
                         <div class="selector-field">
+                            <label for="data-firm-size-select-en">Firm size</label>
+                            <select id="data-firm-size-select-en" onchange="switchDataCombinatorialProfile('en'); renderDataTable('en')">
+                                <option value="lt50" selected>&lt; 50 employees</option>
+                                <option value="ge50">≥ 50 employees</option>
+                            </select>
+                        </div>
+
+                        <div class="selector-field">
                             <label for="data-atmp-select-en">
     				AT/MP risk scenario
     				<a
@@ -791,6 +816,15 @@
 <option value="atmp_4">AT/MP 4 %</option>
 <option value="fonctions_support">Support functions</option>
 <option value="standard" selected>Standard AT/MP</option>
+                            </select>
+                        </div>
+
+                        <div class="selector-field">
+                            <label for="data-working-time-select-en">Working time</label>
+                            <select id="data-working-time-select-en" onchange="switchDataCombinatorialProfile('en'); renderDataTable('en')">
+                                <option value="full_time" selected>Full-time</option>
+                                <option value="part_time_80">Part-time 80 %</option>
+                                <option value="part_time_50">Part-time 50 %</option>
                             </select>
                         </div>
                     </div>
@@ -1040,6 +1074,14 @@
                             </select>
                         </div>
 
+			<div class="selector-field">
+                            <label for="firm-size-select-fr">Taille d’entreprise</label>
+                            <select id="firm-size-select-fr" onchange="switchCombinatorialProfile('fr'); renderSimulation('fr');">
+                                <option value="lt50" selected>&lt; 50 salariés</option>
+                                <option value="ge50">≥ 50 salariés</option>
+                            </select>
+                        </div>
+
                         <div class="selector-field">
                             <label for="atmp-select-fr">
     				Scénario AT/MP
@@ -1061,6 +1103,16 @@
 <option value="standard" selected>AT/MP standard</option>
                             </select>
                         </div>
+			
+			<div class="selector-field">
+                            <label for="working-time-select-fr">Temps de travail</label>
+                            <select id="working-time-select-fr" onchange="switchCombinatorialProfile('fr'); renderSimulation('fr');">
+                                <option value="full_time" selected>Temps plein</option>
+                                <option value="part_time_80">Temps partiel 80 %</option>
+                                <option value="part_time_50">Temps partiel 50 %</option>
+                            </select>
+                        </div>
+
                     </div>
                 </section>
 
@@ -1677,6 +1729,14 @@
                         </div>
 
                         <div class="selector-field">
+                            <label for="data-firm-size-select-fr">Taille d’entreprise</label>
+                            <select id="data-firm-size-select-fr" onchange="switchDataCombinatorialProfile('fr'); renderDataTable('fr')">
+                                <option value="lt50" selected>&lt; 50 salariés</option>
+                                <option value="ge50">≥ 50 salariés</option>
+                            </select>
+                        </div>
+
+                        <div class="selector-field">
                             <label for="data-atmp-select-fr">
     				Scénario AT/MP
     				<a
@@ -1697,6 +1757,16 @@
 <option value="standard" selected>AT/MP standard</option>
                             </select>
                         </div>
+
+                        <div class="selector-field">
+                            <label for="data-working-time-select-fr">Temps de travail</label>
+                            <select id="data-working-time-select-fr" onchange="switchDataCombinatorialProfile('fr'); renderDataTable('fr')">
+                                <option value="full_time" selected>Temps plein</option>
+                                <option value="part_time_80">Temps partiel 80 %</option>
+                                <option value="part_time_50">Temps partiel 50 %</option>
+                            </select>
+                        </div>
+
                     </div>
                 </section>
 
@@ -1834,17 +1904,33 @@
         function getSelectedCombinatorialProfile(lang) {
             const status = document.getElementById("status-select-" + lang).value;
             const territory = document.getElementById("territory-select-" + lang).value;
+            const firmSize = document.getElementById("firm-size-select-" + lang).value;
             const atmp = document.getElementById("atmp-select-" + lang).value;
+            const workingTime = document.getElementById("working-time-select-" + lang).value;
 
-            return status + "__" + territory + "__" + atmp;
+            return [
+                status,
+                territory,
+                firmSize,
+                atmp,
+                workingTime
+            ].join("__");
         }
 
         function getSelectedDataProfile(lang) {
             const status = document.getElementById("data-status-select-" + lang).value;
             const territory = document.getElementById("data-territory-select-" + lang).value;
+            const firmSize = document.getElementById("data-firm-size-select-" + lang).value;
             const atmp = document.getElementById("data-atmp-select-" + lang).value;
+            const workingTime = document.getElementById("data-working-time-select-" + lang).value;
 
-            return status + "__" + territory + "__" + atmp;
+            return [
+                status,
+                territory,
+                firmSize,
+                atmp,
+                workingTime
+            ].join("__");
         }
 
         function restoreCombinatorialSelectors(lang) {
@@ -1874,11 +1960,15 @@
         function syncDataSelectorsFromSimulation(lang) {
             const status = document.getElementById("status-select-" + lang).value;
             const territory = document.getElementById("territory-select-" + lang).value;
+            const firmSize = document.getElementById("firm-size-select-" + lang).value;
             const atmp = document.getElementById("atmp-select-" + lang).value;
+            const workingTime = document.getElementById("working-time-select-" + lang).value;
 
             const dataStatus = document.getElementById("data-status-select-" + lang);
             const dataTerritory = document.getElementById("data-territory-select-" + lang);
+            const dataFirmSize = document.getElementById("data-firm-size-select-" + lang);
             const dataAtmp = document.getElementById("data-atmp-select-" + lang);
+            const dataWorkingTime = document.getElementById("data-working-time-select-" + lang);
 
             if (dataStatus) {
                 dataStatus.value = status;
@@ -1888,8 +1978,16 @@
                 dataTerritory.value = territory;
             }
 
+            if (dataFirmSize) {
+                dataFirmSize.value = firmSize;
+            }
+
             if (dataAtmp) {
                 dataAtmp.value = atmp;
+            }
+
+            if (dataWorkingTime) {
+                dataWorkingTime.value = workingTime;
             }
         }
 
@@ -1897,10 +1995,15 @@
             const status = document.getElementById("data-status-select-" + lang).value;
             const territory = document.getElementById("data-territory-select-" + lang).value;
             const atmp = document.getElementById("data-atmp-select-" + lang).value;
+	    const firmSize = document.getElementById("data-firm-size-select-" + lang).value;
+	    const workingTime = document.getElementById("data-working-time-select-" + lang).value;
+
 
             document.getElementById("status-select-" + lang).value = status;
             document.getElementById("territory-select-" + lang).value = territory;
             document.getElementById("atmp-select-" + lang).value = atmp;
+	    document.getElementById("firm-size-select-" + lang).value = firmSize;
+	    document.getElementById("working-time-select-" + lang).value = workingTime;
 
             localStorage.setItem("flcl_status_" + lang, status);
             localStorage.setItem("flcl_territory_" + lang, territory);

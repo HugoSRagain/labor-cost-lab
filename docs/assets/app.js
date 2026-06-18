@@ -1,3 +1,44 @@
+window.addEventListener("error", function (event) {
+    const box = document.createElement("pre");
+    box.style.position = "fixed";
+    box.style.left = "16px";
+    box.style.right = "16px";
+    box.style.bottom = "16px";
+    box.style.zIndex = "99999";
+    box.style.padding = "12px";
+    box.style.background = "#fee2e2";
+    box.style.color = "#7f1d1d";
+    box.style.border = "1px solid #ef4444";
+    box.style.borderRadius = "8px";
+    box.style.whiteSpace = "pre-wrap";
+    box.textContent = [
+        "JavaScript error:",
+        event.message,
+        event.filename + ":" + event.lineno + ":" + event.colno
+    ].join("\n");
+    document.body.appendChild(box);
+});
+
+window.addEventListener("unhandledrejection", function (event) {
+    const box = document.createElement("pre");
+    box.style.position = "fixed";
+    box.style.left = "16px";
+    box.style.right = "16px";
+    box.style.bottom = "16px";
+    box.style.zIndex = "99999";
+    box.style.padding = "12px";
+    box.style.background = "#fee2e2";
+    box.style.color = "#7f1d1d";
+    box.style.border = "1px solid #ef4444";
+    box.style.borderRadius = "8px";
+    box.style.whiteSpace = "pre-wrap";
+    box.textContent = [
+        "Unhandled promise rejection:",
+        String(event.reason)
+    ].join("\n");
+    document.body.appendChild(box);
+});
+
 var DATA = [];
 var currentLanguage = localStorage.getItem("flcl_language") || "fr";
 var currentTab = localStorage.getItem("flcl_tab_" + currentLanguage) || "simulation";
@@ -120,25 +161,29 @@ function getActiveLanguage() {
 function getSelectedProfile(lang) {
     const statusSelect = getElement("status-select", lang);
     const territorySelect = getElement("territory-select", lang);
+    const firmSizeSelect = getElement("firm-size-select", lang);
     const atmpSelect = getElement("atmp-select", lang);
+    const workingTimeSelect = getElement("working-time-select", lang);
 
     return {
         status: statusSelect ? statusSelect.value : "non_cadre",
         territory: territorySelect ? territorySelect.value : "standard",
-        atmp: atmpSelect ? atmpSelect.value : "standard"
+        firmSize: firmSizeSelect ? firmSizeSelect.value : "lt50",
+        atmp: atmpSelect ? atmpSelect.value : "standard",
+        workingTime: workingTimeSelect ? workingTimeSelect.value : "full_time"
     };
 }
 
 function getProfileData(lang) {
     const profile = getSelectedProfile(lang);
 
-    return DATA
-        .filter(row =>
-            row.dimension_status === profile.status &&
-            row.dimension_territory === profile.territory &&
-            row.dimension_atmp === profile.atmp
-        )
-        .sort((a, b) => num(a.smic_multiple) - num(b.smic_multiple));
+    return DATA.filter(row =>
+        row.dimension_status === profile.status &&
+        row.dimension_territory === profile.territory &&
+        row.dimension_firm_size === profile.firmSize &&
+        row.dimension_atmp === profile.atmp &&
+        row.dimension_working_time === profile.workingTime
+    ).sort((a, b) => num(a.smic_multiple_etp) - num(b.smic_multiple_etp));
 }
 
 function isDarkMode() {
@@ -1840,7 +1885,9 @@ function renderDataTable(lang = getActiveLanguage()) {
 
     const statusSelect = getElement("status-select", lang);
     const territorySelect = getElement("territory-select", lang);
+    const firmSizeSelect = getElement("firm-size-select", lang);
     const atmpSelect = getElement("atmp-select", lang);
+    const workingTimeSelect = getElement("working-time-select", lang);
 
     const statusText = statusSelect && statusSelect.selectedOptions.length
         ? statusSelect.selectedOptions[0].textContent
@@ -1854,8 +1901,16 @@ function renderDataTable(lang = getActiveLanguage()) {
         ? atmpSelect.selectedOptions[0].textContent
         : "";
 
+    const firmSizeText = firmSizeSelect && firmSizeSelect.selectedOptions.length
+    	? firmSizeSelect.selectedOptions[0].textContent
+    	: "";
+
+    const workingTimeText = workingTimeSelect && workingTimeSelect.selectedOptions.length
+    	? workingTimeSelect.selectedOptions[0].textContent
+    	: "";
+
     if (label) {
-        label.textContent = [statusText, territoryText, atmpText]
+        label.textContent = [statusText, territoryText, firmSizeText, atmpText, workingTimeText]
             .filter(Boolean)
             .join(" — ");
     }
@@ -1947,8 +2002,10 @@ function renderAtmpComparisonLevel(lang) {
         const lineData = DATA
             .filter(row =>
                 row.dimension_status === profile.status &&
-                row.dimension_territory === profile.territory &&
-                row.dimension_atmp === atmp
+		row.dimension_territory === profile.territory &&
+		row.dimension_firm_size === profile.firmSize &&
+		row.dimension_atmp === atmp &&
+		row.dimension_working_time === profile.workingTime
             )
             .sort((a, b) => num(a.smic_multiple) - num(b.smic_multiple));
 
@@ -2004,13 +2061,15 @@ function renderAtmpComparisonGap(lang) {
         .filter(row =>
             row.dimension_status === profile.status &&
             row.dimension_territory === profile.territory &&
-            row.dimension_atmp === "standard"
+            row.dimension_firm_size === profile.firmSize &&
+            row.dimension_atmp === "standard" &&
+            row.dimension_working_time === profile.workingTime
         )
-        .sort((a, b) => num(a.smic_multiple) - num(b.smic_multiple));
+        .sort((a, b) => num(a.smic_multiple_etp) - num(b.smic_multiple_etp));
 
     const standardMap = new Map(
         standardData.map(row => [
-            num(row.smic_multiple).toFixed(2),
+            num(row.smic_multiple_etp).toFixed(2),
             num(row.employer_cost_monthly_eur)
         ])
     );
@@ -2022,26 +2081,28 @@ function renderAtmpComparisonGap(lang) {
             .filter(row =>
                 row.dimension_status === profile.status &&
                 row.dimension_territory === profile.territory &&
-                row.dimension_atmp === atmp
+                row.dimension_firm_size === profile.firmSize &&
+                row.dimension_atmp === atmp &&
+                row.dimension_working_time === profile.workingTime
             )
-            .sort((a, b) => num(a.smic_multiple) - num(b.smic_multiple));
+            .sort((a, b) => num(a.smic_multiple_etp) - num(b.smic_multiple_etp));
 
         const x = [];
         const y = [];
         const customdata = [];
 
         lineData.forEach(d => {
-            const key = num(d.smic_multiple).toFixed(2);
+            const key = num(d.smic_multiple_etp).toFixed(2);
             const standardCost = standardMap.get(key);
 
             if (standardCost !== undefined) {
                 const employerCost = num(d.employer_cost_monthly_eur);
                 const gap = employerCost - standardCost;
 
-                x.push(num(d.smic_multiple));
+                x.push(num(d.smic_multiple_etp));
                 y.push(gap);
                 customdata.push([
-                    num(d.gross_monthly_eur),
+                    num(d.gross_monthly_real_eur),
                     employerCost,
                     standardCost,
                     gap
@@ -2072,11 +2133,12 @@ function renderAtmpComparisonGap(lang) {
 
     const rgduZone = getRgduZoneFromData(standardData);
     const layout = addRgduZone(
-    baseLayout(lang, lang === "fr" ? "Écart de coût employeur" : "Employer cost gap"),
-    	lang,
-    	rgduZone.x0,
-    	rgduZone.x1
+        baseLayout(lang, lang === "fr" ? "Écart de coût employeur" : "Employer cost gap"),
+        lang,
+        rgduZone.x0,
+        rgduZone.x1
     );
+
     layout.height = 460;
     layout.margin.b = 95;
     layout.yaxis.ticksuffix = " €";
@@ -2111,9 +2173,11 @@ function renderStatusComparisonLevel(lang) {
     const traces = statusValues.map(status => {
         const lineData = DATA
             .filter(row =>
-                row.dimension_status === status &&
-                row.dimension_territory === profile.territory &&
-                row.dimension_atmp === profile.atmp
+		row.dimension_status === status &&
+		row.dimension_territory === profile.territory &&
+		row.dimension_firm_size === profile.firmSize &&
+		row.dimension_atmp === profile.atmp &&
+		row.dimension_working_time === profile.workingTime
             )
             .sort((a, b) => num(a.smic_multiple) - num(b.smic_multiple));
 
@@ -2167,13 +2231,15 @@ function renderStatusComparisonGap(lang) {
         .filter(row =>
             row.dimension_status === "non_cadre" &&
             row.dimension_territory === profile.territory &&
-            row.dimension_atmp === profile.atmp
+            row.dimension_firm_size === profile.firmSize &&
+            row.dimension_atmp === profile.atmp &&
+            row.dimension_working_time === profile.workingTime
         )
-        .sort((a, b) => num(a.smic_multiple) - num(b.smic_multiple));
+        .sort((a, b) => num(a.smic_multiple_etp) - num(b.smic_multiple_etp));
 
     const nonCadreMap = new Map(
         nonCadreData.map(row => [
-            num(row.smic_multiple).toFixed(2),
+            num(row.smic_multiple_etp).toFixed(2),
             num(row.employer_cost_monthly_eur)
         ])
     );
@@ -2182,26 +2248,28 @@ function renderStatusComparisonGap(lang) {
         .filter(row =>
             row.dimension_status === "cadre" &&
             row.dimension_territory === profile.territory &&
-            row.dimension_atmp === profile.atmp
+            row.dimension_firm_size === profile.firmSize &&
+            row.dimension_atmp === profile.atmp &&
+            row.dimension_working_time === profile.workingTime
         )
-        .sort((a, b) => num(a.smic_multiple) - num(b.smic_multiple));
+        .sort((a, b) => num(a.smic_multiple_etp) - num(b.smic_multiple_etp));
 
     const x = [];
     const y = [];
     const customdata = [];
 
     cadreData.forEach(d => {
-        const key = num(d.smic_multiple).toFixed(2);
+        const key = num(d.smic_multiple_etp).toFixed(2);
         const nonCadreCost = nonCadreMap.get(key);
 
         if (nonCadreCost !== undefined) {
             const cadreCost = num(d.employer_cost_monthly_eur);
             const gap = cadreCost - nonCadreCost;
 
-            x.push(num(d.smic_multiple));
+            x.push(num(d.smic_multiple_etp));
             y.push(gap);
             customdata.push([
-                num(d.gross_monthly_eur),
+                num(d.gross_monthly_real_eur),
                 cadreCost,
                 nonCadreCost,
                 gap
@@ -2233,13 +2301,13 @@ function renderStatusComparisonGap(lang) {
 
     const rgduZone = getRgduZoneFromData(nonCadreData);
     const layout = addRgduZone(
-    	baseLayout(
-        	lang,
-        	lang === "fr" ? "Écart de coût employeur" : "Employer cost gap"
-    	),
-    	lang,
-    	rgduZone.x0,
-    	rgduZone.x1
+        baseLayout(
+            lang,
+            lang === "fr" ? "Écart de coût employeur" : "Employer cost gap"
+        ),
+        lang,
+        rgduZone.x0,
+        rgduZone.x1
     );
 
     layout.height = 460;
@@ -2457,7 +2525,14 @@ function updateAll(lang = getActiveLanguage()) {
 }
 
 function setupEventsForLanguage(lang) {
-    ["status-select", "territory-select", "atmp-select"].forEach(id => {
+    [
+    	"status-select",
+    	"territory-select",
+    	"firm-size-select",
+    	"atmp-select",
+    	"working-time-select"
+    ].forEach(id => {
+
         const element = getElement(id, lang);
 
         if (element) {
