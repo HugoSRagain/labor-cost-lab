@@ -1050,4 +1050,34 @@ body.dark-mode .methodology-versioning-card {
 .info-tooltip:hover {
     opacity: 1;
 }
+
+.global-project-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.65rem 1rem;
+    font-size: 0.9rem;
+    color: var(--text-muted, #64748b);
+    background: rgba(15, 23, 42, 0.04);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.global-project-banner a {
+    font-weight: 700;
+    color: inherit;
+    text-decoration: none;
+}
+
+.global-project-banner a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 720px) {
+    .global-project-banner {
+        flex-direction: column;
+        gap: 0.25rem;
+        text-align: center;
+    }
+}
 }
