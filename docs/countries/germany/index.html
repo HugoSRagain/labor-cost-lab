@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>German Labour Cost Lab</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+    <link rel="stylesheet" href="../../assets/style.css?v=19">
+    <script defer src="./assets/germany_app.js?v=1"></script>
+</head>
+
+<body>
+    <div class="global-project-banner">
+        <a href="../../index.html">← Labor Cost Lab</a>
+        <span>
+            The German Labour Cost Lab is a prototype national module of the Labor Cost Lab project.
+        </span>
+    </div>
+
+    <div class="language-section active">
+        <header>
+            <div>
+                <h1>German Labour Cost Lab</h1>
+                <p>
+                    Prototype de simulation du coût du travail, du salaire net avant impôt
+                    et des cotisations sociales en Allemagne.
+                </p>
+                <p class="author-line">Par Hugo Spring-Ragain, Économiste, CEDS Paris</p>
+            </div>
+        </header>
+
+        <main>
+            <section>
+                <div class="badge">Prototype Allemagne · Paramètres 2026</div>
+
+                <h2>Objectif</h2>
+
+                <p>
+                    Ce module propose une première simulation reproductible du système allemand
+                    de coût du travail. Il calcule le salaire brut, le salaire net avant impôt
+                    sur le revenu, les cotisations salarié, les cotisations employeur et le coût
+                    total employeur.
+                </p>
+
+                <div class="method-box">
+                    <strong>Note méthodologique.</strong>
+                    Cette version est volontairement simplifiée. Elle modélise un salarié standard
+                    affilié à l’assurance publique, sans enfant, hors Saxe. L’impôt sur le revenu,
+                    les mini-jobs, les midi-jobs, les caisses maladie particulières et les situations
+                    familiales seront intégrés dans une version ultérieure.
+                </div>
+            </section>
+
+            <section>
+                <h2>Indicateurs clés</h2>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Salaire net avant impôt à 1 salaire minimum</div>
+                        <div class="metric-value" id="germany-net-smic">—</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">Coût employeur à 1 salaire minimum</div>
+                        <div class="metric-value" id="germany-cost-smic">—</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">Taux employeur apparent à 1 salaire minimum</div>
+                        <div class="metric-value" id="germany-employer-rate">—</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-label">Ratio coût/net à 2 salaires minimums</div>
+                        <div class="metric-value" id="germany-cost-net-ratio">—</div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2>Graphiques interactifs</h2>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Du salaire brut au coût employeur</h3>
+                        <p class="chart-subtitle">
+                            Comparaison du salaire brut, du salaire net avant impôt
+                            et du coût total employeur.
+                        </p>
+                        <div id="chart-germany-cost" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Taux effectifs de cotisations</h3>
+                        <p class="chart-subtitle">
+                            Cotisations salarié et employeur rapportées au salaire brut.
+                        </p>
+                        <div id="chart-germany-rates" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Coin social</h3>
+                        <p class="chart-subtitle">
+                            Écart entre coût employeur et salaire net avant impôt,
+                            exprimé en part du coût employeur.
+                        </p>
+                        <div id="chart-germany-wedge" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Décomposition à 2 salaires minimums</h3>
+                        <p class="chart-subtitle">
+                            Décomposition simplifiée du coût du travail allemand.
+                        </p>
+                        <div id="chart-germany-decomposition" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2>Méthodologie</h2>
+
+                <ul class="methodology-list">
+                    <li>
+                        <strong>Salaire minimum.</strong>
+                        Le salaire minimum horaire retenu est de 13,90 € en 2026.
+                    </li>
+                    <li>
+                        <strong>Durée mensuelle.</strong>
+                        La simulation retient 173,33 heures mensuelles, soit 40 heures hebdomadaires annualisées.
+                    </li>
+                    <li>
+                        <strong>Assurance retraite.</strong>
+                        Taux total de 18,6 %, partagé à parts égales entre salarié et employeur.
+                    </li>
+                    <li>
+                        <strong>Assurance chômage.</strong>
+                        Taux total de 2,6 %, partagé à parts égales.
+                    </li>
+                    <li>
+                        <strong>Assurance maladie.</strong>
+                        Taux général de 14,6 %, auquel s’ajoute une contribution complémentaire de référence.
+                    </li>
+                    <li>
+                        <strong>Dépendance.</strong>
+                        La simulation retient un salarié sans enfant, hors Saxe.
+                    </li>
+                    <li>
+                        <strong>Limite.</strong>
+                        Cette V1 ne calcule pas encore l’impôt sur le revenu allemand.
+                        Le salaire net affiché est donc un net avant impôt.
+                    </li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            German Labour Cost Lab · Prototype 2026 · Part of the Labor Cost Lab project
+        </footer>
+    </div>
+</body>
+</html>
