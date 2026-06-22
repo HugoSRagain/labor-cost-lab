@@ -902,17 +902,28 @@
                     <div class="working-paper-header">
                         <div>
                             <h2>Working Paper</h2>
-                            <p class="interpretation">This working paper documents the French Labour Cost Lab, its methodology, indicators, internal consistency checks and limitations.</p>
+                            <p class="interpretation">This section provides access to the methodological documentation and the FLCL framework paper.</p>
+
+                            <label for="working-paper-select-en">Document</label>
+                            <select id="working-paper-select-en" onchange="switchWorkingPaper('en')">
+                                <option value="assets/french_labour_cost_lab_working_paper.pdf">
+                                    Methodological note
+                                </option>
+                                <option value="assets/FLCL_Framework_Working_Paper_June_2026.pdf">
+                                    FLCL framework paper
+                                </option>
+                            </select>
                         </div>
 
-                        <a class="download-link working-paper-download" href="assets/french_labour_cost_lab_working_paper.pdf" download>
-                            ⬇ Download the working paper (PDF)
+                        <a id="working-paper-download-en" class="download-link working-paper-download" href="assets/french_labour_cost_lab_working_paper.pdf" download>
+                            ⬇ Download the selected PDF
                         </a>
                     </div>
 
                     <div class="working-paper-card">
                         <div class="pdf-viewer-wrapper">
                             <iframe
+                                id="working-paper-viewer-en"
                                 class="pdf-viewer"
                                 src="assets/french_labour_cost_lab_working_paper.pdf#view=FitH"
                                 title="French Labour Cost Lab Working Paper"
@@ -1842,17 +1853,28 @@
                     <div class="working-paper-header">
                         <div>
                             <h2>Working Paper</h2>
-                            <p class="interpretation">Ce working paper documente le French Labour Cost Lab, sa méthodologie, ses indicateurs, ses contrôles de cohérence interne et ses limites.</p>
+                            <p class="interpretation">Cette section donne accès à la documentation méthodologique et au papier de cadrage du FLCL.</p>
+
+                            <label for="working-paper-select-fr">Document</label>
+                            <select id="working-paper-select-fr" onchange="switchWorkingPaper('fr')">
+                                <option value="assets/french_labour_cost_lab_working_paper.pdf">
+                                    Note méthodologique
+                                </option>
+                                <option value="assets/FLCL_Framework_Working_Paper_June_2026.pdf">
+                                    Papier de cadrage FLCL
+                                </option>
+                            </select>
                         </div>
 
-                        <a class="download-link working-paper-download" href="assets/french_labour_cost_lab_working_paper.pdf" download>
-                            ⬇ Télécharger le working paper (PDF)
+                        <a id="working-paper-download-fr" class="download-link working-paper-download" href="assets/french_labour_cost_lab_working_paper.pdf" download>
+                            ⬇ Télécharger le PDF sélectionné
                         </a>
                     </div>
 
                     <div class="working-paper-card">
                         <div class="pdf-viewer-wrapper">
                             <iframe
+                                id="working-paper-viewer-fr"
                                 class="pdf-viewer"
                                 src="assets/french_labour_cost_lab_working_paper.pdf#view=FitH"
                                 title="French Labour Cost Lab Working Paper"
@@ -2140,26 +2162,6 @@
             }
         }
 
-        function switchCombinatorialProfile(lang) {
-            const profileId = getSelectedCombinatorialProfile(lang);
-
-            localStorage.setItem("flcl_status_" + lang, document.getElementById("status-select-" + lang).value);
-            localStorage.setItem("flcl_territory_" + lang, document.getElementById("territory-select-" + lang).value);
-            localStorage.setItem("flcl_atmp_" + lang, document.getElementById("atmp-select-" + lang).value);
-
-            showProfile(lang, profileId);
-            showComparison(lang);
-            showStatusComparison(lang);
-            showTerritoryComparison(lang);
-            syncDataSelectorsFromSimulation(lang);
-            showDataPanel(lang);
-            showMetricsPanel(lang);
-
-            if (typeof renderSimulation === "function") {
-                renderSimulation(lang);
-            }
-        }
-
         function switchDataCombinatorialProfile(lang) {
             syncSimulationSelectorsFromData(lang);
 
@@ -2175,6 +2177,21 @@
             if (typeof renderSimulation === "function") {
                 renderSimulation(lang);
             }
+        }
+
+        function switchWorkingPaper(lang) {
+            const select = document.getElementById("working-paper-select-" + lang);
+            const viewer = document.getElementById("working-paper-viewer-" + lang);
+            const download = document.getElementById("working-paper-download-" + lang);
+
+            if (!select || !viewer || !download) {
+                return;
+            }
+
+            const pdfPath = select.value;
+
+            viewer.src = pdfPath + "#view=FitH";
+            download.href = pdfPath;
         }
 
         function showTab(lang, tabName) {
@@ -2323,6 +2340,8 @@
             const current = localStorage.getItem("flcl_theme") || "light";
             applyTheme(current === "light" ? "dark" : "light");
         }
+
+
 
         function setLanguage(lang) {
             const enSection = document.getElementById("section-en");
