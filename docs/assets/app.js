@@ -258,22 +258,53 @@ function baseLayout(lang, yTitle) {
     };
 }
 
-function addRgduZone(layout, lang, x0 = 1, x1 = 3) {
-    const t = getText(lang);
+function addRgduZone(layout, lang, x0, x1) {
+    const noFreezeZone = {
+        x0: 1.00,
+        x1: 3.00
+    };
 
-    layout.shapes = layout.shapes || [];
-    layout.annotations = layout.annotations || [];
+    const freezeZone = {
+        x0: 1.00,
+        x1: 2.93
+    };
 
-    layout.shapes.push(
+    const updatedLayout = {
+        ...layout
+    };
+
+    if (!updatedLayout.shapes) {
+        updatedLayout.shapes = [];
+    }
+
+    if (!updatedLayout.annotations) {
+        updatedLayout.annotations = [];
+    }
+
+    updatedLayout.shapes = updatedLayout.shapes.concat([
         {
             type: "rect",
-            xref: "x",
-            yref: "paper",
-            x0: x0,
-            x1: x1,
+            x0: noFreezeZone.x0,
+            x1: noFreezeZone.x1,
             y0: 0,
             y1: 1,
-            fillcolor: "rgba(37, 99, 235, 0.08)",
+            xref: "x",
+            yref: "paper",
+            fillcolor: "rgba(148, 163, 184, 0.10)",
+            line: {
+                width: 0
+            },
+            layer: "below"
+        },
+        {
+            type: "rect",
+            x0: freezeZone.x0,
+            x1: freezeZone.x1,
+            y0: 0,
+            y1: 1,
+            xref: "x",
+            yref: "paper",
+            fillcolor: "rgba(37, 99, 235, 0.10)",
             line: {
                 width: 0
             },
@@ -281,75 +312,100 @@ function addRgduZone(layout, lang, x0 = 1, x1 = 3) {
         },
         {
             type: "line",
-            xref: "x",
-            yref: "paper",
-            x0: x0,
-            x1: x0,
+            x0: freezeZone.x0,
+            x1: freezeZone.x0,
             y0: 0,
             y1: 1,
+            xref: "x",
+            yref: "paper",
             line: {
-                color: COLORS.blue,
-                dash: "dash",
-                width: 1.5
+                color: "rgba(37, 99, 235, 0.85)",
+                width: 1.5,
+                dash: "dash"
             }
         },
         {
             type: "line",
-            xref: "x",
-            yref: "paper",
-            x0: x1,
-            x1: x1,
+            x0: freezeZone.x1,
+            x1: freezeZone.x1,
             y0: 0,
             y1: 1,
+            xref: "x",
+            yref: "paper",
             line: {
-                color: COLORS.blue,
-                dash: "dash",
-                width: 1.5
+                color: "rgba(37, 99, 235, 0.85)",
+                width: 1.5,
+                dash: "dash"
+            }
+        },
+        {
+            type: "line",
+            x0: noFreezeZone.x1,
+            x1: noFreezeZone.x1,
+            y0: 0,
+            y1: 1,
+            xref: "x",
+            yref: "paper",
+            line: {
+                color: "rgba(100, 116, 139, 0.85)",
+                width: 1.5,
+                dash: "dot"
             }
         }
-    );
+    ]);
 
-    layout.annotations.push({
-        xref: "x",
-        yref: "paper",
-        x: (x0 + x1) / 2,
-        y: 1.08,
-        text: lang === "fr"
-            ? `Zone dégressive RGDU : ${x0.toFixed(2)} à ${x1.toFixed(2)} SMIC`
-            : `RGDU degressive area: ${x0.toFixed(2)} to ${x1.toFixed(2)} SMIC`,
-        showarrow: false,
-        xanchor: "center",
-        yanchor: "bottom",
-        align: "center",
-        font: {
-            size: 11,
-            color: COLORS.blue
+    updatedLayout.annotations = updatedLayout.annotations.concat([
+        {
+            x: 1.95,
+            y: 0.96,
+            xref: "x",
+            yref: "paper",
+            text: lang === "fr"
+                ? "Avec gel : 1.00 à 2.93 SMIC"
+                : "Freeze: 1.00 to 2.93 minimum wages",
+            showarrow: false,
+            font: {
+                size: 11,
+                color: "#2563eb"
+            },
+            bgcolor: "rgba(255, 255, 255, 0.90)",
+            bordercolor: "rgba(191, 219, 254, 0.95)",
+            borderpad: 4
+        },
+        {
+            x: 2.98,
+            y: 0.88,
+            xref: "x",
+            yref: "paper",
+            text: lang === "fr"
+                ? "Sans gel : 3.00 SMIC"
+                : "No freeze: 3.00 minimum wages",
+            showarrow: false,
+            xanchor: "left",
+            font: {
+                size: 11,
+                color: "#475569"
+            },
+            bgcolor: "rgba(255, 255, 255, 0.90)",
+            bordercolor: "rgba(203, 213, 225, 0.95)",
+            borderpad: 4
         }
-    });
+    ]);
 
-    return layout;
+    updatedLayout.margin = {
+        ...updatedLayout.margin,
+        t: Math.max(updatedLayout.margin?.t || 40, 70)
+    };
+
+    return updatedLayout;
 }
 
 function getRgduZoneFromData(data) {
-    const positiveRows = data
-        .filter(row => num(row.smic_multiple) >= 1)
-        .filter(row => num(row.rgdu_monthly_eur) > 0)
-        .sort((a, b) => num(a.smic_multiple) - num(b.smic_multiple));
-
-    if (!positiveRows.length) {
-        return {
-            x0: 1,
-            x1: 3
-        };
-    }
-
     return {
-        x0: num(positiveRows[0].smic_multiple),
-        x1: num(positiveRows[positiveRows.length - 1].smic_multiple)
+        x0: 1.00,
+        x1: 2.93
     };
 }
-
-
 
 
 function renderCostChart(data, lang) {
