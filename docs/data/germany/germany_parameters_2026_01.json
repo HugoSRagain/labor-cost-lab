@@ -50,22 +50,48 @@
         "care_employer_childless_outside_saxony": 0.018
     },
 
-    "profiles": [
-        {
-            "profile_id": "germany__public_health__with_children__outside_saxony",
-            "label_fr": "Assurance publique · avec enfant · hors Saxe",
-            "label_en": "Public health insurance · with children · outside Saxony",
-            "care_employee_rate": 0.018,
-            "care_employer_rate": 0.018
-        },
-        {
-            "profile_id": "germany__public_health__childless__outside_saxony",
-            "label_fr": "Assurance publique · sans enfant · hors Saxe",
-            "label_en": "Public health insurance · childless · outside Saxony",
-            "care_employee_rate": 0.024,
-            "care_employer_rate": 0.018
-        }
-    ],
+"profiles": [
+    {
+        "profile_id": "germany__public_health__with_children__outside_saxony",
+        "label_fr": "Assurance publique · avec enfant · hors Saxe",
+        "label_en": "Public health insurance · with children · outside Saxony",
+        "region": "outside_saxony",
+        "family_status": "with_children",
+        "health_insurance": "public",
+        "care_employee_rate": 0.018,
+        "care_employer_rate": 0.018
+    },
+    {
+        "profile_id": "germany__public_health__childless__outside_saxony",
+        "label_fr": "Assurance publique · sans enfant · hors Saxe",
+        "label_en": "Public health insurance · childless · outside Saxony",
+        "region": "outside_saxony",
+        "family_status": "childless",
+        "health_insurance": "public",
+        "care_employee_rate": 0.024,
+        "care_employer_rate": 0.018
+    },
+    {
+        "profile_id": "germany__public_health__with_children__saxony",
+        "label_fr": "Assurance publique · avec enfant · Saxe",
+        "label_en": "Public health insurance · with children · Saxony",
+        "region": "saxony",
+        "family_status": "with_children",
+        "health_insurance": "public",
+        "care_employee_rate": 0.023,
+        "care_employer_rate": 0.013
+    },
+    {
+        "profile_id": "germany__public_health__childless__saxony",
+        "label_fr": "Assurance publique · sans enfant · Saxe",
+        "label_en": "Public health insurance · childless · Saxony",
+        "region": "saxony",
+        "family_status": "childless",
+        "health_insurance": "public",
+        "care_employee_rate": 0.029,
+        "care_employer_rate": 0.013
+    }
+],
 
     "methodological_limits": [
         "Income tax is excluded from V1.",

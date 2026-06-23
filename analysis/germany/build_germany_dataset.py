@@ -23,6 +23,21 @@ OUTPUT_PATH = (
     / "germany_labour_cost_grid_2026.csv"
 )
 
+VALIDATION_OUTPUT_DIR = (
+    BASE_DIR
+    / "outputs"
+    / "germany"
+)
+
+VALIDATION_SUMMARY_PATH = (
+    VALIDATION_OUTPUT_DIR
+    / "germany_validation_summary.txt"
+)
+
+VALIDATION_POINTS_PATH = (
+    VALIDATION_OUTPUT_DIR
+    / "germany_validation_points.csv"
+)
 
 def load_parameters() -> dict:
     with PARAMETERS_PATH.open("r", encoding="utf-8") as file:
@@ -120,6 +135,9 @@ def compute_row(
         "profile_id": profile["profile_id"],
         "profile_label_fr": profile["label_fr"],
         "profile_label_en": profile["label_en"],
+        "dimension_region": profile["region"],
+        "dimension_family_status": profile["family_status"],
+        "dimension_health_insurance": profile["health_insurance"],
         "parameter_version": parameters["version"],
         "effective_from": parameters["effective_from"],
 
@@ -262,6 +280,145 @@ def print_sample(dataset: pd.DataFrame) -> None:
     print("Sample rows")
     print(sample.to_string(index=False))
 
+def export_validation_report(dataset: pd.DataFrame) -> None:
+    VALIDATION_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+    control_points = dataset[
+        dataset["smic_multiple"].isin([1.00, 2.00, 3.00, 6.00])
+    ].copy()
+
+    control_points = control_points[
+        [
+            "profile_id",
+            "profile_label_fr",
+            "dimension_region",
+            "dimension_family_status",
+            "smic_multiple",
+            "gross_monthly_eur",
+            "net_before_income_tax_monthly_eur",
+            "employee_contributions_monthly_eur",
+            "employer_contributions_monthly_eur",
+            "employer_cost_monthly_eur",
+            "social_wedge_monthly_eur",
+            "employee_contribution_rate",
+            "employer_contribution_rate",
+            "social_wedge_rate",
+            "cost_to_net_ratio",
+            "health_care_base_monthly_eur",
+            "pension_unemployment_base_monthly_eur",
+        ]
+    ]
+
+    control_points.to_csv(
+        VALIDATION_POINTS_PATH,
+        index=False,
+        encoding="utf-8"
+    )
+
+    profiles = dataset["profile_id"].nunique()
+    rows = len(dataset)
+    expected_rows = 521 * profiles
+
+    net_identity_error = (
+        dataset["gross_monthly_eur"]
+        - dataset["employee_contributions_monthly_eur"]
+        - dataset["net_before_income_tax_monthly_eur"]
+    ).abs().max()
+
+    employer_cost_identity_error = (
+        dataset["gross_monthly_eur"]
+        + dataset["employer_contributions_monthly_eur"]
+        - dataset["employer_cost_monthly_eur"]
+    ).abs().max()
+
+    social_wedge_identity_error = (
+        dataset["employer_cost_monthly_eur"]
+        - dataset["net_before_income_tax_monthly_eur"]
+        - dataset["social_wedge_monthly_eur"]
+    ).abs().max()
+
+    health_ceiling = dataset["health_care_base_monthly_eur"].max()
+    pension_ceiling = dataset["pension_unemployment_base_monthly_eur"].max()
+    
+    reference_row = dataset[
+        dataset["smic_multiple"] == 1.00
+    ].iloc[0]
+
+    monthly_minimum_wage = reference_row["monthly_minimum_wage_eur"]
+
+    health_ceiling_multiple = (
+        health_ceiling
+        / monthly_minimum_wage
+    )
+
+    pension_ceiling_multiple = (
+        pension_ceiling
+        / monthly_minimum_wage
+    )
+
+    first_health_ceiling_row = dataset[
+        dataset["health_care_base_monthly_eur"] >= health_ceiling
+    ].sort_values("smic_multiple").iloc[0]
+
+    first_pension_ceiling_row = dataset[
+        dataset["pension_unemployment_base_monthly_eur"] >= pension_ceiling
+    ].sort_values("smic_multiple").iloc[0]
+
+    summary = f"""German Labour Cost Lab validation summary
+
+Dataset
+-------
+Profiles: {profiles}
+Rows: {rows}
+Expected rows: {expected_rows}
+
+Accounting identities
+---------------------
+Max net identity error: {net_identity_error:.10f}
+Max employer cost identity error: {employer_cost_identity_error:.10f}
+Max social wedge identity error: {social_wedge_identity_error:.10f}
+
+Contribution ceilings reached in dataset
+----------------------------------------
+Maximum health/care contribution base: {health_ceiling:.2f} EUR
+Maximum pension/unemployment contribution base: {pension_ceiling:.2f} EUR
+
+Ceiling thresholds
+------------------
+Monthly minimum wage reference: {monthly_minimum_wage:.2f} EUR
+
+Health/care ceiling:
+- ceiling amount: {health_ceiling:.2f} EUR
+- analytical threshold: {health_ceiling_multiple:.4f} minimum wages
+- first grid point reaching ceiling: {first_health_ceiling_row["smic_multiple"]:.2f} minimum wages
+
+Pension/unemployment ceiling:
+- ceiling amount: {pension_ceiling:.2f} EUR
+- analytical threshold: {pension_ceiling_multiple:.4f} minimum wages
+- first grid point reaching ceiling: {first_pension_ceiling_row["smic_multiple"]:.2f} minimum wages
+
+Control points
+--------------
+Control points exported to:
+{VALIDATION_POINTS_PATH}
+
+Interpretation
+--------------
+The German module is a rule-based simulation built from documented social security parameters.
+The net wage is computed before personal income tax.
+Income tax, mini-jobs, midi-jobs, private health insurance, accident insurance,
+Kirchensteuer and Solidaritätszuschlag are excluded from this prototype.
+"""
+
+    VALIDATION_SUMMARY_PATH.write_text(
+        summary,
+        encoding="utf-8"
+    )
+
+    print()
+    print("Validation report exported.")
+    print(f"Summary: {VALIDATION_SUMMARY_PATH}")
+    print(f"Control points: {VALIDATION_POINTS_PATH}")
 
 def main() -> None:
     parameters = load_parameters()
@@ -279,6 +436,7 @@ def main() -> None:
 
     print_quality_checks(dataset)
     print_sample(dataset)
+    export_validation_report(dataset)
 
 
 if __name__ == "__main__":
