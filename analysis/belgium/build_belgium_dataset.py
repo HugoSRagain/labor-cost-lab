@@ -29,6 +29,76 @@ def load_parameters() -> dict:
         return json.load(file)
 
 
+def compute_structural_reduction(
+    gross_monthly_eur: float,
+    parameters: dict
+) -> dict:
+    structural_reduction = parameters["social_security"]["structural_reduction"]
+
+    reference_wage_quarterly = (
+        gross_monthly_eur
+        * 3
+    )
+
+    if not structural_reduction["active"]:
+        return {
+            "structural_reduction_monthly_eur": 0.0,
+            "structural_reduction_quarterly_eur": 0.0,
+            "structural_reduction_low_wage_component_quarterly_eur": 0.0,
+            "structural_reduction_very_low_wage_component_quarterly_eur": 0.0,
+            "structural_reduction_reference_wage_quarterly_eur": reference_wage_quarterly
+        }
+
+    low_wage_component = (
+        structural_reduction["low_wage_component_rate"]
+        * (
+            structural_reduction["low_wage_threshold_quarterly_eur"]
+            - reference_wage_quarterly
+        )
+    )
+
+    very_low_wage_component = (
+        structural_reduction["very_low_wage_component_rate"]
+        * (
+            structural_reduction["very_low_wage_threshold_quarterly_eur"]
+            - reference_wage_quarterly
+        )
+    )
+
+    low_wage_component = max(
+        low_wage_component,
+        0.0
+    )
+
+    very_low_wage_component = max(
+        very_low_wage_component,
+        0.0
+    )
+
+    structural_reduction_quarterly = (
+        low_wage_component
+        + very_low_wage_component
+    )
+
+    structural_reduction_quarterly = (
+        structural_reduction_quarterly
+        * structural_reduction["mu"]
+        * structural_reduction["beta_s"]
+    )
+
+    structural_reduction_monthly = (
+        structural_reduction_quarterly
+        / 3
+    )
+
+    return {
+        "structural_reduction_monthly_eur": structural_reduction_monthly,
+        "structural_reduction_quarterly_eur": structural_reduction_quarterly,
+        "structural_reduction_low_wage_component_quarterly_eur": low_wage_component,
+        "structural_reduction_very_low_wage_component_quarterly_eur": very_low_wage_component,
+        "structural_reduction_reference_wage_quarterly_eur": reference_wage_quarterly
+    }
+
 def compute_row(
     profile: dict,
     smic_multiple: float,
@@ -41,8 +111,26 @@ def compute_row(
     employee_rate = profile["employee_contribution_rate"]
     employer_rate = profile["employer_contribution_rate"]
 
-    employee_contributions = gross_monthly_eur * employee_rate
-    employer_contributions = gross_monthly_eur * employer_rate
+    employee_contributions = (
+        gross_monthly_eur
+        * employee_rate
+    )
+
+    employer_contributions_before_reduction = (
+        gross_monthly_eur
+        * employer_rate
+    )
+
+    structural_reduction = compute_structural_reduction(
+        gross_monthly_eur=gross_monthly_eur,
+        parameters=parameters
+    )
+
+    employer_contributions = max(
+        employer_contributions_before_reduction
+        - structural_reduction["structural_reduction_monthly_eur"],
+        0.0
+    )
 
     net_before_income_tax = (
         gross_monthly_eur
@@ -70,9 +158,21 @@ def compute_row(
         "smic_multiple": smic_multiple,
         "gross_monthly_eur": gross_monthly_eur,
         "employee_contribution_rate": employee_rate,
-        "employer_contribution_rate": employer_rate,
+        "employer_contribution_rate_before_reduction": employer_rate,
         "employee_contributions_monthly_eur": employee_contributions,
+        "employer_contributions_before_reduction_monthly_eur": employer_contributions_before_reduction,
+        "structural_reduction_monthly_eur": structural_reduction["structural_reduction_monthly_eur"],
+        "structural_reduction_quarterly_eur": structural_reduction["structural_reduction_quarterly_eur"],
+        "structural_reduction_low_wage_component_quarterly_eur": structural_reduction["structural_reduction_low_wage_component_quarterly_eur"],
+        "structural_reduction_very_low_wage_component_quarterly_eur": structural_reduction["structural_reduction_very_low_wage_component_quarterly_eur"],
+        "structural_reduction_reference_wage_quarterly_eur": structural_reduction["structural_reduction_reference_wage_quarterly_eur"],
         "employer_contributions_monthly_eur": employer_contributions,
+        "employer_contribution_rate": (
+            employer_contributions
+            / gross_monthly_eur
+            if gross_monthly_eur > 0
+            else np.nan
+        ),
         "net_before_income_tax_monthly_eur": net_before_income_tax,
         "employer_cost_monthly_eur": employer_cost,
         "social_wedge_monthly_eur": social_wedge,

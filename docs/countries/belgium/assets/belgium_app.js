@@ -227,12 +227,27 @@ function renderBelgiumContributionRateChart() {
         },
         {
             x: x,
+            y: data.map(row => (
+                deNum(row.employer_contribution_rate_before_reduction)
+                * 100
+            )),
+            type: "scatter",
+            mode: "lines",
+            name: "Taux employeur avant réduction",
+            line: {
+                color: BELGIUM_COLORS.employer,
+                width: 2,
+                dash: "dash"
+            }
+        },
+        {
+            x: x,
             y: data.map(row => deNum(row.employer_contribution_rate) * 100),
             type: "scatter",
             mode: "lines",
-            name: "Taux employeur",
+            name: "Taux employeur après réduction",
             line: {
-                color: BELGIUM_COLORS.employer,
+                color: BELGIUM_COLORS.wedge,
                 width: 3
             }
         }
@@ -250,6 +265,59 @@ function renderBelgiumContributionRateChart() {
     );
 }
 
+function renderBelgiumStructuralReductionChart() {
+    const profileId = getBelgiumSelectedProfile();
+    const data = getBelgiumProfileData(profileId);
+
+    const x = data.map(row => deNum(row.smic_multiple));
+
+    const traces = [
+        {
+            x: x,
+            y: data.map(row => deNum(row.structural_reduction_monthly_eur)),
+            type: "scatter",
+            mode: "lines",
+            name: "Réduction structurelle",
+            line: {
+                color: BELGIUM_COLORS.net,
+                width: 3
+            }
+        },
+        {
+            x: x,
+            y: data.map(row => deNum(row.employer_contributions_before_reduction_monthly_eur)),
+            type: "scatter",
+            mode: "lines",
+            name: "Cotisations employeur avant réduction",
+            line: {
+                color: BELGIUM_COLORS.employer,
+                width: 2,
+                dash: "dash"
+            }
+        },
+        {
+            x: x,
+            y: data.map(row => deNum(row.employer_contributions_monthly_eur)),
+            type: "scatter",
+            mode: "lines",
+            name: "Cotisations employeur après réduction",
+            line: {
+                color: BELGIUM_COLORS.wedge,
+                width: 3
+            }
+        }
+    ];
+
+    const layout = belgiumBaseLayout("Montant mensuel, euros");
+
+    layout.yaxis.ticksuffix = " €";
+
+    belgiumPlot(
+        "chart-belgium-structural-reduction",
+        traces,
+        layout
+    );
+}
 
 function renderBelgiumWedgeChart() {
     const profileId = getBelgiumSelectedProfile();
@@ -360,6 +428,7 @@ function renderBelgium() {
     renderBelgiumMetrics();
     renderBelgiumCostChart();
     renderBelgiumContributionRateChart();
+    renderBelgiumStructuralReductionChart();
     renderBelgiumWedgeChart();
     renderBelgiumDataTable();
 }
