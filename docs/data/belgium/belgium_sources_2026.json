@@ -1,0 +1,68 @@
+{
+    "country": "Belgium",
+    "country_code": "BE",
+    "version": "2026",
+    "status": "source_audit",
+    "sources": {
+        "employee_social_security_rate": {
+            "value": 0.1307,
+            "label": "Employee ONSS contribution rate",
+            "source_name": "Socialsecurity.be",
+            "source_type": "official",
+            "url": "https://www.socialsecurity.be/site_fr/employer/infos/employers_nsso/which-contributions.htm",
+            "evidence": "Les cotisations personnelles des travailleurs du secteur privé s'élèvent à 13,07 % du salaire brut.",
+            "confidence": "high"
+        },
+        "employer_base_contribution_rate": {
+            "value": 0.25,
+            "label": "Employer base contribution rate, private market sector",
+            "source_name": "SPF Emploi, Travail et Concertation sociale",
+            "source_type": "official",
+            "url": "https://emploi.belgique.be/fr/themes/emploi-et-marche-du-travail/mesures-demploi/baisse-generale-du-cout-salarial",
+            "evidence": "Les cotisations patronales de base pour la sécurité sociale s'élèvent à 25% du salaire brut pour le secteur marchand privé.",
+            "confidence": "high"
+        },
+        "withholding_tax": {
+            "label": "Précompte professionnel",
+            "source_name": "SPF Emploi, Travail et Concertation sociale",
+            "source_type": "official",
+            "url": "https://emploi.belgique.be/fr/themes/remuneration/salaire",
+            "evidence": "Le précompte professionnel est la retenue d'impôt prélevée chaque mois sur le salaire.",
+            "confidence": "high",
+            "implementation_status": "not_yet_simulated"
+        },
+        "structural_reduction": {
+            "label": "Structural reduction of employer contributions",
+            "source_name": "ONSS administrative instructions",
+            "source_type": "official",
+            "url": "https://www.socialsecurity.be/employer/instructions/dmfa/fr/latest/instructions/deductions/structuralreduction_targetgroupreductions/structuralreduction.html",
+            "confidence": "to_verify_before_implementation",
+            "implementation_status": "not_yet_simulated"
+        },
+        "minimum_wage_reference": {
+            "label": "GGMMI / RMMMG",
+            "source_name": "CNT / NAR",
+            "source_type": "official",
+            "url": "https://cnt-nar.be/fr/dossiers-thematiques/salaire-minimum",
+            "confidence": "to_verify_before_implementation",
+            "implementation_status": "used_as_reference_but_requires_final_source_lock"
+        }
+    },
+    "audit_decision": {
+        "v0_scope": [
+            "employee ONSS contribution",
+            "employer base contribution",
+            "net wage before income tax",
+            "employer cost before reductions"
+        ],
+        "not_yet_included": [
+            "structural reduction",
+            "work bonus",
+            "withholding tax",
+            "sectoral contributions",
+            "manual worker holiday pay contribution",
+            "regional differences",
+            "family status"
+        ]
+    }
+}
