@@ -1,0 +1,42 @@
+{
+    "country": "Belgium",
+    "country_code": "BE",
+    "version": "2026-04",
+    "effective_from": "2026-04-01",
+    "status": "prototype",
+    "currency": "EUR",
+    "wage_reference": {
+        "name": "GGMMI / RMMMG",
+        "gross_monthly_eur": 2189.81,
+        "weekly_hours": 38,
+        "source": "Guaranteed average minimum monthly income, April 2026",
+        "note": "Belgian national minimum wage reference for full-time private-sector employees. Sectoral minima may be higher."
+    },
+    "grid": {
+        "min_multiple": 0.80,
+        "max_multiple": 6.00,
+        "step": 0.01
+    },
+    "social_security": {
+        "employee_contribution_rate": 0.1307,
+        "employer_base_contribution_rate": 0.25,
+        "employee_contribution_note": "Standard employee ONSS contribution rate.",
+        "employer_contribution_note": "Prototype employer base rate. Structural reductions and sector-specific contributions are not yet simulated."
+    },
+    "profiles": [
+        {
+            "profile_id": "belgium__standard_private_sector",
+            "label_fr": "Belgique · secteur privé standard",
+            "label_en": "Belgium · standard private sector",
+            "employee_contribution_rate": 0.1307,
+            "employer_contribution_rate": 0.25
+        }
+    ],
+    "limits": [
+        "Personal income tax and withholding tax are not simulated in this V0.",
+        "Structural reduction for low wages is not yet simulated.",
+        "Sectoral minimum wages are not simulated.",
+        "Regional and family-status differences are not simulated.",
+        "Employer contribution rate is treated as a simplified base rate."
+    ]
+}

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Belgian Labour Cost Lab</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+    <link rel="stylesheet" href="../../assets/style.css?v=19">
+    <script defer src="./assets/belgium_app.js?v=1"></script>
+</head>
+
+<body>
+    <header class="hero">
+        <div class="hero-inner">
+            <p class="eyebrow">Labor Cost Lab · Belgium module</p>
+
+            <h1>Belgian Labour Cost Lab</h1>
+
+            <p class="hero-subtitle">
+                Prototype de simulation du coût du travail belge. Cette première version
+                calcule le salaire net avant impôt, le coût employeur et le coin social
+                à partir d’un profil standard du secteur privé.
+            </p>
+
+            <div class="hero-actions">
+                <a href="../../index.html" class="button secondary">
+                    Retour au portail
+                </a>
+
+                <a href="../germany/index.html" class="button secondary">
+                    Voir l’Allemagne
+                </a>
+
+                <a href="../france/index.html" class="button secondary">
+                    Voir la France
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="page-shell">
+        <section class="method-box">
+            <h2>Belgique · version prototype</h2>
+
+            <p>
+                Cette version V0 utilise le GGMMI/RMMMG comme référence salariale,
+                un taux salarié ONSS de 13,07 % et un taux employeur simplifié de
+                25 %. Le précompte professionnel et les réductions de cotisations ne
+                sont pas encore simulés.
+            </p>
+
+            <p class="method-note">
+                L’objectif est d’abord de poser une base comparable avec les modules
+                France et Allemagne. Les paramètres belges seront enrichis progressivement.
+            </p>
+        </section>
+
+        <nav class="tabs" aria-label="Navigation Belgique">
+            <button class="tab-button active" data-tab="simulation">
+                Simulation
+            </button>
+
+            <button class="tab-button" data-tab="data">
+                Données
+            </button>
+
+            <button class="tab-button" data-tab="methodology">
+                Méthodologie
+            </button>
+        </nav>
+
+        <section id="tab-simulation" class="tab-content active">
+            <div class="profile-selector profile-selector-grid">
+                <div class="selector-field">
+                    <label for="belgium-profile-select">
+                        Profil Belgique
+                    </label>
+
+                    <select id="belgium-profile-select">
+                        <option value="belgium__standard_private_sector" selected>
+                            Belgique · secteur privé standard
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <section class="metrics-grid" id="belgium-metrics">
+                <article class="metric-card">
+                    <span class="metric-label">Salaire brut de référence</span>
+                    <strong id="metric-belgium-reference-wage">—</strong>
+                    <span class="metric-note">GGMMI / RMMMG mensuel</span>
+                </article>
+
+                <article class="metric-card">
+                    <span class="metric-label">Taux salarié</span>
+                    <strong id="metric-belgium-employee-rate">—</strong>
+                    <span class="metric-note">ONSS salarié</span>
+                </article>
+
+                <article class="metric-card">
+                    <span class="metric-label">Taux employeur</span>
+                    <strong id="metric-belgium-employer-rate">—</strong>
+                    <span class="metric-note">Taux simplifié V0</span>
+                </article>
+
+                <article class="metric-card">
+                    <span class="metric-label">Ratio coût / net à 1 RMMMG</span>
+                    <strong id="metric-belgium-cost-to-net">—</strong>
+                    <span class="metric-note">Avant impôt</span>
+                </article>
+            </section>
+
+            <div class="chart-card">
+                <h3>Coût employeur, brut et net avant impôt</h3>
+
+                <p>
+                    Comparaison du salaire brut, du salaire net avant impôt et du coût
+                    employeur selon le multiple du salaire minimum belge.
+                </p>
+
+                <div
+                    id="chart-belgium-cost"
+                    class="chart"
+                    aria-label="Coût du travail en Belgique"
+                ></div>
+            </div>
+
+            <div class="chart-card">
+                <h3>Taux effectifs de cotisation</h3>
+
+                <p>
+                    Taux salarié et employeur utilisés dans cette première version du
+                    module belge.
+                </p>
+
+                <div
+                    id="chart-belgium-rates"
+                    class="chart"
+                    aria-label="Taux de cotisation en Belgique"
+                ></div>
+            </div>
+
+            <div class="chart-card">
+                <h3>Coin social avant impôt</h3>
+
+                <p>
+                    Part du coût employeur qui ne revient pas au salarié sous forme de
+                    salaire net avant impôt.
+                </p>
+
+                <div
+                    id="chart-belgium-wedge"
+                    class="chart"
+                    aria-label="Coin social belge avant impôt"
+                ></div>
+            </div>
+        </section>
+
+        <section id="tab-data" class="tab-content">
+            <div class="chart-card">
+                <h3>Données simulées</h3>
+
+                <p>
+                    Extrait du dataset Belgique V0. Les montants sont mensuels et
+                    exprimés en euros.
+                </p>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Multiple</th>
+                                <th>Salaire brut (€)</th>
+                                <th>Net avant impôt (€)</th>
+                                <th>Coût employeur (€)</th>
+                                <th>Cotisations salarié (€)</th>
+                                <th>Cotisations employeur (€)</th>
+                                <th>Coin social (€)</th>
+                                <th>Taux salarié</th>
+                                <th>Taux employeur</th>
+                                <th>Ratio coût/net</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="belgium-data-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-methodology" class="tab-content">
+            <div class="method-box">
+                <h2>Méthodologie</h2>
+
+                <p>
+                    Le module Belgique V0 repose sur une simulation simple du coût du
+                    travail dans le secteur privé standard. Le salaire brut est calculé
+                    comme multiple du GGMMI/RMMMG mensuel.
+                </p>
+
+                <p>
+                    Le salaire net avant impôt est obtenu en retirant les cotisations
+                    sociales salarié. Le coût employeur est obtenu en ajoutant les
+                    cotisations employeur au salaire brut.
+                </p>
+
+                <p class="method-note">
+                    Limites actuelles : le précompte professionnel, la réduction
+                    structurelle, les réductions bas salaires, les différences sectorielles
+                    et les effets familiaux ne sont pas encore simulés.
+                </p>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
