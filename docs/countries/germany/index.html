@@ -14,9 +14,12 @@
 
 <body>
     <div class="global-project-banner">
-        <a href="../../index.html">← Labor Cost Lab</a>
+        <a href="../../index.html">
+            ← Labor Cost Lab
+        </a>
+
         <span>
-            The German Labour Cost Lab is a prototype national module of the Labor Cost Lab project.
+            Germany prototype module
         </span>
     </div>
 
@@ -28,9 +31,19 @@
                     Prototype de simulation du coût du travail, du salaire net avant impôt
                     et des cotisations sociales en Allemagne.
                 </p>
-                <p class="author-line">
-                    Par Hugo Spring-Ragain, Économiste, CEDS Paris
-                </p>
+	        <p class="author-line">Par Hugo Spring-Ragain, Économiste, CEDS Paris</p>
+
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
             </div>
         </header>
 
@@ -319,6 +332,14 @@
                         >
                             ⬇ Télécharger les paramètres 2026
                         </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/germany/germany_sources_2026.json"
+                            download
+                        >
+                            ⬇ Télécharger les sources 2026
+                        </a>
                     </div>
 
                     <div class="profile-selector profile-selector-grid" style="margin-top: 18px;">
@@ -399,8 +420,10 @@
 
                         <li>
                             <strong>Net affiché.</strong>
-                            Le salaire net correspond au salaire après cotisations salarié,
-                            mais avant impôt sur le revenu.
+                            Le module distingue le salaire net avant impôt, c’est-à-dire
+                            après cotisations salarié, et le salaire net après Lohnsteuer
+                            et Solidaritätszuschlag dans le graphique de rendement
+                            socio-fiscal.
                         </li>
 
                         <li>
@@ -441,10 +464,17 @@
                         </li>
 
                         <li>
+                            <strong>Scénario fiscal.</strong>
+                            Le calcul fiscal utilise le PAP 2026 allemand dans un scénario
+                            standardisé : Steuerklasse I, assurance publique, sans Kirchensteuer,
+                            sans autre revenu et sans paiement exceptionnel.
+                        </li>
+
+                        <li>
                             <strong>Limites.</strong>
-                            Les mini-jobs, midi-jobs, l’assurance privée, l’impôt sur le revenu,
-                            la Kirchensteuer, le Solidaritätszuschlag, l’assurance accident et
-                            les conventions collectives sont exclus du calcul spécifique de cette V1.
+                            L’assurance maladie privée, l’assurance accident, les conventions
+                            collectives, les effets de ménage, les revenus exceptionnels et les
+                            règles spécifiques Minijob / Midijob ne sont pas encore simulés.
                         </li>
                     </ul>
                 </section>
