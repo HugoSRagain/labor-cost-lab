@@ -1,5 +1,51 @@
 var GERMANY_DATA = [];
 
+function applyStoredGermanyTheme() {
+    const storedTheme = localStorage.getItem("germany-theme");
+
+    if (storedTheme === "dark") {
+        document.body.classList.add("dark-mode");
+        updateGermanyThemeButton("dark");
+    } else {
+        document.body.classList.remove("dark-mode");
+        updateGermanyThemeButton("light");
+    }
+}
+
+
+function updateGermanyThemeButton(theme) {
+    const themeToggle = document.querySelector(".theme-toggle");
+
+    if (!themeToggle) {
+        return;
+    }
+
+    if (theme === "dark") {
+        themeToggle.textContent = "☀️";
+        themeToggle.title = "Light mode";
+        themeToggle.setAttribute("aria-label", "Light mode");
+    } else {
+        themeToggle.textContent = "🌙";
+        themeToggle.title = "Dark mode";
+        themeToggle.setAttribute("aria-label", "Dark mode");
+    }
+}
+
+
+function toggleTheme() {
+    const isDarkMode = document.body.classList.toggle("dark-mode");
+
+    if (isDarkMode) {
+        localStorage.setItem("germany-theme", "dark");
+        updateGermanyThemeButton("dark");
+    } else {
+        localStorage.setItem("germany-theme", "light");
+        updateGermanyThemeButton("light");
+    }
+
+    renderGermany();
+}
+
 const GERMANY_COLORS = {
     blue: "#2563eb",
     orange: "#f97316",
@@ -90,6 +136,13 @@ function getGermanyProfileData() {
 }
 
 function germanyBaseLayout(yTitle) {
+    const isDarkMode = document.body.classList.contains("dark-mode");
+
+    const backgroundColor = isDarkMode ? "#111827" : "#ffffff";
+    const textColor = isDarkMode ? "#f9fafb" : GERMANY_COLORS.navy;
+    const gridColor = isDarkMode ? "#374151" : "#e5e7eb";
+    const axisColor = isDarkMode ? "#4b5563" : "#cbd5e1";
+
     return {
         template: "plotly_white",
         height: 460,
@@ -102,16 +155,17 @@ function germanyBaseLayout(yTitle) {
         font: {
             family: "Inter, Arial, sans-serif",
             size: 13,
-            color: GERMANY_COLORS.navy
+            color: textColor
         },
-        paper_bgcolor: "#ffffff",
-        plot_bgcolor: "#ffffff",
+        paper_bgcolor: backgroundColor,
+        plot_bgcolor: backgroundColor,
+
         hovermode: "x unified",
         hoverlabel: {
-            bgcolor: "#ffffff",
-            bordercolor: "#cbd5e1",
+            bgcolor: backgroundColor,
+            bordercolor: axisColor,
             font: {
-                color: GERMANY_COLORS.navy,
+                color: textColor,
                 size: 12
             }
         },
@@ -133,8 +187,8 @@ function germanyBaseLayout(yTitle) {
             range: [0.15, 6.05],
             showgrid: false,
             zeroline: false,
-            linecolor: "#cbd5e1",
-            tickcolor: "#cbd5e1",
+            linecolor: axisColor,
+            tickcolor: axisColor,
             ticks: "outside",
             tickvals: [0.2, 0.5, 1, 2, 3, 4, 5, 6],
             ticktext: ["0,2", "0,5", "1", "2", "3", "4", "5", "6"]
@@ -145,10 +199,10 @@ function germanyBaseLayout(yTitle) {
                 standoff: 16
             },
             showgrid: true,
-            gridcolor: "#e5e7eb",
             zeroline: false,
-            linecolor: "#cbd5e1",
-            tickcolor: "#cbd5e1",
+            gridcolor: gridColor,
+            linecolor: axisColor,
+            tickcolor: axisColor,
             ticks: "outside"
         }
     };
@@ -1056,4 +1110,7 @@ function loadGermanyData() {
 
 }
 
-document.addEventListener("DOMContentLoaded", loadGermanyData);
+document.addEventListener("DOMContentLoaded", function() {
+    applyStoredGermanyTheme();
+    loadGermanyData();
+});
