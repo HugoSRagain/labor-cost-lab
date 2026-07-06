@@ -2,2684 +2,1247 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-N46D6NCQJ9"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-N46D6NCQJ9');
-    </script>
-    <title>French Labour Cost Lab</title>
-    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-    <link rel="stylesheet" href="assets/style.css?v=19">
-    <script defer src="assets/app.js?v=9"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Labor Cost Lab · Observatoire comparatif du coût du travail</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --paper: #f1f2ee;
+            --card: #fbfcf9;
+            --ink: #14181a;
+            --ink-soft: #363c40;
+            --graphite: #5f676b;
+            --faint: #949b9d;
+            --line: #d9dcd4;
+            --line-soft: #e6e8e1;
+
+            --green: #1d5c40;
+            --green-deep: #133f2c;
+            --green-soft: #e3ece5;
+
+            --band-emp: #464e53;
+            --band-sal: #8b939a;
+            --band-tax: #c68a3c;
+            --band-net: #1d5c40;
+
+            --sans: 'Archivo', system-ui, sans-serif;
+            --mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+            --maxw: 1140px;
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            background: var(--paper);
+            color: var(--ink);
+            font-family: var(--sans);
+            font-size: 16px;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { color: inherit; }
+
+        .mono {
+            font-family: var(--mono);
+            font-feature-settings: "tnum" 1;
+        }
+
+        .eyebrow {
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--graphite);
+        }
+
+        .wrap {
+            max-width: var(--maxw);
+            margin: 0 auto;
+            padding: 0 28px;
+        }
+
+        /* ---------- header ---------- */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            background: rgba(241, 242, 238, 0.86);
+            backdrop-filter: saturate(1.2) blur(8px);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            height: 66px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--ink);
+        }
+
+        .brand-mark {
+            display: flex;
+            width: 30px;
+            height: 30px;
+            flex-direction: column;
+            gap: 3px;
+            justify-content: center;
+        }
+
+        .brand-mark i {
+            display: block;
+            height: 5px;
+            border-radius: 1px;
+        }
+
+        .brand-mark i:nth-child(1) { width: 100%; background: var(--band-emp); }
+        .brand-mark i:nth-child(2) { width: 66%; background: var(--band-tax); }
+        .brand-mark i:nth-child(3) { width: 40%; background: var(--green); }
+
+        .brand-text strong {
+            display: block;
+            font-size: 0.98rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        .brand-text span {
+            display: block;
+            font-family: var(--mono);
+            font-size: 0.64rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--faint);
+        }
+
+        .navline {
+            display: flex;
+            align-items: center;
+            gap: 26px;
+        }
+
+        .navline a {
+            font-family: var(--mono);
+            font-size: 0.78rem;
+            letter-spacing: 0.04em;
+            text-decoration: none;
+            color: var(--ink-soft);
+            padding-bottom: 2px;
+            border-bottom: 1px solid transparent;
+        }
+
+        .navline a:hover {
+            color: var(--green);
+            border-bottom-color: var(--green);
+        }
+
+        .language-switch {
+            display: inline-flex;
+            border: 1px solid var(--line);
+            border-radius: 3px;
+            overflow: hidden;
+            background: var(--card);
+        }
+
+        .language-switch button {
+            border: 0;
+            padding: 5px 9px;
+            background: transparent;
+            color: var(--graphite);
+            font-family: var(--mono);
+            font-weight: 600;
+            font-size: 0.72rem;
+            cursor: pointer;
+        }
+
+        .language-switch button.active {
+            background: var(--ink);
+            color: #fff;
+        }
+
+        /* ---------- hero ---------- */
+        .hero {
+            padding: 74px 0 20px;
+        }
+
+        .hero .eyebrow {
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            margin: 0;
+            max-width: 15ch;
+            font-size: clamp(2.7rem, 5.6vw, 5rem);
+            font-weight: 800;
+            line-height: 0.98;
+            letter-spacing: -0.045em;
+        }
+
+        .hero-lead {
+            margin: 26px 0 0;
+            max-width: 60ch;
+            font-size: 1.1rem;
+            color: var(--ink-soft);
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 44px;
+            padding: 0 18px;
+            border-radius: 3px;
+            border: 1px solid var(--ink);
+            font-family: var(--mono);
+            font-size: 0.82rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            text-decoration: none;
+        }
+
+        .button.primary { background: var(--ink); color: var(--paper); }
+        .button.primary:hover { background: var(--green-deep); border-color: var(--green-deep); }
+
+        .button.ghost { background: transparent; color: var(--ink); }
+        .button.ghost:hover { border-color: var(--green); color: var(--green); }
+
+        /* ---------- decomposition signature ---------- */
+        .decomp {
+            margin: 48px 0 8px;
+            padding: 30px 30px 26px;
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 6px;
+        }
+
+        .decomp-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 18px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+
+        .decomp-head h2 {
+            margin: 0;
+            font-size: 1.28rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .decomp-base {
+            font-family: var(--mono);
+            font-size: 0.8rem;
+            color: var(--graphite);
+        }
+
+        .decomp-base b { color: var(--ink); font-weight: 600; }
+
+        .country-switch {
+            display: inline-flex;
+            border: 1px solid var(--line);
+            border-radius: 4px;
+            overflow: hidden;
+            background: var(--paper);
+        }
+
+        .country-switch button {
+            border: 0;
+            border-left: 1px solid var(--line);
+            padding: 7px 13px;
+            background: transparent;
+            color: var(--graphite);
+            font-family: var(--mono);
+            font-size: 0.74rem;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .country-switch button:first-child { border-left: 0; }
+        .country-switch button:hover { color: var(--green); }
+        .country-switch button.active { background: var(--ink); color: var(--paper); }
+
+        .bar {
+            display: flex;
+            width: 100%;
+            height: 74px;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.06);
+        }
+
+        .seg {
+            height: 100%;
+            width: 0;
+            transition: width 1.05s cubic-bezier(0.16, 0.84, 0.3, 1);
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .is-ready .seg { width: var(--w); }
+
+        .seg[data-band="emp"] { background: var(--band-emp); transition-delay: 0.05s; }
+        .seg[data-band="sal"] { background: var(--band-sal); transition-delay: 0.15s; }
+        .seg[data-band="tax"] { background: var(--band-tax); transition-delay: 0.25s; }
+        .seg[data-band="net"] { background: var(--band-net); transition-delay: 0.35s; }
+
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+            margin-top: 22px;
+        }
+
+        .legend-item {
+            padding-top: 12px;
+            border-top: 2px solid var(--ink);
+        }
+
+        .legend-item[data-band="emp"] { border-top-color: var(--band-emp); }
+        .legend-item[data-band="sal"] { border-top-color: var(--band-sal); }
+        .legend-item[data-band="tax"] { border-top-color: var(--band-tax); }
+        .legend-item[data-band="net"] { border-top-color: var(--band-net); }
+
+        .legend-val {
+            font-family: var(--mono);
+            font-size: 1.3rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            line-height: 1;
+        }
+
+        .legend-lab {
+            margin-top: 6px;
+            font-size: 0.86rem;
+            color: var(--graphite);
+            line-height: 1.35;
+        }
+
+        .decomp-caption {
+            margin: 20px 0 0;
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--faint);
+        }
+
+        /* ---------- generic section ---------- */
+        section.block { padding: 60px 0; border-top: 1px solid var(--line); }
+
+        .block-label {
+            display: flex;
+            align-items: baseline;
+            gap: 14px;
+            margin-bottom: 30px;
+        }
+
+        .block-label .idx {
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--green);
+            letter-spacing: 0.1em;
+        }
+
+        h2.block-title {
+            margin: 0;
+            font-size: clamp(1.7rem, 3vw, 2.3rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.05;
+        }
+
+        .block-intro {
+            margin: 14px 0 0;
+            max-width: 68ch;
+            color: var(--ink-soft);
+            font-size: 1.02rem;
+        }
+
+        /* ---------- modules as comparison ---------- */
+        .compare-note {
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--faint);
+            margin: 0 0 8px;
+        }
+
+        .mod {
+            display: grid;
+            grid-template-columns: 150px minmax(0, 1fr) 116px;
+            gap: 30px;
+            align-items: center;
+            padding: 26px 0;
+            border-top: 1px solid var(--line-soft);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .mod:first-of-type { border-top: 1px solid var(--ink); }
+        .mod:hover .mod-name { color: var(--green); }
+        .mod:hover .mod-go { transform: translateX(4px); }
+
+        .mod-name {
+            font-size: 1.24rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            transition: color 0.2s;
+        }
+
+        .mod-tags {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            font-family: var(--mono);
+            font-size: 0.64rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 3px 7px;
+            border: 1px solid var(--line);
+            border-radius: 3px;
+            color: var(--graphite);
+            background: #fff;
+        }
+
+        .tag.live { color: var(--green); border-color: #b9d4c1; background: var(--green-soft); }
+
+        .mod-desc {
+            margin: 0 0 14px;
+            font-size: 0.95rem;
+            color: var(--ink-soft);
+            max-width: 62ch;
+        }
+
+        .minibar {
+            display: flex;
+            width: 100%;
+            height: 12px;
+            border-radius: 3px;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .minibar span { height: 100%; display: block; }
+        .minibar .m-emp { background: var(--band-emp); }
+        .minibar .m-sal { background: var(--band-sal); }
+        .minibar .m-tax { background: var(--band-tax); }
+        .minibar .m-net { background: var(--band-net); }
+
+        .mod-net {
+            text-align: right;
+        }
+
+        .mod-net b {
+            display: block;
+            font-family: var(--mono);
+            font-size: 1.9rem;
+            font-weight: 600;
+            letter-spacing: -0.03em;
+            line-height: 1;
+            color: var(--green);
+        }
+
+        .mod-net span {
+            display: block;
+            margin-top: 5px;
+            font-family: var(--mono);
+            font-size: 0.64rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--faint);
+        }
+
+        .mod-go {
+            display: inline-block;
+            margin-top: 10px;
+            font-family: var(--mono);
+            font-size: 0.78rem;
+            color: var(--green);
+            transition: transform 0.2s;
+        }
+
+        /* ---------- method ---------- */
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 34px;
+        }
+
+        .method-grid p {
+            margin: 0;
+            color: var(--ink-soft);
+            font-size: 0.98rem;
+        }
+
+        .method-grid .m-n {
+            display: block;
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            color: var(--green);
+            letter-spacing: 0.1em;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        /* ---------- publications ---------- */
+        .pub {
+            padding: 26px 0;
+            border-top: 1px solid var(--line-soft);
+            display: grid;
+            grid-template-columns: 190px minmax(0, 1fr);
+            gap: 30px;
+        }
+
+        .pub:first-of-type { border-top: 1px solid var(--ink); }
+
+        .pub-meta {
+            font-family: var(--mono);
+            font-size: 0.74rem;
+            letter-spacing: 0.04em;
+            color: var(--graphite);
+            line-height: 1.5;
+        }
+
+        .pub h3 {
+            margin: 0 0 8px;
+            font-size: 1.14rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .pub p {
+            margin: 0;
+            color: var(--ink-soft);
+            font-size: 0.96rem;
+            max-width: 70ch;
+        }
+
+        .pub-actions {
+            display: flex;
+            gap: 18px;
+            margin-top: 14px;
+        }
+
+        .link {
+            font-family: var(--mono);
+            font-size: 0.78rem;
+            color: var(--green);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+        }
+
+        .link:hover { border-bottom-color: var(--green); }
+
+        /* ---------- data ---------- */
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1px;
+            background: var(--line);
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .data-cell {
+            background: var(--card);
+            padding: 26px;
+        }
+
+        .data-cell .d-tag {
+            font-family: var(--mono);
+            font-size: 0.68rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--green);
+        }
+
+        .data-cell h3 {
+            margin: 10px 0 8px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .data-cell p {
+            margin: 0;
+            color: var(--graphite);
+            font-size: 0.92rem;
+        }
+
+        /* ---------- status strip ---------- */
+        .status-strip {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 30px;
+            padding: 34px 0 0;
+            margin-top: 30px;
+            border-top: 1px solid var(--line);
+        }
+
+        .status-strip .s-lab {
+            font-family: var(--mono);
+            font-size: 0.68rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--faint);
+        }
+
+        .status-strip .s-val {
+            display: block;
+            margin-top: 8px;
+            font-size: 1.02rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        /* ---------- contact ---------- */
+        .contact {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .contact p { margin: 0; max-width: 62ch; color: var(--ink-soft); }
+
+        /* ---------- footer ---------- */
+        footer {
+            border-top: 1px solid var(--ink);
+            background: var(--paper);
+        }
+
+        .foot {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+            padding: 26px 0;
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.04em;
+            color: var(--graphite);
+        }
+
+        /* ---------- responsive ---------- */
+        @media (max-width: 860px) {
+            .navline a { display: none; }
+            .legend { grid-template-columns: repeat(2, 1fr); }
+            .method-grid { grid-template-columns: 1fr; gap: 24px; }
+            .data-grid, .status-strip { grid-template-columns: 1fr; }
+            .mod { grid-template-columns: 1fr; gap: 14px; }
+            .mod-net { text-align: left; }
+            .mod-net b { display: inline; } .mod-net span { display: inline; margin-left: 8px; }
+            .pub { grid-template-columns: 1fr; gap: 10px; }
+            .contact { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 560px) {
+            .wrap { padding: 0 18px; }
+            .legend { grid-template-columns: 1fr; }
+            .decomp { padding: 22px 18px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .seg { transition: none; }
+            html { scroll-behavior: auto; }
+        }
+    </style>
 </head>
+
 <body>
-    
+    <header class="site-header">
+        <div class="wrap topbar">
+            <a class="brand" href="#top" aria-label="Labor Cost Lab">
+                <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+                <span class="brand-text">
+                    <strong>Labor Cost Lab</strong>
+                    <span data-i18n="brand.subtitle">Observatoire du coût du travail</span>
+                </span>
+            </a>
 
-    <div class="language-section " id="section-en" data-default-profile="cadre__alsace_moselle__atmp_1">
-        <header>
-            <div>
-                <h1>French Labour Cost Lab</h1>
-                <p>Open-source research tool for simulating and visualizing labour costs in France.</p>
-                <p class="author-line">Par Hugo Spring-Ragain, Économiste, CEDS Paris</p>
-            </div>
-            <div class="header-actions">
-                <button class="theme-toggle" onclick="toggleTheme()" title="Dark mode" aria-label="Dark mode">🌙</button>
-                <button class="language-toggle" onclick="switchLanguage()">Français</button>
-            </div>
-        </header>
+            <nav class="navline" aria-label="Navigation principale">
+                <a href="#modules" data-i18n="nav.modules">Modules</a>
+                <a href="#method" data-i18n="nav.method">Méthode</a>
+                <a href="#publications" data-i18n="nav.publications">Publications</a>
+                <a href="#data" data-i18n="nav.data">Données</a>
 
-        <main>
-            <nav class="tabs" aria-label="Dashboard sections">
-                <button class="tab-button active" data-tab="simulation" onclick="showTab('en', 'simulation')">Simulation</button>
-                <button class="tab-button" data-tab="comparisons" onclick="showTab('en', 'comparisons')">Comparisons</button>
-                <button class="tab-button" data-tab="flcl-index" onclick="showTab('en', 'flcl-index')">FLCL Index</button>
-                <button class="tab-button" data-tab="data" onclick="showTab('en', 'data')">Data</button>
-                <button class="tab-button" data-tab="methodology" onclick="showTab('en', 'methodology')">Methodology</button>
-                <button class="tab-button" data-tab="working-paper" onclick="showTab('en', 'working-paper')">Working Paper</button>
-                <button class="tab-button" data-tab="contact" onclick="showTab('en', 'contact')">Contact</button>
+                <span class="language-switch" aria-label="Language selector">
+                    <button id="lang-fr" class="active" type="button" onclick="setLanguage('fr')">FR</button>
+                    <button id="lang-en" type="button" onclick="setLanguage('en')">EN</button>
+                </span>
             </nav>
+        </div>
+    </header>
 
-            <div class="tab-panel active" id="tab-en-simulation">
-                <section>
-                    <div class="badge">Calculation engine: Mon-entreprise / URSSAF API</div>
-                    <h2>Purpose</h2>
-                    <p>French Labour Cost Lab provides reproducible simulations of gross wages, net wages, employer costs, employer contribution reliefs and social wedges in France.</p>
-                    <div class="method-box"><strong>Methodological note.</strong> This version uses the Mon-entreprise / URSSAF calculation engine through its public API. Results are computed over a wage grid and by employee profile. They should be interpreted as reference simulations, not as official payslip calculations.</div>
-                </section>
+    <main id="top">
+        <!-- HERO + SIGNATURE -->
+        <section class="hero">
+            <div class="wrap">
+                <span class="eyebrow" data-i18n="hero.kicker">Projet de recherche ouvert · 2026</span>
 
-                <section>
-                    <h2>From net wage to employer cost</h2>
-                    <p class="chart-subtitle">Simplified and robust decomposition from net wage to total employer cost. Percentages report employee contributions as a share of gross wage, and employer contributions and reliefs as a share of total employer cost.</p>
+                <h1 data-i18n="hero.title">Observatoire des salaires, cotisations et coûts employeurs</h1>
 
-                    <div class="profile-selector decomposition-selector">
-                        <div class="selector-field">
-                            <label for="waterfall-wage-select-en">Selected wage point</label>
-                            <select id="waterfall-wage-select-en" onchange="renderWaterfallChart(getProfileData('en'), 'en')">
-    				<option value="1.00">1 SMIC</option>
-<option value="1.10">1.1 SMIC</option>
-<option value="1.20">1.2 SMIC</option>
-<option value="1.30">1.3 SMIC</option>
-<option value="1.40">1.4 SMIC</option>
-<option value="1.50">1.5 SMIC</option>
-<option value="1.60">1.6 SMIC</option>
-<option value="1.70">1.7 SMIC</option>
-<option value="1.80">1.8 SMIC</option>
-<option value="1.90">1.9 SMIC</option>
-<option value="2.00" selected>2 SMIC</option>
-<option value="2.10">2.1 SMIC</option>
-<option value="2.20">2.2 SMIC</option>
-<option value="2.30">2.3 SMIC</option>
-<option value="2.40">2.4 SMIC</option>
-<option value="2.50">2.5 SMIC</option>
-<option value="2.60">2.6 SMIC</option>
-<option value="2.70">2.7 SMIC</option>
-<option value="2.80">2.8 SMIC</option>
-<option value="2.90">2.9 SMIC</option>
-<option value="3.00">3 SMIC</option>
-<option value="3.10">3.1 SMIC</option>
-<option value="3.20">3.2 SMIC</option>
-<option value="3.30">3.3 SMIC</option>
-<option value="3.40">3.4 SMIC</option>
-<option value="3.50">3.5 SMIC</option>
-<option value="3.60">3.6 SMIC</option>
-<option value="3.70">3.7 SMIC</option>
-<option value="3.80">3.8 SMIC</option>
-<option value="3.90">3.9 SMIC</option>
-<option value="4.00">4 SMIC</option>
-<option value="4.10">4.1 SMIC</option>
-<option value="4.20">4.2 SMIC</option>
-<option value="4.30">4.3 SMIC</option>
-<option value="4.40">4.4 SMIC</option>
-<option value="4.50">4.5 SMIC</option>
-<option value="4.60">4.6 SMIC</option>
-<option value="4.70">4.7 SMIC</option>
-<option value="4.80">4.8 SMIC</option>
-<option value="4.90">4.9 SMIC</option>
-<option value="5.00">5 SMIC</option>
-<option value="5.10">5.1 SMIC</option>
-<option value="5.20">5.2 SMIC</option>
-<option value="5.30">5.3 SMIC</option>
-<option value="5.40">5.4 SMIC</option>
-<option value="5.50">5.5 SMIC</option>
-<option value="5.60">5.6 SMIC</option>
-<option value="5.70">5.7 SMIC</option>
-<option value="5.80">5.8 SMIC</option>
-<option value="5.90">5.9 SMIC</option>
-<option value="6.00">6 SMIC</option>
-			    </select>
+                <p class="hero-lead" data-i18n="hero.lead">
+                    Le Labor Cost Lab reconstruit la façon dont les règles socio-fiscales
+                    transforment un coût employeur en salaire net. Modules nationaux,
+                    données ouvertes et paramètres versionnés, pour comparer les structures
+                    de prélèvement d'un pays à l'autre.
+                </p>
+
+                <div class="hero-actions">
+                    <a class="button primary" href="#modules" data-i18n="hero.primary">Consulter les modules →</a>
+                    <a class="button ghost" href="#publications" data-i18n="hero.secondary">Publications</a>
+                </div>
+
+                <div class="decomp" aria-label="Décomposition du coût du travail">
+                    <div class="decomp-head">
+                        <div>
+                            <h2 data-i18n="decomp.title">Du coût employeur au salaire net</h2>
+                            <span class="decomp-base" data-i18n="decomp.base">Base : coût employeur = 100</span>
+                        </div>
+
+                        <div class="country-switch" role="tablist" aria-label="Pays">
+                            <button class="active" type="button" role="tab" aria-selected="true" onclick="setCountry('fr', this)">France</button>
+                            <button type="button" role="tab" aria-selected="false" onclick="setCountry('de', this)">Germany</button>
+                            <button type="button" role="tab" aria-selected="false" onclick="setCountry('be', this)">Belgium</button>
                         </div>
                     </div>
 
-                    <div class="chart-card chart-card-full">
-                        <div id="chart-waterfall-en" class="plotly-chart lazy-chart"></div>
+                    <div class="bar" id="hero-bar">
+                        <div class="seg" data-band="emp" style="--w:26%"></div>
+                        <div class="seg" data-band="sal" style="--w:18%"></div>
+                        <div class="seg" data-band="tax" style="--w:12%"></div>
+                        <div class="seg" data-band="net" style="--w:44%"></div>
                     </div>
-                </section>
 
-                <section>
-                    <div class="profile-selector profile-selector-grid">
-                        <div class="selector-field">
-                            <label for="status-select-en">Employee status</label>
-                            <select id="status-select-en" onchange="switchCombinatorialProfile('en'); renderSimulation('en');">
-                                <option value="cadre">Executive</option>
-<option value="non_cadre" selected>Non-executive</option>
-                            </select>
+                    <div class="legend">
+                        <div class="legend-item" data-band="emp">
+                            <div class="legend-val mono" data-val="emp">26</div>
+                            <div class="legend-lab" data-lab="emp">Cotisations patronales</div>
                         </div>
-
-                        <div class="selector-field">
-                            <label for="territory-select-en">Territorial regime</label>
-                            <select id="territory-select-en" onchange="switchCombinatorialProfile('en'); renderSimulation('en');">
-                                <option value="alsace_moselle">Alsace-Moselle</option>
-<option value="standard" selected>Outside Alsace-Moselle</option>
-                            </select>
+                        <div class="legend-item" data-band="sal">
+                            <div class="legend-val mono" data-val="sal">18</div>
+                            <div class="legend-lab" data-lab="sal">Cotisations salariales</div>
                         </div>
-
-			<div class="selector-field">
-                            <label for="firm-size-select-en">Firm size</label>
-                            <select id="firm-size-select-en" onchange="switchCombinatorialProfile('en'); renderSimulation('en');">
-                                <option value="lt50" selected>&lt; 50 employees</option>
-                                <option value="ge50">≥ 50 employees</option>
-                            </select>
+                        <div class="legend-item" data-band="tax">
+                            <div class="legend-val mono" data-val="tax">12</div>
+                            <div class="legend-lab" data-lab="tax">CSG, CRDS, impôt sur le revenu</div>
                         </div>
-
-                        <div class="selector-field">
-                            <label for="atmp-select-en">
-    				AT/MP risk scenario
-    				<a
-        				class="info-tooltip"
-        				href="https://www.ameli.fr/entreprise/votre-entreprise/cotisation-atmp"
-        				target="_blank"
-        				rel="noopener noreferrer"
-        				title="AT/MP refers to occupational accidents and diseases. The rate depends on the sector and the establishment risk profile."
-        				aria-label="AT/MP refers to occupational accidents and diseases. The rate depends on the sector and the establishment risk profile."
-    				>
-        				ⓘ
-    				</a>
-			    </label>
-                            <select id="atmp-select-en" onchange="switchCombinatorialProfile('en'); renderSimulation('en');">
-                                <option value="atmp_1">AT/MP 1 %</option>
-<option value="atmp_4">AT/MP 4 %</option>
-<option value="fonctions_support">Support functions</option>
-<option value="standard" selected>Standard AT/MP</option>
-                            </select>
-                        </div>
-
-                        <div class="selector-field">
-                            <label for="working-time-select-en">Working time</label>
-                            <select id="working-time-select-en" onchange="switchCombinatorialProfile('en'); renderSimulation('en');">
-                                <option value="full_time" selected>Full-time</option>
-                                <option value="part_time_80">Part-time 80 %</option>
-                                <option value="part_time_50">Part-time 50 %</option>
-                            </select>
+                        <div class="legend-item" data-band="net">
+                            <div class="legend-val mono" data-val="net">44</div>
+                            <div class="legend-lab" data-lab="net">Salaire net disponible</div>
                         </div>
                     </div>
-                </section>
 
-                <div id="profile-panels-en">
-                    
-    <div class="profile-panel active" id="panel-en">
-        <section>
-            <h2>Interactive figures</h2>
-
-            <div class="charts-grid">
-                <div class="chart-card">
-                    <h3>From gross wage to employer cost</h3>
-                    <p class="chart-subtitle">Compare monthly gross wage, net wage and total employer cost across the wage grid.</p>
-                    <div id="chart-cost-en" class="plotly-chart lazy-chart"></div>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Effective employer contribution rate</h3>
-                    <p class="chart-subtitle">Employer contribution rates are computed as employer contributions divided by gross wage.</p>
-                    <div id="chart-employer-rate-en" class="plotly-chart lazy-chart"></div>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Employer contribution reliefs (RGDU) – before and after the 1 June 2026 reform</h3>
-                    <p class="chart-subtitle">Monthly relief amount retrieved directly from the Mon-entreprise / URSSAF API.</p>
-                    <div id="chart-rgdu-en" class="plotly-chart lazy-chart"></div>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Impact of the 1 June 2026 reform on contribution reliefs</h3>
-                    <p class="chart-subtitle">Monthly change in RGDU after the June 2026 SMIC increase and the freezing of relief parameters. Exploratory simulation based on currently available Mon-entreprise / URSSAF outputs.</p>
-                    <div id="chart-rgdu-delta-en" class="plotly-chart lazy-chart"></div>
-                </div>
-
-                <div class="chart-card chart-card-full">
-                    <h3>Impact of the relief freeze on employer cost</h3>
-                    <p class="chart-subtitle">Estimated monthly increase in employer cost after the SMIC increase and the freezing of relief parameters.</p>
-                    <div class="chart-note">
-                        <strong>Reading:</strong>
-                        the spike observed around 3 SMIC corresponds to the earlier phase-out of the general degressive contribution relief (RGDU) when parameters remain frozen despite the SMIC increase.
-                    </div>
-                    <div id="chart-employer-cost-reform-en" class="plotly-chart lazy-chart"></div>
-                </div>
-
-
-                <div class="chart-card">
-                    <h3>Social wedge as a share of employer cost</h3>
-                    <p class="chart-subtitle">The social wedge measures the gap between what the employer pays and what the employee receives.</p>
-                    <div id="chart-wedge-en" class="plotly-chart lazy-chart"></div>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Employer cost to net wage ratio</h3>
-                    <p class="chart-subtitle">This ratio summarizes how many euros the employer pays for one euro of net wage.</p>
-                    <div id="chart-ratio-en" class="plotly-chart lazy-chart"></div>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Marginal cost of gross wage increases</h3>
-                    <p class="chart-subtitle">This chart shows how employer cost and net wage react locally to an additional euro of gross wage.</p>
-                    <div id="chart-marginal-en" class="plotly-chart lazy-chart"></div>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Total contribution rate on labour</h3>
-                    <p class="chart-subtitle">Employee and employer contributions expressed as a share of total employer cost.</p>
-                    <div id="chart-total-levy-en" class="plotly-chart lazy-chart"></div>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Socio-fiscal return of a gross wage increase</h3>
-                    <p class="chart-subtitle">Share of one additional euro of gross wage converted into disposable income after employee contributions, estimated personal income tax and estimated in-work benefit. Reference scenario: single taxpayer, 1 tax unit, no other income, no housing benefit.</p>
-                    <div id="chart-net-gross-return-en" class="plotly-chart lazy-chart"></div>
+                    <p class="decomp-caption" data-i18n="decomp.caption">
+                        Schéma indicatif · valeurs éditables selon le module et le niveau de salaire
+                    </p>
                 </div>
             </div>
         </section>
-    </div>
-    
+
+        <!-- MODULES -->
+        <section id="modules" class="block">
+            <div class="wrap">
+                <div class="block-label">
+                    <span class="idx">/ 01</span>
+                    <h2 class="block-title" data-i18n="modules.title">Modules nationaux</h2>
                 </div>
+                <p class="block-intro" data-i18n="modules.intro">
+                    Même logique pour chaque pays : partir d'un salaire de référence, appliquer
+                    les règles sociales et fiscales, restituer une grille comparable. Les barres
+                    ci-dessous donnent la part du coût employeur perçue en net.
+                </p>
 
-                <section>
-                    <h2>Employer cost decomposition</h2>
-                    <p class="chart-subtitle">This chart decomposes employer cost at a selected wage point. Contribution reliefs are shown as a reduction in theoretical employer contributions.</p>
+                <p class="compare-note" style="margin-top:26px" data-i18n="compare.note">
+                    Part nette du coût employeur · schéma indicatif
+                </p>
 
-                    <div class="profile-selector decomposition-selector">
-                        <div class="selector-field">
-                            <label for="decomposition-wage-select-en">Selected wage point</label>
-                            <select id="decomposition-wage-select-en" onchange="renderSimulation('en')">
-                                <option value="1.00">1 SMIC</option>
-                                <option value="1.60">1,6 SMIC</option>
-                                <option value="2.00" selected>2 SMIC</option>
-                                <option value="3.00">3 SMIC</option>
-                            </select>
+                <a class="mod" href="./countries/france/index.html">
+                    <div>
+                        <div class="mod-name">France</div>
+                        <div class="mod-tags">
+                            <span class="tag live" data-i18n="status.available">Disponible</span>
+                            <span class="tag">RGDU</span>
+                            <span class="tag">SMIC</span>
                         </div>
                     </div>
-
-                    <div class="chart-card chart-card-full decomposition-chart-card">
-                        <div id="chart-decomposition-en" class="plotly-chart lazy-chart"></div>
-                    </div>
-                </section>
-
-
-                <div id="metrics-panels-en">
-                    
-        <div class="metrics-panel" id="metrics-en-cadre__alsace_moselle__atmp_1">
-            <section>
-                <h2>Key indicators</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Net wage at 1 SMIC</div>
-                        <div class="metric-value">1 429 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Employer cost at 1 SMIC</div>
-                        <div class="metric-value">1 992 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 at 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Cost/net ratio at 2 SMIC</div>
-                        <div class="metric-value">1.80</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-en-cadre__alsace_moselle__atmp_4">
-            <section>
-                <h2>Key indicators</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Net wage at 1 SMIC</div>
-                        <div class="metric-value">1 429 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Employer cost at 1 SMIC</div>
-                        <div class="metric-value">2 048 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 at 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Cost/net ratio at 2 SMIC</div>
-                        <div class="metric-value">1.84</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-en-cadre__alsace_moselle__fonctions_support">
-            <section>
-                <h2>Key indicators</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Net wage at 1 SMIC</div>
-                        <div class="metric-value">1 429 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Employer cost at 1 SMIC</div>
-                        <div class="metric-value">1 989 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 at 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Cost/net ratio at 2 SMIC</div>
-                        <div class="metric-value">1.80</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-en-cadre__alsace_moselle__standard">
-            <section>
-                <h2>Key indicators</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Net wage at 1 SMIC</div>
-                        <div class="metric-value">1 429 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Employer cost at 1 SMIC</div>
-                        <div class="metric-value">2 012 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 at 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Cost/net ratio at 2 SMIC</div>
-                        <div class="metric-value">1.81</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-en-cadre__standard__atmp_1">
-            <section>
-                <h2>Key indicators</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Net wage at 1 SMIC</div>
-                        <div class="metric-value">1 453 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Employer cost at 1 SMIC</div>
-                        <div class="metric-value">1 996 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 at 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Cost/net ratio at 2 SMIC</div>
-                        <div class="metric-value">1.77</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-en-cadre__standard__atmp_4">
-            <section>
-                <h2>Key indicators</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Net wage at 1 SMIC</div>
-                        <div class="metric-value">1 453 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Employer cost at 1 SMIC</div>
-                        <div class="metric-value">2 052 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 at 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Cost/net ratio at 2 SMIC</div>
-                        <div class="metric-value">1.81</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-en-cadre__standard__fonctions_support">
-            <section>
-                <h2>Key indicators</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Net wage at 1 SMIC</div>
-                        <div class="metric-value">1 453 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Employer cost at 1 SMIC</div>
-                        <div class="metric-value">1 990 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 at 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Cost/net ratio at 2 SMIC</div>
-                        <div class="metric-value">1.77</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-en-cadre__standard__standard">
-            <section>
-                <h2>Key indicators</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Net wage at 1 SMIC</div>
-                        <div class="metric-value">1 453 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Employer cost at 1 SMIC</div>
-                        <div class="metric-value">2 016 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 at 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Cost/net ratio at 2 SMIC</div>
-                        <div class="metric-value">1.79</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-en-non_cadre__alsace_moselle__atmp_1">
-            <section>
-                <h2>Key indicators</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Net wage at 1 SMIC</div>
-                        <div class="metric-value">1 432 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Employer cost at 1 SMIC</div>
-                        <div class="metric-value">1 963 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 at 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Cost/net ratio at 2 SMIC</div>
-                        <div class="metric-value">1.78</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-en-non_cadre__alsace_moselle__atmp_4">
-            <section>
-                <h2>Key indicators</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Net wage at 1 SMIC</div>
-                        <div class="metric-value">1 432 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Employer cost at 1 SMIC</div>
-                        <div class="metric-value">2 019 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 at 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Cost/net ratio at 2 SMIC</div>
-                        <div class="metric-value">1.81</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-en-non_cadre__alsace_moselle__fonctions_support">
-            <section>
-                <h2>Key indicators</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Net wage at 1 SMIC</div>
-                        <div class="metric-value">1 432 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Employer cost at 1 SMIC</div>
-                        <div class="metric-value">1 961 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 at 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Cost/net ratio at 2 SMIC</div>
-                        <div class="metric-value">1.77</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-en-non_cadre__alsace_moselle__standard">
-            <section>
-                <h2>Key indicators</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Net wage at 1 SMIC</div>
-                        <div class="metric-value">1 432 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Employer cost at 1 SMIC</div>
-                        <div class="metric-value">1 983 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 at 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Cost/net ratio at 2 SMIC</div>
-                        <div class="metric-value">1.79</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-en-non_cadre__standard__atmp_1">
-            <section>
-                <h2>Key indicators</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Net wage at 1 SMIC</div>
-                        <div class="metric-value">1 456 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Employer cost at 1 SMIC</div>
-                        <div class="metric-value">1 968 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 at 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Cost/net ratio at 2 SMIC</div>
-                        <div class="metric-value">1.75</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-en-non_cadre__standard__atmp_4">
-            <section>
-                <h2>Key indicators</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Net wage at 1 SMIC</div>
-                        <div class="metric-value">1 456 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Employer cost at 1 SMIC</div>
-                        <div class="metric-value">2 024 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 at 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Cost/net ratio at 2 SMIC</div>
-                        <div class="metric-value">1.79</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-en-non_cadre__standard__fonctions_support">
-            <section>
-                <h2>Key indicators</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Net wage at 1 SMIC</div>
-                        <div class="metric-value">1 456 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Employer cost at 1 SMIC</div>
-                        <div class="metric-value">1 961 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 at 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Cost/net ratio at 2 SMIC</div>
-                        <div class="metric-value">1.74</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-en-non_cadre__standard__standard">
-            <section>
-                <h2>Key indicators</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Net wage at 1 SMIC</div>
-                        <div class="metric-value">1 456 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Employer cost at 1 SMIC</div>
-                        <div class="metric-value">1 988 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 at 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Cost/net ratio at 2 SMIC</div>
-                        <div class="metric-value">1.76</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-                </div>
+                    <div>
+                        <p class="mod-desc" data-i18n="module.france.text">
+                            Module complet : coût employeur, salaire net, allègements généraux,
+                            RGDU et rendement marginal du salaire brut.
+                        </p>
+                        <div class="minibar" aria-hidden="true">
+                            <span class="m-emp" style="width:26%"></span>
+                            <span class="m-sal" style="width:18%"></span>
+                            <span class="m-tax" style="width:12%"></span>
+                            <span class="m-net" style="width:44%"></span>
+                        </div>
+                    </div>
+                    <div class="mod-net">
+                        <b>44</b>
+                        <span data-i18n="module.netshare">net / 100</span>
+                        <span class="mod-go" data-i18n="module.open">Ouvrir →</span>
+                    </div>
+                </a>
+
+                <a class="mod" href="./countries/germany/index.html">
+                    <div>
+                        <div class="mod-name">Germany</div>
+                        <div class="mod-tags">
+                            <span class="tag live" data-i18n="status.available">Disponible</span>
+                            <span class="tag" data-i18n="status.prototype">Prototype</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="mod-desc" data-i18n="module.germany.text">
+                            Prototype réglementaire : cotisations sociales, coût employeur et
+                            salaire net avant impôt sur le revenu.
+                        </p>
+                        <div class="minibar" aria-hidden="true">
+                            <span class="m-emp" style="width:21%"></span>
+                            <span class="m-sal" style="width:20%"></span>
+                            <span class="m-tax" style="width:11%"></span>
+                            <span class="m-net" style="width:48%"></span>
+                        </div>
+                    </div>
+                    <div class="mod-net">
+                        <b>48</b>
+                        <span data-i18n="module.netshare">net / 100</span>
+                        <span class="mod-go" data-i18n="module.open">Ouvrir →</span>
+                    </div>
+                </a>
+
+                <a class="mod" href="./countries/belgium/index.html">
+                    <div>
+                        <div class="mod-name">Belgium</div>
+                        <div class="mod-tags">
+                            <span class="tag live" data-i18n="status.available">Disponible</span>
+                            <span class="tag">ONSS</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="mod-desc" data-i18n="module.belgium.text">
+                            Module socio-fiscal 2026 : cotisations ONSS, réduction structurelle
+                            employeur et précompte professionnel.
+                        </p>
+                        <div class="minibar" aria-hidden="true">
+                            <span class="m-emp" style="width:22%"></span>
+                            <span class="m-sal" style="width:15%"></span>
+                            <span class="m-tax" style="width:23%"></span>
+                            <span class="m-net" style="width:40%"></span>
+                        </div>
+                    </div>
+                    <div class="mod-net">
+                        <b>40</b>
+                        <span data-i18n="module.netshare">net / 100</span>
+                        <span class="mod-go" data-i18n="module.open">Ouvrir →</span>
+                    </div>
+                </a>
             </div>
+        </section>
 
-            <div class="tab-panel" id="tab-en-comparisons">
-                <section>
-                    <h2>Comparisons</h2>
-                    <p class="interpretation">Comparative charts will be added here to compare AT/MP scenarios, employee status and territorial regimes.</p>
+        <!-- METHOD -->
+        <section id="method" class="block">
+            <div class="wrap">
+                <div class="block-label">
+                    <span class="idx">/ 02</span>
+                    <h2 class="block-title" data-i18n="method.title">Méthode</h2>
+                </div>
 
-                    <div class="charts-grid">
-                        <div class="chart-card">
-                            <h3>Employer cost by AT/MP scenario</h3>
-                            <p class="chart-subtitle">For the selected employee status and territorial regime, this chart compares total employer cost across AT/MP risk scenarios.</p>
-                            <div id="chart-comparison-atmp-level-en" class="plotly-chart lazy-chart"></div>
-                        </div>
-
-                        <div class="chart-card">
-                            <h3>Employer cost gap relative to standard AT/MP</h3>
-                            <p class="chart-subtitle">This chart shows the monthly employer-cost difference relative to the standard AT/MP scenario.</p>
-                            <div id="chart-comparison-atmp-gap-en" class="plotly-chart lazy-chart"></div>
-                        </div>
-
-                        <div class="chart-card">
-                            <h3>Employer cost by employee status</h3>
-                            <p class="chart-subtitle">For the selected territorial regime and AT/MP scenario, this chart compares total employer cost between non-executive and executive employees.</p>
-                            <div id="chart-comparison-status-level-en" class="plotly-chart lazy-chart"></div>
-                        </div>
-
-                        <div class="chart-card">
-                            <h3>Employer cost gap: executive minus non-executive</h3>
-                            <p class="chart-subtitle">This chart shows the monthly employer-cost difference between executive and non-executive employees.</p>
-                            <div id="chart-comparison-status-gap-en" class="plotly-chart lazy-chart"></div>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            <div class="tab-panel" id="tab-en-flcl-index">
-                <section class="chart-card">
-                    <h2>FLCL Index</h2>
-                    <p class="chart-subtitle">
-                        Labour cost efficiency indicators.
+                <div class="method-grid">
+                    <p>
+                        <span class="m-n">SCÉNARIOS</span>
+                        <span data-i18n="method.p1">Pas de reproduction d'une fiche de paie individuelle. Le Lab construit des scénarios de référence, comparables entre pays, pour isoler l'effet des règles statutaires sur le coût du travail et le revenu net.</span>
                     </p>
-
-                    <div class="profile-selector profile-selector-grid">
-                        <div class="selector-field">
-                            <label for="flcl-status-select-en">Employee status</label>
-                            <select id="flcl-status-select-en" onchange="syncFlclSelectorsToSimulation('en'); renderFlclIndex(getProfileData('en'), 'en')">
-                                <option value="cadre">Executive</option>
-                                <option value="non_cadre" selected>Non-executive</option>
-                            </select>
-                        </div>
-
-                        <div class="selector-field">
-                            <label for="flcl-territory-select-en">Territorial regime</label>
-                            <select id="flcl-territory-select-en" onchange="syncFlclSelectorsToSimulation('en'); renderFlclIndex(getProfileData('en'), 'en')">
-                                <option value="alsace_moselle">Alsace-Moselle</option>
-                                <option value="standard" selected>Outside Alsace-Moselle</option>
-                            </select>
-                        </div>
-
-                        <div class="selector-field">
-                            <label for="flcl-firm-size-select-en">Firm size</label>
-                            <select id="flcl-firm-size-select-en" onchange="syncFlclSelectorsToSimulation('en'); renderFlclIndex(getProfileData('en'), 'en')">
-                                <option value="lt50" selected>&lt; 50 employees</option>
-                                <option value="ge50">≥ 50 employees</option>
-                            </select>
-                        </div>
-
-                        <div class="selector-field">
-                            <label for="flcl-atmp-select-en">AT/MP risk scenario</label>
-                            <select id="flcl-atmp-select-en" onchange="syncFlclSelectorsToSimulation('en'); renderFlclIndex(getProfileData('en'), 'en')">
-                                <option value="atmp_1">AT/MP 1 %</option>
-                                <option value="atmp_4">AT/MP 4 %</option>
-                                <option value="fonctions_support">Support functions</option>
-                                <option value="standard" selected>Standard AT/MP</option>
-                            </select>
-                        </div>
-
-                        <div class="selector-field">
-                            <label for="flcl-working-time-select-en">Working time</label>
-                            <select id="flcl-working-time-select-en" onchange="syncFlclSelectorsToSimulation('en'); renderFlclIndex(getProfileData('en'), 'en')">
-                                <option value="full_time" selected>Full time</option>
-                                <option value="part_time_80">80 % part-time</option>
-                                <option value="part_time_50">50 % part-time</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div id="flcl-index-container-en">
-                        <div class="metrics-grid" style="margin-top: 24px;">
-                            <div class="metric-card">
-                                <div class="metric-label">FLCL Index · E</div>
-                                <div class="metric-value" id="flcl-e-value-en">—</div>
-                                <div class="metric-caption" id="flcl-e-caption-en"></div>
-                            </div>
-
-                            <div class="metric-card">
-                                <div class="metric-label">FLCL Index · B</div>
-                                <div class="metric-value" id="flcl-b-value-en">—</div>
-                                <div class="metric-caption" id="flcl-b-caption-en"></div>
-                            </div>
-
-                            <div class="metric-card">
-                                <div class="metric-label">FLCL Index · R</div>
-                                <div class="metric-value" id="flcl-r-value-en">—</div>
-                                <div class="metric-caption" id="flcl-r-caption-en"></div>
-                            </div>
-                        </div>
-
-                        <div class="metrics-grid" style="margin-top: 24px;">
-                            <div class="metric-card">
-                                <div class="metric-label">Marginal transmission</div>
-                                <div class="metric-value" id="flcl-transmission-value-en">—</div>
-                                <div class="metric-caption" id="flcl-transmission-caption-en"></div>
-                            </div>
-
-                            <div class="metric-card">
-                                <div class="metric-label">Marginal capture</div>
-                                <div class="metric-value" id="flcl-captation-value-en">—</div>
-                                <div class="metric-caption" id="flcl-captation-caption-en"></div>
-                            </div>
-
-                            <div class="metric-card">
-                                <div class="metric-label">Implicit progressivity</div>
-                                <div class="metric-value" id="flcl-progressivity-value-en">—</div>
-                                <div class="metric-caption" id="flcl-progressivity-caption-en"></div>
-                            </div>
-
-                            <div class="metric-card">
-                                <div class="metric-label">Low-wage support</div>
-                                <div class="metric-value" id="flcl-support-value-en">—</div>
-                                <div class="metric-caption" id="flcl-support-caption-en"></div>
-                            </div>
-                        </div>
-
-                        <div class="chart-card chart-card-full" style="margin-top: 22px;">
-                            <h3>FLCL Index</h3>
-                            <p class="chart-subtitle">
-                                FLCL-E = 100 × net wage / employer cost.
-                            </p>
-                            <div id="chart-flcl-e-en" class="plotly-chart lazy-chart"></div>
-                        </div>
-
-                        <div class="chart-card chart-card-full" style="margin-top: 22px;">
-                            <h3>FLCL-R</h3>
-                            <p class="chart-subtitle">
-                                Effect of general contribution reliefs on wage efficiency.
-                            </p>
-                            <div id="chart-flcl-r-en" class="plotly-chart lazy-chart"></div>
-                        </div>
-
-                        <div class="chart-card chart-card-full" style="margin-top: 22px;">
-                            <h3>Marginal transmission</h3>
-                            <p class="chart-subtitle">
-                                Share of one additional employer-cost euro reaching net wage.
-                            </p>
-                            <div id="chart-flcl-marginal-en" class="plotly-chart lazy-chart"></div>
-                        </div>
-
-                        <div class="chart-card chart-card-full" style="margin-top: 22px;">
-                            <h3>Implicit progressivity</h3>
-                            <p class="chart-subtitle">
-                                Change in FLCL-E when the wage level increases.
-                            </p>
-                            <div id="chart-flcl-progressivity-en" class="plotly-chart lazy-chart"></div>
-                        </div>
-
-                        <div class="chart-card chart-card-full" style="margin-top: 22px;">
-                            <h3>Marginal destination of one additional employer-cost euro</h3>
-                            <p class="chart-subtitle">
-                                Marginal allocation of one additional euro between net wage, employee contributions and employer contributions.
-                            </p>
-                            <div id="chart-flcl-100-en" class="plotly-chart lazy-chart"></div>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            <div class="tab-panel" id="tab-en-data">
-                <section>
-                    <h2>Data</h2>
-                    <p class="interpretation">The full simulation dataset can be downloaded as a CSV file. It contains all wage points and all combinations of employee status, territorial regime and AT/MP scenarios.</p>
-
-                    <div class="download-row" style="margin-top: 18px;">
-                        <a class="download-link" href="data/labour_cost_grid_mon_entreprise.csv" download>
-                            ⬇ Download simulation dataset (CSV)
-                        </a>
-                    </div>
-
-                    <div class="profile-selector profile-selector-grid data-profile-selector">
-                        <div class="selector-field">
-                            <label for="data-status-select-en">Employee status</label>
-                            <select id="data-status-select-en" onchange="switchDataCombinatorialProfile('en'); renderDataTable('en')">
-                                <option value="cadre">Executive</option>
-<option value="non_cadre" selected>Non-executive</option>
-                            </select>
-                        </div>
-
-                        <div class="selector-field">
-                            <label for="data-territory-select-en">Territorial regime</label>
-                            <select id="data-territory-select-en" onchange="switchDataCombinatorialProfile('en'); renderDataTable('en')">
-                                <option value="alsace_moselle">Alsace-Moselle</option>
-<option value="standard" selected>Outside Alsace-Moselle</option>
-                            </select>
-                        </div>
-
-                        <div class="selector-field">
-                            <label for="data-firm-size-select-en">Firm size</label>
-                            <select id="data-firm-size-select-en" onchange="switchDataCombinatorialProfile('en'); renderDataTable('en')">
-                                <option value="lt50" selected>&lt; 50 employees</option>
-                                <option value="ge50">≥ 50 employees</option>
-                            </select>
-                        </div>
-
-                        <div class="selector-field">
-                            <label for="data-atmp-select-en">
-    				AT/MP risk scenario
-    				<a
-        				class="info-tooltip"
-        				href="https://www.ameli.fr/entreprise/votre-entreprise/cotisation-atmp"
-        				target="_blank"
-        				rel="noopener noreferrer"
-        				title="AT/MP refers to occupational accidents and diseases. The rate depends on the sector and the establishment risk profile."
-        				aria-label="AT/MP refers to occupational accidents and diseases. The rate depends on the sector and the establishment risk profile."
-    				>
-        				ⓘ
-    				</a>
-			    </label>
-                            <select id="data-atmp-select-en" onchange="switchDataCombinatorialProfile('en'); renderDataTable('en')">
-                                <option value="atmp_1">AT/MP 1 %</option>
-<option value="atmp_4">AT/MP 4 %</option>
-<option value="fonctions_support">Support functions</option>
-<option value="standard" selected>Standard AT/MP</option>
-                            </select>
-                        </div>
-
-                        <div class="selector-field">
-                            <label for="data-working-time-select-en">Working time</label>
-                            <select id="data-working-time-select-en" onchange="switchDataCombinatorialProfile('en'); renderDataTable('en')">
-                                <option value="full_time" selected>Full-time</option>
-                                <option value="part_time_80">Part-time 80 %</option>
-                                <option value="part_time_50">Part-time 50 %</option>
-                            </select>
-                        </div>
-                    </div>
-                </section>
-
-                <div id="data-panels-en">
-                    <section>
-                        <h2>Data for selected profile</h2>
-                        <p class="interpretation" id="data-profile-label-en"></p>
-
-                        <div class="table-wrapper table-wrapper-full">
-                            <table class="data-table data-table-full" id="data-table-en"></table>
-                        </div>
-                    </section>
-                </div>
-            </div>
-
-            <div class="tab-panel" id="tab-en-methodology">
-                <section>
-                    <h2>Methodology</h2>
-
-                    
-    <p>The dashboard is built from a reproducible wage grid evaluated through the Mon-entreprise / URSSAF API. The objective is not to reproduce a full payslip, but to isolate economically meaningful indicators of labour cost formation.</p>
-    <ul class="methodology-list">
-        <li><strong>Source.</strong> Calculations are obtained from the public Mon-entreprise / URSSAF API.</li>
-<li><strong>Wage grid.</strong> Gross monthly wages are expressed as multiples of the gross monthly SMIC, from 0.8 to 6.0 SMIC, with a 0.01 SMIC step.</li>
-<li><strong>Combinatorial simulation.</strong> Users can combine three dimensions: employee status, territorial regime and AT/MP risk scenario.</li>
-<li><strong>Employee status.</strong> The status dimension distinguishes non-executive and executive employees.</li>
-<li><strong>Territorial regime.</strong> The territorial dimension distinguishes the general regime from the Alsace-Moselle regime.</li>
-<li><strong>AT/MP scenarios.</strong> The AT/MP dimension should be interpreted as a risk-rate scenario, not as a precise occupation or sector. Explicit rates, such as 1% or 4%, are directly passed to the Mon-entreprise engine. The support-functions scenario relies on a rule flagged as experimental by the API.</li>
-<li><strong>Indicators.</strong> Employer cost, net wage, employer contributions, employee contributions, RGDU 2026, social wedge and cost-to-net ratios are derived from API outputs.</li>
-<li><strong>Effective employer contribution rate.</strong> The rate shown in the chart is not the gross statutory employer contribution schedule. It is an apparent rate after employer contribution reliefs, computed as net employer contributions divided by gross wage.</li>
-<li><strong>Marginal indicators.</strong> The marginal employer-cost rate is computed as the finite difference between two adjacent points of the wage grid: Δ employer cost / Δ gross wage.</li>
-<li><strong>Limitations.</strong> Results are reference simulations, not official payslip calculations. They may vary depending on firm size, collective agreements, precise AT/MP classification, exemptions and specific contribution regimes.</li>
-    </ul>
-    
-
-                    <div class="methodology-versioning">
-                        <h3>
-                            Regulatory parameter versioning
-                        </h3>
-
-                        <div class="methodology-versioning-card">
-                            <p>
-                                <strong>
-                                    Version used :
-                                </strong>
-                                2026-06
-                            </p>
-
-                            <p>
-                                <strong>
-                                    Effective date :
-                                </strong>
-                                2026-06-01
-                            </p>
-
-                            <p>
-                                <strong>
-                                    Calculation source :
-                                </strong>
-                                Mon-entreprise / URSSAF API
-                            </p>
-
-                            <p class="interpretation">
-                                Simulations currently rely on regulatory parameters and calculations provided by the Mon-entreprise / URSSAF API. The versioning system documents the regulatory assumptions associated with each dashboard version.
-                            </p>
-                        </div>
-                    </div>
-                </section>
-	    </div>
-
-            <div class="tab-panel" id="tab-en-working-paper">
-                <section class="working-paper-section">
-                    <div class="working-paper-header">
-                        <div>
-                            <h2>Working Paper</h2>
-                            <p class="interpretation">This section provides access to the methodological documentation and the FLCL framework paper.</p>
-
-                            <label for="working-paper-select-en">Document</label>
-                            <select id="working-paper-select-en" onchange="switchWorkingPaper('en')">
-                                <option value="assets/french_labour_cost_lab_working_paper.pdf">
-                                    Methodological note
-                                </option>
-                                <option value="assets/FLCL_Framework_Working_Paper_June_2026.pdf">
-                                    FLCL framework paper
-                                </option>
-                            </select>
-                        </div>
-
-                        <a id="working-paper-download-en" class="download-link working-paper-download" href="assets/french_labour_cost_lab_working_paper.pdf" download>
-                            ⬇ Download the selected PDF
-                        </a>
-                    </div>
-
-                    <div class="working-paper-card">
-                        <div class="pdf-viewer-wrapper">
-                            <iframe
-                                id="working-paper-viewer-en"
-                                class="pdf-viewer"
-                                src="assets/french_labour_cost_lab_working_paper.pdf#view=FitH"
-                                title="French Labour Cost Lab Working Paper"
-                            ></iframe>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            <div class="tab-panel" id="tab-en-contact">
-                <section class="contact-section">
-                    <h2>Contact</h2>
-                    <p class="interpretation">For any comment, correction, methodological suggestion, data-source proposal or request for discussion about the French Labour Cost Lab, you can use the form below.</p>
-
-                    <form action="https://formspree.io/f/xnjrvjlr" method="POST" class="contact-form">
-                        <input type="hidden" name="_subject" value="Nouveau message — French Labour Cost Lab">
-
-                        <label for="name-en">Name</label>
-                        <input type="text" id="name-en" name="name" required>
-
-                        <label for="email-en">Email address</label>
-                        <input type="email" id="email-en" name="email" required>
-
-                        <label for="subject-en">Subject</label>
-                        <input type="text" id="subject-en" name="subject" required>
-
-                        <label for="message-en">Message</label>
-                        <textarea id="message-en" name="message" rows="7" required></textarea>
-
-                        <button type="submit" class="download-link">Send</button>
-                    </form>
-                </section>
-            </div>
-        </main>
-
-        <footer>
-    		Last updated: 2026-06-10 10:28
-    		· Paramètres réglementaires: 2026-06
-    		· Date d’effet: 2026-06-01
-        </footer>
-    </div>
-    
-    
-
-    <div class="language-section active" id="section-fr" data-default-profile="cadre__alsace_moselle__atmp_1">
-        <header>
-            <div>
-                <h1>French Labour Cost Lab</h1>
-                <p>Outil open source de simulation et de visualisation du coût du travail en France.</p>
-                <p class="author-line">Par Hugo Spring-Ragain, Économiste, CEDS Paris</p>
-            </div>
-            <div class="header-actions">
-                <button class="theme-toggle" onclick="toggleTheme()" title="Dark mode" aria-label="Dark mode">🌙</button>
-                <button class="language-toggle" onclick="switchLanguage()">English</button>
-            </div>
-        </header>
-
-        <main>
-            <nav class="tabs" aria-label="Dashboard sections">
-                <button class="tab-button active" data-tab="simulation" onclick="showTab('fr', 'simulation')">Simulation</button>
-                <button class="tab-button" data-tab="comparisons" onclick="showTab('fr', 'comparisons')">Comparaisons</button>
-                			 <button class="tab-button" data-tab="flcl-index" onclick="showTab('fr', 'flcl-index')">Indice FLCL</button>
-                <button class="tab-button" data-tab="data" onclick="showTab('fr', 'data')">Données</button>
-                <button class="tab-button" data-tab="methodology" onclick="showTab('fr', 'methodology')">Méthodologie</button>
-                <button class="tab-button" data-tab="working-paper" onclick="showTab('fr', 'working-paper')">Working Paper</button>
-                <button class="tab-button" data-tab="contact" onclick="showTab('fr', 'contact')">Contact</button>
-            </nav>
-
-            <div class="tab-panel active" id="tab-fr-simulation">
-                <section>
-                    <div class="badge">Moteur de calcul : API Mon-entreprise / URSSAF</div>
-                    <h2>Objectif</h2>
-                    <p>French Labour Cost Lab propose des simulations reproductibles du salaire brut, du salaire net, du coût employeur, des allègements de charges et du coin socio-fiscal en France.</p>
-                    <div class="method-box"><strong>Note méthodologique.</strong> Cette version utilise le moteur de calcul Mon-entreprise / URSSAF via son API publique. Les résultats sont calculés sur une grille salariale et par profil de salarié. Ils doivent être interprétés comme des simulations de référence, non comme des calculs officiels de fiche de paie.</div>
-                </section>
-
-                <section>
-                    <h2>Du salaire net au coût employeur</h2>
-                    <p class="chart-subtitle">Décomposition simplifiée et robuste du passage du salaire net au coût total employeur. Les pourcentages indiquent la part du salaire brut pour les cotisations salariales, et la part du coût total employeur pour les cotisations patronales et les allègements.</p>
-
-                    <div class="profile-selector decomposition-selector">
-                        <div class="selector-field">
-                            <label for="waterfall-wage-select-fr">Point de salaire sélectionné</label>
-                            <select id="waterfall-wage-select-fr" onchange="renderWaterfallChart(getProfileData('fr'), 'fr')">
-    				<option value="1.00">1 SMIC</option>
-<option value="1.10">1,1 SMIC</option>
-<option value="1.20">1,2 SMIC</option>
-<option value="1.30">1,3 SMIC</option>
-<option value="1.40">1,4 SMIC</option>
-<option value="1.50">1,5 SMIC</option>
-<option value="1.60">1,6 SMIC</option>
-<option value="1.70">1,7 SMIC</option>
-<option value="1.80">1,8 SMIC</option>
-<option value="1.90">1,9 SMIC</option>
-<option value="2.00" selected>2 SMIC</option>
-<option value="2.10">2,1 SMIC</option>
-<option value="2.20">2,2 SMIC</option>
-<option value="2.30">2,3 SMIC</option>
-<option value="2.40">2,4 SMIC</option>
-<option value="2.50">2,5 SMIC</option>
-<option value="2.60">2,6 SMIC</option>
-<option value="2.70">2,7 SMIC</option>
-<option value="2.80">2,8 SMIC</option>
-<option value="2.90">2,9 SMIC</option>
-<option value="3.00">3 SMIC</option>
-<option value="3.10">3,1 SMIC</option>
-<option value="3.20">3,2 SMIC</option>
-<option value="3.30">3,3 SMIC</option>
-<option value="3.40">3,4 SMIC</option>
-<option value="3.50">3,5 SMIC</option>
-<option value="3.60">3,6 SMIC</option>
-<option value="3.70">3,7 SMIC</option>
-<option value="3.80">3,8 SMIC</option>
-<option value="3.90">3,9 SMIC</option>
-<option value="4.00">4 SMIC</option>
-<option value="4.10">4,1 SMIC</option>
-<option value="4.20">4,2 SMIC</option>
-<option value="4.30">4,3 SMIC</option>
-<option value="4.40">4,4 SMIC</option>
-<option value="4.50">4,5 SMIC</option>
-<option value="4.60">4,6 SMIC</option>
-<option value="4.70">4,7 SMIC</option>
-<option value="4.80">4,8 SMIC</option>
-<option value="4.90">4,9 SMIC</option>
-<option value="5.00">5 SMIC</option>
-<option value="5.10">5,1 SMIC</option>
-<option value="5.20">5,2 SMIC</option>
-<option value="5.30">5,3 SMIC</option>
-<option value="5.40">5,4 SMIC</option>
-<option value="5.50">5,5 SMIC</option>
-<option value="5.60">5,6 SMIC</option>
-<option value="5.70">5,7 SMIC</option>
-<option value="5.80">5,8 SMIC</option>
-<option value="5.90">5,9 SMIC</option>
-<option value="6.00">6 SMIC</option>
-			    </select>
-                        </div>
-                    </div>
-
-                    <div class="chart-card chart-card-full">
-                        <div id="chart-waterfall-fr" class="plotly-chart lazy-chart"></div>
-                    </div>
-                </section>
-
-                <section>
-                    <div class="profile-selector profile-selector-grid">
-                        <div class="selector-field">
-                            <label for="status-select-fr">Statut salarié</label>
-                            <select id="status-select-fr" onchange="switchCombinatorialProfile('fr'); renderSimulation('fr');">
-                                <option value="cadre">Cadre</option>
-<option value="non_cadre" selected>Non-cadre</option>
-                            </select>
-                        </div>
-
-                        <div class="selector-field">
-                            <label for="territory-select-fr">Régime territorial</label>
-                            <select id="territory-select-fr" onchange="switchCombinatorialProfile('fr'); renderSimulation('fr');">
-                                <option value="alsace_moselle">Alsace-Moselle</option>
-<option value="standard" selected>Hors Alsace-Moselle</option>
-                            </select>
-                        </div>
-
-			<div class="selector-field">
-                            <label for="firm-size-select-fr">Taille d’entreprise</label>
-                            <select id="firm-size-select-fr" onchange="switchCombinatorialProfile('fr'); renderSimulation('fr');">
-                                <option value="lt50" selected>&lt; 50 salariés</option>
-                                <option value="ge50">≥ 50 salariés</option>
-                            </select>
-                        </div>
-
-                        <div class="selector-field">
-                            <label for="atmp-select-fr">
-    				Scénario AT/MP
-    				<a
-        				class="info-tooltip"
-        				href="https://www.ameli.fr/entreprise/votre-entreprise/cotisation-atmp"
-        				target="_blank"
-        				rel="noopener noreferrer"
-        				title="AT/MP = accidents du travail et maladies professionnelles. Le taux dépend du secteur d'activité et du niveau de risque de l'établissement."
-        				aria-label="AT/MP = accidents du travail et maladies professionnelles. Le taux dépend du secteur d'activité et du niveau de risque de l'établissement."
-    				>
-        				ⓘ
-    				</a>
-			    </label>
-                            <select id="atmp-select-fr" onchange="switchCombinatorialProfile('fr'); renderSimulation('fr');">
-                                <option value="atmp_1">AT/MP 1 %</option>
-<option value="atmp_4">AT/MP 4 %</option>
-<option value="fonctions_support">Fonctions support</option>
-<option value="standard" selected>AT/MP standard</option>
-                            </select>
-                        </div>
-			
-			<div class="selector-field">
-                            <label for="working-time-select-fr">Temps de travail</label>
-                            <select id="working-time-select-fr" onchange="switchCombinatorialProfile('fr'); renderSimulation('fr');">
-                                <option value="full_time" selected>Temps plein</option>
-                                <option value="part_time_80">Temps partiel 80 %</option>
-                                <option value="part_time_50">Temps partiel 50 %</option>
-                            </select>
-                        </div>
-
-                    </div>
-                </section>
-
-                <div id="profile-panels-fr">
-                    
-    <div class="profile-panel active" id="panel-fr">
-        <section>
-            <h2>Graphiques interactifs</h2>
-
-            <div class="charts-grid">
-                <div class="chart-card">
-                    <h3>Du salaire brut au coût employeur</h3>
-                    <p class="chart-subtitle">Comparaison du salaire brut, du salaire net et du coût total employeur le long de la grille salariale.</p>
-                    <div id="chart-cost-fr" class="plotly-chart lazy-chart"></div>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Taux effectif de cotisations employeur</h3>
-                    <p class="chart-subtitle">Le taux de cotisations employeur est calculé en rapportant les cotisations employeur au salaire brut.</p>
-                    <div id="chart-employer-rate-fr" class="plotly-chart lazy-chart"></div>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Allègements de cotisations (RGDU) – avant et après la réforme du 1er juin 2026</h3>
-                    <p class="chart-subtitle">Montant mensuel d’allègement récupéré directement depuis l’API Mon-entreprise / URSSAF.</p>
-                    <div id="chart-rgdu-fr" class="plotly-chart lazy-chart"></div>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Impact de la réforme du 1er juin 2026 sur les allègements</h3>
-                    <p class="chart-subtitle">Variation mensuelle de RGDU après la hausse du SMIC et le gel des paramètres d’allègement. Simulation exploratoire à partir des sorties Mon-entreprise / URSSAF disponibles.</p>
-                    <div id="chart-rgdu-delta-fr" class="plotly-chart lazy-chart"></div>
-                </div>
-
-                <div class="chart-card chart-card-full">
-                    <h3>Impact du gel des allègements sur le coût employeur</h3>
-                    <p class="chart-subtitle">Hausse mensuelle du coût employeur estimée après la hausse du SMIC et le gel des paramètres d’allègements.</p>
-                    <div class="chart-note">
-                        <strong>Lecture :</strong>
-                        le pic observé autour de 3 SMIC correspond à la disparition anticipée de la réduction générale dégressive unique (RGDU) lorsque les paramètres restent gelés malgré la hausse du SMIC.
-                    </div>
-                    <div id="chart-employer-cost-reform-fr" class="plotly-chart lazy-chart"></div>
-                </div>
-
-
-                <div class="chart-card">
-                    <h3>Coin social en part du coût employeur</h3>
-                    <p class="chart-subtitle">Le coin social mesure l’écart entre ce que l’employeur paie et ce que le salarié reçoit.</p>
-                    <div id="chart-wedge-fr" class="plotly-chart lazy-chart"></div>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Ratio coût employeur / salaire net</h3>
-                    <p class="chart-subtitle">Ce ratio indique combien l’employeur paie pour un euro de salaire net.</p>
-                    <div id="chart-ratio-fr" class="plotly-chart lazy-chart"></div>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Coût marginal des hausses de salaire brut</h3>
-                    <p class="chart-subtitle">Ce graphique montre comment le coût employeur et le salaire net réagissent localement à un euro supplémentaire de salaire brut.</p>
-                    <div id="chart-marginal-fr" class="plotly-chart lazy-chart"></div>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Taux de prélèvement total sur le travail</h3>
-                    <p class="chart-subtitle">Cotisations salarié et employeur rapportées au coût total employeur.</p>
-                    <div id="chart-total-levy-fr" class="plotly-chart lazy-chart"></div>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Rendement socio-fiscal d’une hausse de salaire brut</h3>
-                    <p class="chart-subtitle">Part d’un euro supplémentaire de salaire brut qui se transforme en revenu disponible après cotisations salariées, impôt sur le revenu estimé et prime d’activité estimée. Scénario de référence : célibataire, 1 part, sans autre revenu, sans aide au logement.</p>
-                    <div id="chart-net-gross-return-fr" class="plotly-chart lazy-chart"></div>
+                    <p>
+                        <span class="m-n">PARAMÈTRES</span>
+                        <span data-i18n="method.p2">Des paramètres explicites : salaire minimum ou de référence, taux de cotisations, dispositifs d'allègement, retenues fiscales et conventions de calcul propres à chaque module.</span>
+                    </p>
+                    <p>
+                        <span class="m-n">SORTIES</span>
+                        <span data-i18n="method.p3">Chaque jeu de données est versionné et produit une grille permettant de comparer niveaux, taux effectifs, coins socio-fiscaux et effets marginaux d'une hausse de salaire brut.</span>
+                    </p>
                 </div>
             </div>
         </section>
-    </div>
-    
+
+        <!-- PUBLICATIONS -->
+        <section id="publications" class="block">
+            <div class="wrap">
+                <div class="block-label">
+                    <span class="idx">/ 03</span>
+                    <h2 class="block-title" data-i18n="publications.title">Publications</h2>
                 </div>
-
-                <section>
-                    <h2>Décomposition du coût employeur</h2>
-                    <p class="chart-subtitle">Ce graphique décompose le coût employeur à un point de salaire donné. Les allègements de cotisations sont représentés comme une réduction des cotisations employeur théoriques.</p>
-
-                    <div class="profile-selector decomposition-selector">
-                        <div class="selector-field">
-                            <label for="decomposition-wage-select-fr">Point de salaire sélectionné</label>
-                            <select id="decomposition-wage-select-fr" onchange="renderSimulation('fr')">
-                                <option value="1.00">1 SMIC</option>
-                                <option value="1.60">1,6 SMIC</option>
-                                <option value="2.00" selected>2 SMIC</option>
-                                <option value="3.00">3 SMIC</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="chart-card chart-card-full decomposition-chart-card">
-                        <div id="chart-decomposition-fr" class="plotly-chart lazy-chart"></div>
-                    </div>
-                </section>
-
-
-                <div id="metrics-panels-fr">
-                    
-        <div class="metrics-panel" id="metrics-fr-cadre__alsace_moselle__atmp_1">
-            <section>
-                <h2>Indicateurs clés</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Salaire net à 1 SMIC</div>
-                        <div class="metric-value">1 429 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Coût employeur à 1 SMIC</div>
-                        <div class="metric-value">1 992 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 à 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Ratio coût/net à 2 SMIC</div>
-                        <div class="metric-value">1.80</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-fr-cadre__alsace_moselle__atmp_4">
-            <section>
-                <h2>Indicateurs clés</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Salaire net à 1 SMIC</div>
-                        <div class="metric-value">1 429 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Coût employeur à 1 SMIC</div>
-                        <div class="metric-value">2 048 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 à 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Ratio coût/net à 2 SMIC</div>
-                        <div class="metric-value">1.84</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-fr-cadre__alsace_moselle__fonctions_support">
-            <section>
-                <h2>Indicateurs clés</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Salaire net à 1 SMIC</div>
-                        <div class="metric-value">1 429 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Coût employeur à 1 SMIC</div>
-                        <div class="metric-value">1 989 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 à 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Ratio coût/net à 2 SMIC</div>
-                        <div class="metric-value">1.80</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-fr-cadre__alsace_moselle__standard">
-            <section>
-                <h2>Indicateurs clés</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Salaire net à 1 SMIC</div>
-                        <div class="metric-value">1 429 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Coût employeur à 1 SMIC</div>
-                        <div class="metric-value">2 012 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 à 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Ratio coût/net à 2 SMIC</div>
-                        <div class="metric-value">1.81</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-fr-cadre__standard__atmp_1">
-            <section>
-                <h2>Indicateurs clés</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Salaire net à 1 SMIC</div>
-                        <div class="metric-value">1 453 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Coût employeur à 1 SMIC</div>
-                        <div class="metric-value">1 996 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 à 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Ratio coût/net à 2 SMIC</div>
-                        <div class="metric-value">1.77</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-fr-cadre__standard__atmp_4">
-            <section>
-                <h2>Indicateurs clés</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Salaire net à 1 SMIC</div>
-                        <div class="metric-value">1 453 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Coût employeur à 1 SMIC</div>
-                        <div class="metric-value">2 052 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 à 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Ratio coût/net à 2 SMIC</div>
-                        <div class="metric-value">1.81</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-fr-cadre__standard__fonctions_support">
-            <section>
-                <h2>Indicateurs clés</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Salaire net à 1 SMIC</div>
-                        <div class="metric-value">1 453 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Coût employeur à 1 SMIC</div>
-                        <div class="metric-value">1 990 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 à 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Ratio coût/net à 2 SMIC</div>
-                        <div class="metric-value">1.77</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-fr-cadre__standard__standard">
-            <section>
-                <h2>Indicateurs clés</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Salaire net à 1 SMIC</div>
-                        <div class="metric-value">1 453 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Coût employeur à 1 SMIC</div>
-                        <div class="metric-value">2 016 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 à 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Ratio coût/net à 2 SMIC</div>
-                        <div class="metric-value">1.79</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-fr-non_cadre__alsace_moselle__atmp_1">
-            <section>
-                <h2>Indicateurs clés</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Salaire net à 1 SMIC</div>
-                        <div class="metric-value">1 432 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Coût employeur à 1 SMIC</div>
-                        <div class="metric-value">1 963 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 à 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Ratio coût/net à 2 SMIC</div>
-                        <div class="metric-value">1.78</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-fr-non_cadre__alsace_moselle__atmp_4">
-            <section>
-                <h2>Indicateurs clés</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Salaire net à 1 SMIC</div>
-                        <div class="metric-value">1 432 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Coût employeur à 1 SMIC</div>
-                        <div class="metric-value">2 019 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 à 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Ratio coût/net à 2 SMIC</div>
-                        <div class="metric-value">1.81</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-fr-non_cadre__alsace_moselle__fonctions_support">
-            <section>
-                <h2>Indicateurs clés</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Salaire net à 1 SMIC</div>
-                        <div class="metric-value">1 432 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Coût employeur à 1 SMIC</div>
-                        <div class="metric-value">1 961 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 à 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Ratio coût/net à 2 SMIC</div>
-                        <div class="metric-value">1.77</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-fr-non_cadre__alsace_moselle__standard">
-            <section>
-                <h2>Indicateurs clés</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Salaire net à 1 SMIC</div>
-                        <div class="metric-value">1 432 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Coût employeur à 1 SMIC</div>
-                        <div class="metric-value">1 983 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 à 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Ratio coût/net à 2 SMIC</div>
-                        <div class="metric-value">1.79</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-fr-non_cadre__standard__atmp_1">
-            <section>
-                <h2>Indicateurs clés</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Salaire net à 1 SMIC</div>
-                        <div class="metric-value">1 456 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Coût employeur à 1 SMIC</div>
-                        <div class="metric-value">1 968 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 à 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Ratio coût/net à 2 SMIC</div>
-                        <div class="metric-value">1.75</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-fr-non_cadre__standard__atmp_4">
-            <section>
-                <h2>Indicateurs clés</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Salaire net à 1 SMIC</div>
-                        <div class="metric-value">1 456 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Coût employeur à 1 SMIC</div>
-                        <div class="metric-value">2 024 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 à 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Ratio coût/net à 2 SMIC</div>
-                        <div class="metric-value">1.79</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-fr-non_cadre__standard__fonctions_support">
-            <section>
-                <h2>Indicateurs clés</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Salaire net à 1 SMIC</div>
-                        <div class="metric-value">1 456 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Coût employeur à 1 SMIC</div>
-                        <div class="metric-value">1 961 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 à 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Ratio coût/net à 2 SMIC</div>
-                        <div class="metric-value">1.74</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-
-        <div class="metrics-panel" id="metrics-fr-non_cadre__standard__standard">
-            <section>
-                <h2>Indicateurs clés</h2>
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">Salaire net à 1 SMIC</div>
-                        <div class="metric-value">1 456 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Coût employeur à 1 SMIC</div>
-                        <div class="metric-value">1 988 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">RGDU 2026 à 1 SMIC</div>
-                        <div class="metric-value">700 €</div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-label">Ratio coût/net à 2 SMIC</div>
-                        <div class="metric-value">1.76</div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-                </div>
-            </div>
-
-            <div class="tab-panel" id="tab-fr-comparisons">
-                <section>
-                    <h2>Comparaisons</h2>
-                    <p class="interpretation">Des graphiques comparatifs seront ajoutés ici pour comparer les scénarios AT/MP, le statut salarié et les régimes territoriaux.</p>
-
-                    <div class="charts-grid">
-                        <div class="chart-card">
-                            <h3>Coût employeur selon le scénario AT/MP</h3>
-                            <p class="chart-subtitle">Pour le statut salarié et le régime territorial sélectionnés, ce graphique compare le coût total employeur selon les scénarios de risque AT/MP.</p>
-                            <div id="chart-comparison-atmp-level-fr" class="plotly-chart lazy-chart"></div>
-                        </div>
-
-                        <div class="chart-card">
-                            <h3>Écart de coût employeur par rapport au scénario AT/MP standard</h3>
-                            <p class="chart-subtitle">Ce graphique montre l’écart mensuel de coût employeur par rapport au scénario AT/MP standard.</p>
-                            <div id="chart-comparison-atmp-gap-fr" class="plotly-chart lazy-chart"></div>
-                        </div>
-
-                        <div class="chart-card">
-                            <h3>Coût employeur selon le statut salarié</h3>
-                            <p class="chart-subtitle">Pour le régime territorial et le scénario AT/MP sélectionnés, ce graphique compare le coût total employeur entre salariés non-cadres et cadres.</p>
-                            <div id="chart-comparison-status-level-fr" class="plotly-chart lazy-chart"></div>
-                        </div>
-
-                        <div class="chart-card">
-                            <h3>Écart de coût employeur : cadre moins non-cadre</h3>
-                            <p class="chart-subtitle">Ce graphique montre l’écart mensuel de coût employeur entre salarié cadre et salarié non-cadre.</p>
-                            <div id="chart-comparison-status-gap-fr" class="plotly-chart lazy-chart"></div>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            <div class="tab-panel" id="tab-fr-flcl-index">
-                <section class="chart-card">
-                    <h2>Indice FLCL</h2>
-                    <p class="chart-subtitle">
-                        Indicateurs d’efficacité salariale du coût du travail.
-                    </p>
-
-                    <div class="profile-selector profile-selector-grid">
-                        <div class="selector-field">
-                            <label for="flcl-status-select-fr">Statut salarié</label>
-                            <select id="flcl-status-select-fr" onchange="syncFlclSelectorsToSimulation('fr'); renderFlclIndex(getProfileData('fr'), 'fr')">
-                                <option value="cadre">Cadre</option>
-                                <option value="non_cadre" selected>Non-cadre</option>
-                            </select>
-                        </div>
-
-                        <div class="selector-field">
-                            <label for="flcl-territory-select-fr">Régime territorial</label>
-                            <select id="flcl-territory-select-fr" onchange="syncFlclSelectorsToSimulation('fr'); renderFlclIndex(getProfileData('fr'), 'fr')">
-                                <option value="alsace_moselle">Alsace-Moselle</option>
-                                <option value="standard" selected>Hors Alsace-Moselle</option>
-                            </select>
-                        </div>
-
-                        <div class="selector-field">
-                            <label for="flcl-firm-size-select-fr">Taille d’entreprise</label>
-                            <select id="flcl-firm-size-select-fr" onchange="syncFlclSelectorsToSimulation('fr'); renderFlclIndex(getProfileData('fr'), 'fr')">
-                                <option value="lt50" selected>&lt; 50 salariés</option>
-                                <option value="ge50">≥ 50 salariés</option>
-                            </select>
-                        </div>
-
-                        <div class="selector-field">
-                            <label for="flcl-atmp-select-fr">Scénario AT/MP</label>
-                            <select id="flcl-atmp-select-fr" onchange="syncFlclSelectorsToSimulation('fr'); renderFlclIndex(getProfileData('fr'), 'fr')">
-                                <option value="atmp_1">AT/MP 1 %</option>
-                                <option value="atmp_4">AT/MP 4 %</option>
-                                <option value="fonctions_support">Fonctions support</option>
-                                <option value="standard" selected>AT/MP standard</option>
-                            </select>
-                        </div>
-
-                        <div class="selector-field">
-                            <label for="flcl-working-time-select-fr">Temps de travail</label>
-                            <select id="flcl-working-time-select-fr" onchange="syncFlclSelectorsToSimulation('fr'); renderFlclIndex(getProfileData('fr'), 'fr')">
-                                <option value="full_time" selected>Temps plein</option>
-                                <option value="part_time_80">Temps partiel 80 %</option>
-                                <option value="part_time_50">Temps partiel 50 %</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div id="flcl-index-container-fr">
-                        <div class="metrics-grid" style="margin-top: 24px;">
-                            <div class="metric-card">
-                                <div class="metric-label">Indice FLCL · E</div>
-                                <div class="metric-value" id="flcl-e-value-fr">—</div>
-                                <div class="metric-caption" id="flcl-e-caption-fr"></div>
-                            </div>
-
-                            <div class="metric-card">
-                                <div class="metric-label">Indice FLCL · B</div>
-                                <div class="metric-value" id="flcl-b-value-fr">—</div>
-                                <div class="metric-caption" id="flcl-b-caption-fr"></div>
-                            </div>
-
-                            <div class="metric-card">
-                                <div class="metric-label">Indice FLCL · R</div>
-                                <div class="metric-value" id="flcl-r-value-fr">—</div>
-                                <div class="metric-caption" id="flcl-r-caption-fr"></div>
-                            </div>
-                        </div>
-
-                        <div class="metrics-grid" style="margin-top: 24px;">
-                            <div class="metric-card">
-                                <div class="metric-label">Transmission marginale</div>
-                                <div class="metric-value" id="flcl-transmission-value-fr">—</div>
-                                <div class="metric-caption" id="flcl-transmission-caption-fr"></div>
-                            </div>
-
-                            <div class="metric-card">
-                                <div class="metric-label">Captation marginale</div>
-                                <div class="metric-value" id="flcl-captation-value-fr">—</div>
-                                <div class="metric-caption" id="flcl-captation-caption-fr"></div>
-                            </div>
-
-                            <div class="metric-card">
-                                <div class="metric-label">Progressivité implicite</div>
-                                <div class="metric-value" id="flcl-progressivity-value-fr">—</div>
-                                <div class="metric-caption" id="flcl-progressivity-caption-fr"></div>
-                            </div>
-
-                            <div class="metric-card">
-                                <div class="metric-label">Soutien bas salaires</div>
-                                <div class="metric-value" id="flcl-support-value-fr">—</div>
-                                <div class="metric-caption" id="flcl-support-caption-fr"></div>
-                            </div>
-                        </div>
-
-                        <div class="chart-card chart-card-full" style="margin-top: 22px;">
-                            <h3>Indice FLCL</h3>
-                            <p class="chart-subtitle">
-                                FLCL-E = 100 × salaire net / coût employeur.
-                            </p>
-                            <div id="chart-flcl-e-fr" class="plotly-chart lazy-chart"></div>
-                        </div>
-
-                        <div class="chart-card chart-card-full" style="margin-top: 22px;">
-                            <h3>FLCL-R</h3>
-                            <p class="chart-subtitle">
-                                Effet des allègements généraux sur l’efficacité salariale.
-                            </p>
-                            <div id="chart-flcl-r-fr" class="plotly-chart lazy-chart"></div>
-                        </div>
-
-                        <div class="chart-card chart-card-full" style="margin-top: 22px;">
-                            <h3>Transmission marginale</h3>
-                            <p class="chart-subtitle">
-                                Part d’un euro supplémentaire de coût employeur allant au salaire net.
-                            </p>
-                            <div id="chart-flcl-marginal-fr" class="plotly-chart lazy-chart"></div>
-                        </div>
-
-                        <div class="chart-card chart-card-full" style="margin-top: 22px;">
-                            <h3>Progressivité implicite</h3>
-                            <p class="chart-subtitle">
-                                Variation de FLCL-E lorsque le niveau de salaire augmente.
-                            </p>
-                            <div id="chart-flcl-progressivity-fr" class="plotly-chart lazy-chart"></div>
-                        </div>
-
-                        <div class="chart-card chart-card-full" style="margin-top: 22px;">
-                            <h3>Destination marginale d’un euro supplémentaire de coût employeur</h3>
-                            <p class="chart-subtitle">
-                                Répartition marginale d’un euro supplémentaire entre salaire net, cotisations salarié et cotisations employeur.
-                            </p>
-                            <div id="chart-flcl-100-fr" class="plotly-chart lazy-chart"></div>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            <div class="tab-panel" id="tab-fr-data">
-                <section>
-                    <h2>Données</h2>
-                    <p class="interpretation">Le jeu de données complet peut être téléchargé au format CSV. Il contient tous les points de salaire et toutes les combinaisons de statut salarié, régime territorial et scénario AT/MP.</p>
-
-                    <div class="download-row" style="margin-top: 18px;">
-                        <a class="download-link" href="data/labour_cost_grid_mon_entreprise.csv" download>
-                            ⬇ Télécharger les données de simulation (CSV)
-                        </a>
-                    </div>
-
-                    <div class="profile-selector profile-selector-grid data-profile-selector">
-                        <div class="selector-field">
-                            <label for="data-status-select-fr">Statut salarié</label>
-                            <select id="data-status-select-fr" onchange="switchDataCombinatorialProfile('fr'); renderDataTable('fr')">
-                                <option value="cadre">Cadre</option>
-<option value="non_cadre" selected>Non-cadre</option>
-                            </select>
-                        </div>
-
-                        <div class="selector-field">
-                            <label for="data-territory-select-fr">Régime territorial</label>
-                            <select id="data-territory-select-fr" onchange="switchDataCombinatorialProfile('fr'); renderDataTable('fr')">
-                                <option value="alsace_moselle">Alsace-Moselle</option>
-<option value="standard" selected>Hors Alsace-Moselle</option>
-                            </select>
-                        </div>
-
-                        <div class="selector-field">
-                            <label for="data-firm-size-select-fr">Taille d’entreprise</label>
-                            <select id="data-firm-size-select-fr" onchange="switchDataCombinatorialProfile('fr'); renderDataTable('fr')">
-                                <option value="lt50" selected>&lt; 50 salariés</option>
-                                <option value="ge50">≥ 50 salariés</option>
-                            </select>
-                        </div>
-
-                        <div class="selector-field">
-                            <label for="data-atmp-select-fr">
-    				Scénario AT/MP
-    				<a
-        				class="info-tooltip"
-        				href="https://www.ameli.fr/entreprise/votre-entreprise/cotisation-atmp"
-        				target="_blank"
-        				rel="noopener noreferrer"
-        				title="AT/MP = accidents du travail et maladies professionnelles. Le taux dépend du secteur d'activité et du niveau de risque de l'établissement."
-        				aria-label="AT/MP = accidents du travail et maladies professionnelles. Le taux dépend du secteur d'activité et du niveau de risque de l'établissement."
-    				>
-        				ⓘ
-    				</a>
-			    </label>
-                            <select id="data-atmp-select-fr" onchange="switchDataCombinatorialProfile('fr'); renderDataTable('fr')">
-                                <option value="atmp_1">AT/MP 1 %</option>
-<option value="atmp_4">AT/MP 4 %</option>
-<option value="fonctions_support">Fonctions support</option>
-<option value="standard" selected>AT/MP standard</option>
-                            </select>
-                        </div>
-
-                        <div class="selector-field">
-                            <label for="data-working-time-select-fr">Temps de travail</label>
-                            <select id="data-working-time-select-fr" onchange="switchDataCombinatorialProfile('fr'); renderDataTable('fr')">
-                                <option value="full_time" selected>Temps plein</option>
-                                <option value="part_time_80">Temps partiel 80 %</option>
-                                <option value="part_time_50">Temps partiel 50 %</option>
-                            </select>
-                        </div>
-
-                    </div>
-                </section>
-
-                <div id="data-panels-fr">
-                    <section>
-                        <h2>Données du profil sélectionné</h2>
-                        <p class="interpretation" id="data-profile-label-fr"></p>
-
-                        <div class="table-wrapper table-wrapper-full">
-                            <table class="data-table data-table-full" id="data-table-fr"></table>
-                        </div>
-                    </section>
-                </div>
-            </div>
-
-            <div class="tab-panel" id="tab-fr-methodology">
-                <section>
-                    <h2>Méthodologie</h2>
-
-                    
-    <p>Le tableau de bord est construit à partir d’une grille salariale reproductible évaluée via l’API Mon-entreprise / URSSAF. L’objectif n’est pas de reproduire une fiche de paie complète, mais d’isoler des indicateurs économiquement interprétables de formation du coût du travail.</p>
-    <ul class="methodology-list">
-        <li><strong>Source.</strong> Les calculs sont obtenus à partir de l’API publique Mon-entreprise / URSSAF.</li>
-<li><strong>Grille salariale.</strong> Les salaires bruts mensuels sont exprimés en multiples du SMIC brut mensuel, de 0,8 à 6 SMIC, avec un pas de 0,01 SMIC.</li>
-<li><strong>Simulation combinatoire.</strong> L’utilisateur peut combiner trois dimensions : statut salarié, régime territorial et scénario de risque AT/MP.</li>
-<li><strong>Statut salarié.</strong> La dimension de statut distingue les salariés non-cadres et cadres.</li>
-<li><strong>Régime territorial.</strong> La dimension territoriale distingue le régime général du régime Alsace-Moselle.</li>
-<li><strong>Scénarios AT/MP.</strong> La dimension AT/MP doit être interprétée comme un scénario de taux de risque, et non comme une profession ou un secteur précis. Les taux explicites, par exemple 1 % ou 4 %, sont directement transmis au moteur Mon-		entreprise. Le scénario fonctions support repose sur une règle signalée comme expérimentale par l’API.</li>
-<li><strong>Indicateurs.</strong> Coût employeur, salaire net, cotisations employeur, cotisations salarié, RGDU 2026, coin social et ratio coût/net sont dérivés des sorties de l’API.</li>
-<li><strong>Taux effectif de cotisations employeur.</strong> Le taux affiché dans le graphique ne correspond pas au barème légal brut de cotisations patronales. Il s’agit d’un taux apparent après allègements de charges, calculé comme cotisations employeur 		nettes rapportées au salaire brut.</li>
-<li><strong>Indicateurs marginaux.</strong> Le taux marginal de coût employeur est calculé par différence finie entre deux points adjacents de la grille : Δ coût employeur / Δ salaire brut.</li>
-<li><strong>Limites.</strong> Les résultats sont des simulations de référence, non des calculs officiels de fiche de paie. Ils peuvent varier selon la taille de l’entreprise, les conventions collectives, la classification AT/MP précise, les exonérations et 		les régimes spécifiques.</li>
-    </ul>
-    
-
-                    <div class="methodology-versioning">
-                        <h3>
-                            Version des paramètres réglementaires
-                        </h3>
-
-                        <div class="methodology-versioning-card">
-                            <p>
-                                <strong>
-                                    Version utilisée :
-                                </strong>
-                                2026-06
-                            </p>
-
-                            <p>
-                                <strong>
-                                    Date d’effet :
-                                </strong>
-                                2026-06-01
-                            </p>
-
-                            <p>
-                                <strong>
-                                    Source des calculs :
-                                </strong>
-                                API Mon-entreprise / URSSAF
-                            </p>
-
-                            <p class="interpretation">
-                                Les simulations reposent actuellement sur les paramètres réglementaires et calculs fournis par l’API Mon-entreprise / 				     URSSAF. Le système de versioning permet de documenter les hypothèses réglementaires utilisées pour chaque version du 					    dashboard.
-                            </p>
-                        </div>
-                    </div>
-                </section>
-	    </div>
-
-            <div class="tab-panel" id="tab-fr-working-paper">
-                <section class="working-paper-section">
-                    <div class="working-paper-header">
+                <p class="block-intro" data-i18n="publications.intro">
+                    Conventions de calcul, indicateurs et extensions méthodologiques du projet.
+                </p>
+
+                <div style="margin-top:14px">
+                    <article class="pub">
+                        <div class="pub-meta" data-i18n="pub.flcl.meta">Working paper<br>Juin 2026</div>
                         <div>
-                            <h2>Working Paper</h2>
-                            <p class="interpretation">Cette section donne accès à la documentation méthodologique et au papier de cadrage du FLCL.</p>
-
-                            <label for="working-paper-select-fr">Document</label>
-                            <select id="working-paper-select-fr" onchange="switchWorkingPaper('fr')">
-                                <option value="assets/french_labour_cost_lab_working_paper.pdf">
-                                    Note méthodologique
-                                </option>
-                                <option value="assets/FLCL_Framework_Working_Paper_June_2026.pdf">
-                                    Papier de cadrage FLCL
-                                </option>
-                            </select>
+                            <h3 data-i18n="pub.flcl.title">Indice French Labour Cost Lab</h3>
+                            <p data-i18n="pub.flcl.text">Méthodologie des indicateurs de coût du travail, rendement marginal du salaire brut et effets des allègements généraux dans le module français.</p>
+                            <div class="pub-actions">
+                                <a class="link" href="./assets/french_labour_cost_lab_working_paper.pdf" target="_blank" rel="noopener" data-i18n="pub.open">Ouvrir le PDF ↗</a>
+                                <a class="link" href="./assets/french_labour_cost_lab_working_paper.pdf" download data-i18n="pub.download">Télécharger ↓</a>
+                            </div>
                         </div>
+                    </article>
 
-                        <a id="working-paper-download-fr" class="download-link working-paper-download" href="assets/french_labour_cost_lab_working_paper.pdf" download>
-                            ⬇ Télécharger le PDF sélectionné
-                        </a>
-                    </div>
-
-                    <div class="working-paper-card">
-                        <div class="pdf-viewer-wrapper">
-                            <iframe
-                                id="working-paper-viewer-fr"
-                                class="pdf-viewer"
-                                src="assets/french_labour_cost_lab_working_paper.pdf#view=FitH"
-                                title="French Labour Cost Lab Working Paper"
-                            ></iframe>
+                    <article class="pub">
+                        <div class="pub-meta" data-i18n="pub.framework.meta">Document de cadrage<br>Juin 2026</div>
+                        <div>
+                            <h3 data-i18n="pub.framework.title">Cadre méthodologique du Labor Cost Lab</h3>
+                            <p data-i18n="pub.framework.text">Cadre général du projet : indicateurs communs, conventions de comparaison, données ouvertes et extension du French Labour Cost Lab vers une plateforme internationale.</p>
+                            <div class="pub-actions">
+                                <a class="link" href="./assets/FLCL_Framework_Working_Paper_June_2026.pdf" target="_blank" rel="noopener" data-i18n="pub.open">Ouvrir le PDF ↗</a>
+                                <a class="link" href="./assets/FLCL_Framework_Working_Paper_June_2026.pdf" download data-i18n="pub.download">Télécharger ↓</a>
+                            </div>
                         </div>
+                    </article>
+
+                    <article class="pub">
+                        <div class="pub-meta" data-i18n="pub.comparison.meta">Note méthodologique<br>En développement</div>
+                        <div>
+                            <h3 data-i18n="pub.comparison.title">Comparaison internationale du coût du travail</h3>
+                            <p data-i18n="pub.comparison.text">Extension comparative destinée à harmoniser les sorties des modules nationaux et à documenter les écarts de structure entre coût employeur, salaire net et prélèvements obligatoires.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- DATA -->
+        <section id="data" class="block">
+            <div class="wrap">
+                <div class="block-label">
+                    <span class="idx">/ 04</span>
+                    <h2 class="block-title" data-i18n="data.title">Données et reproductibilité</h2>
+                </div>
+                <p class="block-intro" data-i18n="data.intro">
+                    Le projet sépare données calculées, paramètres réglementaires et sources
+                    documentaires, pour distinguer ce qui relève des hypothèses, des textes
+                    officiels et des sorties de simulation.
+                </p>
+
+                <div class="data-grid" style="margin-top:26px">
+                    <div class="data-cell">
+                        <span class="d-tag">CSV</span>
+                        <h3 data-i18n="data.block1.title">Grilles de salaires</h3>
+                        <p data-i18n="data.block1.text">Résultats calculés pour chaque multiple du salaire de référence.</p>
                     </div>
-                </section>
+                    <div class="data-cell">
+                        <span class="d-tag">JSON</span>
+                        <h3 data-i18n="data.block2.title">Paramètres versionnés</h3>
+                        <p data-i18n="data.block2.text">Paramètres réglementaires et conventions de calcul propres à chaque pays.</p>
+                    </div>
+                    <div class="data-cell">
+                        <span class="d-tag">REF</span>
+                        <h3 data-i18n="data.block3.title">Sources documentées</h3>
+                        <p data-i18n="data.block3.text">Textes, bases et documents utilisés pour construire les modules nationaux.</p>
+                    </div>
+                    <div class="data-cell">
+                        <span class="d-tag">CODE</span>
+                        <h3 data-i18n="data.block4.title">Code ouvert</h3>
+                        <p data-i18n="data.block4.text">Scripts de construction des jeux de données et interface web reproductible.</p>
+                    </div>
+                </div>
+
+                <div class="status-strip">
+                    <div>
+                        <span class="s-lab" data-i18n="side.status.modules.label">Modules accessibles</span>
+                        <span class="s-val" data-i18n="side.status.modules.value">France · Allemagne · Belgique</span>
+                    </div>
+                    <div>
+                        <span class="s-lab" data-i18n="side.status.year.label">Année réglementaire</span>
+                        <span class="s-val mono">2026</span>
+                    </div>
+                    <div>
+                        <span class="s-lab" data-i18n="side.status.output.label">Sorties principales</span>
+                        <span class="s-val" data-i18n="side.status.output.value">coût employeur · net · coins socio-fiscaux</span>
+                    </div>
+                </div>
             </div>
+        </section>
 
-            <div class="tab-panel" id="tab-fr-contact">
-                <section class="contact-section">
-                    <h2>Contact</h2>
-                    <p class="interpretation">Pour toute remarque, correction, suggestion méthodologique, proposition de source ou demande d’échange autour du French Labour Cost Lab, vous pouvez utiliser le formulaire ci-dessous.</p>
-
-                    <form action="https://formspree.io/f/xnjrvjlr" method="POST" class="contact-form">
-                        <input type="hidden" name="_subject" value="Nouveau message — French Labour Cost Lab">
-
-                        <label for="name-fr">Nom</label>
-                        <input type="text" id="name-fr" name="name" required>
-
-                        <label for="email-fr">Adresse e-mail</label>
-                        <input type="email" id="email-fr" name="email" required>
-
-                        <label for="subject-fr">Objet</label>
-                        <input type="text" id="subject-fr" name="subject" required>
-
-                        <label for="message-fr">Message</label>
-                        <textarea id="message-fr" name="message" rows="7" required></textarea>
-
-                        <button type="submit" class="download-link">Envoyer</button>
-                    </form>
-                </section>
+        <!-- CONTACT -->
+        <section class="block">
+            <div class="wrap contact">
+                <div>
+                    <div class="block-label">
+                        <span class="idx">/ 05</span>
+                        <h2 class="block-title" data-i18n="side.contact.title">Contact</h2>
+                    </div>
+                    <p data-i18n="side.contact.text">
+                        Projet développé par Hugo Spring-Ragain. Remarques méthodologiques,
+                        corrections de paramètres et propositions de collaboration bienvenues.
+                    </p>
+                </div>
+                <a class="button ghost" href="mailto:hugo.springragain@gmail.com" data-i18n="side.contact.link">Envoyer un message →</a>
             </div>
-        </main>
+        </section>
+    </main>
 
-        <footer>
-    		Dernière mise à jour: 2026-06-10 10:28
-    		· Paramètres réglementaires: 2026-06
-    		· Date d’effet: 2026-06-01
-        </footer>
-    </div>
-    
+    <footer>
+        <div class="wrap foot">
+            <span data-i18n="footer.left">Labor Cost Lab · Projet de recherche indépendant</span>
+            <span data-i18n="footer.right">Données ouvertes · Paramètres versionnés · Modules nationaux</span>
+        </div>
+    </footer>
 
     <script>
-        function safeId(value) {
-            return String(value).replaceAll(" ", "_").replaceAll("-", "_");
-        }
-
-        function getSelectedCombinatorialProfile(lang) {
-            const status = document.getElementById("status-select-" + lang).value;
-            const territory = document.getElementById("territory-select-" + lang).value;
-            const firmSize = document.getElementById("firm-size-select-" + lang).value;
-            const atmp = document.getElementById("atmp-select-" + lang).value;
-            const workingTime = document.getElementById("working-time-select-" + lang).value;
-
-            return [
-                status,
-                territory,
-                firmSize,
-                atmp,
-                workingTime
-            ].join("__");
-        }
-
-        function getSelectedDataProfile(lang) {
-            const status = document.getElementById("data-status-select-" + lang).value;
-            const territory = document.getElementById("data-territory-select-" + lang).value;
-            const firmSize = document.getElementById("data-firm-size-select-" + lang).value;
-            const atmp = document.getElementById("data-atmp-select-" + lang).value;
-            const workingTime = document.getElementById("data-working-time-select-" + lang).value;
-
-            return [
-                status,
-                territory,
-                firmSize,
-                atmp,
-                workingTime
-            ].join("__");
-        }
-
-        function restoreCombinatorialSelectors(lang) {
-            const statusSelect = document.getElementById("status-select-" + lang);
-            const territorySelect = document.getElementById("territory-select-" + lang);
-            const atmpSelect = document.getElementById("atmp-select-" + lang);
-
-            const savedStatus = localStorage.getItem("flcl_status_" + lang);
-            const savedTerritory = localStorage.getItem("flcl_territory_" + lang);
-            const savedAtmp = localStorage.getItem("flcl_atmp_" + lang);
-
-            if (savedStatus && statusSelect.querySelector('option[value="' + savedStatus + '"]')) {
-                statusSelect.value = savedStatus;
+        const TRANSLATIONS = {
+            fr: {
+                "brand.subtitle": "Observatoire du coût du travail",
+                "nav.modules": "Modules",
+                "nav.method": "Méthode",
+                "nav.publications": "Publications",
+                "nav.data": "Données",
+                "hero.kicker": "Projet de recherche ouvert · 2026",
+                "hero.title": "Observatoire des salaires, cotisations et coûts employeurs",
+                "hero.lead": "Le Labor Cost Lab reconstruit la façon dont les règles socio-fiscales transforment un coût employeur en salaire net. Modules nationaux, données ouvertes et paramètres versionnés, pour comparer les structures de prélèvement d'un pays à l'autre.",
+                "hero.primary": "Consulter les modules →",
+                "hero.secondary": "Publications",
+                "decomp.title": "Du coût employeur au salaire net",
+                "decomp.base": "Base : coût employeur = 100",
+                "decomp.caption": "Schéma indicatif · valeurs éditables selon le module et le niveau de salaire",
+                "modules.title": "Modules nationaux",
+                "modules.intro": "Même logique pour chaque pays : partir d'un salaire de référence, appliquer les règles sociales et fiscales, restituer une grille comparable. Les barres ci-dessous donnent la part du coût employeur perçue en net.",
+                "compare.note": "Part nette du coût employeur · schéma indicatif",
+                "module.france.text": "Module complet : coût employeur, salaire net, allègements généraux, RGDU et rendement marginal du salaire brut.",
+                "module.germany.text": "Prototype réglementaire : cotisations sociales, coût employeur et salaire net avant impôt sur le revenu.",
+                "module.belgium.text": "Module socio-fiscal 2026 : cotisations ONSS, réduction structurelle employeur et précompte professionnel.",
+                "module.open": "Ouvrir →",
+                "module.netshare": "net / 100",
+                "status.available": "Disponible",
+                "status.prototype": "Prototype",
+                "method.title": "Méthode",
+                "method.p1": "Pas de reproduction d'une fiche de paie individuelle. Le Lab construit des scénarios de référence, comparables entre pays, pour isoler l'effet des règles statutaires sur le coût du travail et le revenu net.",
+                "method.p2": "Des paramètres explicites : salaire minimum ou de référence, taux de cotisations, dispositifs d'allègement, retenues fiscales et conventions de calcul propres à chaque module.",
+                "method.p3": "Chaque jeu de données est versionné et produit une grille permettant de comparer niveaux, taux effectifs, coins socio-fiscaux et effets marginaux d'une hausse de salaire brut.",
+                "publications.title": "Publications",
+                "publications.intro": "Conventions de calcul, indicateurs et extensions méthodologiques du projet.",
+                "pub.flcl.title": "Indice French Labour Cost Lab",
+                "pub.flcl.meta": "Working paper<br>Juin 2026",
+                "pub.flcl.text": "Méthodologie des indicateurs de coût du travail, rendement marginal du salaire brut et effets des allègements généraux dans le module français.",
+                "pub.framework.title": "Cadre méthodologique du Labor Cost Lab",
+                "pub.framework.meta": "Document de cadrage<br>Juin 2026",
+                "pub.framework.text": "Cadre général du projet : indicateurs communs, conventions de comparaison, données ouvertes et extension du French Labour Cost Lab vers une plateforme internationale.",
+                "pub.comparison.title": "Comparaison internationale du coût du travail",
+                "pub.comparison.meta": "Note méthodologique<br>En développement",
+                "pub.comparison.text": "Extension comparative destinée à harmoniser les sorties des modules nationaux et à documenter les écarts de structure entre coût employeur, salaire net et prélèvements obligatoires.",
+                "pub.open": "Ouvrir le PDF ↗",
+                "pub.download": "Télécharger ↓",
+                "data.title": "Données et reproductibilité",
+                "data.intro": "Le projet sépare données calculées, paramètres réglementaires et sources documentaires, pour distinguer ce qui relève des hypothèses, des textes officiels et des sorties de simulation.",
+                "data.block1.title": "Grilles de salaires",
+                "data.block1.text": "Résultats calculés pour chaque multiple du salaire de référence.",
+                "data.block2.title": "Paramètres versionnés",
+                "data.block2.text": "Paramètres réglementaires et conventions de calcul propres à chaque pays.",
+                "data.block3.title": "Sources documentées",
+                "data.block3.text": "Textes, bases et documents utilisés pour construire les modules nationaux.",
+                "data.block4.title": "Code ouvert",
+                "data.block4.text": "Scripts de construction des jeux de données et interface web reproductible.",
+                "side.status.modules.label": "Modules accessibles",
+                "side.status.modules.value": "France · Allemagne · Belgique",
+                "side.status.year.label": "Année réglementaire",
+                "side.status.output.label": "Sorties principales",
+                "side.status.output.value": "coût employeur · net · coins socio-fiscaux",
+                "side.contact.title": "Contact",
+                "side.contact.text": "Projet développé par Hugo Spring-Ragain. Remarques méthodologiques, corrections de paramètres et propositions de collaboration bienvenues.",
+                "side.contact.link": "Envoyer un message →",
+                "footer.left": "Labor Cost Lab · Projet de recherche indépendant",
+                "footer.right": "Données ouvertes · Paramètres versionnés · Modules nationaux"
+            },
+            en: {
+                "brand.subtitle": "Labour cost observatory",
+                "nav.modules": "Modules",
+                "nav.method": "Method",
+                "nav.publications": "Publications",
+                "nav.data": "Data",
+                "hero.kicker": "Open research project · 2026",
+                "hero.title": "Observatory on wages, social security contributions, and employer costs",
+                "hero.lead": "The Labor Cost Lab reconstructs how statutory social and fiscal rules turn an employer cost into a net wage. National modules, open data, and versioned parameters, built to compare levy structures across countries.",
+                "hero.primary": "Browse modules →",
+                "hero.secondary": "Publications",
+                "decomp.title": "From employer cost to net wage",
+                "decomp.base": "Base: employer cost = 100",
+                "decomp.caption": "Illustrative schematic · values editable per module and wage level",
+                "modules.title": "National modules",
+                "modules.intro": "Same logic for every country: start from a reference wage, apply social and fiscal rules, publish a comparable grid. The bars below show the share of employer cost received as net pay.",
+                "compare.note": "Net share of employer cost · illustrative",
+                "module.france.text": "Full module: employer cost, net wage, general contribution relief, RGDU, and marginal returns to gross wages.",
+                "module.germany.text": "Regulatory prototype: social contributions, employer cost, and net wage before income tax.",
+                "module.belgium.text": "2026 socio-fiscal module: ONSS contributions, the employer structural reduction, and professional withholding tax.",
+                "module.open": "Open →",
+                "module.netshare": "net / 100",
+                "status.available": "Available",
+                "status.prototype": "Prototype",
+                "method.title": "Method",
+                "method.p1": "No reproduction of an individual payslip. The Lab builds comparable reference scenarios across countries to isolate the effect of statutory rules on labour cost and net income.",
+                "method.p2": "Explicit parameters: minimum or reference wages, contribution rates, relief schemes, tax withholding rules, and module-specific calculation conventions.",
+                "method.p3": "Each dataset is versioned and produces a grid to compare levels, effective rates, socio-fiscal wedges, and marginal effects of a gross wage increase.",
+                "publications.title": "Publications",
+                "publications.intro": "Calculation conventions, indicators, and methodological extensions of the project.",
+                "pub.flcl.title": "French Labour Cost Lab Index",
+                "pub.flcl.meta": "Working paper<br>June 2026",
+                "pub.flcl.text": "Methodology of labour-cost indicators, marginal returns to gross wages, and effects of employer contribution relief in the French module.",
+                "pub.framework.title": "Labor Cost Lab methodological framework",
+                "pub.framework.meta": "Framework paper<br>June 2026",
+                "pub.framework.text": "General framework of the project: common indicators, comparison conventions, open data, and the extension of the French Labour Cost Lab into an international platform.",
+                "pub.comparison.title": "Cross-country comparison of labour costs",
+                "pub.comparison.meta": "Methodological note<br>In development",
+                "pub.comparison.text": "Comparative extension designed to harmonise national module outputs and document structural differences between employer costs, net wages, and statutory levies.",
+                "pub.open": "Open PDF ↗",
+                "pub.download": "Download ↓",
+                "data.title": "Data and reproducibility",
+                "data.intro": "The project separates calculated data, regulatory parameters, and documentary sources, so that assumptions, official rules, and simulation outputs can be told apart.",
+                "data.block1.title": "Wage grids",
+                "data.block1.text": "Calculated outputs for each multiple of the reference wage.",
+                "data.block2.title": "Versioned parameters",
+                "data.block2.text": "Regulatory parameters and country-specific calculation conventions.",
+                "data.block3.title": "Documented sources",
+                "data.block3.text": "Legal texts, datasets, and documents used to build the national modules.",
+                "data.block4.title": "Open code",
+                "data.block4.text": "Dataset-building scripts and a reproducible hosted web interface.",
+                "side.status.modules.label": "Available modules",
+                "side.status.modules.value": "France · Germany · Belgium",
+                "side.status.year.label": "Regulatory year",
+                "side.status.output.label": "Main outputs",
+                "side.status.output.value": "employer cost · net · socio-fiscal wedges",
+                "side.contact.title": "Contact",
+                "side.contact.text": "Project developed by Hugo Spring-Ragain. Methodological comments, parameter corrections, and collaboration proposals are welcome.",
+                "side.contact.link": "Send a message →",
+                "footer.left": "Labor Cost Lab · Independent research project",
+                "footer.right": "Open data · Versioned parameters · National modules"
             }
+        };
 
-            if (savedTerritory && territorySelect.querySelector('option[value="' + savedTerritory + '"]')) {
-                territorySelect.value = savedTerritory;
+        // ---- shared state ----
+        let currentLang = "fr";
+        let currentCountry = "fr";
+
+        // Per-country decomposition of employer cost (= 100).
+        // Values are illustrative and sum to 100. Labels carry each country's
+        // real statutory vocabulary, so the fiscal band is never generically French.
+        const COUNTRY_DECOMP = {
+            fr: {
+                emp: { v: 26, fr: "Cotisations patronales", en: "Employer contributions" },
+                sal: { v: 18, fr: "Cotisations salariales", en: "Employee contributions" },
+                tax: { v: 12, fr: "CSG, CRDS, impôt sur le revenu", en: "CSG, CRDS, income tax" },
+                net: { v: 44, fr: "Salaire net disponible", en: "Disposable net wage" }
+            },
+            de: {
+                emp: { v: 21, fr: "Cotisations employeur (Sozialbeiträge)", en: "Employer social contributions" },
+                sal: { v: 20, fr: "Cotisations salariales (Sozialbeiträge)", en: "Employee social contributions" },
+                tax: { v: 11, fr: "Lohnsteuer, contribution de solidarité", en: "Lohnsteuer, solidarity surcharge" },
+                net: { v: 48, fr: "Salaire net (Nettolohn)", en: "Net wage (Nettolohn)" }
+            },
+            be: {
+                emp: { v: 22, fr: "Cotisations ONSS employeur", en: "Employer NSSO contributions" },
+                sal: { v: 15, fr: "Cotisations ONSS travailleur", en: "Employee NSSO contributions" },
+                tax: { v: 23, fr: "Précompte professionnel", en: "Professional withholding tax" },
+                net: { v: 40, fr: "Salaire net", en: "Net wage" }
             }
+        };
 
-            if (savedAtmp && atmpSelect.querySelector('option[value="' + savedAtmp + '"]')) {
-                atmpSelect.value = savedAtmp;
-            }
+        function renderDecomp() {
+            const d = COUNTRY_DECOMP[currentCountry] || COUNTRY_DECOMP.fr;
 
-            return getSelectedCombinatorialProfile(lang);
-        }
-
-        function syncDataSelectorsFromSimulation(lang) {
-            const status = document.getElementById("status-select-" + lang).value;
-            const territory = document.getElementById("territory-select-" + lang).value;
-            const firmSize = document.getElementById("firm-size-select-" + lang).value;
-            const atmp = document.getElementById("atmp-select-" + lang).value;
-            const workingTime = document.getElementById("working-time-select-" + lang).value;
-
-            const dataStatus = document.getElementById("data-status-select-" + lang);
-            const dataTerritory = document.getElementById("data-territory-select-" + lang);
-            const dataFirmSize = document.getElementById("data-firm-size-select-" + lang);
-            const dataAtmp = document.getElementById("data-atmp-select-" + lang);
-            const dataWorkingTime = document.getElementById("data-working-time-select-" + lang);
-
-            if (dataStatus) {
-                dataStatus.value = status;
-            }
-
-            if (dataTerritory) {
-                dataTerritory.value = territory;
-            }
-
-            if (dataFirmSize) {
-                dataFirmSize.value = firmSize;
-            }
-
-            if (dataAtmp) {
-                dataAtmp.value = atmp;
-            }
-
-            if (dataWorkingTime) {
-                dataWorkingTime.value = workingTime;
-            }
-        }
-
-        function syncSimulationSelectorsFromData(lang) {
-            const status = document.getElementById("data-status-select-" + lang).value;
-            const territory = document.getElementById("data-territory-select-" + lang).value;
-            const atmp = document.getElementById("data-atmp-select-" + lang).value;
-	    const firmSize = document.getElementById("data-firm-size-select-" + lang).value;
-	    const workingTime = document.getElementById("data-working-time-select-" + lang).value;
-
-
-            document.getElementById("status-select-" + lang).value = status;
-            document.getElementById("territory-select-" + lang).value = territory;
-            document.getElementById("atmp-select-" + lang).value = atmp;
-	    document.getElementById("firm-size-select-" + lang).value = firmSize;
-	    document.getElementById("working-time-select-" + lang).value = workingTime;
-
-            localStorage.setItem("flcl_status_" + lang, status);
-            localStorage.setItem("flcl_territory_" + lang, territory);
-            localStorage.setItem("flcl_atmp_" + lang, atmp);
-        }
-
-        function showProfile(lang, profileId) {
-            const panels = document.querySelectorAll("#profile-panels-" + lang + " .profile-panel");
-
-            panels.forEach(function(panel) {
-                panel.classList.remove("active");
+            document.querySelectorAll("#hero-bar .seg").forEach(seg => {
+                const band = seg.getAttribute("data-band");
+                seg.style.setProperty("--w", d[band].v + "%");
             });
 
-            const directTarget = document.getElementById("panel-" + lang);
-            const oldTarget = document.getElementById("panel-" + lang + "-" + safeId(profileId));
-
-            if (directTarget) {
-                directTarget.classList.add("active");
-            } else if (oldTarget) {
-                oldTarget.classList.add("active");
-            } else if (panels.length > 0) {
-                panels[0].classList.add("active");
-            }
-
-            setTimeout(function() {
-                window.dispatchEvent(new Event("resize"));
-            }, 150);
-        }
-
-        function showComparison(lang) {
-            const panels = document.querySelectorAll("#comparison-panels-" + lang + " .comparison-panel");
-
-            panels.forEach(function(panel) {
-                panel.classList.remove("active");
+            document.querySelectorAll(".legend-val[data-val]").forEach(el => {
+                el.textContent = d[el.getAttribute("data-val")].v;
             });
 
-            const statusSelect = document.getElementById("status-select-" + lang);
-            const territorySelect = document.getElementById("territory-select-" + lang);
-
-            let target = null;
-
-            if (statusSelect && territorySelect) {
-                const status = statusSelect.value;
-                const territory = territorySelect.value;
-                const comparisonId = "comparison-" + lang + "-" + status + "__" + territory;
-                target = document.getElementById(comparisonId);
-            }
-
-            if (target) {
-                target.classList.add("active");
-            } else if (panels.length > 0) {
-                panels[0].classList.add("active");
-            }
-
-            setTimeout(function() {
-                window.dispatchEvent(new Event("resize"));
-            }, 200);
-        }
-
-        function showStatusComparison(lang) {
-            const panels = document.querySelectorAll("#comparison-panels-" + lang + " .status-comparison-panel");
-
-            panels.forEach(function(panel) {
-                panel.classList.remove("active");
-            });
-
-            const territorySelect = document.getElementById("territory-select-" + lang);
-            const atmpSelect = document.getElementById("atmp-select-" + lang);
-
-            let target = null;
-
-            if (territorySelect && atmpSelect) {
-                const territory = territorySelect.value;
-                const atmp = atmpSelect.value;
-                const comparisonId = "status-comparison-" + lang + "-" + territory + "__" + atmp;
-                target = document.getElementById(comparisonId);
-            }
-
-            if (target) {
-                target.classList.add("active");
-            } else if (panels.length > 0) {
-                panels[0].classList.add("active");
-            }
-
-            setTimeout(function() {
-                window.dispatchEvent(new Event("resize"));
-            }, 200);
-        }
-
-        function showTerritoryComparison(lang) {
-            return;
-        }
-
-        function showDataPanel(lang) {
-            let profileId;
-
-            const dataStatus = document.getElementById("data-status-select-" + lang);
-
-            if (dataStatus) {
-                profileId = getSelectedDataProfile(lang);
-            } else {
-                profileId = getSelectedCombinatorialProfile(lang);
-            }
-
-            const panels = document.querySelectorAll("#data-panels-" + lang + " .data-panel");
-
-            panels.forEach(function(panel) {
-                panel.classList.remove("active");
-            });
-
-            const target = document.getElementById("data-panel-" + lang + "-" + safeId(profileId));
-
-            if (target) {
-                target.classList.add("active");
-            } else if (panels.length > 0) {
-                panels[0].classList.add("active");
-            }
-        }
-
-        function showMetricsPanel(lang) {
-            const profileId = getSelectedCombinatorialProfile(lang);
-            const panels = document.querySelectorAll("#metrics-panels-" + lang + " .metrics-panel");
-
-            panels.forEach(function(panel) {
-                panel.classList.remove("active");
-            });
-
-            const target = document.getElementById("metrics-" + lang + "-" + safeId(profileId));
-
-            if (target) {
-                target.classList.add("active");
-            } else if (panels.length > 0) {
-                panels[0].classList.add("active");
-            }
-        }
-
-        function switchDataCombinatorialProfile(lang) {
-            syncSimulationSelectorsFromData(lang);
-
-            const profileId = getSelectedDataProfile(lang);
-
-            showProfile(lang, profileId);
-            showComparison(lang);
-            showStatusComparison(lang);
-            showTerritoryComparison(lang);
-            showDataPanel(lang);
-            showMetricsPanel(lang);
-
-            if (typeof renderSimulation === "function") {
-                renderSimulation(lang);
-            }
-        }
-
-        function switchWorkingPaper(lang) {
-            const select = document.getElementById("working-paper-select-" + lang);
-            const viewer = document.getElementById("working-paper-viewer-" + lang);
-            const download = document.getElementById("working-paper-download-" + lang);
-
-            if (!select || !viewer || !download) {
-                return;
-            }
-
-            const pdfPath = select.value;
-
-            viewer.src = pdfPath + "#view=FitH";
-            download.href = pdfPath;
-        }
-
-        function showTab(lang, tabName) {
-            const panels = document.querySelectorAll("#section-" + lang + " .tab-panel");
-            const buttons = document.querySelectorAll("#section-" + lang + " .tab-button");
-
-            panels.forEach(function(panel) {
-                panel.classList.remove("active");
-            });
-
-            buttons.forEach(function(button) {
-                button.classList.remove("active");
-            });
-
-            const targetPanel = document.getElementById("tab-" + lang + "-" + tabName);
-            const targetButton = document.querySelector(
-                "#section-" + lang + " .tab-button[data-tab='" + tabName + "']"
-            );
-
-            if (targetPanel) {
-    		targetPanel.classList.add("active");
-
-    	    	if (tabName === "contact") {
-        		setTimeout(function() {
-            			targetPanel.scrollIntoView({ behavior: "smooth", block: "start" });
-            			window.dispatchEvent(new Event("resize"));
-        		}, 100);
-    	    	}
-	    }
-
-            if (targetButton) {
-                targetButton.classList.add("active");
-            }
-
-            localStorage.setItem("flcl_tab_" + lang, tabName);
-
-            if (tabName === "simulation" && typeof renderSimulation === "function") {
-                setTimeout(function() {
-                    renderSimulation(lang);
-                }, 150);
-            }
-
-            if (tabName === "comparisons" && typeof renderComparisons === "function") {
-                setTimeout(function() {
-                    renderComparisons(lang);
-                }, 150);
-            }
-
-            			if (tabName === "flcl-index" && typeof renderFlclIndex === "function") {
-                			 setTimeout(function() {
-                    				  renderFlclIndex(getProfileData(lang), lang);
-                			 }, 150);
-           			}
-
-            if (tabName === "methodology" && typeof renderConsistencyChecks === "function") {
-                setTimeout(function() {
-                    renderConsistencyChecks(lang);
-                }, 150);
-            }
-
-            setTimeout(function() {
-                window.dispatchEvent(new Event("resize"));
-            }, 150);
-        }
-
-        function restoreTab(lang) {
-            const savedTab = localStorage.getItem("flcl_tab_" + lang) || "simulation";
-            const targetPanel = document.getElementById("tab-" + lang + "-" + savedTab);
-
-            if (targetPanel) {
-                showTab(lang, savedTab);
-            } else {
-                localStorage.setItem("flcl_tab_" + lang, "simulation");
-                showTab(lang, "simulation");
-            }
-        }
-
-        function switchLanguage() {
-            const current = localStorage.getItem("flcl_language") || "fr";
-            setLanguage(current === "fr" ? "en" : "fr");
-        }
-
-        function updateThemeButtons(theme) {
-            const buttons = document.querySelectorAll(".theme-toggle");
-
-            buttons.forEach(function(button) {
-                if (theme === "dark") {
-                    button.textContent = "☀️";
-                    button.title = "Light mode";
-                    button.setAttribute("aria-label", "Light mode");
-                } else {
-                    button.textContent = "🌙";
-                    button.title = "Dark mode";
-                    button.setAttribute("aria-label", "Dark mode");
-                }
+            document.querySelectorAll(".legend-lab[data-lab]").forEach(el => {
+                const band = el.getAttribute("data-lab");
+                el.textContent = d[band][currentLang] || d[band].fr;
             });
         }
-
-        function updatePlotlyTheme(theme) {
-            if (typeof Plotly === "undefined") {
-                return;
-            }
-
-            const isDark = theme === "dark";
-            const axisColor = isDark ? "#e5e7eb" : "#111827";
-            const gridColor = isDark ? "#374151" : "#d1d5db";
-            const paperColor = isDark ? "#111827" : "#ffffff";
-            const plotColor = isDark ? "#111827" : "#ffffff";
-
-            const layoutUpdate = {
-                "paper_bgcolor": paperColor,
-                "plot_bgcolor": plotColor,
-                "font.color": axisColor,
-                "legend.bgcolor": "rgba(0,0,0,0)",
-                "legend.font.color": axisColor,
-                "xaxis.color": axisColor,
-                "xaxis.gridcolor": gridColor,
-                "xaxis.zerolinecolor": gridColor,
-                "yaxis.color": axisColor,
-                "yaxis.gridcolor": gridColor,
-                "yaxis.zerolinecolor": gridColor,
-                "yaxis2.color": axisColor,
-                "yaxis2.gridcolor": gridColor,
-                "yaxis2.zerolinecolor": gridColor,
-                "yaxis2.overlaying": "y",
-                "yaxis2.side": "right",
-                "yaxis2.showgrid": false
-            };
-
-            document.querySelectorAll(".js-plotly-plot").forEach(function(plot) {
-                Plotly.relayout(plot, layoutUpdate);
-            });
-        }
-
-        function applyTheme(theme) {
-            if (theme === "dark") {
-                document.body.classList.add("dark-mode");
-            } else {
-                document.body.classList.remove("dark-mode");
-            }
-
-            localStorage.setItem("flcl_theme", theme);
-            updateThemeButtons(theme);
-            updatePlotlyTheme(theme);
-
-            setTimeout(function() {
-                window.dispatchEvent(new Event("resize"));
-            }, 150);
-        }
-
-        function toggleTheme() {
-            const current = localStorage.getItem("flcl_theme") || "light";
-            applyTheme(current === "light" ? "dark" : "light");
-        }
-
-
 
         function setLanguage(lang) {
-            const enSection = document.getElementById("section-en");
-            const frSection = document.getElementById("section-fr");
+            currentLang = (lang === "en") ? "en" : "fr";
+            const dict = TRANSLATIONS[currentLang] || TRANSLATIONS.fr;
+            document.documentElement.lang = currentLang;
+            try { localStorage.setItem("labor-cost-lab-language", currentLang); } catch (e) {}
 
-            if (!enSection || !frSection) {
-                console.error("Language sections not found.");
-                return;
-            }
+            document.querySelectorAll("[data-i18n]").forEach(el => {
+                const key = el.getAttribute("data-i18n");
+                if (dict[key] !== undefined) el.innerHTML = dict[key];
+            });
 
-            enSection.classList.remove("active");
-            frSection.classList.remove("active");
+            document.getElementById("lang-fr").classList.toggle("active", currentLang === "fr");
+            document.getElementById("lang-en").classList.toggle("active", currentLang === "en");
 
-            if (lang === "fr") {
-                frSection.classList.add("active");
-                document.documentElement.lang = "fr";
-            } else {
-                enSection.classList.add("active");
-                document.documentElement.lang = "en";
-            }
-
-            localStorage.setItem("flcl_language", lang);
-
-            const selectedProfile = restoreCombinatorialSelectors(lang);
-
-            showProfile(lang, selectedProfile);
-            showComparison(lang);
-            showStatusComparison(lang);
-            showTerritoryComparison(lang);
-            syncDataSelectorsFromSimulation(lang);
-            showDataPanel(lang);
-            showMetricsPanel(lang);
-            restoreTab(lang);
-
-            if (typeof renderSimulation === "function") {
-                setTimeout(function() {
-                    renderSimulation(lang);
-                }, 300);
-            }
+            renderDecomp();
         }
 
-        const savedTheme = localStorage.getItem("flcl_theme") || "light";
-        applyTheme(savedTheme);
+        function setCountry(code, btn) {
+            currentCountry = COUNTRY_DECOMP[code] ? code : "fr";
 
-        const savedLanguage = localStorage.getItem("flcl_language") || "fr";
-        setLanguage(savedLanguage);
+            document.querySelectorAll(".country-switch button").forEach(b => {
+                b.classList.remove("active");
+                b.setAttribute("aria-selected", "false");
+            });
+            if (btn) { btn.classList.add("active"); btn.setAttribute("aria-selected", "true"); }
+
+            renderDecomp();
+        }
+
+        let stored = "fr";
+        try { stored = localStorage.getItem("labor-cost-lab-language") || "fr"; } catch (e) {}
+        setLanguage(stored);
+
+        // reveal the decomposition bar once painted
+        window.addEventListener("load", () => {
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => document.body.classList.add("is-ready"));
+            });
+        });
     </script>
 </body>
 </html>

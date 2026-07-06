@@ -1,0 +1,59 @@
+{
+    "country": "Belgium",
+    "country_code": "BE",
+    "version": "2026-04",
+    "effective_from": "2026-04-01",
+    "status": "prototype_v1_structural_reduction",
+    "currency": "EUR",
+    "wage_reference": {
+        "name": "GGMMI / RMMMG",
+        "gross_monthly_eur": 2189.81,
+        "weekly_hours": 38,
+        "source": "CNT / NAR minimum wage reference",
+        "note": "Belgian national minimum wage reference for full-time private-sector employees. Sectoral minima may be higher."
+    },
+    "grid": {
+        "min_multiple": 0.80,
+        "max_multiple": 6.00,
+        "step": 0.01
+    },
+    "social_security": {
+        "employee_contribution_rate": 0.1307,
+        "employer_base_contribution_rate": 0.25,
+        "employee_contribution_note": "Standard employee ONSS contribution rate for private-sector employees.",
+        "employer_contribution_note": "Base employer contribution rate for the private market sector before reductions.",
+        "structural_reduction": {
+            "active": true,
+            "category": 1,
+            "period": "2026-Q2",
+            "dmfa_reduction_code": 3000,
+            "mu": 1.0,
+            "beta_s": 1.0,
+            "low_wage_component_rate": 0.1400,
+            "low_wage_threshold_quarterly_eur": 11458.57,
+            "very_low_wage_component_rate": 0.1600,
+            "very_low_wage_threshold_quarterly_eur": 9547.20,
+            "source": "ONSS / RSZ administrative instructions 2026/2, structural reduction, category 1",
+            "note": "Prototype full-time monthly implementation. The quarterly reference wage S is approximated as gross monthly wage multiplied by 3. Negative components are set to zero."
+        }
+    },
+    "profiles": [
+        {
+            "profile_id": "belgium__standard_private_sector",
+            "label_fr": "Belgique · secteur privé standard",
+            "label_en": "Belgium · standard private sector",
+            "employee_contribution_rate": 0.1307,
+            "employer_contribution_rate": 0.25
+        }
+    ],
+    "limits": [
+        "Personal income tax and withholding tax are not simulated in this V1.",
+        "The structural reduction is simulated for category 1 using a simplified full-time monthly implementation.",
+        "The quarterly reference wage S is approximated as monthly gross wage multiplied by 3.",
+        "Sectoral minimum wages are not simulated.",
+        "Sector-specific employer contributions are not simulated.",
+        "Manual-worker holiday pay contributions are not simulated.",
+        "Regional and family-status differences are not simulated.",
+        "Employer contribution rate is treated as a simplified base rate before structural reduction."
+    ]
+}

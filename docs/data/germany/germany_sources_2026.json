@@ -1,0 +1,63 @@
+{
+    "country": "Germany",
+    "country_code": "DE",
+    "version": "2026",
+    "status": "available_source_audit",
+    "sources": {
+        "minimum_wage": {
+            "value_hourly_eur": 13.90,
+            "label": "Statutory minimum wage",
+            "source_name": "Bundesministerium für Arbeit und Soziales",
+            "source_type": "official",
+            "url": "https://www.bmas.de/EN/Labour/Minimum-Wage/the-minimum-wage-questions-and-answers.html",
+            "evidence": "The statutory minimum wage has been 13.90 euros gross per hour since 1 January 2026.",
+            "confidence": "high"
+        },
+        "social_security_ceilings": {
+            "health_care_ceiling_monthly_eur": 5812.50,
+            "pension_unemployment_ceiling_monthly_eur": 8450.00,
+            "label": "Social security contribution assessment ceilings",
+            "source_name": "Bundesregierung",
+            "source_type": "official",
+            "url": "https://www.bundesregierung.de/breg-de/aktuelles/beitragsgemessungsgrenzen-2386514",
+            "evidence": "2026 contribution assessment ceilings: health insurance 5,812.50 euros per month; general pension insurance 8,450 euros per month.",
+            "confidence": "high"
+        },
+        "wage_tax_algorithm": {
+            "label": "PAP 2026 wage-tax algorithm",
+            "source_name": "Bundesministerium der Finanzen",
+            "source_type": "official",
+            "url": "https://www.bundesfinanzministerium.de/Content/DE/Downloads/Steuern/Steuerarten/Lohnsteuer/Programmablaufplan/2025-11-12-PAP-2026.html",
+            "evidence": "Official Programmablaufplan for the machine calculation of wage tax, solidarity surcharge and church-tax base for 2026.",
+            "confidence": "high"
+        },
+        "implementation_scope": {
+            "included": [
+                "gross wage grid",
+                "net wage before income tax",
+                "statutory employee social contributions",
+                "statutory employer social contributions",
+                "health and care contribution ceiling",
+                "pension and unemployment contribution ceiling",
+                "standardized PAP 2026 wage-tax simulation",
+                "net wage after Lohnsteuer and Solidaritätszuschlag",
+                "Saxony and non-Saxony care contribution profiles",
+                "childless and with-child care contribution profiles"
+            ],
+            "excluded_or_simplified": [
+                "private health insurance",
+                "church tax actually paid",
+                "accident insurance",
+                "collective agreements",
+                "firm-level payroll details",
+                "Minijob and Midijob specific contribution formulas",
+                "special payments and bonuses",
+                "household taxation and spouse effects"
+            ]
+        }
+    },
+    "availability_decision": {
+        "status": "available",
+        "reason": "The module combines official minimum-wage parameters, official social-security ceilings and the official BMF PAP 2026 wage-tax algorithm. Remaining limits are explicitly documented."
+    }
+}

@@ -1,0 +1,124 @@
+{
+    "country": "Germany",
+    "version": "2026-01",
+    "effective_from": "2026-01-01",
+    "status": "prototype",
+
+    "minimum_wage": {
+        "hourly_eur": 13.90,
+        "source": "BMAS / Bundesregierung / Mindestlohnkommission",
+        "note": "Statutory minimum wage from 1 January 2026."
+    },
+
+    "working_time_convention": {
+        "weekly_hours": 40,
+        "monthly_hours": 173.3333333333,
+        "note": "Analytical full-time convention: 40 hours per week × 52 weeks / 12 months."
+    },
+
+    "employment_regimes": {
+    	"minijob": {
+        	"monthly_threshold_eur": 603.00,
+        	"annual_threshold_eur": 7236.00,
+        	"source": "Minijob-Zentrale / Deutsche Rentenversicherung",
+        	"note": "Monthly earnings threshold for marginal employment in 2026."
+    	},
+    	"midijob": {
+        	"lower_monthly_threshold_eur": 603.01,
+        	"upper_monthly_threshold_eur": 2000.00,
+        	"source": "BMAS",
+        	"note": "German transitional employment range, also known as Übergangsbereich."
+    	},
+    	"standard_job": {
+        	"lower_monthly_threshold_eur": 2000.01,
+        	"note": "Regular employment regime above the upper Midijob threshold."
+    	}
+    },
+
+    "contribution_ceilings": {
+        "health_and_care_monthly_eur": 5812.50,
+        "health_and_care_annual_eur": 69750.00,
+        "pension_and_unemployment_monthly_eur": 8450.00,
+        "pension_and_unemployment_annual_eur": 101400.00,
+        "source": "BMAS Sozialversicherungsrechengroessen 2026"
+    },
+
+    "rates": {
+        "pension_total": 0.186,
+        "pension_employee": 0.093,
+        "pension_employer": 0.093,
+
+        "unemployment_total": 0.026,
+        "unemployment_employee": 0.013,
+        "unemployment_employer": 0.013,
+
+        "health_general_total": 0.146,
+        "health_general_employee": 0.073,
+        "health_general_employer": 0.073,
+
+        "health_additional_total_reference": 0.029,
+        "health_additional_employee_reference": 0.0145,
+        "health_additional_employer_reference": 0.0145,
+
+        "care_total_with_children": 0.036,
+        "care_employee_with_children_outside_saxony": 0.018,
+        "care_employer_with_children_outside_saxony": 0.018,
+
+        "care_total_childless": 0.042,
+        "care_employee_childless_outside_saxony": 0.024,
+        "care_employer_childless_outside_saxony": 0.018
+    },
+
+"profiles": [
+    {
+        "profile_id": "germany__public_health__with_children__outside_saxony",
+        "label_fr": "Assurance publique · avec enfant · hors Saxe",
+        "label_en": "Public health insurance · with children · outside Saxony",
+        "region": "outside_saxony",
+        "family_status": "with_children",
+        "health_insurance": "public",
+        "care_employee_rate": 0.018,
+        "care_employer_rate": 0.018
+    },
+    {
+        "profile_id": "germany__public_health__childless__outside_saxony",
+        "label_fr": "Assurance publique · sans enfant · hors Saxe",
+        "label_en": "Public health insurance · childless · outside Saxony",
+        "region": "outside_saxony",
+        "family_status": "childless",
+        "health_insurance": "public",
+        "care_employee_rate": 0.024,
+        "care_employer_rate": 0.018
+    },
+    {
+        "profile_id": "germany__public_health__with_children__saxony",
+        "label_fr": "Assurance publique · avec enfant · Saxe",
+        "label_en": "Public health insurance · with children · Saxony",
+        "region": "saxony",
+        "family_status": "with_children",
+        "health_insurance": "public",
+        "care_employee_rate": 0.023,
+        "care_employer_rate": 0.013
+    },
+    {
+        "profile_id": "germany__public_health__childless__saxony",
+        "label_fr": "Assurance publique · sans enfant · Saxe",
+        "label_en": "Public health insurance · childless · Saxony",
+        "region": "saxony",
+        "family_status": "childless",
+        "health_insurance": "public",
+        "care_employee_rate": 0.029,
+        "care_employer_rate": 0.013
+    }
+],
+
+    "methodological_limits": [
+        "Income tax is excluded from V1.",
+        "Net wage is computed before personal income tax.",
+        "Mini-jobs and midi-jobs are excluded from V1.",
+        "Private health insurance is excluded from V1.",
+        "Individual sickness-fund additional contribution rates are not modelled in V1.",
+        "The health additional contribution is modelled with a reference average rate.",
+        "Accident insurance contributions are excluded from V1."
+    ]
+}

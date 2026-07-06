@@ -490,7 +490,7 @@ function renderEmployerRateChart(data, lang) {
 }
 
 function renderRgduChart(data, lang) {
-    Papa.parse("data/rgdu_reform_june_2026.csv", {
+    Papa.parse("../../data/rgdu_reform_june_2026.csv", {
         download: true,
         header: true,
         dynamicTyping: true,
@@ -575,7 +575,7 @@ function renderRgduChart(data, lang) {
 }
 
 function renderRgduDeltaChart(data, lang) {
-    Papa.parse("data/rgdu_reform_june_2026.csv", {
+    Papa.parse("../../data/rgdu_reform_june_2026.csv", {
         download: true,
         header: true,
         dynamicTyping: true,
@@ -654,7 +654,7 @@ function renderRgduDeltaChart(data, lang) {
 }
 
 function renderEmployerCostReformChart(data, lang) {
-    Papa.parse("data/employer_cost_reform_june_2026.csv", {
+    Papa.parse("../../data/employer_cost_reform_june_2026.csv", {
         download: true,
         header: true,
         dynamicTyping: true,
@@ -3163,14 +3163,27 @@ function loadData() {
         return;
     }
 
-    Papa.parse("data/labour_cost_grid_mon_entreprise.csv", {
+    Papa.parse("../../data/labour_cost_grid_mon_entreprise.csv", {
         download: true,
         header: true,
         dynamicTyping: false,
         complete: function (results) {
-            DATA = results.data.filter(row => row.profile_id);
+            DATA = results.data
+                .filter(row => row.profile_id)
+                .map(row => {
+                    if (!row.smic_multiple && row.smic_multiple_etp) {
+                        row.smic_multiple = row.smic_multiple_etp;
+                    }
+
+                    if (!row.gross_monthly_eur && row.gross_monthly_real_eur) {
+                        row.gross_monthly_eur = row.gross_monthly_real_eur;
+                    }
+
+                    return row;
+                });
 
             console.log("French Labour Cost Lab data loaded:", DATA.length, "rows");
+            console.log("First row:", DATA[0]);
 
             setupEvents();
 
@@ -3183,5 +3196,4 @@ function loadData() {
         }
     });
 }
-
 document.addEventListener("DOMContentLoaded", loadData);
