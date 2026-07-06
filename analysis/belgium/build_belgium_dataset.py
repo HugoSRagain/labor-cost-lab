@@ -4,6 +4,8 @@ import json
 import numpy as np
 import pandas as pd
 
+from precompte_professionnel_2026 import compute_belgian_withholding_tax_2026
+
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
 
@@ -27,6 +29,10 @@ OUTPUT_PATH = (
 def load_parameters() -> dict:
     with PARAMETERS_PATH.open("r", encoding="utf-8") as file:
         return json.load(file)
+
+
+def round_money(value: float) -> float:
+    return round(float(value) + 1e-12, 6)
 
 
 def compute_structural_reduction(
@@ -99,6 +105,7 @@ def compute_structural_reduction(
         "structural_reduction_reference_wage_quarterly_eur": reference_wage_quarterly
     }
 
+
 def compute_row(
     profile: dict,
     smic_multiple: float,
@@ -106,7 +113,10 @@ def compute_row(
 ) -> dict:
     wage_reference = parameters["wage_reference"]["gross_monthly_eur"]
 
-    gross_monthly_eur = wage_reference * smic_multiple
+    gross_monthly_eur = (
+        wage_reference
+        * smic_multiple
+    )
 
     employee_rate = profile["employee_contribution_rate"]
     employer_rate = profile["employer_contribution_rate"]
@@ -137,14 +147,33 @@ def compute_row(
         - employee_contributions
     )
 
+    tax_result = compute_belgian_withholding_tax_2026(
+        gross_monthly_eur=gross_monthly_eur,
+        employee_social_contributions_monthly_eur=employee_contributions
+    )
+
+    withholding_tax_monthly_eur = tax_result[
+        "withholding_tax_monthly_eur"
+    ]
+
+    net_after_withholding_tax = (
+        net_before_income_tax
+        - withholding_tax_monthly_eur
+    )
+
     employer_cost = (
         gross_monthly_eur
         + employer_contributions
     )
 
-    social_wedge = (
+    social_wedge_before_income_tax = (
         employer_cost
         - net_before_income_tax
+    )
+
+    total_wedge_after_withholding_tax = (
+        employer_cost
+        - net_after_withholding_tax
     )
 
     return {
@@ -152,34 +181,121 @@ def compute_row(
         "country_code": parameters["country_code"],
         "version": parameters["version"],
         "effective_from": parameters["effective_from"],
+
         "profile_id": profile["profile_id"],
         "profile_label_fr": profile["label_fr"],
         "profile_label_en": profile["label_en"],
+
         "smic_multiple": smic_multiple,
-        "gross_monthly_eur": gross_monthly_eur,
+        "gross_monthly_eur": round_money(gross_monthly_eur),
+
         "employee_contribution_rate": employee_rate,
         "employer_contribution_rate_before_reduction": employer_rate,
-        "employee_contributions_monthly_eur": employee_contributions,
-        "employer_contributions_before_reduction_monthly_eur": employer_contributions_before_reduction,
-        "structural_reduction_monthly_eur": structural_reduction["structural_reduction_monthly_eur"],
-        "structural_reduction_quarterly_eur": structural_reduction["structural_reduction_quarterly_eur"],
-        "structural_reduction_low_wage_component_quarterly_eur": structural_reduction["structural_reduction_low_wage_component_quarterly_eur"],
-        "structural_reduction_very_low_wage_component_quarterly_eur": structural_reduction["structural_reduction_very_low_wage_component_quarterly_eur"],
-        "structural_reduction_reference_wage_quarterly_eur": structural_reduction["structural_reduction_reference_wage_quarterly_eur"],
-        "employer_contributions_monthly_eur": employer_contributions,
+
+        "employee_contributions_monthly_eur": round_money(
+            employee_contributions
+        ),
+
+        "employer_contributions_before_reduction_monthly_eur": round_money(
+            employer_contributions_before_reduction
+        ),
+
+        "structural_reduction_monthly_eur": round_money(
+            structural_reduction["structural_reduction_monthly_eur"]
+        ),
+
+        "structural_reduction_quarterly_eur": round_money(
+            structural_reduction["structural_reduction_quarterly_eur"]
+        ),
+
+        "structural_reduction_low_wage_component_quarterly_eur": round_money(
+            structural_reduction[
+                "structural_reduction_low_wage_component_quarterly_eur"
+            ]
+        ),
+
+        "structural_reduction_very_low_wage_component_quarterly_eur": round_money(
+            structural_reduction[
+                "structural_reduction_very_low_wage_component_quarterly_eur"
+            ]
+        ),
+
+        "structural_reduction_reference_wage_quarterly_eur": round_money(
+            structural_reduction[
+                "structural_reduction_reference_wage_quarterly_eur"
+            ]
+        ),
+
+        "employer_contributions_monthly_eur": round_money(
+            employer_contributions
+        ),
+
         "employer_contribution_rate": (
             employer_contributions
             / gross_monthly_eur
             if gross_monthly_eur > 0
             else np.nan
         ),
-        "net_before_income_tax_monthly_eur": net_before_income_tax,
-        "employer_cost_monthly_eur": employer_cost,
-        "social_wedge_monthly_eur": social_wedge,
+
+        "net_before_income_tax_monthly_eur": round_money(
+            net_before_income_tax
+        ),
+
+        "monthly_tax_base_before_annualisation_eur": tax_result[
+            "monthly_tax_base_before_annualisation_eur"
+        ],
+
+        "annual_gross_tax_base_eur": tax_result[
+            "annual_gross_tax_base_eur"
+        ],
+
+        "professional_expenses_eur": tax_result[
+            "professional_expenses_eur"
+        ],
+
+        "annual_taxable_net_income_eur": tax_result[
+            "annual_taxable_net_income_eur"
+        ],
+
+        "annual_basic_tax_before_allowance_eur": tax_result[
+            "annual_basic_tax_before_allowance_eur"
+        ],
+
+        "annual_tax_after_basic_allowance_eur": tax_result[
+            "annual_tax_after_basic_allowance_eur"
+        ],
+
+        "withholding_tax_monthly_eur": round_money(
+            withholding_tax_monthly_eur
+        ),
+
+        "net_after_withholding_tax_monthly_eur": round_money(
+            net_after_withholding_tax
+        ),
+
+        "employer_cost_monthly_eur": round_money(
+            employer_cost
+        ),
+
+        "social_wedge_monthly_eur": round_money(
+            social_wedge_before_income_tax
+        ),
+
+        "total_wedge_after_withholding_tax_monthly_eur": round_money(
+            total_wedge_after_withholding_tax
+        ),
+
         "cost_to_net_ratio": (
             employer_cost
             / net_before_income_tax
             if net_before_income_tax > 0
+            else np.nan
+        ),
+
+        "cost_to_net_after_withholding_tax_ratio": (
+            employer_cost
+            / net_after_withholding_tax
+            if net_after_withholding_tax > 0
             else np.nan
         )
     }
@@ -214,11 +330,77 @@ def build_dataset(parameters: dict) -> pd.DataFrame:
     return dataset
 
 
+def add_marginal_indicators(dataset: pd.DataFrame) -> pd.DataFrame:
+    dataset = dataset.sort_values(
+        [
+            "profile_id",
+            "smic_multiple"
+        ]
+    ).copy()
+
+    dataset["delta_gross_monthly_eur"] = dataset.groupby(
+        "profile_id"
+    )["gross_monthly_eur"].diff()
+
+    dataset["delta_net_before_income_tax_monthly_eur"] = dataset.groupby(
+        "profile_id"
+    )["net_before_income_tax_monthly_eur"].diff()
+
+    dataset["delta_net_after_withholding_tax_monthly_eur"] = dataset.groupby(
+        "profile_id"
+    )["net_after_withholding_tax_monthly_eur"].diff()
+
+    dataset["delta_employer_cost_monthly_eur"] = dataset.groupby(
+        "profile_id"
+    )["employer_cost_monthly_eur"].diff()
+
+    dataset["delta_social_wedge_monthly_eur"] = dataset.groupby(
+        "profile_id"
+    )["social_wedge_monthly_eur"].diff()
+
+    dataset["delta_total_wedge_after_withholding_tax_monthly_eur"] = dataset.groupby(
+        "profile_id"
+    )["total_wedge_after_withholding_tax_monthly_eur"].diff()
+
+    dataset["marginal_net_before_income_tax_rate"] = (
+        dataset["delta_net_before_income_tax_monthly_eur"]
+        / dataset["delta_gross_monthly_eur"]
+    )
+
+    dataset["marginal_net_after_withholding_tax_rate"] = (
+        dataset["delta_net_after_withholding_tax_monthly_eur"]
+        / dataset["delta_gross_monthly_eur"]
+    )
+
+    dataset["marginal_employer_cost_rate"] = (
+        dataset["delta_employer_cost_monthly_eur"]
+        / dataset["delta_gross_monthly_eur"]
+    )
+
+    dataset["marginal_social_wedge_rate"] = (
+        dataset["delta_social_wedge_monthly_eur"]
+        / dataset["delta_gross_monthly_eur"]
+    )
+
+    dataset["marginal_total_wedge_after_withholding_tax_rate"] = (
+        dataset["delta_total_wedge_after_withholding_tax_monthly_eur"]
+        / dataset["delta_gross_monthly_eur"]
+    )
+
+    return dataset
+
+
 def run_quality_checks(dataset: pd.DataFrame) -> dict:
     net_identity_error = (
         dataset["gross_monthly_eur"]
         - dataset["employee_contributions_monthly_eur"]
         - dataset["net_before_income_tax_monthly_eur"]
+    ).abs().max()
+
+    withholding_tax_identity_error = (
+        dataset["net_before_income_tax_monthly_eur"]
+        - dataset["withholding_tax_monthly_eur"]
+        - dataset["net_after_withholding_tax_monthly_eur"]
     ).abs().max()
 
     employer_cost_identity_error = (
@@ -233,18 +415,28 @@ def run_quality_checks(dataset: pd.DataFrame) -> dict:
         - dataset["social_wedge_monthly_eur"]
     ).abs().max()
 
+    total_wedge_after_tax_identity_error = (
+        dataset["employer_cost_monthly_eur"]
+        - dataset["net_after_withholding_tax_monthly_eur"]
+        - dataset["total_wedge_after_withholding_tax_monthly_eur"]
+    ).abs().max()
+
     return {
         "rows": len(dataset),
         "profiles": dataset["profile_id"].nunique(),
         "max_net_identity_error": net_identity_error,
+        "max_withholding_tax_identity_error": withholding_tax_identity_error,
         "max_employer_cost_identity_error": employer_cost_identity_error,
-        "max_social_wedge_identity_error": social_wedge_identity_error
+        "max_social_wedge_identity_error": social_wedge_identity_error,
+        "max_total_wedge_after_tax_identity_error": total_wedge_after_tax_identity_error
     }
 
 
 def main() -> None:
     parameters = load_parameters()
+
     dataset = build_dataset(parameters)
+    dataset = add_marginal_indicators(dataset)
 
     OUTPUT_PATH.parent.mkdir(
         parents=True,
@@ -265,17 +457,48 @@ def main() -> None:
     print("Quality checks")
     print(f"Profiles: {checks['profiles']}")
     print(f"Rows: {checks['rows']}")
+
     print(
         "Max net identity error: "
         f"{checks['max_net_identity_error']:.10f}"
     )
+
+    print(
+        "Max withholding tax identity error: "
+        f"{checks['max_withholding_tax_identity_error']:.10f}"
+    )
+
     print(
         "Max employer cost identity error: "
         f"{checks['max_employer_cost_identity_error']:.10f}"
     )
+
     print(
         "Max social wedge identity error: "
         f"{checks['max_social_wedge_identity_error']:.10f}"
+    )
+
+    print(
+        "Max total wedge after tax identity error: "
+        f"{checks['max_total_wedge_after_tax_identity_error']:.10f}"
+    )
+
+    print()
+    print("Sample")
+    print(
+        dataset[
+            [
+                "smic_multiple",
+                "gross_monthly_eur",
+                "net_before_income_tax_monthly_eur",
+                "withholding_tax_monthly_eur",
+                "net_after_withholding_tax_monthly_eur",
+                "employer_cost_monthly_eur",
+                "cost_to_net_after_withholding_tax_ratio"
+            ]
+        ]
+        .query("smic_multiple in [1.0, 1.5, 2.0, 3.0, 6.0]")
+        .to_string(index=False)
     )
 
 

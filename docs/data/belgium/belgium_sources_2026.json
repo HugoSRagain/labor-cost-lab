@@ -22,15 +22,27 @@
             "evidence": "Les cotisations patronales de base pour la sécurité sociale s'élèvent à 25% du salaire brut pour le secteur marchand privé.",
             "confidence": "high"
         },
+
         "withholding_tax": {
             "label": "Précompte professionnel",
+            "source_name": "SPF Finances",
+            "source_type": "official",
+            "url": "https://finances.belgium.be/fr/entreprises/personnel_et_remuneration/precompte_professionnel/calcul",
+            "evidence": "Official page for the calculation of withholding tax, including 2026 rules.",
+            "confidence": "high",
+            "implementation_status": "to_implement"
+        },
+
+        "pay_slip_net_wage": {
+            "label": "Fiche de salaire and net wage components",
             "source_name": "SPF Emploi, Travail et Concertation sociale",
             "source_type": "official",
-            "url": "https://emploi.belgique.be/fr/themes/remuneration/salaire",
-            "evidence": "Le précompte professionnel est la retenue d'impôt prélevée chaque mois sur le salaire.",
+            "url": "https://emploi.belgique.be/fr/themes/reglementation-du-travail/documents-sociaux/fiche-de-salaire",
+            "evidence": "The payslip includes social security deductions, taxable amount, withholding tax and net amount paid.",
             "confidence": "high",
-            "implementation_status": "not_yet_simulated"
+            "implementation_status": "documented"
         },
+
         "structural_reduction": {
             "label": "Structural reduction of employer contributions",
             "source_name": "ONSS administrative instructions",
