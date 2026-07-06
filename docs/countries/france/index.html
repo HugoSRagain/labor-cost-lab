@@ -18,12 +18,15 @@
 </head>
 <body>
 
-<div class="global-project-banner">
-    <a href="../../index.html">← Labor Cost Lab</a>
-    <span>
-        The French Labour Cost Lab is the first national module of the Labor Cost Lab project.
-    </span>
-</div>
+    <div class="global-project-banner">
+        <a href="../../index.html">
+            ← Labor Cost Lab
+        </a>
+
+        <span>
+            Country module
+        </span>
+    </div>
     
 
     <div class="language-section " id="section-en" data-default-profile="cadre__alsace_moselle__atmp_1">
@@ -46,7 +49,6 @@
                 <button class="tab-button" data-tab="flcl-index" onclick="showTab('en', 'flcl-index')">FLCL Index</button>
                 <button class="tab-button" data-tab="data" onclick="showTab('en', 'data')">Data</button>
                 <button class="tab-button" data-tab="methodology" onclick="showTab('en', 'methodology')">Methodology</button>
-                <button class="tab-button" data-tab="working-paper" onclick="showTab('en', 'working-paper')">Working Paper</button>
                 <button class="tab-button" data-tab="contact" onclick="showTab('en', 'contact')">Contact</button>
             </nav>
 
@@ -1047,42 +1049,6 @@
                 </section>
 	    </div>
 
-            <div class="tab-panel" id="tab-en-working-paper">
-                <section class="working-paper-section">
-                    <div class="working-paper-header">
-                        <div>
-                            <h2>Working Paper</h2>
-                            <p class="interpretation">This section provides access to the methodological documentation and the FLCL framework paper.</p>
-
-                            <label for="working-paper-select-en">Document</label>
-                            <select id="working-paper-select-en" onchange="switchWorkingPaper('en')">
-                                <option value="../../assets/french_labour_cost_lab_working_paper.pdf">
-                                    Methodological note
-                                </option>
-                                <option value="../../assets/FLCL_Framework_Working_Paper_June_2026.pdf">
-                                    FLCL framework paper
-                                </option>
-                            </select>
-                        </div>
-
-                        <a id="working-paper-download-en" class="download-link working-paper-download" href="../../assets/french_labour_cost_lab_working_paper.pdf" download>
-                            ⬇ Download the selected PDF
-                        </a>
-                    </div>
-
-                    <div class="working-paper-card">
-                        <div class="pdf-viewer-wrapper">
-                            <iframe
-                                id="working-paper-viewer-en"
-                                class="pdf-viewer"
-                                src="../../assets/french_labour_cost_lab_working_paper.pdf#view=FitH"
-                                title="French Labour Cost Lab Working Paper"
-                            ></iframe>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
             <div class="tab-panel" id="tab-en-contact">
                 <section class="contact-section">
                     <h2>Contact</h2>
@@ -1138,7 +1104,6 @@
                 			 <button class="tab-button" data-tab="flcl-index" onclick="showTab('fr', 'flcl-index')">Indice FLCL</button>
                 <button class="tab-button" data-tab="data" onclick="showTab('fr', 'data')">Données</button>
                 <button class="tab-button" data-tab="methodology" onclick="showTab('fr', 'methodology')">Méthodologie</button>
-                <button class="tab-button" data-tab="working-paper" onclick="showTab('fr', 'working-paper')">Working Paper</button>
                 <button class="tab-button" data-tab="contact" onclick="showTab('fr', 'contact')">Contact</button>
             </nav>
 
@@ -2141,42 +2106,6 @@
                 </section>
 	    </div>
 
-            <div class="tab-panel" id="tab-fr-working-paper">
-                <section class="working-paper-section">
-                    <div class="working-paper-header">
-                        <div>
-                            <h2>Working Paper</h2>
-                            <p class="interpretation">Cette section donne accès à la documentation méthodologique et au papier de cadrage du FLCL.</p>
-
-                            <label for="working-paper-select-fr">Document</label>
-                            <select id="working-paper-select-fr" onchange="switchWorkingPaper('fr')">
-                                <option value="../../assets/french_labour_cost_lab_working_paper.pdf">
-                                    Note méthodologique
-                                </option>
-                                <option value="../../assets/FLCL_Framework_Working_Paper_June_2026.pdf">
-                                    Papier de cadrage FLCL
-                                </option>
-                            </select>
-                        </div>
-
-                        <a id="working-paper-download-fr" class="download-link working-paper-download" href="../../assets/french_labour_cost_lab_working_paper.pdf" download>
-                            ⬇ Télécharger le PDF sélectionné
-                        </a>
-                    </div>
-
-                    <div class="working-paper-card">
-                        <div class="pdf-viewer-wrapper">
-                            <iframe
-                                id="working-paper-viewer-fr"
-                                class="pdf-viewer"
-                                src="../../assets/french_labour_cost_lab_working_paper.pdf#view=FitH"
-                                title="French Labour Cost Lab Working Paper"
-                            ></iframe>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
             <div class="tab-panel" id="tab-fr-contact">
                 <section class="contact-section">
                     <h2>Contact</h2>
@@ -2472,20 +2401,6 @@
             }
         }
 
-        function switchWorkingPaper(lang) {
-            const select = document.getElementById("working-paper-select-" + lang);
-            const viewer = document.getElementById("working-paper-viewer-" + lang);
-            const download = document.getElementById("working-paper-download-" + lang);
-
-            if (!select || !viewer || !download) {
-                return;
-            }
-
-            const pdfPath = select.value;
-
-            viewer.src = pdfPath + "#view=FitH";
-            download.href = pdfPath;
-        }
 
         function showTab(lang, tabName) {
             const panels = document.querySelectorAll("#section-" + lang + " .tab-panel");
