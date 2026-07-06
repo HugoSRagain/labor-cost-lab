@@ -8,8 +8,8 @@
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
-    <link rel="stylesheet" href="../../assets/style.css?v=23">
-    <script defer src="./assets/belgium_app.js?v=7"></script>
+    <link rel="stylesheet" href="../../assets/style.css?v=26">
+    <script defer src="./assets/belgium_app.js?v=8"></script>
 </head>
 
 <body>
@@ -147,13 +147,14 @@
         <section id="tab-simulation" class="tab-content active">
             <div class="chart-card chart-card-wide">
                 <h3 id="belgium-waterfall-title">
-                    Du salaire brut au coût employeur
+                    Du salaire net au coût employeur
                 </h3>
 
                 <p class="chart-subtitle" id="belgium-waterfall-subtitle">
-                    Décomposition du salaire brut, des cotisations sociales, du
-                    précompte professionnel, du salaire net après précompte et du
-                    coût employeur.
+                    Décomposition du passage du salaire net après précompte au coût
+                    employeur total, en distinguant le précompte professionnel, les
+                    cotisations salarié, les cotisations employeur et la réduction
+                    structurelle.
                 </p>
 
                 <div class="profile-selector profile-selector-grid">
@@ -207,7 +208,7 @@
                 </div>
             </div>
 
-            <div class="dashboard-chart-grid">
+            <div class="charts-grid">
                 <div class="chart-card">
                     <h3>Coût employeur, salaire brut et salaires nets</h3>
 
@@ -336,11 +337,14 @@
 
         <section id="tab-data" class="tab-content">
             <div class="chart-card">
-                <h3>Données simulées</h3>
+                <h3>Données</h3>
 
                 <p class="chart-subtitle">
-                    Extrait du dataset Belgique 2026. Les montants sont mensuels et
-                    exprimés en euros.
+                    Le jeu de données belge peut être téléchargé au format CSV.
+                    Il contient l’ensemble des points de salaire simulés pour le
+                    profil belge standard : salaire brut, salaire net avant précompte,
+                    précompte professionnel, salaire net après précompte, coût employeur,
+                    cotisations et indicateurs de coin socio-fiscal.
                 </p>
 
                 <div class="download-row" style="margin-top: 18px;">
@@ -349,7 +353,7 @@
                         href="../../data/belgium/belgium_labour_cost_grid_2026.csv"
                         download
                     >
-                        ⬇ Télécharger le jeu de données Belgique
+                        Télécharger le jeu de données Belgique
                     </a>
 
                     <a
@@ -357,7 +361,7 @@
                         href="../../data/belgium/belgium_parameters_2026.json"
                         download
                     >
-                        ⬇ Télécharger les paramètres 2026
+                        Télécharger les paramètres 2026
                     </a>
 
                     <a
@@ -365,12 +369,37 @@
                         href="../../data/belgium/belgium_sources_2026.json"
                         download
                     >
-                        ⬇ Télécharger les sources 2026
+                        Télécharger les sources 2026
                     </a>
                 </div>
 
-                <div class="table-wrapper" style="margin-top: 18px;">
-                    <table>
+                <div class="profile-selector profile-selector-grid data-profile-selector">
+                    <div class="selector-field">
+                        <label for="belgium-data-profile-select">
+                            Profil Belgique
+                        </label>
+
+                        <select id="belgium-data-profile-select">
+                            <option value="belgium__standard_private_sector" selected>
+                                Secteur privé standard
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h3>Données du profil sélectionné</h3>
+
+                <p
+                    class="chart-subtitle"
+                    id="belgium-data-profile-caption"
+                >
+                    Secteur privé standard
+                </p>
+
+                <div class="table-wrapper data-table-scroll data-table-panel">
+                    <table class="data-table">
                         <thead>
                             <tr>
                                 <th>Multiple</th>

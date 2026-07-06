@@ -3,947 +3,1246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Labor Cost Lab</title>
+    <title>Labor Cost Lab · Observatoire comparatif du coût du travail</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --panel: rgba(15, 23, 42, 0.78);
-            --text: #e5e7eb;
-            --muted: #9ca3af;
-            --soft: #cbd5e1;
-            --accent: #38bdf8;
-            --border: rgba(148, 163, 184, 0.25);
-            --border-strong: rgba(56, 189, 248, 0.45);
-            --shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
-            --radius-lg: 24px;
-            --radius-md: 18px;
+            --paper: #f1f2ee;
+            --card: #fbfcf9;
+            --ink: #14181a;
+            --ink-soft: #363c40;
+            --graphite: #5f676b;
+            --faint: #949b9d;
+            --line: #d9dcd4;
+            --line-soft: #e6e8e1;
+
+            --green: #1d5c40;
+            --green-deep: #133f2c;
+            --green-soft: #e3ece5;
+
+            --band-emp: #464e53;
+            --band-sal: #8b939a;
+            --band-tax: #c68a3c;
+            --band-net: #1d5c40;
+
+            --sans: 'Archivo', system-ui, sans-serif;
+            --mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+            --maxw: 1140px;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
-        html {
-            scroll-behavior: smooth;
-        }
+        html { scroll-behavior: smooth; }
 
         body {
             margin: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background:
-                radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), transparent 34%),
-                radial-gradient(circle at top right, rgba(34, 197, 94, 0.10), transparent 30%),
-                linear-gradient(180deg, #0f172a 0%, #020617 100%);
-            color: var(--text);
+            background: var(--paper);
+            color: var(--ink);
+            font-family: var(--sans);
+            font-size: 16px;
             line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
         }
 
-        a {
-            color: inherit;
-        }
+        a { color: inherit; }
 
-        .page-shell {
-            max-width: 1180px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        .top-bar {
-            display: flex;
-            justify-content: flex-end;
-            padding-top: 18px;
-        }
-
-        .language-switcher {
-            display: inline-flex;
-            gap: 6px;
-            padding: 5px;
-            border: 1px solid var(--border);
-            border-radius: 999px;
-            background: rgba(15, 23, 42, 0.68);
-        }
-
-        .lang-button {
-            cursor: pointer;
-            border: 0;
-            border-radius: 999px;
-            padding: 7px 11px;
-            color: var(--muted);
-            background: transparent;
-            font-size: 0.78rem;
-            font-weight: 850;
-            letter-spacing: 0.04em;
-        }
-
-        .lang-button.active {
-            color: #082f49;
-            background: var(--accent);
-        }
-
-        header.hero {
-            padding: 42px 0 38px;
-        }
-
-        .hero-grid {
-            display: grid;
-            grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
-            gap: 32px;
-            align-items: stretch;
+        .mono {
+            font-family: var(--mono);
+            font-feature-settings: "tnum" 1;
         }
 
         .eyebrow {
-            color: var(--accent);
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.16em;
             text-transform: uppercase;
-            letter-spacing: 0.14em;
-            font-size: 0.78rem;
+            color: var(--graphite);
+        }
+
+        .wrap {
+            max-width: var(--maxw);
+            margin: 0 auto;
+            padding: 0 28px;
+        }
+
+        /* ---------- header ---------- */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            background: rgba(241, 242, 238, 0.86);
+            backdrop-filter: saturate(1.2) blur(8px);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            height: 66px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--ink);
+        }
+
+        .brand-mark {
+            display: flex;
+            width: 30px;
+            height: 30px;
+            flex-direction: column;
+            gap: 3px;
+            justify-content: center;
+        }
+
+        .brand-mark i {
+            display: block;
+            height: 5px;
+            border-radius: 1px;
+        }
+
+        .brand-mark i:nth-child(1) { width: 100%; background: var(--band-emp); }
+        .brand-mark i:nth-child(2) { width: 66%; background: var(--band-tax); }
+        .brand-mark i:nth-child(3) { width: 40%; background: var(--green); }
+
+        .brand-text strong {
+            display: block;
+            font-size: 0.98rem;
             font-weight: 800;
-            margin: 0 0 14px;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        .brand-text span {
+            display: block;
+            font-family: var(--mono);
+            font-size: 0.64rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--faint);
+        }
+
+        .navline {
+            display: flex;
+            align-items: center;
+            gap: 26px;
+        }
+
+        .navline a {
+            font-family: var(--mono);
+            font-size: 0.78rem;
+            letter-spacing: 0.04em;
+            text-decoration: none;
+            color: var(--ink-soft);
+            padding-bottom: 2px;
+            border-bottom: 1px solid transparent;
+        }
+
+        .navline a:hover {
+            color: var(--green);
+            border-bottom-color: var(--green);
+        }
+
+        .language-switch {
+            display: inline-flex;
+            border: 1px solid var(--line);
+            border-radius: 3px;
+            overflow: hidden;
+            background: var(--card);
+        }
+
+        .language-switch button {
+            border: 0;
+            padding: 5px 9px;
+            background: transparent;
+            color: var(--graphite);
+            font-family: var(--mono);
+            font-weight: 600;
+            font-size: 0.72rem;
+            cursor: pointer;
+        }
+
+        .language-switch button.active {
+            background: var(--ink);
+            color: #fff;
+        }
+
+        /* ---------- hero ---------- */
+        .hero {
+            padding: 74px 0 20px;
+        }
+
+        .hero .eyebrow {
+            display: block;
+            margin-bottom: 20px;
         }
 
         h1 {
             margin: 0;
-            font-size: clamp(2.8rem, 7vw, 5.6rem);
-            line-height: 0.95;
-            letter-spacing: -0.06em;
-            font-weight: 820;
+            max-width: 15ch;
+            font-size: clamp(2.7rem, 5.6vw, 5rem);
+            font-weight: 800;
+            line-height: 0.98;
+            letter-spacing: -0.045em;
         }
 
-        .lead {
-            max-width: 820px;
+        .hero-lead {
             margin: 26px 0 0;
-            color: var(--soft);
-            font-size: 1.16rem;
-            line-height: 1.7;
+            max-width: 60ch;
+            font-size: 1.1rem;
+            color: var(--ink-soft);
         }
 
         .hero-actions {
             display: flex;
-            flex-wrap: wrap;
             gap: 12px;
+            flex-wrap: wrap;
             margin-top: 30px;
         }
 
         .button {
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            border-radius: 999px;
-            padding: 11px 17px;
-            font-weight: 800;
-            font-size: 0.92rem;
-            text-decoration: none;
-            border: 1px solid var(--border);
-            transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
-        }
-
-        .button.primary {
-            background: var(--accent);
-            color: #082f49;
-            border-color: transparent;
-        }
-
-        .button.secondary {
-            background: rgba(15, 23, 42, 0.65);
-            color: var(--text);
-        }
-
-        .button:hover {
-            transform: translateY(-2px);
-            border-color: var(--border-strong);
-        }
-
-        .hero-panel,
-        .panel {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow);
-            padding: 24px;
-        }
-
-        .hero-panel h2 {
-            margin: 0 0 14px;
-            font-size: 1.05rem;
-        }
-
-        .hero-panel p,
-        .section-header p,
-        .card p,
-        .method-card p,
-        .research-item p,
-        .roadmap-item p {
-            color: var(--muted);
-        }
-
-        .hero-stats {
-            display: grid;
-            gap: 12px;
-            margin-top: 18px;
-        }
-
-        .hero-stat,
-        .indicator,
-        .method-card,
-        .research-item,
-        .roadmap-item {
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 16px;
-            background: rgba(2, 6, 23, 0.28);
-        }
-
-        .hero-stat strong {
-            display: block;
-            font-size: 1.45rem;
-            line-height: 1.1;
-            color: #ffffff;
-        }
-
-        .hero-stat span {
-            display: block;
-            margin-top: 4px;
-            font-size: 0.86rem;
-            color: var(--muted);
-        }
-
-        main {
-            padding-bottom: 68px;
-        }
-
-        section {
-            margin-top: 42px;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            gap: 24px;
-            margin-bottom: 18px;
-        }
-
-        .section-header h2 {
-            margin: 0;
-            font-size: 1.65rem;
-            line-height: 1.2;
-            letter-spacing: -0.03em;
-        }
-
-        .section-header p {
-            margin: 0;
-            max-width: 640px;
-            font-size: 0.98rem;
-        }
-
-        .country-grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 18px;
-        }
-
-        .card {
-            display: flex;
-            flex-direction: column;
-            min-height: 292px;
-            text-decoration: none;
-            color: inherit;
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 22px;
-            transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
-        }
-
-        a.card:hover {
-            transform: translateY(-4px);
-            border-color: var(--border-strong);
-            background: rgba(30, 41, 59, 0.92);
-        }
-
-        .card-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 14px;
-            margin-bottom: 18px;
-        }
-
-        .country-name {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .flag {
-            font-size: 1.6rem;
-        }
-
-        .status {
-            display: inline-flex;
-            align-items: center;
-            width: fit-content;
-            border-radius: 999px;
-            padding: 5px 10px;
-            font-size: 0.74rem;
-            font-weight: 850;
-            border: 1px solid rgba(34, 197, 94, 0.32);
-            color: #86efac;
-            background: rgba(34, 197, 94, 0.10);
-            white-space: nowrap;
-        }
-
-        .card h3 {
-            margin: 0;
-            font-size: 1.36rem;
-            line-height: 1.25;
-        }
-
-        .card-description {
-            margin-top: 10px;
-            flex: 1;
-        }
-
-        .feature-list {
-            list-style: none;
-            padding: 0;
-            margin: 18px 0 0;
-            display: grid;
             gap: 8px;
+            min-height: 44px;
+            padding: 0 18px;
+            border-radius: 3px;
+            border: 1px solid var(--ink);
+            font-family: var(--mono);
+            font-size: 0.82rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            text-decoration: none;
         }
 
-        .feature-list li {
-            position: relative;
-            padding-left: 18px;
-            color: var(--soft);
-            font-size: 0.88rem;
+        .button.primary { background: var(--ink); color: var(--paper); }
+        .button.primary:hover { background: var(--green-deep); border-color: var(--green-deep); }
+
+        .button.ghost { background: transparent; color: var(--ink); }
+        .button.ghost:hover { border-color: var(--green); color: var(--green); }
+
+        /* ---------- decomposition signature ---------- */
+        .decomp {
+            margin: 48px 0 8px;
+            padding: 30px 30px 26px;
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 6px;
         }
 
-        .feature-list li::before {
-            content: "•";
-            position: absolute;
-            left: 0;
-            color: var(--accent);
-            font-weight: 900;
-        }
-
-        .card-footer {
+        .decomp-head {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            gap: 12px;
-            margin-top: 22px;
-            padding-top: 16px;
-            border-top: 1px solid var(--border);
-            color: var(--soft);
-            font-size: 0.88rem;
-            font-weight: 750;
+            align-items: baseline;
+            gap: 18px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
         }
 
-        .arrow {
-            color: var(--accent);
-            font-weight: 900;
+        .decomp-head h2 {
+            margin: 0;
+            font-size: 1.28rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
         }
 
-        .indicator-grid {
+        .decomp-base {
+            font-family: var(--mono);
+            font-size: 0.8rem;
+            color: var(--graphite);
+        }
+
+        .decomp-base b { color: var(--ink); font-weight: 600; }
+
+        .country-switch {
+            display: inline-flex;
+            border: 1px solid var(--line);
+            border-radius: 4px;
+            overflow: hidden;
+            background: var(--paper);
+        }
+
+        .country-switch button {
+            border: 0;
+            border-left: 1px solid var(--line);
+            padding: 7px 13px;
+            background: transparent;
+            color: var(--graphite);
+            font-family: var(--mono);
+            font-size: 0.74rem;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .country-switch button:first-child { border-left: 0; }
+        .country-switch button:hover { color: var(--green); }
+        .country-switch button.active { background: var(--ink); color: var(--paper); }
+
+        .bar {
+            display: flex;
+            width: 100%;
+            height: 74px;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.06);
+        }
+
+        .seg {
+            height: 100%;
+            width: 0;
+            transition: width 1.05s cubic-bezier(0.16, 0.84, 0.3, 1);
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .is-ready .seg { width: var(--w); }
+
+        .seg[data-band="emp"] { background: var(--band-emp); transition-delay: 0.05s; }
+        .seg[data-band="sal"] { background: var(--band-sal); transition-delay: 0.15s; }
+        .seg[data-band="tax"] { background: var(--band-tax); transition-delay: 0.25s; }
+        .seg[data-band="net"] { background: var(--band-net); transition-delay: 0.35s; }
+
+        .legend {
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 14px;
+            gap: 16px;
+            margin-top: 22px;
         }
 
-        .indicator strong {
-            display: block;
-            color: var(--text);
-            font-size: 0.98rem;
+        .legend-item {
+            padding-top: 12px;
+            border-top: 2px solid var(--ink);
         }
 
-        .indicator span {
-            display: block;
+        .legend-item[data-band="emp"] { border-top-color: var(--band-emp); }
+        .legend-item[data-band="sal"] { border-top-color: var(--band-sal); }
+        .legend-item[data-band="tax"] { border-top-color: var(--band-tax); }
+        .legend-item[data-band="net"] { border-top-color: var(--band-net); }
+
+        .legend-val {
+            font-family: var(--mono);
+            font-size: 1.3rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            line-height: 1;
+        }
+
+        .legend-lab {
             margin-top: 6px;
-            color: var(--muted);
-            font-size: 0.84rem;
+            font-size: 0.86rem;
+            color: var(--graphite);
+            line-height: 1.35;
         }
 
-        .method-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
+        .decomp-caption {
+            margin: 20px 0 0;
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--faint);
         }
 
-        .method-card,
-        .research-item {
-            border-radius: 18px;
-            padding: 20px;
-        }
+        /* ---------- generic section ---------- */
+        section.block { padding: 60px 0; border-top: 1px solid var(--line); }
 
-        .method-card h3,
-        .research-item h3 {
-            margin: 0 0 10px;
-            font-size: 1.05rem;
-        }
-
-        .research-list,
-        .roadmap {
-            display: grid;
-            gap: 14px;
-        }
-
-        .research-meta {
+        .block-label {
             display: flex;
+            align-items: baseline;
+            gap: 14px;
+            margin-bottom: 30px;
+        }
+
+        .block-label .idx {
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--green);
+            letter-spacing: 0.1em;
+        }
+
+        h2.block-title {
+            margin: 0;
+            font-size: clamp(1.7rem, 3vw, 2.3rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.05;
+        }
+
+        .block-intro {
+            margin: 14px 0 0;
+            max-width: 68ch;
+            color: var(--ink-soft);
+            font-size: 1.02rem;
+        }
+
+        /* ---------- modules as comparison ---------- */
+        .compare-note {
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--faint);
+            margin: 0 0 8px;
+        }
+
+        .mod {
+            display: grid;
+            grid-template-columns: 150px minmax(0, 1fr) 116px;
+            gap: 30px;
+            align-items: center;
+            padding: 26px 0;
+            border-top: 1px solid var(--line-soft);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .mod:first-of-type { border-top: 1px solid var(--ink); }
+        .mod:hover .mod-name { color: var(--green); }
+        .mod:hover .mod-go { transform: translateX(4px); }
+
+        .mod-name {
+            font-size: 1.24rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            transition: color 0.2s;
+        }
+
+        .mod-tags {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 12px;
         }
 
         .tag {
-            display: inline-flex;
-            width: fit-content;
-            border-radius: 999px;
-            padding: 4px 9px;
-            font-size: 0.74rem;
-            font-weight: 800;
-            color: var(--soft);
-            border: 1px solid var(--border);
-            background: rgba(148, 163, 184, 0.08);
+            font-family: var(--mono);
+            font-size: 0.64rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 3px 7px;
+            border: 1px solid var(--line);
+            border-radius: 3px;
+            color: var(--graphite);
+            background: #fff;
         }
 
-        .roadmap-item {
+        .tag.live { color: var(--green); border-color: #b9d4c1; background: var(--green-soft); }
+
+        .mod-desc {
+            margin: 0 0 14px;
+            font-size: 0.95rem;
+            color: var(--ink-soft);
+            max-width: 62ch;
+        }
+
+        .minibar {
+            display: flex;
+            width: 100%;
+            height: 12px;
+            border-radius: 3px;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .minibar span { height: 100%; display: block; }
+        .minibar .m-emp { background: var(--band-emp); }
+        .minibar .m-sal { background: var(--band-sal); }
+        .minibar .m-tax { background: var(--band-tax); }
+        .minibar .m-net { background: var(--band-net); }
+
+        .mod-net {
+            text-align: right;
+        }
+
+        .mod-net b {
+            display: block;
+            font-family: var(--mono);
+            font-size: 1.9rem;
+            font-weight: 600;
+            letter-spacing: -0.03em;
+            line-height: 1;
+            color: var(--green);
+        }
+
+        .mod-net span {
+            display: block;
+            margin-top: 5px;
+            font-family: var(--mono);
+            font-size: 0.64rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--faint);
+        }
+
+        .mod-go {
+            display: inline-block;
+            margin-top: 10px;
+            font-family: var(--mono);
+            font-size: 0.78rem;
+            color: var(--green);
+            transition: transform 0.2s;
+        }
+
+        /* ---------- method ---------- */
+        .method-grid {
             display: grid;
-            grid-template-columns: 120px 1fr;
-            gap: 16px;
-            align-items: start;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 34px;
         }
 
-        .roadmap-item strong {
-            color: var(--accent);
+        .method-grid p {
+            margin: 0;
+            color: var(--ink-soft);
+            font-size: 0.98rem;
+        }
+
+        .method-grid .m-n {
+            display: block;
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            color: var(--green);
+            letter-spacing: 0.1em;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        /* ---------- publications ---------- */
+        .pub {
+            padding: 26px 0;
+            border-top: 1px solid var(--line-soft);
+            display: grid;
+            grid-template-columns: 190px minmax(0, 1fr);
+            gap: 30px;
+        }
+
+        .pub:first-of-type { border-top: 1px solid var(--ink); }
+
+        .pub-meta {
+            font-family: var(--mono);
+            font-size: 0.74rem;
+            letter-spacing: 0.04em;
+            color: var(--graphite);
+            line-height: 1.5;
+        }
+
+        .pub h3 {
+            margin: 0 0 8px;
+            font-size: 1.14rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .pub p {
+            margin: 0;
+            color: var(--ink-soft);
+            font-size: 0.96rem;
+            max-width: 70ch;
+        }
+
+        .pub-actions {
+            display: flex;
+            gap: 18px;
+            margin-top: 14px;
+        }
+
+        .link {
+            font-family: var(--mono);
+            font-size: 0.78rem;
+            color: var(--green);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+        }
+
+        .link:hover { border-bottom-color: var(--green); }
+
+        /* ---------- data ---------- */
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1px;
+            background: var(--line);
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .data-cell {
+            background: var(--card);
+            padding: 26px;
+        }
+
+        .data-cell .d-tag {
+            font-family: var(--mono);
+            font-size: 0.68rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--green);
+        }
+
+        .data-cell h3 {
+            margin: 10px 0 8px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .data-cell p {
+            margin: 0;
+            color: var(--graphite);
             font-size: 0.92rem;
         }
 
-        footer {
-            border-top: 1px solid var(--border);
-            color: var(--muted);
-            padding: 26px 0 34px;
-            font-size: 0.9rem;
+        /* ---------- status strip ---------- */
+        .status-strip {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 30px;
+            padding: 34px 0 0;
+            margin-top: 30px;
+            border-top: 1px solid var(--line);
         }
 
-        .footer-row {
+        .status-strip .s-lab {
+            font-family: var(--mono);
+            font-size: 0.68rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--faint);
+        }
+
+        .status-strip .s-val {
+            display: block;
+            margin-top: 8px;
+            font-size: 1.02rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        /* ---------- contact ---------- */
+        .contact {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .contact p { margin: 0; max-width: 62ch; color: var(--ink-soft); }
+
+        /* ---------- footer ---------- */
+        footer {
+            border-top: 1px solid var(--ink);
+            background: var(--paper);
+        }
+
+        .foot {
             display: flex;
             justify-content: space-between;
-            gap: 18px;
+            gap: 20px;
             flex-wrap: wrap;
+            padding: 26px 0;
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.04em;
+            color: var(--graphite);
         }
 
-        @media (max-width: 980px) {
-            .hero-grid,
-            .method-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .country-grid,
-            .indicator-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .section-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+        /* ---------- responsive ---------- */
+        @media (max-width: 860px) {
+            .navline a { display: none; }
+            .legend { grid-template-columns: repeat(2, 1fr); }
+            .method-grid { grid-template-columns: 1fr; gap: 24px; }
+            .data-grid, .status-strip { grid-template-columns: 1fr; }
+            .mod { grid-template-columns: 1fr; gap: 14px; }
+            .mod-net { text-align: left; }
+            .mod-net b { display: inline; } .mod-net span { display: inline; margin-left: 8px; }
+            .pub { grid-template-columns: 1fr; gap: 10px; }
+            .contact { grid-template-columns: 1fr; }
         }
 
-        @media (max-width: 680px) {
-            .page-shell {
-                padding: 0 16px;
-            }
+        @media (max-width: 560px) {
+            .wrap { padding: 0 18px; }
+            .legend { grid-template-columns: 1fr; }
+            .decomp { padding: 22px 18px; }
+        }
 
-            header.hero {
-                padding-top: 32px;
-            }
-
-            .top-bar {
-                justify-content: flex-start;
-            }
-
-            .country-grid,
-            .indicator-grid,
-            .roadmap-item {
-                grid-template-columns: 1fr;
-            }
-
-            .hero-actions {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .button {
-                width: 100%;
-            }
+        @media (prefers-reduced-motion: reduce) {
+            .seg { transition: none; }
+            html { scroll-behavior: auto; }
         }
     </style>
 </head>
 
 <body>
-    <div class="page-shell">
-        <div class="top-bar">
-            <div class="language-switcher" aria-label="Language selector">
-                <button class="lang-button active" type="button" data-lang="fr">FR</button>
-                <button class="lang-button" type="button" data-lang="en">EN</button>
-            </div>
+    <header class="site-header">
+        <div class="wrap topbar">
+            <a class="brand" href="#top" aria-label="Labor Cost Lab">
+                <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+                <span class="brand-text">
+                    <strong>Labor Cost Lab</strong>
+                    <span data-i18n="brand.subtitle">Observatoire du coût du travail</span>
+                </span>
+            </a>
+
+            <nav class="navline" aria-label="Navigation principale">
+                <a href="#modules" data-i18n="nav.modules">Modules</a>
+                <a href="#method" data-i18n="nav.method">Méthode</a>
+                <a href="#publications" data-i18n="nav.publications">Publications</a>
+                <a href="#data" data-i18n="nav.data">Données</a>
+
+                <span class="language-switch" aria-label="Language selector">
+                    <button id="lang-fr" class="active" type="button" onclick="setLanguage('fr')">FR</button>
+                    <button id="lang-en" type="button" onclick="setLanguage('en')">EN</button>
+                </span>
+            </nav>
         </div>
+    </header>
 
-        <header class="hero">
-            <div class="hero-grid">
+    <main id="top">
+        <!-- HERO + SIGNATURE -->
+        <section class="hero">
+            <div class="wrap">
+                <span class="eyebrow" data-i18n="hero.kicker">Projet de recherche ouvert · 2026</span>
+
+                <h1 data-i18n="hero.title">Observatoire des salaires, cotisations et coûts employeurs</h1>
+
+                <p class="hero-lead" data-i18n="hero.lead">
+                    Le Labor Cost Lab reconstruit la façon dont les règles socio-fiscales
+                    transforment un coût employeur en salaire net. Modules nationaux,
+                    données ouvertes et paramètres versionnés, pour comparer les structures
+                    de prélèvement d'un pays à l'autre.
+                </p>
+
+                <div class="hero-actions">
+                    <a class="button primary" href="#modules" data-i18n="hero.primary">Consulter les modules →</a>
+                    <a class="button ghost" href="#publications" data-i18n="hero.secondary">Publications</a>
+                </div>
+
+                <div class="decomp" aria-label="Décomposition du coût du travail">
+                    <div class="decomp-head">
+                        <div>
+                            <h2 data-i18n="decomp.title">Du coût employeur au salaire net</h2>
+                            <span class="decomp-base" data-i18n="decomp.base">Base : coût employeur = 100</span>
+                        </div>
+
+                        <div class="country-switch" role="tablist" aria-label="Pays">
+                            <button class="active" type="button" role="tab" aria-selected="true" onclick="setCountry('fr', this)">France</button>
+                            <button type="button" role="tab" aria-selected="false" onclick="setCountry('de', this)">Germany</button>
+                            <button type="button" role="tab" aria-selected="false" onclick="setCountry('be', this)">Belgium</button>
+                        </div>
+                    </div>
+
+                    <div class="bar" id="hero-bar">
+                        <div class="seg" data-band="emp" style="--w:26%"></div>
+                        <div class="seg" data-band="sal" style="--w:18%"></div>
+                        <div class="seg" data-band="tax" style="--w:12%"></div>
+                        <div class="seg" data-band="net" style="--w:44%"></div>
+                    </div>
+
+                    <div class="legend">
+                        <div class="legend-item" data-band="emp">
+                            <div class="legend-val mono" data-val="emp">26</div>
+                            <div class="legend-lab" data-lab="emp">Cotisations patronales</div>
+                        </div>
+                        <div class="legend-item" data-band="sal">
+                            <div class="legend-val mono" data-val="sal">18</div>
+                            <div class="legend-lab" data-lab="sal">Cotisations salariales</div>
+                        </div>
+                        <div class="legend-item" data-band="tax">
+                            <div class="legend-val mono" data-val="tax">12</div>
+                            <div class="legend-lab" data-lab="tax">CSG, CRDS, impôt sur le revenu</div>
+                        </div>
+                        <div class="legend-item" data-band="net">
+                            <div class="legend-val mono" data-val="net">44</div>
+                            <div class="legend-lab" data-lab="net">Salaire net disponible</div>
+                        </div>
+                    </div>
+
+                    <p class="decomp-caption" data-i18n="decomp.caption">
+                        Schéma indicatif · valeurs éditables selon le module et le niveau de salaire
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- MODULES -->
+        <section id="modules" class="block">
+            <div class="wrap">
+                <div class="block-label">
+                    <span class="idx">/ 01</span>
+                    <h2 class="block-title" data-i18n="modules.title">Modules nationaux</h2>
+                </div>
+                <p class="block-intro" data-i18n="modules.intro">
+                    Même logique pour chaque pays : partir d'un salaire de référence, appliquer
+                    les règles sociales et fiscales, restituer une grille comparable. Les barres
+                    ci-dessous donnent la part du coût employeur perçue en net.
+                </p>
+
+                <p class="compare-note" style="margin-top:26px" data-i18n="compare.note">
+                    Part nette du coût employeur · schéma indicatif
+                </p>
+
+                <a class="mod" href="./countries/france/index.html">
+                    <div>
+                        <div class="mod-name">France</div>
+                        <div class="mod-tags">
+                            <span class="tag live" data-i18n="status.available">Disponible</span>
+                            <span class="tag">RGDU</span>
+                            <span class="tag">SMIC</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="mod-desc" data-i18n="module.france.text">
+                            Module complet : coût employeur, salaire net, allègements généraux,
+                            RGDU et rendement marginal du salaire brut.
+                        </p>
+                        <div class="minibar" aria-hidden="true">
+                            <span class="m-emp" style="width:26%"></span>
+                            <span class="m-sal" style="width:18%"></span>
+                            <span class="m-tax" style="width:12%"></span>
+                            <span class="m-net" style="width:44%"></span>
+                        </div>
+                    </div>
+                    <div class="mod-net">
+                        <b>44</b>
+                        <span data-i18n="module.netshare">net / 100</span>
+                        <span class="mod-go" data-i18n="module.open">Ouvrir →</span>
+                    </div>
+                </a>
+
+                <a class="mod" href="./countries/germany/index.html">
+                    <div>
+                        <div class="mod-name">Germany</div>
+                        <div class="mod-tags">
+                            <span class="tag live" data-i18n="status.available">Disponible</span>
+                            <span class="tag" data-i18n="status.prototype">Prototype</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="mod-desc" data-i18n="module.germany.text">
+                            Prototype réglementaire : cotisations sociales, coût employeur et
+                            salaire net avant impôt sur le revenu.
+                        </p>
+                        <div class="minibar" aria-hidden="true">
+                            <span class="m-emp" style="width:21%"></span>
+                            <span class="m-sal" style="width:20%"></span>
+                            <span class="m-tax" style="width:11%"></span>
+                            <span class="m-net" style="width:48%"></span>
+                        </div>
+                    </div>
+                    <div class="mod-net">
+                        <b>48</b>
+                        <span data-i18n="module.netshare">net / 100</span>
+                        <span class="mod-go" data-i18n="module.open">Ouvrir →</span>
+                    </div>
+                </a>
+
+                <a class="mod" href="./countries/belgium/index.html">
+                    <div>
+                        <div class="mod-name">Belgium</div>
+                        <div class="mod-tags">
+                            <span class="tag live" data-i18n="status.available">Disponible</span>
+                            <span class="tag">ONSS</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="mod-desc" data-i18n="module.belgium.text">
+                            Module socio-fiscal 2026 : cotisations ONSS, réduction structurelle
+                            employeur et précompte professionnel.
+                        </p>
+                        <div class="minibar" aria-hidden="true">
+                            <span class="m-emp" style="width:22%"></span>
+                            <span class="m-sal" style="width:15%"></span>
+                            <span class="m-tax" style="width:23%"></span>
+                            <span class="m-net" style="width:40%"></span>
+                        </div>
+                    </div>
+                    <div class="mod-net">
+                        <b>40</b>
+                        <span data-i18n="module.netshare">net / 100</span>
+                        <span class="mod-go" data-i18n="module.open">Ouvrir →</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- METHOD -->
+        <section id="method" class="block">
+            <div class="wrap">
+                <div class="block-label">
+                    <span class="idx">/ 02</span>
+                    <h2 class="block-title" data-i18n="method.title">Méthode</h2>
+                </div>
+
+                <div class="method-grid">
+                    <p>
+                        <span class="m-n">SCÉNARIOS</span>
+                        <span data-i18n="method.p1">Pas de reproduction d'une fiche de paie individuelle. Le Lab construit des scénarios de référence, comparables entre pays, pour isoler l'effet des règles statutaires sur le coût du travail et le revenu net.</span>
+                    </p>
+                    <p>
+                        <span class="m-n">PARAMÈTRES</span>
+                        <span data-i18n="method.p2">Des paramètres explicites : salaire minimum ou de référence, taux de cotisations, dispositifs d'allègement, retenues fiscales et conventions de calcul propres à chaque module.</span>
+                    </p>
+                    <p>
+                        <span class="m-n">SORTIES</span>
+                        <span data-i18n="method.p3">Chaque jeu de données est versionné et produit une grille permettant de comparer niveaux, taux effectifs, coins socio-fiscaux et effets marginaux d'une hausse de salaire brut.</span>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PUBLICATIONS -->
+        <section id="publications" class="block">
+            <div class="wrap">
+                <div class="block-label">
+                    <span class="idx">/ 03</span>
+                    <h2 class="block-title" data-i18n="publications.title">Publications</h2>
+                </div>
+                <p class="block-intro" data-i18n="publications.intro">
+                    Conventions de calcul, indicateurs et extensions méthodologiques du projet.
+                </p>
+
+                <div style="margin-top:14px">
+                    <article class="pub">
+                        <div class="pub-meta" data-i18n="pub.flcl.meta">Working paper<br>Juin 2026</div>
+                        <div>
+                            <h3 data-i18n="pub.flcl.title">Indice French Labour Cost Lab</h3>
+                            <p data-i18n="pub.flcl.text">Méthodologie des indicateurs de coût du travail, rendement marginal du salaire brut et effets des allègements généraux dans le module français.</p>
+                            <div class="pub-actions">
+                                <a class="link" href="./assets/french_labour_cost_lab_working_paper.pdf" target="_blank" rel="noopener" data-i18n="pub.open">Ouvrir le PDF ↗</a>
+                                <a class="link" href="./assets/french_labour_cost_lab_working_paper.pdf" download data-i18n="pub.download">Télécharger ↓</a>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="pub">
+                        <div class="pub-meta" data-i18n="pub.framework.meta">Document de cadrage<br>Juin 2026</div>
+                        <div>
+                            <h3 data-i18n="pub.framework.title">Cadre méthodologique du Labor Cost Lab</h3>
+                            <p data-i18n="pub.framework.text">Cadre général du projet : indicateurs communs, conventions de comparaison, données ouvertes et extension du French Labour Cost Lab vers une plateforme internationale.</p>
+                            <div class="pub-actions">
+                                <a class="link" href="./assets/FLCL_Framework_Working_Paper_June_2026.pdf" target="_blank" rel="noopener" data-i18n="pub.open">Ouvrir le PDF ↗</a>
+                                <a class="link" href="./assets/FLCL_Framework_Working_Paper_June_2026.pdf" download data-i18n="pub.download">Télécharger ↓</a>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="pub">
+                        <div class="pub-meta" data-i18n="pub.comparison.meta">Note méthodologique<br>En développement</div>
+                        <div>
+                            <h3 data-i18n="pub.comparison.title">Comparaison internationale du coût du travail</h3>
+                            <p data-i18n="pub.comparison.text">Extension comparative destinée à harmoniser les sorties des modules nationaux et à documenter les écarts de structure entre coût employeur, salaire net et prélèvements obligatoires.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- DATA -->
+        <section id="data" class="block">
+            <div class="wrap">
+                <div class="block-label">
+                    <span class="idx">/ 04</span>
+                    <h2 class="block-title" data-i18n="data.title">Données et reproductibilité</h2>
+                </div>
+                <p class="block-intro" data-i18n="data.intro">
+                    Le projet sépare données calculées, paramètres réglementaires et sources
+                    documentaires, pour distinguer ce qui relève des hypothèses, des textes
+                    officiels et des sorties de simulation.
+                </p>
+
+                <div class="data-grid" style="margin-top:26px">
+                    <div class="data-cell">
+                        <span class="d-tag">CSV</span>
+                        <h3 data-i18n="data.block1.title">Grilles de salaires</h3>
+                        <p data-i18n="data.block1.text">Résultats calculés pour chaque multiple du salaire de référence.</p>
+                    </div>
+                    <div class="data-cell">
+                        <span class="d-tag">JSON</span>
+                        <h3 data-i18n="data.block2.title">Paramètres versionnés</h3>
+                        <p data-i18n="data.block2.text">Paramètres réglementaires et conventions de calcul propres à chaque pays.</p>
+                    </div>
+                    <div class="data-cell">
+                        <span class="d-tag">REF</span>
+                        <h3 data-i18n="data.block3.title">Sources documentées</h3>
+                        <p data-i18n="data.block3.text">Textes, bases et documents utilisés pour construire les modules nationaux.</p>
+                    </div>
+                    <div class="data-cell">
+                        <span class="d-tag">CODE</span>
+                        <h3 data-i18n="data.block4.title">Code ouvert</h3>
+                        <p data-i18n="data.block4.text">Scripts de construction des jeux de données et interface web reproductible.</p>
+                    </div>
+                </div>
+
+                <div class="status-strip">
+                    <div>
+                        <span class="s-lab" data-i18n="side.status.modules.label">Modules accessibles</span>
+                        <span class="s-val" data-i18n="side.status.modules.value">France · Allemagne · Belgique</span>
+                    </div>
+                    <div>
+                        <span class="s-lab" data-i18n="side.status.year.label">Année réglementaire</span>
+                        <span class="s-val mono">2026</span>
+                    </div>
+                    <div>
+                        <span class="s-lab" data-i18n="side.status.output.label">Sorties principales</span>
+                        <span class="s-val" data-i18n="side.status.output.value">coût employeur · net · coins socio-fiscaux</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT -->
+        <section class="block">
+            <div class="wrap contact">
                 <div>
-                    <p class="eyebrow" data-i18n="hero.eyebrow">Plateforme de recherche ouverte</p>
-                    <h1>Labor Cost Lab</h1>
-                    <p class="lead" data-i18n="hero.lead">
-                        Une plateforme de recherche ouverte consacrée à la comparaison du coût du travail, des salaires nets, des cotisations sociales, du coût employeur et des coins socio-fiscaux entre pays.
-                    </p>
-
-                    <div class="hero-actions">
-                        <a class="button primary" href="#country-modules" data-i18n="hero.button.modules">Explorer les modules nationaux</a>
-                        <a class="button secondary" href="#research-outputs" data-i18n="hero.button.research">Publications et travaux</a>
+                    <div class="block-label">
+                        <span class="idx">/ 05</span>
+                        <h2 class="block-title" data-i18n="side.contact.title">Contact</h2>
                     </div>
+                    <p data-i18n="side.contact.text">
+                        Projet développé par Hugo Spring-Ragain. Remarques méthodologiques,
+                        corrections de paramètres et propositions de collaboration bienvenues.
+                    </p>
                 </div>
-
-                <aside class="hero-panel">
-                    <h2 data-i18n="hero.status.title">État du projet</h2>
-                    <p data-i18n="hero.status.text">
-                        La plateforme propose actuellement trois modules nationaux documentés, avec jeux de données ouverts, paramètres versionnés et logique de calcul transparente.
-                    </p>
-
-                    <div class="hero-stats">
-                        <div class="hero-stat">
-                            <strong>3</strong>
-                            <span data-i18n="hero.stat.modules">modules nationaux disponibles</span>
-                        </div>
-                        <div class="hero-stat">
-                            <strong>2026</strong>
-                            <span data-i18n="hero.stat.year">année réglementaire courante</span>
-                        </div>
-                        <div class="hero-stat">
-                            <strong>Open</strong>
-                            <span data-i18n="hero.stat.open">données, paramètres et sources documentées</span>
-                        </div>
-                    </div>
-                </aside>
+                <a class="button ghost" href="mailto:hugo.springragain@gmail.com" data-i18n="side.contact.link">Envoyer un message →</a>
             </div>
-        </header>
+        </section>
+    </main>
 
-        <main>
-            <section id="country-modules">
-                <div class="section-header">
-                    <div>
-                        <p class="eyebrow" data-i18n="modules.eyebrow">Modules nationaux</p>
-                        <h2 data-i18n="modules.title">Explorer les systèmes nationaux de coût du travail</h2>
-                    </div>
-                    <p data-i18n="modules.description">
-                        Chaque module suit la même logique : salaire brut, cotisations salarié, salaire net, cotisations employeur, coût employeur, fiscalité salariale lorsqu’elle est modélisée et indicateurs de coin.
-                    </p>
-                </div>
-
-                <div class="country-grid">
-                    <a class="card" href="./countries/france/">
-                        <div class="card-top">
-                            <div class="country-name">
-                                <span class="flag">🇫🇷</span>
-                                <h3>France</h3>
-                            </div>
-                            <span class="status" data-i18n="status.available">Available</span>
-                        </div>
-                        <p class="card-description" data-i18n="france.description">
-                            Module French Labour Cost Lab avec salaires bruts, salaires nets, coût employeur, cotisations sociales, allègements de cotisations employeur et indicateurs marginaux de coût du travail.
-                        </p>
-                        <ul class="feature-list">
-                            <li data-i18n="france.feature.1">Grille salariale fondée sur le SMIC</li>
-                            <li data-i18n="france.feature.2">Allègements de cotisations employeur</li>
-                            <li data-i18n="france.feature.3">RGDU et indicateurs marginaux</li>
-                            <li data-i18n="france.feature.4">Données ouvertes et méthodologie</li>
-                        </ul>
-                        <div class="card-footer">
-                            <span data-i18n="card.open">Ouvrir le module</span>
-                            <span class="arrow">→</span>
-                        </div>
-                    </a>
-
-                    <a class="card" href="./countries/germany/">
-                        <div class="card-top">
-                            <div class="country-name">
-                                <span class="flag">🇩🇪</span>
-                                <h3>Germany</h3>
-                            </div>
-                            <span class="status" data-i18n="status.available">Available</span>
-                        </div>
-                        <p class="card-description" data-i18n="germany.description">
-                            Module German Labour Cost Lab avec salaire minimum légal, cotisations sociales, plafonds de cotisation, coût employeur et simulation de l’impôt salarial PAP 2026.
-                        </p>
-                        <ul class="feature-list">
-                            <li data-i18n="germany.feature.1">Grille jusqu’à 6 fois le salaire minimum</li>
-                            <li data-i18n="germany.feature.2">Santé, dépendance, retraite et chômage</li>
-                            <li data-i18n="germany.feature.3">Plafonds de cotisation</li>
-                            <li data-i18n="germany.feature.4">Simulation fiscale PAP 2026</li>
-                        </ul>
-                        <div class="card-footer">
-                            <span data-i18n="card.open">Ouvrir le module</span>
-                            <span class="arrow">→</span>
-                        </div>
-                    </a>
-
-                    <a class="card" href="./countries/belgium/">
-                        <div class="card-top">
-                            <div class="country-name">
-                                <span class="flag">🇧🇪</span>
-                                <h3>Belgium</h3>
-                            </div>
-                            <span class="status" data-i18n="status.available">Available</span>
-                        </div>
-                        <p class="card-description" data-i18n="belgium.description">
-                            Module Belgian Labour Cost Lab couvrant le salaire brut, les cotisations ONSS, la réduction structurelle employeur, le précompte professionnel et les indicateurs socio-fiscaux.
-                        </p>
-                        <ul class="feature-list">
-                            <li data-i18n="belgium.feature.1">Référence salariale GGMMI / RMMMG</li>
-                            <li data-i18n="belgium.feature.2">Cotisations ONSS salarié et employeur</li>
-                            <li data-i18n="belgium.feature.3">Réduction structurelle employeur</li>
-                            <li data-i18n="belgium.feature.4">Formule de précompte professionnel 2026</li>
-                        </ul>
-                        <div class="card-footer">
-                            <span data-i18n="card.open">Ouvrir le module</span>
-                            <span class="arrow">→</span>
-                        </div>
-                    </a>
-                </div>
-            </section>
-
-            <section>
-                <div class="section-header">
-                    <div>
-                        <p class="eyebrow" data-i18n="indicators.eyebrow">Indicateurs communs</p>
-                        <h2 data-i18n="indicators.title">Un cadre d’analyse partagé</h2>
-                    </div>
-                    <p data-i18n="indicators.description">L’objectif est de rendre comparables les systèmes nationaux tout en respectant leurs spécificités institutionnelles.</p>
-                </div>
-
-                <div class="panel">
-                    <div class="indicator-grid">
-                        <div class="indicator"><strong data-i18n="indicator.gross.title">Salaire brut</strong><span data-i18n="indicator.gross.text">Salaire de référence avant déductions salarié.</span></div>
-                        <div class="indicator"><strong data-i18n="indicator.net.title">Salaire net</strong><span data-i18n="indicator.net.text">Salaire après cotisations salarié et, lorsque modélisée, fiscalité salariale.</span></div>
-                        <div class="indicator"><strong data-i18n="indicator.cost.title">Coût employeur</strong><span data-i18n="indicator.cost.text">Coût mensuel total supporté par l’employeur.</span></div>
-                        <div class="indicator"><strong data-i18n="indicator.social.title">Coin social</strong><span data-i18n="indicator.social.text">Écart entre coût employeur et salaire net avant fiscalité salariale.</span></div>
-                        <div class="indicator"><strong data-i18n="indicator.fiscal.title">Coin socio-fiscal</strong><span data-i18n="indicator.fiscal.text">Écart entre coût employeur et salaire net après fiscalité salariale.</span></div>
-                        <div class="indicator"><strong data-i18n="indicator.employee.title">Cotisations salarié</strong><span data-i18n="indicator.employee.text">Cotisations sociales obligatoires payées par les salariés.</span></div>
-                        <div class="indicator"><strong data-i18n="indicator.employer.title">Cotisations employeur</strong><span data-i18n="indicator.employer.text">Cotisations sociales obligatoires payées par les employeurs.</span></div>
-                        <div class="indicator"><strong data-i18n="indicator.marginal.title">Rendement marginal</strong><span data-i18n="indicator.marginal.text">Part d’un euro supplémentaire de salaire brut conservée par le salarié.</span></div>
-                    </div>
-                </div>
-            </section>
-
-            <section>
-                <div class="section-header">
-                    <div>
-                        <p class="eyebrow" data-i18n="method.eyebrow">Méthode</p>
-                        <h2 data-i18n="method.title">Des simulations transparentes, pays par pays</h2>
-                    </div>
-                    <p data-i18n="method.description">Le Labor Cost Lab n’est pas un calculateur de paie individuel. C’est une plateforme de recherche comparative qui mesure comment les règles statutaires transforment le salaire brut en salaire net, en coût employeur et en coin socio-fiscal.</p>
-                </div>
-
-                <div class="method-grid">
-                    <div class="method-card"><h3 data-i18n="method.card.1.title">Modélisation réglementaire</h3><p data-i18n="method.card.1.text">Chaque module est construit à partir de paramètres institutionnels explicites : salaires minimums, taux de cotisation, plafonds, réductions et règles fiscales lorsqu’elles sont disponibles.</p></div>
-                    <div class="method-card"><h3 data-i18n="method.card.2.title">Jeux de données ouverts</h3><p data-i18n="method.card.2.text">Les grilles pays sont exportées en CSV afin que les résultats puissent être audités, réutilisés et comparés.</p></div>
-                    <div class="method-card"><h3 data-i18n="method.card.3.title">Paramètres versionnés</h3><p data-i18n="method.card.3.text">Chaque module documente l’année réglementaire, la date d’effet, les hypothèses et les limites de la simulation.</p></div>
-                    <div class="method-card"><h3 data-i18n="method.card.4.title">Indicateurs comparables</h3><p data-i18n="method.card.4.text">La plateforme standardise la présentation des salaires nets, coûts employeur, taux de cotisation, coins et effets marginaux.</p></div>
-                </div>
-            </section>
-
-            <section id="research-outputs">
-                <div class="section-header">
-                    <div>
-                        <p class="eyebrow" data-i18n="research.eyebrow">Publications</p>
-                        <h2 data-i18n="research.title">Working papers et notes méthodologiques</h2>
-                    </div>
-                    <p data-i18n="research.description">Les travaux de recherche sont centralisés au niveau du portail, car le Labor Cost Lab est conçu comme une infrastructure comparative et non comme un tableau de bord national isolé.</p>
-                </div>
-
-                <div class="panel research-list">
-                    <article class="research-item">
-                        <h3 data-i18n="research.item.1.title">Indice French Labour Cost Lab</h3>
-                        <p data-i18n="research.item.1.text">Travail méthodologique sur les indicateurs de coût du travail, les dynamiques de coût employeur, les allègements de cotisations et les incitations salariales marginales dans le module français.</p>
-                        <div class="research-meta">
-                            <span class="tag">France</span>
-                            <span class="tag">Working paper</span>
-                            <span class="tag" data-i18n="tag.methodology">Méthodologie</span>
-                        </div>
-                    </article>
-
-                    <article class="research-item">
-                        <h3 data-i18n="research.item.2.title">Comparaison internationale du coût du travail</h3>
-                        <p data-i18n="research.item.2.text">Cadre comparatif en développement pour analyser la façon dont les systèmes statutaires transforment les salaires bruts en salaires nets et en coûts employeur entre pays.</p>
-                        <div class="research-meta">
-                            <span class="tag">France</span>
-                            <span class="tag">Germany</span>
-                            <span class="tag">Belgium</span>
-                            <span class="tag" data-i18n="tag.development">En développement</span>
-                        </div>
-                    </article>
-                </div>
-            </section>
-
-            <section>
-                <div class="section-header">
-                    <div>
-                        <p class="eyebrow" data-i18n="data.eyebrow">Données</p>
-                        <h2 data-i18n="data.title">Données ouvertes et reproductibilité</h2>
-                    </div>
-                    <p data-i18n="data.description">Chaque module national fournit des jeux de données et fichiers de paramètres téléchargeables. L’objectif est de rendre chaque résultat traçable à des hypothèses explicites.</p>
-                </div>
-
-                <div class="method-grid">
-                    <div class="method-card"><h3 data-i18n="data.card.1.title">Jeux de données pays</h3><p data-i18n="data.card.1.text">Chaque module exporte une grille salariale avec salaire brut, salaire net, coût employeur, cotisations, coins et indicateurs marginaux.</p></div>
-                    <div class="method-card"><h3 data-i18n="data.card.2.title">Fichiers de paramètres</h3><p data-i18n="data.card.2.text">Les paramètres sont séparés de l’interface afin de rendre les hypothèses, versions et dates d’effet explicites.</p></div>
-                    <div class="method-card"><h3 data-i18n="data.card.3.title">Documentation des sources</h3><p data-i18n="data.card.3.text">Les modules pays intègrent progressivement des fichiers documentant les sources officielles et le périmètre d’implémentation.</p></div>
-                    <div class="method-card"><h3 data-i18n="data.card.4.title">Limites assumées</h3><p data-i18n="data.card.4.text">Chaque module précise ce qui est inclus, simplifié ou exclu, afin que les résultats soient correctement interprétés.</p></div>
-                </div>
-            </section>
-
-            <section>
-                <div class="section-header">
-                    <div>
-                        <p class="eyebrow" data-i18n="roadmap.eyebrow">Feuille de route</p>
-                        <h2 data-i18n="roadmap.title">Prochaines étapes de développement</h2>
-                    </div>
-                </div>
-
-                <div class="panel roadmap">
-                    <div class="roadmap-item"><strong data-i18n="roadmap.step.1">Étape 1</strong><p data-i18n="roadmap.step.1.text">Stabiliser les modules France, Allemagne et Belgique avec une documentation claire, des sources traçables et des données téléchargeables.</p></div>
-                    <div class="roadmap-item"><strong data-i18n="roadmap.step.2">Étape 2</strong><p data-i18n="roadmap.step.2.text">Ajouter des profils plus riches : situations familiales, temps partiel, variantes sectorielles et cas contractuels lorsque les règles officielles peuvent être reproduites.</p></div>
-                    <div class="roadmap-item"><strong data-i18n="roadmap.step.3">Étape 3</strong><p data-i18n="roadmap.step.3.text">Construire un comparateur européen des ratios coût / net, des coins socio-fiscaux, des effets marginaux et des simulations réglementaires.</p></div>
-                </div>
-            </section>
-        </main>
-
-        <footer>
-            <div class="footer-row">
-                <span data-i18n="footer.left">Labor Cost Lab · Plateforme de recherche ouverte</span>
-                <span data-i18n="footer.right">Par Hugo Spring-Ragain</span>
-            </div>
-        </footer>
-    </div>
+    <footer>
+        <div class="wrap foot">
+            <span data-i18n="footer.left">Labor Cost Lab · Projet de recherche indépendant</span>
+            <span data-i18n="footer.right">Données ouvertes · Paramètres versionnés · Modules nationaux</span>
+        </div>
+    </footer>
 
     <script>
         const TRANSLATIONS = {
             fr: {
-                "hero.eyebrow": "Plateforme de recherche ouverte",
-                "hero.lead": "Une plateforme de recherche ouverte consacrée à la comparaison du coût du travail, des salaires nets, des cotisations sociales, du coût employeur et des coins socio-fiscaux entre pays.",
-                "hero.button.modules": "Explorer les modules nationaux",
-                "hero.button.research": "Publications et travaux",
-                "hero.status.title": "État du projet",
-                "hero.status.text": "La plateforme propose actuellement trois modules nationaux documentés, avec jeux de données ouverts, paramètres versionnés et logique de calcul transparente.",
-                "hero.stat.modules": "modules nationaux disponibles",
-                "hero.stat.year": "année réglementaire courante",
-                "hero.stat.open": "données, paramètres et sources documentées",
-                "modules.eyebrow": "Modules nationaux",
-                "modules.title": "Explorer les systèmes nationaux de coût du travail",
-                "modules.description": "Chaque module suit la même logique : salaire brut, cotisations salarié, salaire net, cotisations employeur, coût employeur, fiscalité salariale lorsqu’elle est modélisée et indicateurs de coin.",
-                "status.available": "Available",
-                "card.open": "Ouvrir le module",
-                "france.description": "Module French Labour Cost Lab avec salaires bruts, salaires nets, coût employeur, cotisations sociales, allègements de cotisations employeur et indicateurs marginaux de coût du travail.",
-                "france.feature.1": "Grille salariale fondée sur le SMIC",
-                "france.feature.2": "Allègements de cotisations employeur",
-                "france.feature.3": "RGDU et indicateurs marginaux",
-                "france.feature.4": "Données ouvertes et méthodologie",
-                "germany.description": "Module German Labour Cost Lab avec salaire minimum légal, cotisations sociales, plafonds de cotisation, coût employeur et simulation de l’impôt salarial PAP 2026.",
-                "germany.feature.1": "Grille jusqu’à 6 fois le salaire minimum",
-                "germany.feature.2": "Santé, dépendance, retraite et chômage",
-                "germany.feature.3": "Plafonds de cotisation",
-                "germany.feature.4": "Simulation fiscale PAP 2026",
-                "belgium.description": "Module Belgian Labour Cost Lab couvrant le salaire brut, les cotisations ONSS, la réduction structurelle employeur, le précompte professionnel et les indicateurs socio-fiscaux.",
-                "belgium.feature.1": "Référence salariale GGMMI / RMMMG",
-                "belgium.feature.2": "Cotisations ONSS salarié et employeur",
-                "belgium.feature.3": "Réduction structurelle employeur",
-                "belgium.feature.4": "Formule de précompte professionnel 2026",
-                "indicators.eyebrow": "Indicateurs communs",
-                "indicators.title": "Un cadre d’analyse partagé",
-                "indicators.description": "L’objectif est de rendre comparables les systèmes nationaux tout en respectant leurs spécificités institutionnelles.",
-                "indicator.gross.title": "Salaire brut",
-                "indicator.gross.text": "Salaire de référence avant déductions salarié.",
-                "indicator.net.title": "Salaire net",
-                "indicator.net.text": "Salaire après cotisations salarié et, lorsque modélisée, fiscalité salariale.",
-                "indicator.cost.title": "Coût employeur",
-                "indicator.cost.text": "Coût mensuel total supporté par l’employeur.",
-                "indicator.social.title": "Coin social",
-                "indicator.social.text": "Écart entre coût employeur et salaire net avant fiscalité salariale.",
-                "indicator.fiscal.title": "Coin socio-fiscal",
-                "indicator.fiscal.text": "Écart entre coût employeur et salaire net après fiscalité salariale.",
-                "indicator.employee.title": "Cotisations salarié",
-                "indicator.employee.text": "Cotisations sociales obligatoires payées par les salariés.",
-                "indicator.employer.title": "Cotisations employeur",
-                "indicator.employer.text": "Cotisations sociales obligatoires payées par les employeurs.",
-                "indicator.marginal.title": "Rendement marginal",
-                "indicator.marginal.text": "Part d’un euro supplémentaire de salaire brut conservée par le salarié.",
-                "method.eyebrow": "Méthode",
-                "method.title": "Des simulations transparentes, pays par pays",
-                "method.description": "Le Labor Cost Lab n’est pas un calculateur de paie individuel. C’est une plateforme de recherche comparative qui mesure comment les règles statutaires transforment le salaire brut en salaire net, en coût employeur et en coin socio-fiscal.",
-                "method.card.1.title": "Modélisation réglementaire",
-                "method.card.1.text": "Chaque module est construit à partir de paramètres institutionnels explicites : salaires minimums, taux de cotisation, plafonds, réductions et règles fiscales lorsqu’elles sont disponibles.",
-                "method.card.2.title": "Jeux de données ouverts",
-                "method.card.2.text": "Les grilles pays sont exportées en CSV afin que les résultats puissent être audités, réutilisés et comparés.",
-                "method.card.3.title": "Paramètres versionnés",
-                "method.card.3.text": "Chaque module documente l’année réglementaire, la date d’effet, les hypothèses et les limites de la simulation.",
-                "method.card.4.title": "Indicateurs comparables",
-                "method.card.4.text": "La plateforme standardise la présentation des salaires nets, coûts employeur, taux de cotisation, coins et effets marginaux.",
-                "research.eyebrow": "Publications",
-                "research.title": "Working papers et notes méthodologiques",
-                "research.description": "Les travaux de recherche sont centralisés au niveau du portail, car le Labor Cost Lab est conçu comme une infrastructure comparative et non comme un tableau de bord national isolé.",
-                "research.item.1.title": "Indice French Labour Cost Lab",
-                "research.item.1.text": "Travail méthodologique sur les indicateurs de coût du travail, les dynamiques de coût employeur, les allègements de cotisations et les incitations salariales marginales dans le module français.",
-                "research.item.2.title": "Comparaison internationale du coût du travail",
-                "research.item.2.text": "Cadre comparatif en développement pour analyser la façon dont les systèmes statutaires transforment les salaires bruts en salaires nets et en coûts employeur entre pays.",
-                "tag.methodology": "Méthodologie",
-                "tag.development": "En développement",
-                "data.eyebrow": "Données",
-                "data.title": "Données ouvertes et reproductibilité",
-                "data.description": "Chaque module national fournit des jeux de données et fichiers de paramètres téléchargeables. L’objectif est de rendre chaque résultat traçable à des hypothèses explicites.",
-                "data.card.1.title": "Jeux de données pays",
-                "data.card.1.text": "Chaque module exporte une grille salariale avec salaire brut, salaire net, coût employeur, cotisations, coins et indicateurs marginaux.",
-                "data.card.2.title": "Fichiers de paramètres",
-                "data.card.2.text": "Les paramètres sont séparés de l’interface afin de rendre les hypothèses, versions et dates d’effet explicites.",
-                "data.card.3.title": "Documentation des sources",
-                "data.card.3.text": "Les modules pays intègrent progressivement des fichiers documentant les sources officielles et le périmètre d’implémentation.",
-                "data.card.4.title": "Limites assumées",
-                "data.card.4.text": "Chaque module précise ce qui est inclus, simplifié ou exclu, afin que les résultats soient correctement interprétés.",
-                "roadmap.eyebrow": "Feuille de route",
-                "roadmap.title": "Prochaines étapes de développement",
-                "roadmap.step.1": "Étape 1",
-                "roadmap.step.1.text": "Stabiliser les modules France, Allemagne et Belgique avec une documentation claire, des sources traçables et des données téléchargeables.",
-                "roadmap.step.2": "Étape 2",
-                "roadmap.step.2.text": "Ajouter des profils plus riches : situations familiales, temps partiel, variantes sectorielles et cas contractuels lorsque les règles officielles peuvent être reproduites.",
-                "roadmap.step.3": "Étape 3",
-                "roadmap.step.3.text": "Construire un comparateur européen des ratios coût / net, des coins socio-fiscaux, des effets marginaux et des simulations réglementaires.",
-                "footer.left": "Labor Cost Lab · Plateforme de recherche ouverte",
-                "footer.right": "Par Hugo Spring-Ragain"
+                "brand.subtitle": "Observatoire du coût du travail",
+                "nav.modules": "Modules",
+                "nav.method": "Méthode",
+                "nav.publications": "Publications",
+                "nav.data": "Données",
+                "hero.kicker": "Projet de recherche ouvert · 2026",
+                "hero.title": "Observatoire des salaires, cotisations et coûts employeurs",
+                "hero.lead": "Le Labor Cost Lab reconstruit la façon dont les règles socio-fiscales transforment un coût employeur en salaire net. Modules nationaux, données ouvertes et paramètres versionnés, pour comparer les structures de prélèvement d'un pays à l'autre.",
+                "hero.primary": "Consulter les modules →",
+                "hero.secondary": "Publications",
+                "decomp.title": "Du coût employeur au salaire net",
+                "decomp.base": "Base : coût employeur = 100",
+                "decomp.caption": "Schéma indicatif · valeurs éditables selon le module et le niveau de salaire",
+                "modules.title": "Modules nationaux",
+                "modules.intro": "Même logique pour chaque pays : partir d'un salaire de référence, appliquer les règles sociales et fiscales, restituer une grille comparable. Les barres ci-dessous donnent la part du coût employeur perçue en net.",
+                "compare.note": "Part nette du coût employeur · schéma indicatif",
+                "module.france.text": "Module complet : coût employeur, salaire net, allègements généraux, RGDU et rendement marginal du salaire brut.",
+                "module.germany.text": "Prototype réglementaire : cotisations sociales, coût employeur et salaire net avant impôt sur le revenu.",
+                "module.belgium.text": "Module socio-fiscal 2026 : cotisations ONSS, réduction structurelle employeur et précompte professionnel.",
+                "module.open": "Ouvrir →",
+                "module.netshare": "net / 100",
+                "status.available": "Disponible",
+                "status.prototype": "Prototype",
+                "method.title": "Méthode",
+                "method.p1": "Pas de reproduction d'une fiche de paie individuelle. Le Lab construit des scénarios de référence, comparables entre pays, pour isoler l'effet des règles statutaires sur le coût du travail et le revenu net.",
+                "method.p2": "Des paramètres explicites : salaire minimum ou de référence, taux de cotisations, dispositifs d'allègement, retenues fiscales et conventions de calcul propres à chaque module.",
+                "method.p3": "Chaque jeu de données est versionné et produit une grille permettant de comparer niveaux, taux effectifs, coins socio-fiscaux et effets marginaux d'une hausse de salaire brut.",
+                "publications.title": "Publications",
+                "publications.intro": "Conventions de calcul, indicateurs et extensions méthodologiques du projet.",
+                "pub.flcl.title": "Indice French Labour Cost Lab",
+                "pub.flcl.meta": "Working paper<br>Juin 2026",
+                "pub.flcl.text": "Méthodologie des indicateurs de coût du travail, rendement marginal du salaire brut et effets des allègements généraux dans le module français.",
+                "pub.framework.title": "Cadre méthodologique du Labor Cost Lab",
+                "pub.framework.meta": "Document de cadrage<br>Juin 2026",
+                "pub.framework.text": "Cadre général du projet : indicateurs communs, conventions de comparaison, données ouvertes et extension du French Labour Cost Lab vers une plateforme internationale.",
+                "pub.comparison.title": "Comparaison internationale du coût du travail",
+                "pub.comparison.meta": "Note méthodologique<br>En développement",
+                "pub.comparison.text": "Extension comparative destinée à harmoniser les sorties des modules nationaux et à documenter les écarts de structure entre coût employeur, salaire net et prélèvements obligatoires.",
+                "pub.open": "Ouvrir le PDF ↗",
+                "pub.download": "Télécharger ↓",
+                "data.title": "Données et reproductibilité",
+                "data.intro": "Le projet sépare données calculées, paramètres réglementaires et sources documentaires, pour distinguer ce qui relève des hypothèses, des textes officiels et des sorties de simulation.",
+                "data.block1.title": "Grilles de salaires",
+                "data.block1.text": "Résultats calculés pour chaque multiple du salaire de référence.",
+                "data.block2.title": "Paramètres versionnés",
+                "data.block2.text": "Paramètres réglementaires et conventions de calcul propres à chaque pays.",
+                "data.block3.title": "Sources documentées",
+                "data.block3.text": "Textes, bases et documents utilisés pour construire les modules nationaux.",
+                "data.block4.title": "Code ouvert",
+                "data.block4.text": "Scripts de construction des jeux de données et interface web reproductible.",
+                "side.status.modules.label": "Modules accessibles",
+                "side.status.modules.value": "France · Allemagne · Belgique",
+                "side.status.year.label": "Année réglementaire",
+                "side.status.output.label": "Sorties principales",
+                "side.status.output.value": "coût employeur · net · coins socio-fiscaux",
+                "side.contact.title": "Contact",
+                "side.contact.text": "Projet développé par Hugo Spring-Ragain. Remarques méthodologiques, corrections de paramètres et propositions de collaboration bienvenues.",
+                "side.contact.link": "Envoyer un message →",
+                "footer.left": "Labor Cost Lab · Projet de recherche indépendant",
+                "footer.right": "Données ouvertes · Paramètres versionnés · Modules nationaux"
             },
-
             en: {
-                "hero.eyebrow": "Open research platform",
-                "hero.lead": "An open-access research platform designed to compare labour cost structures, net wages, employer costs, social contributions, wage taxation and socio-fiscal incentives across countries.",
-                "hero.button.modules": "Browse country modules",
-                "hero.button.research": "Research outputs",
-                "hero.status.title": "Project status",
-                "hero.status.text": "The platform currently provides three documented national modules, with open datasets, versioned parameters and transparent calculation logic.",
-                "hero.stat.modules": "national modules available",
-                "hero.stat.year": "current parameter year",
-                "hero.stat.open": "datasets, parameters and source documentation",
-                "modules.eyebrow": "Country modules",
-                "modules.title": "Explore national labour-cost systems",
-                "modules.description": "Each country module follows the same core logic: gross wage, employee contributions, net wage, employer contributions, employer cost, wage taxation when modelled and wedge indicators.",
+                "brand.subtitle": "Labour cost observatory",
+                "nav.modules": "Modules",
+                "nav.method": "Method",
+                "nav.publications": "Publications",
+                "nav.data": "Data",
+                "hero.kicker": "Open research project · 2026",
+                "hero.title": "Observatory on wages, social security contributions, and employer costs",
+                "hero.lead": "The Labor Cost Lab reconstructs how statutory social and fiscal rules turn an employer cost into a net wage. National modules, open data, and versioned parameters, built to compare levy structures across countries.",
+                "hero.primary": "Browse modules →",
+                "hero.secondary": "Publications",
+                "decomp.title": "From employer cost to net wage",
+                "decomp.base": "Base: employer cost = 100",
+                "decomp.caption": "Illustrative schematic · values editable per module and wage level",
+                "modules.title": "National modules",
+                "modules.intro": "Same logic for every country: start from a reference wage, apply social and fiscal rules, publish a comparable grid. The bars below show the share of employer cost received as net pay.",
+                "compare.note": "Net share of employer cost · illustrative",
+                "module.france.text": "Full module: employer cost, net wage, general contribution relief, RGDU, and marginal returns to gross wages.",
+                "module.germany.text": "Regulatory prototype: social contributions, employer cost, and net wage before income tax.",
+                "module.belgium.text": "2026 socio-fiscal module: ONSS contributions, the employer structural reduction, and professional withholding tax.",
+                "module.open": "Open →",
+                "module.netshare": "net / 100",
                 "status.available": "Available",
-                "card.open": "Open module",
-                "france.description": "French Labour Cost Lab module with gross wages, net wages, employer costs, social contributions, employer contribution reductions and marginal labour-cost indicators.",
-                "france.feature.1": "SMIC-based wage grid",
-                "france.feature.2": "Employer contribution reductions",
-                "france.feature.3": "RGDU and marginal indicators",
-                "france.feature.4": "Open dataset and methodology",
-                "germany.description": "German Labour Cost Lab module with statutory minimum wage, social-security contributions, contribution ceilings, employer costs and PAP 2026 wage-tax simulation.",
-                "germany.feature.1": "Minimum-wage grid up to 6×",
-                "germany.feature.2": "Health, care, pension and unemployment branches",
-                "germany.feature.3": "Contribution ceilings",
-                "germany.feature.4": "PAP 2026 wage-tax simulation",
-                "belgium.description": "Belgian Labour Cost Lab module covering gross wage, ONSS contributions, employer structural reduction, withholding tax and socio-fiscal labour-cost indicators.",
-                "belgium.feature.1": "GGMMI / RMMMG wage reference",
-                "belgium.feature.2": "Employee and employer ONSS contributions",
-                "belgium.feature.3": "Structural employer reduction",
-                "belgium.feature.4": "2026 withholding-tax formula",
-                "indicators.eyebrow": "Common indicators",
-                "indicators.title": "A shared analytical framework",
-                "indicators.description": "The goal is to make national systems comparable while preserving each country’s institutional specificities.",
-                "indicator.gross.title": "Gross wage",
-                "indicator.gross.text": "Reference wage before employee deductions.",
-                "indicator.net.title": "Net wage",
-                "indicator.net.text": "Wage after employee contributions and, when modelled, wage taxation.",
-                "indicator.cost.title": "Employer cost",
-                "indicator.cost.text": "Total monthly cost borne by the employer.",
-                "indicator.social.title": "Social wedge",
-                "indicator.social.text": "Gap between employer cost and net wage before wage taxation.",
-                "indicator.fiscal.title": "Socio-fiscal wedge",
-                "indicator.fiscal.text": "Gap between employer cost and net wage after wage taxation.",
-                "indicator.employee.title": "Employee contributions",
-                "indicator.employee.text": "Mandatory social contributions paid by workers.",
-                "indicator.employer.title": "Employer contributions",
-                "indicator.employer.text": "Mandatory social contributions paid by employers.",
-                "indicator.marginal.title": "Marginal retention",
-                "indicator.marginal.text": "Share of an additional euro of gross wage retained by the worker.",
-                "method.eyebrow": "Method",
-                "method.title": "Transparent simulations, country by country",
-                "method.description": "The Labor Cost Lab is not a payroll calculator. It is a comparative research platform designed to measure how statutory rules transform gross wages into net wages, employer costs and socio-fiscal wedges.",
-                "method.card.1.title": "Rule-based modelling",
-                "method.card.1.text": "Each module is built from explicit institutional parameters: minimum wages, social security rates, contribution ceilings, reductions and tax rules when available.",
-                "method.card.2.title": "Open datasets",
-                "method.card.2.text": "Country grids are exported as CSV files so that results can be audited, reused and compared.",
-                "method.card.3.title": "Versioned parameters",
-                "method.card.3.text": "Each module documents the regulatory year, effective date, assumptions and limits of the simulation.",
-                "method.card.4.title": "Comparable indicators",
-                "method.card.4.text": "The platform standardizes the presentation of net wages, employer costs, contribution rates, wedges and marginal effects.",
-                "research.eyebrow": "Research outputs",
-                "research.title": "Working papers and methodological notes",
-                "research.description": "Research outputs are centralized at the platform level because the Labor Cost Lab is designed as a comparative infrastructure, not as a single-country dashboard.",
-                "research.item.1.title": "French Labour Cost Lab index",
-                "research.item.1.text": "Methodological work on labour-cost indicators, employer-cost dynamics, contribution reductions and marginal wage incentives in the French module.",
-                "research.item.2.title": "Cross-country labour-cost comparison",
-                "research.item.2.text": "Comparative framework under development for analyzing how statutory systems transform gross wages into net wages and employer costs across countries.",
-                "tag.methodology": "Methodology",
-                "tag.development": "In development",
-                "data.eyebrow": "Data",
-                "data.title": "Open data and reproducibility",
-                "data.description": "Each national module provides downloadable datasets and parameter files. The objective is to make every result traceable to explicit assumptions.",
-                "data.card.1.title": "Country datasets",
-                "data.card.1.text": "Each module exports a wage grid with gross wage, net wage, employer cost, contributions, wedges and marginal indicators.",
-                "data.card.2.title": "Parameter files",
-                "data.card.2.text": "Parameters are stored separately from the interface to make assumptions, versions and effective dates explicit.",
-                "data.card.3.title": "Source documentation",
-                "data.card.3.text": "Country modules progressively include files documenting official sources and implementation scope.",
-                "data.card.4.title": "Research-grade limits",
-                "data.card.4.text": "Each module states what is included, simplified or excluded so results can be interpreted correctly.",
-                "roadmap.eyebrow": "Roadmap",
-                "roadmap.title": "Next development steps",
-                "roadmap.step.1": "Step 1",
-                "roadmap.step.1.text": "Stabilize France, Germany and Belgium modules with clear documentation, source tracking and downloadable datasets.",
-                "roadmap.step.2": "Step 2",
-                "roadmap.step.2.text": "Add richer profiles: household situations, working-time cases, sectoral variants and contractual cases where official rules can be reproduced.",
-                "roadmap.step.3": "Step 3",
-                "roadmap.step.3.text": "Build a European comparator for cost-to-net ratios, socio-fiscal wedges, marginal effects and statutory policy simulations.",
-                "footer.left": "Labor Cost Lab · Open-access research platform",
-                "footer.right": "By Hugo Spring-Ragain"
+                "status.prototype": "Prototype",
+                "method.title": "Method",
+                "method.p1": "No reproduction of an individual payslip. The Lab builds comparable reference scenarios across countries to isolate the effect of statutory rules on labour cost and net income.",
+                "method.p2": "Explicit parameters: minimum or reference wages, contribution rates, relief schemes, tax withholding rules, and module-specific calculation conventions.",
+                "method.p3": "Each dataset is versioned and produces a grid to compare levels, effective rates, socio-fiscal wedges, and marginal effects of a gross wage increase.",
+                "publications.title": "Publications",
+                "publications.intro": "Calculation conventions, indicators, and methodological extensions of the project.",
+                "pub.flcl.title": "French Labour Cost Lab Index",
+                "pub.flcl.meta": "Working paper<br>June 2026",
+                "pub.flcl.text": "Methodology of labour-cost indicators, marginal returns to gross wages, and effects of employer contribution relief in the French module.",
+                "pub.framework.title": "Labor Cost Lab methodological framework",
+                "pub.framework.meta": "Framework paper<br>June 2026",
+                "pub.framework.text": "General framework of the project: common indicators, comparison conventions, open data, and the extension of the French Labour Cost Lab into an international platform.",
+                "pub.comparison.title": "Cross-country comparison of labour costs",
+                "pub.comparison.meta": "Methodological note<br>In development",
+                "pub.comparison.text": "Comparative extension designed to harmonise national module outputs and document structural differences between employer costs, net wages, and statutory levies.",
+                "pub.open": "Open PDF ↗",
+                "pub.download": "Download ↓",
+                "data.title": "Data and reproducibility",
+                "data.intro": "The project separates calculated data, regulatory parameters, and documentary sources, so that assumptions, official rules, and simulation outputs can be told apart.",
+                "data.block1.title": "Wage grids",
+                "data.block1.text": "Calculated outputs for each multiple of the reference wage.",
+                "data.block2.title": "Versioned parameters",
+                "data.block2.text": "Regulatory parameters and country-specific calculation conventions.",
+                "data.block3.title": "Documented sources",
+                "data.block3.text": "Legal texts, datasets, and documents used to build the national modules.",
+                "data.block4.title": "Open code",
+                "data.block4.text": "Dataset-building scripts and a reproducible hosted web interface.",
+                "side.status.modules.label": "Available modules",
+                "side.status.modules.value": "France · Germany · Belgium",
+                "side.status.year.label": "Regulatory year",
+                "side.status.output.label": "Main outputs",
+                "side.status.output.value": "employer cost · net · socio-fiscal wedges",
+                "side.contact.title": "Contact",
+                "side.contact.text": "Project developed by Hugo Spring-Ragain. Methodological comments, parameter corrections, and collaboration proposals are welcome.",
+                "side.contact.link": "Send a message →",
+                "footer.left": "Labor Cost Lab · Independent research project",
+                "footer.right": "Open data · Versioned parameters · National modules"
             }
         };
 
-        function applyLanguage(lang) {
-            const selectedLang = TRANSLATIONS[lang] ? lang : "fr";
+        // ---- shared state ----
+        let currentLang = "fr";
+        let currentCountry = "fr";
 
-            document.documentElement.lang = selectedLang;
+        // Per-country decomposition of employer cost (= 100).
+        // Values are illustrative and sum to 100. Labels carry each country's
+        // real statutory vocabulary, so the fiscal band is never generically French.
+        const COUNTRY_DECOMP = {
+            fr: {
+                emp: { v: 26, fr: "Cotisations patronales", en: "Employer contributions" },
+                sal: { v: 18, fr: "Cotisations salariales", en: "Employee contributions" },
+                tax: { v: 12, fr: "CSG, CRDS, impôt sur le revenu", en: "CSG, CRDS, income tax" },
+                net: { v: 44, fr: "Salaire net disponible", en: "Disposable net wage" }
+            },
+            de: {
+                emp: { v: 21, fr: "Cotisations employeur (Sozialbeiträge)", en: "Employer social contributions" },
+                sal: { v: 20, fr: "Cotisations salariales (Sozialbeiträge)", en: "Employee social contributions" },
+                tax: { v: 11, fr: "Lohnsteuer, contribution de solidarité", en: "Lohnsteuer, solidarity surcharge" },
+                net: { v: 48, fr: "Salaire net (Nettolohn)", en: "Net wage (Nettolohn)" }
+            },
+            be: {
+                emp: { v: 22, fr: "Cotisations ONSS employeur", en: "Employer NSSO contributions" },
+                sal: { v: 15, fr: "Cotisations ONSS travailleur", en: "Employee NSSO contributions" },
+                tax: { v: 23, fr: "Précompte professionnel", en: "Professional withholding tax" },
+                net: { v: 40, fr: "Salaire net", en: "Net wage" }
+            }
+        };
 
-            document.querySelectorAll("[data-i18n]").forEach(element => {
-                const key = element.getAttribute("data-i18n");
-                const value = TRANSLATIONS[selectedLang][key];
+        function renderDecomp() {
+            const d = COUNTRY_DECOMP[currentCountry] || COUNTRY_DECOMP.fr;
 
-                if (value) {
-                    element.textContent = value;
-                }
+            document.querySelectorAll("#hero-bar .seg").forEach(seg => {
+                const band = seg.getAttribute("data-band");
+                seg.style.setProperty("--w", d[band].v + "%");
             });
 
-            document.querySelectorAll(".lang-button").forEach(button => {
-                button.classList.toggle(
-                    "active",
-                    button.dataset.lang === selectedLang
-                );
+            document.querySelectorAll(".legend-val[data-val]").forEach(el => {
+                el.textContent = d[el.getAttribute("data-val")].v;
             });
 
-            localStorage.setItem("labor-cost-lab-language", selectedLang);
+            document.querySelectorAll(".legend-lab[data-lab]").forEach(el => {
+                const band = el.getAttribute("data-lab");
+                el.textContent = d[band][currentLang] || d[band].fr;
+            });
         }
 
-        document.querySelectorAll(".lang-button").forEach(button => {
-            button.addEventListener("click", function() {
-                applyLanguage(button.dataset.lang);
+        function setLanguage(lang) {
+            currentLang = (lang === "en") ? "en" : "fr";
+            const dict = TRANSLATIONS[currentLang] || TRANSLATIONS.fr;
+            document.documentElement.lang = currentLang;
+            try { localStorage.setItem("labor-cost-lab-language", currentLang); } catch (e) {}
+
+            document.querySelectorAll("[data-i18n]").forEach(el => {
+                const key = el.getAttribute("data-i18n");
+                if (dict[key] !== undefined) el.innerHTML = dict[key];
+            });
+
+            document.getElementById("lang-fr").classList.toggle("active", currentLang === "fr");
+            document.getElementById("lang-en").classList.toggle("active", currentLang === "en");
+
+            renderDecomp();
+        }
+
+        function setCountry(code, btn) {
+            currentCountry = COUNTRY_DECOMP[code] ? code : "fr";
+
+            document.querySelectorAll(".country-switch button").forEach(b => {
+                b.classList.remove("active");
+                b.setAttribute("aria-selected", "false");
+            });
+            if (btn) { btn.classList.add("active"); btn.setAttribute("aria-selected", "true"); }
+
+            renderDecomp();
+        }
+
+        let stored = "fr";
+        try { stored = localStorage.getItem("labor-cost-lab-language") || "fr"; } catch (e) {}
+        setLanguage(stored);
+
+        // reveal the decomposition bar once painted
+        window.addEventListener("load", () => {
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => document.body.classList.add("is-ready"));
             });
         });
-
-        applyLanguage(localStorage.getItem("labor-cost-lab-language") || "fr");
     </script>
 </body>
 </html>

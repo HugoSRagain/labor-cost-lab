@@ -115,6 +115,15 @@ function getBelgiumSelectedProfile() {
     return select.value;
 }
 
+function getBelgiumSelectedDataProfile() {
+    const select = document.getElementById("belgium-data-profile-select");
+
+    if (!select) {
+        return getBelgiumSelectedProfile();
+    }
+
+    return select.value;
+}
 
 function getBelgiumWaterfallMultiple() {
     const select = document.getElementById("belgium-waterfall-multiple");
@@ -858,10 +867,19 @@ function renderBelgiumDataTable() {
         return;
     }
 
-    const profileId = getBelgiumSelectedProfile();
+    const profileId = getBelgiumSelectedDataProfile();
 
-    const data = getBelgiumProfileData(profileId)
-        .filter(row => [1, 2, 3, 4, 5, 6].includes(deNum(row.smic_multiple)));
+    const profileLabels = {
+        belgium__standard_private_sector: "Secteur privé standard"
+    };
+
+    const caption = document.getElementById("belgium-data-profile-caption");
+
+    if (caption) {
+        caption.textContent = profileLabels[profileId] || profileId;
+    }
+
+    const data = getBelgiumProfileData(profileId);
 
     tableBody.innerHTML = "";
 
@@ -895,7 +913,6 @@ function renderBelgiumDataTable() {
         tableBody.appendChild(tableRow);
     });
 }
-
 
 function renderBelgium() {
     renderBelgiumMetrics();
@@ -951,6 +968,7 @@ function setupBelgiumTabs() {
 
 function setupBelgiumEvents() {
     const profileSelect = document.getElementById("belgium-profile-select");
+    const dataProfileSelect = document.getElementById("belgium-data-profile-select");
     const waterfallMultipleSelect = document.getElementById(
         "belgium-waterfall-multiple"
     );
@@ -958,6 +976,12 @@ function setupBelgiumEvents() {
     if (profileSelect) {
         profileSelect.addEventListener("change", function() {
             renderBelgium();
+        });
+    }
+
+    if (dataProfileSelect) {
+        dataProfileSelect.addEventListener("change", function() {
+            renderBelgiumDataTable();
         });
     }
 
