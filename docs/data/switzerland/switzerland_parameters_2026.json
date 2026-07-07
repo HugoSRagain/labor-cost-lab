@@ -1,0 +1,125 @@
+{
+    "country": "Switzerland",
+    "country_code": "CH",
+    "module_name": "Swiss Labour Cost Lab",
+    "version": "2026-01",
+    "effective_from": "2026-01-01",
+    "currency": "CHF",
+    "status": "prototype",
+    "description": "Swiss labour cost simulation module with canton-level fiscal profiles. Version 1 combines national social contributions, standard occupational pension assumptions, accident insurance assumptions and canton-level withholding-tax placeholders.",
+
+    "wage_grid": {
+        "gross_monthly_min_chf": 3000,
+        "gross_monthly_max_chf": 20000,
+        "gross_monthly_step_chf": 100,
+        "reference_wage_monthly_chf": 5000,
+        "reference_unit_label": "CHF gross monthly wage"
+    },
+
+    "social_contributions": {
+        "ahv_iv_eo": {
+            "employee_rate": 0.053,
+            "employer_rate": 0.053,
+            "label_fr": "AVS / AI / APG",
+            "label_en": "OASI / DI / EO",
+            "source_note": "Official Swiss federal social contribution rate, split equally between employee and employer."
+        },
+        "unemployment_insurance": {
+            "employee_rate": 0.011,
+            "employer_rate": 0.011,
+            "annual_salary_ceiling_chf": 148200,
+            "label_fr": "Assurance chômage",
+            "label_en": "Unemployment insurance",
+            "source_note": "Standard unemployment insurance contribution rate up to the insured salary ceiling."
+        }
+    },
+
+    "occupational_pension_lpp": {
+        "status": "standardized_assumption",
+        "entry_threshold_annual_chf": 22680,
+        "coordination_deduction_annual_chf": 26460,
+        "maximum_insured_salary_annual_chf": 90720,
+        "minimum_coordinated_salary_annual_chf": 3780,
+        "default_age_band": "35-44",
+        "age_bands": {
+            "25-34": {
+                "total_savings_rate": 0.07,
+                "employee_share": 0.5,
+                "employer_share": 0.5
+            },
+            "35-44": {
+                "total_savings_rate": 0.10,
+                "employee_share": 0.5,
+                "employer_share": 0.5
+            },
+            "45-54": {
+                "total_savings_rate": 0.15,
+                "employee_share": 0.5,
+                "employer_share": 0.5
+            },
+            "55-65": {
+                "total_savings_rate": 0.18,
+                "employee_share": 0.5,
+                "employer_share": 0.5
+            }
+        },
+        "source_note": "The LPP/BVG component is standardized. Actual pension contributions vary by age, pension plan and employer scheme."
+    },
+
+    "accident_insurance": {
+        "status": "standardized_assumption",
+        "employee_non_occupational_accident_rate": 0.012,
+        "employer_occupational_accident_rate": 0.005,
+        "annual_salary_ceiling_chf": 148200,
+        "source_note": "Accident insurance rates vary by insurer, firm risk class and sector. The module uses standardized benchmark rates for comparability."
+    },
+
+    "withholding_tax": {
+        "status": "placeholder_for_canton_tables",
+        "year": 2026,
+        "profile": {
+            "tariff_code": "A0",
+            "marital_status": "single",
+            "children": 0,
+            "church_tax": false
+        },
+        "source_note": "Canton-level withholding-tax tables are published by the Swiss Federal Tax Administration. They will be integrated in a second step."
+    },
+
+    "cantons": [
+        { "code": "ZH", "name_fr": "Zurich", "name_en": "Zurich", "reference_municipality": "Zürich" },
+        { "code": "BE", "name_fr": "Berne", "name_en": "Bern", "reference_municipality": "Bern" },
+        { "code": "LU", "name_fr": "Lucerne", "name_en": "Lucerne", "reference_municipality": "Luzern" },
+        { "code": "UR", "name_fr": "Uri", "name_en": "Uri", "reference_municipality": "Altdorf" },
+        { "code": "SZ", "name_fr": "Schwytz", "name_en": "Schwyz", "reference_municipality": "Schwyz" },
+        { "code": "OW", "name_fr": "Obwald", "name_en": "Obwalden", "reference_municipality": "Sarnen" },
+        { "code": "NW", "name_fr": "Nidwald", "name_en": "Nidwalden", "reference_municipality": "Stans" },
+        { "code": "GL", "name_fr": "Glaris", "name_en": "Glarus", "reference_municipality": "Glarus" },
+        { "code": "ZG", "name_fr": "Zoug", "name_en": "Zug", "reference_municipality": "Zug" },
+        { "code": "FR", "name_fr": "Fribourg", "name_en": "Fribourg", "reference_municipality": "Fribourg" },
+        { "code": "SO", "name_fr": "Soleure", "name_en": "Solothurn", "reference_municipality": "Solothurn" },
+        { "code": "BS", "name_fr": "Bâle-Ville", "name_en": "Basel-Stadt", "reference_municipality": "Basel" },
+        { "code": "BL", "name_fr": "Bâle-Campagne", "name_en": "Basel-Landschaft", "reference_municipality": "Liestal" },
+        { "code": "SH", "name_fr": "Schaffhouse", "name_en": "Schaffhausen", "reference_municipality": "Schaffhausen" },
+        { "code": "AR", "name_fr": "Appenzell Rhodes-Extérieures", "name_en": "Appenzell Ausserrhoden", "reference_municipality": "Herisau" },
+        { "code": "AI", "name_fr": "Appenzell Rhodes-Intérieures", "name_en": "Appenzell Innerrhoden", "reference_municipality": "Appenzell" },
+        { "code": "SG", "name_fr": "Saint-Gall", "name_en": "St. Gallen", "reference_municipality": "St. Gallen" },
+        { "code": "GR", "name_fr": "Grisons", "name_en": "Graubünden", "reference_municipality": "Chur" },
+        { "code": "AG", "name_fr": "Argovie", "name_en": "Aargau", "reference_municipality": "Aarau" },
+        { "code": "TG", "name_fr": "Thurgovie", "name_en": "Thurgau", "reference_municipality": "Frauenfeld" },
+        { "code": "TI", "name_fr": "Tessin", "name_en": "Ticino", "reference_municipality": "Bellinzona" },
+        { "code": "VD", "name_fr": "Vaud", "name_en": "Vaud", "reference_municipality": "Lausanne" },
+        { "code": "VS", "name_fr": "Valais", "name_en": "Valais", "reference_municipality": "Sion" },
+        { "code": "NE", "name_fr": "Neuchâtel", "name_en": "Neuchâtel", "reference_municipality": "Neuchâtel" },
+        { "code": "GE", "name_fr": "Genève", "name_en": "Geneva", "reference_municipality": "Genève" },
+        { "code": "JU", "name_fr": "Jura", "name_en": "Jura", "reference_municipality": "Delémont" }
+    ],
+
+    "methodological_limits": [
+        "The module is not an individual Swiss payslip calculator.",
+        "Occupational pension contributions are standardized and do not reproduce firm-level pension plans.",
+        "Accident insurance rates are benchmark assumptions and do not reflect sector-specific risk classes.",
+        "Withholding-tax tables are prepared for integration but are not yet implemented in this initial parameter file.",
+        "The selected canton is represented by a reference municipality for comparability."
+    ]
+}

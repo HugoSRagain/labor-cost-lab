@@ -1,0 +1,51 @@
+{
+    "country": "Switzerland",
+    "country_code": "CH",
+    "module_name": "Swiss Labour Cost Lab",
+    "version": "2026-01",
+    "sources": [
+        {
+            "id": "bsv_social_contributions_overview",
+            "institution": "Federal Social Insurance Office",
+            "institution_fr": "Office fédéral des assurances sociales",
+            "title": "Aperçu des cotisations aux assurances sociales",
+            "url": "https://www.bsv.admin.ch/fr/cotisations-apercu",
+            "used_for": [
+                "AVS / AI / APG contribution rates",
+                "Unemployment insurance contribution rates",
+                "Employee and employer social contribution split"
+            ],
+            "status": "official"
+        },
+        {
+            "id": "bsv_occupational_pension_financing",
+            "institution": "Federal Social Insurance Office",
+            "institution_fr": "Office fédéral des assurances sociales",
+            "title": "Financement de la prévoyance professionnelle",
+            "url": "https://www.bsv.admin.ch/fr/financement-de-la-prevoyance-professionnelle",
+            "used_for": [
+                "LPP/BVG coordination logic",
+                "Occupational pension threshold concepts",
+                "Methodological limits of standardized pension assumptions"
+            ],
+            "status": "official"
+        },
+        {
+            "id": "estv_withholding_tax_tables_2026",
+            "institution": "Federal Tax Administration",
+            "institution_fr": "Administration fédérale des contributions",
+            "title": "Barèmes de l'impôt à la source pour l'importation dans les systèmes de comptabilité salariale",
+            "url": "https://www.estv.admin.ch/fr/baremes-impot-a-la-source-importation-systemes-de-comptabilite-salariale",
+            "used_for": [
+                "Canton-level withholding-tax tables",
+                "Future integration of net after withholding tax by canton"
+            ],
+            "status": "official"
+        }
+    ],
+    "notes": [
+        "The first Swiss prototype separates national social contributions from canton-level fiscal parameters.",
+        "Withholding-tax integration will be implemented in a second step using official cantonal files.",
+        "The module uses benchmark assumptions for occupational pension and accident insurance because actual employer schemes vary."
+    ]
+}
