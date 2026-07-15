@@ -742,6 +742,7 @@
                             <button class="active" type="button" role="tab" aria-selected="true" onclick="setCountry('fr', this)">France</button>
                             <button type="button" role="tab" aria-selected="false" onclick="setCountry('de', this)">Germany</button>
                             <button type="button" role="tab" aria-selected="false" onclick="setCountry('be', this)">Belgium</button>
+    			    <button type="button" role="tab" aria-selected="false" onclick="setCountry('ch', this)">Switzerland</button>
                         </div>
                     </div>
 
@@ -872,6 +873,34 @@
                     </div>
                     <div class="mod-net">
                         <b>40</b>
+                        <span data-i18n="module.netshare">net / 100</span>
+                        <span class="mod-go" data-i18n="module.open">Ouvrir →</span>
+                    </div>
+                </a>
+                <a class="mod" href="./countries/switzerland/index.html">
+                    <div>
+                        <div class="mod-name">Switzerland</div>
+                        <div class="mod-tags">
+                            <span class="tag live" data-i18n="status.available">Disponible</span>
+                            <span class="tag" data-i18n="status.prototype">Prototype</span>
+                            <span class="tag">26 cantons</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="mod-desc" data-i18n="module.switzerland.text">
+                            Prototype social 2026 : AVS / AI / APG, assurance chômage,
+                            LPP standardisée, assurance accident et préparation cantonale
+                            pour les 26 cantons suisses.
+                        </p>
+                        <div class="minibar" aria-hidden="true">
+                                <span class="m-emp" style="width:9%"></span>
+    				<span class="m-sal" style="width:9%"></span>
+    				<span class="m-tax" style="width:5%"></span>
+    				<span class="m-net" style="width:77%"></span>
+                        </div>
+                    </div>
+                    <div class="mod-net">
+                        <b>77</b>
                         <span data-i18n="module.netshare">net / 100</span>
                         <span class="mod-go" data-i18n="module.open">Ouvrir →</span>
                     </div>
@@ -1050,6 +1079,7 @@
                 "module.france.text": "Module complet : coût employeur, salaire net, allègements généraux, RGDU et rendement marginal du salaire brut.",
                 "module.germany.text": "Prototype réglementaire : cotisations sociales, coût employeur et salaire net avant impôt sur le revenu.",
                 "module.belgium.text": "Module socio-fiscal 2026 : cotisations ONSS, réduction structurelle employeur et précompte professionnel.",
+		"module.switzerland.text": "Module socio-fiscal 2026 : AVS / AI / APG, assurance chômage, LPP standardisée, assurance accident et impôt à la source canton par canton.",
                 "module.open": "Ouvrir →",
                 "module.netshare": "net / 100",
                 "status.available": "Disponible",
@@ -1082,7 +1112,7 @@
                 "data.block4.title": "Code ouvert",
                 "data.block4.text": "Scripts de construction des jeux de données et interface web reproductible.",
                 "side.status.modules.label": "Modules accessibles",
-                "side.status.modules.value": "France · Allemagne · Belgique",
+		"side.status.modules.value": "France · Allemagne · Belgique · Suisse",
                 "side.status.year.label": "Année réglementaire",
                 "side.status.output.label": "Sorties principales",
                 "side.status.output.value": "coût employeur · net · coins socio-fiscaux",
@@ -1111,6 +1141,7 @@
                 "module.france.text": "Full module: employer cost, net wage, general contribution relief, RGDU, and marginal returns to gross wages.",
                 "module.germany.text": "Regulatory prototype: social contributions, employer cost, and net wage before income tax.",
                 "module.belgium.text": "2026 socio-fiscal module: ONSS contributions, the employer structural reduction, and professional withholding tax.",
+		"module.switzerland.text": "2026 socio-fiscal module: OASI / DI / EO, unemployment insurance, standardized occupational pension, accident insurance, and canton-level withholding tax.",
                 "module.open": "Open →",
                 "module.netshare": "net / 100",
                 "status.available": "Available",
@@ -1143,7 +1174,7 @@
                 "data.block4.title": "Open code",
                 "data.block4.text": "Dataset-building scripts and a reproducible hosted web interface.",
                 "side.status.modules.label": "Available modules",
-                "side.status.modules.value": "France · Germany · Belgium",
+		"side.status.modules.value": "France · Germany · Belgium · Switzerland",
                 "side.status.year.label": "Regulatory year",
                 "side.status.output.label": "Main outputs",
                 "side.status.output.value": "employer cost · net · socio-fiscal wedges",
@@ -1180,6 +1211,12 @@
                 sal: { v: 15, fr: "Cotisations ONSS travailleur", en: "Employee NSSO contributions" },
                 tax: { v: 23, fr: "Précompte professionnel", en: "Professional withholding tax" },
                 net: { v: 40, fr: "Salaire net", en: "Net wage" }
+            },
+            ch: {
+                    emp: { v: 9, fr: "Cotisations employeur, LPP et accident", en: "Employer contributions, pension and accident insurance" },
+    		    sal: { v: 9, fr: "Cotisations salarié, LPP et accident", en: "Employee contributions, pension and accident insurance" },
+    		    tax: { v: 5, fr: "Impôt à la source", en: "Withholding tax" },
+    		    net: { v: 77, fr: "Salaire net après impôt", en: "Net wage after tax" }
             }
         };
 
