@@ -10,10 +10,11 @@ Version 1:
 - national social contributions
 - standardized LPP/BVG
 - standardized accident insurance
-- no withholding tax yet
+- official 2026 withholding-tax tariff A0
+- canton-level net after withholding tax
 
-The canton dimension is already included so that canton-level withholding
-tax can be added in the next step without changing the dataset structure.
+The canton dimension is included so that the module can compare the same
+gross wage across cantons after social contributions and withholding tax.
 """
 
 from __future__ import annotations
@@ -26,6 +27,12 @@ from typing import Any, Dict, List
 from swiss_social_contributions_2026 import (
     SwissSocialParameters,
     compute_swiss_social_contributions,
+)
+
+from swiss_withholding_tax_2026 import (
+    compute_withholding_tax_monthly,
+    get_withholding_tax_rate_percent,
+    load_withholding_tax_brackets,
 )
 
 
@@ -101,6 +108,7 @@ def build_dataset() -> List[Dict[str, Any]]:
     """Build the Swiss canton-level labour cost dataset."""
     parameters = load_parameters()
     social_params = build_social_parameters(parameters)
+    withholding_tax_brackets = load_withholding_tax_brackets()
 
     cantons = parameters["cantons"]
     gross_wages = generate_gross_wage_grid(parameters)
@@ -114,8 +122,22 @@ def build_dataset() -> List[Dict[str, Any]]:
                 social_params,
             )
 
-            withholding_tax_monthly_chf = 0.0
-            net_after_tax_monthly_chf = social["net_before_tax_monthly_chf"]
+            withholding_tax_monthly_chf = compute_withholding_tax_monthly(
+                gross_monthly_chf,
+                canton["code"],
+                withholding_tax_brackets,
+            )
+
+            withholding_tax_rate_percent = get_withholding_tax_rate_percent(
+                gross_monthly_chf,
+                canton["code"],
+                withholding_tax_brackets,
+            )
+
+            net_after_tax_monthly_chf = (
+                social["net_before_tax_monthly_chf"]
+                - withholding_tax_monthly_chf
+            )
 
             total_wedge_after_tax_monthly_chf = (
                 social["employer_cost_monthly_chf"]
@@ -157,6 +179,10 @@ def build_dataset() -> List[Dict[str, Any]]:
 
                 "net_before_tax_monthly_chf": social["net_before_tax_monthly_chf"],
                 "withholding_tax_monthly_chf": round(withholding_tax_monthly_chf, 2),
+                "withholding_tax_rate_percent": round(
+                    withholding_tax_rate_percent,
+                    4,
+                ),
                 "net_after_tax_monthly_chf": round(net_after_tax_monthly_chf, 2),
 
                 "employer_cost_monthly_chf": social["employer_cost_monthly_chf"],
@@ -175,7 +201,7 @@ def build_dataset() -> List[Dict[str, Any]]:
                     8,
                 ),
 
-                "withholding_tax_status": "not_integrated_yet",
+                "withholding_tax_status": "official_2026_tariff_A0",
                 "profile_id": (
                     "switzerland__"
                     + canton["code"].lower()
@@ -269,6 +295,11 @@ def run_quality_checks(rows: List[Dict[str, Any]]) -> None:
 
     print()
     print("Sample")
+    print(
+        "canton gross net_before_tax withholding_tax "
+        "withholding_rate net_after_tax employer_cost cost_to_net_after_tax"
+    )
+
     for target_canton in ["ZH", "GE", "VD"]:
         sample_rows = [
             row for row in rows
@@ -281,8 +312,11 @@ def run_quality_checks(rows: List[Dict[str, Any]]) -> None:
                 row["canton_code"],
                 row["gross_monthly_chf"],
                 row["net_before_tax_monthly_chf"],
+                row["withholding_tax_monthly_chf"],
+                row["withholding_tax_rate_percent"],
+                row["net_after_tax_monthly_chf"],
                 row["employer_cost_monthly_chf"],
-                row["cost_to_net_before_tax_ratio"],
+                row["cost_to_net_after_tax_ratio"],
             )
 
 
