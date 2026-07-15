@@ -53,8 +53,10 @@ function toggleTheme() {
 const SWITZERLAND_COLORS = {
     gross: "#2563eb",
     net: "#16a34a",
+    netBeforeTax: "#22c55e",
     employer: "#dc2626",
     employee: "#9333ea",
+    tax: "#7c2d12",
     wedge: "#f97316",
     lpp: "#0891b2",
     accident: "#64748b",
@@ -86,6 +88,17 @@ function chf(value) {
 
 function pct(value) {
     return (chNum(value) * 100).toLocaleString(
+        "fr-FR",
+        {
+            minimumFractionDigits: 1,
+            maximumFractionDigits: 1
+        }
+    ) + " %";
+}
+
+
+function pctDirect(value) {
+    return chNum(value).toLocaleString(
         "fr-FR",
         {
             minimumFractionDigits: 1,
@@ -185,6 +198,8 @@ function populateCantonSelects() {
             return;
         }
 
+        const currentValue = select.value;
+
         select.innerHTML = "";
 
         cantons.forEach(canton => {
@@ -199,7 +214,10 @@ function populateCantonSelects() {
                 + canton.municipality
             );
 
-            if (canton.code === "ZH") {
+            if (
+                canton.code === currentValue
+                || (!currentValue && canton.code === "ZH")
+            ) {
                 option.selected = true;
             }
 
@@ -335,13 +353,28 @@ function renderSwitzerlandMetrics() {
     );
 
     setTextContent(
+        "metric-switzerland-net-after-tax",
+        chf(referenceRow.net_after_tax_monthly_chf) + " CHF"
+    );
+
+    setTextContent(
+        "metric-switzerland-withholding-tax",
+        chf(referenceRow.withholding_tax_monthly_chf) + " CHF"
+    );
+
+    setTextContent(
+        "metric-switzerland-withholding-tax-rate",
+        pctDirect(referenceRow.withholding_tax_rate_percent)
+    );
+
+    setTextContent(
         "metric-switzerland-employer-cost",
         chf(referenceRow.employer_cost_monthly_chf) + " CHF"
     );
 
     setTextContent(
         "metric-switzerland-cost-to-net",
-        chNum(referenceRow.cost_to_net_before_tax_ratio)
+        chNum(referenceRow.cost_to_net_after_tax_ratio)
             .toFixed(2)
             .replace(".", ",")
     );
@@ -364,7 +397,10 @@ function renderSwitzerlandWaterfallChart() {
     }
 
     const gross = chNum(row.gross_monthly_chf);
+    const netAfterTax = chNum(row.net_after_tax_monthly_chf);
     const netBeforeTax = chNum(row.net_before_tax_monthly_chf);
+    const withholdingTax = chNum(row.withholding_tax_monthly_chf);
+    const withholdingTaxRate = chNum(row.withholding_tax_rate_percent);
 
     const employeeAhv = chNum(row.employee_ahv_iv_eo_monthly_chf);
     const employeeUnemployment = chNum(row.employee_unemployment_monthly_chf);
@@ -376,7 +412,6 @@ function renderSwitzerlandWaterfallChart() {
     const employerLpp = chNum(row.employer_lpp_monthly_chf);
     const employerAccident = chNum(row.employer_accident_monthly_chf);
 
-    const employeeTotal = chNum(row.employee_total_contrib_monthly_chf);
     const employerCost = chNum(row.employer_cost_monthly_chf);
 
     setTextContent(
@@ -390,10 +425,15 @@ function renderSwitzerlandWaterfallChart() {
         "switzerland-waterfall-subtitle",
         "Canton "
         + cantonCode
-        + " · prototype social avant impôt. "
-        + "Le salaire net avant impôt est de "
-        + chf(netBeforeTax)
-        + " CHF pour un coût employeur de "
+        + " · tarif d’impôt à la source A0. "
+        + "Le salaire net après impôt est de "
+        + chf(netAfterTax)
+        + " CHF, dont "
+        + chf(withholdingTax)
+        + " CHF d’impôt à la source "
+        + "("
+        + pctDirect(withholdingTaxRate)
+        + "), pour un coût employeur de "
         + chf(employerCost)
         + " CHF."
     );
@@ -404,6 +444,8 @@ function renderSwitzerlandWaterfallChart() {
             orientation: "v",
             measure: [
                 "absolute",
+                "relative",
+                "total",
                 "relative",
                 "relative",
                 "relative",
@@ -416,6 +458,8 @@ function renderSwitzerlandWaterfallChart() {
                 "total"
             ],
             x: [
+                "Net après impôt",
+                "Impôt à la source",
                 "Net avant impôt",
                 "AVS / AI / APG salarié",
                 "Chômage salarié",
@@ -429,6 +473,8 @@ function renderSwitzerlandWaterfallChart() {
                 "Coût employeur"
             ],
             y: [
+                netAfterTax,
+                withholdingTax,
                 netBeforeTax,
                 employeeAhv,
                 employeeUnemployment,
@@ -442,6 +488,8 @@ function renderSwitzerlandWaterfallChart() {
                 employerCost
             ],
             text: [
+                chf(netAfterTax) + " CHF",
+                "+" + chf(withholdingTax) + " CHF",
                 chf(netBeforeTax) + " CHF",
                 "+" + chf(employeeAhv) + " CHF",
                 "+" + chf(employeeUnemployment) + " CHF",
@@ -502,7 +550,7 @@ function renderSwitzerlandWaterfallChart() {
         l: 82,
         r: 28,
         t: 34,
-        b: 135
+        b: 150
     };
 
     switzerlandPlot(
@@ -522,13 +570,28 @@ function renderSwitzerlandCostChart() {
     const traces = [
         {
             x: x,
+            y: data.map(row => chNum(row.net_after_tax_monthly_chf)),
+            type: "scatter",
+            mode: "lines",
+            name: "Net après impôt",
+            line: {
+                color: SWITZERLAND_COLORS.net,
+                width: 3
+            },
+            hovertemplate:
+                "%{x:,.0f} CHF bruts<br>" +
+                "Net après impôt : %{y:,.0f} CHF<extra></extra>"
+        },
+        {
+            x: x,
             y: data.map(row => chNum(row.net_before_tax_monthly_chf)),
             type: "scatter",
             mode: "lines",
             name: "Net avant impôt",
             line: {
-                color: SWITZERLAND_COLORS.net,
-                width: 3
+                color: SWITZERLAND_COLORS.netBeforeTax,
+                width: 2,
+                dash: "dash"
             },
             hovertemplate:
                 "%{x:,.0f} CHF bruts<br>" +
@@ -610,13 +673,27 @@ function renderSwitzerlandRateChart() {
             hovertemplate:
                 "%{x:,.0f} CHF bruts<br>" +
                 "Taux employeur : %{y:.1f} %<extra></extra>"
+        },
+        {
+            x: x,
+            y: data.map(row => chNum(row.withholding_tax_rate_percent)),
+            type: "scatter",
+            mode: "lines",
+            name: "Impôt à la source",
+            line: {
+                color: SWITZERLAND_COLORS.tax,
+                width: 3
+            },
+            hovertemplate:
+                "%{x:,.0f} CHF bruts<br>" +
+                "Impôt à la source : %{y:.1f} %<extra></extra>"
         }
     ];
 
     const layout = switzerlandBaseLayout("Taux effectif");
 
     layout.yaxis.ticksuffix = "%";
-    layout.yaxis.range = [0, 22];
+    layout.yaxis.range = [0, 30];
 
     switzerlandPlot(
         "chart-switzerland-rates",
@@ -680,10 +757,22 @@ function renderSwitzerlandEmployeeComponentsChart() {
                 color: SWITZERLAND_COLORS.accident,
                 width: 1
             }
+        },
+        {
+            x: x,
+            y: data.map(row => chNum(row.withholding_tax_monthly_chf)),
+            type: "scatter",
+            mode: "lines",
+            name: "Impôt à la source",
+            stackgroup: "one",
+            line: {
+                color: SWITZERLAND_COLORS.tax,
+                width: 1
+            }
         }
     ];
 
-    const layout = switzerlandBaseLayout("Cotisations salarié, CHF");
+    const layout = switzerlandBaseLayout("Prélèvements salarié et impôt, CHF");
 
     layout.yaxis.ticksuffix = " CHF";
 
@@ -787,10 +876,24 @@ function renderSwitzerlandWedgeChart() {
         },
         {
             x: x,
-            y: data.map(row => chNum(row.social_wedge_rate_employer_cost) * 100),
+            y: data.map(row => chNum(row.total_wedge_after_tax_monthly_chf)),
             type: "scatter",
             mode: "lines",
-            name: "Coin social / coût employeur",
+            name: "Coin total après impôt",
+            line: {
+                color: SWITZERLAND_COLORS.tax,
+                width: 3
+            },
+            hovertemplate:
+                "%{x:,.0f} CHF bruts<br>" +
+                "Coin total après impôt : %{y:,.0f} CHF<extra></extra>"
+        },
+        {
+            x: x,
+            y: data.map(row => chNum(row.cost_to_net_after_tax_ratio)),
+            type: "scatter",
+            mode: "lines",
+            name: "Coût / net après impôt",
             yaxis: "y2",
             line: {
                 color: SWITZERLAND_COLORS.total,
@@ -799,23 +902,22 @@ function renderSwitzerlandWedgeChart() {
             },
             hovertemplate:
                 "%{x:,.0f} CHF bruts<br>" +
-                "Part du coût employeur : %{y:.1f} %<extra></extra>"
+                "Coût / net après impôt : %{y:.2f}<extra></extra>"
         }
     ];
 
-    const layout = switzerlandBaseLayout("Coin social mensuel, CHF");
+    const layout = switzerlandBaseLayout("Coin mensuel, CHF");
 
     layout.yaxis.ticksuffix = " CHF";
 
     layout.yaxis2 = {
         title: {
-            text: "Part du coût employeur",
+            text: "Ratio coût / net après impôt",
             standoff: 16
         },
         overlaying: "y",
         side: "right",
-        range: [0, 30],
-        ticksuffix: "%",
+        range: [1.1, 2.4],
         zeroline: false,
         showgrid: false
     };
@@ -848,6 +950,7 @@ function renderSwitzerlandDataTable() {
             + firstRow.canton_name_fr
             + " · "
             + firstRow.reference_municipality
+            + " · tarif A0"
         );
     }
 
@@ -858,14 +961,15 @@ function renderSwitzerlandDataTable() {
 
         const cells = [
             chf(row.gross_monthly_chf) + " CHF",
+            chf(row.net_after_tax_monthly_chf) + " CHF",
+            chf(row.withholding_tax_monthly_chf) + " CHF",
+            pctDirect(row.withholding_tax_rate_percent),
             chf(row.net_before_tax_monthly_chf) + " CHF",
             chf(row.employer_cost_monthly_chf) + " CHF",
             chf(row.employee_total_contrib_monthly_chf) + " CHF",
             chf(row.employer_total_contrib_monthly_chf) + " CHF",
-            chf(row.social_wedge_monthly_chf) + " CHF",
-            pct(row.employee_contribution_rate),
-            pct(row.employer_contribution_rate),
-            chNum(row.cost_to_net_before_tax_ratio)
+            chf(row.total_wedge_after_tax_monthly_chf) + " CHF",
+            chNum(row.cost_to_net_after_tax_ratio)
                 .toFixed(2)
                 .replace(".", ",")
         ];

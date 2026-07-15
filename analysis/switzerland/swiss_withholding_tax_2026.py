@@ -17,19 +17,19 @@ The official files are fixed-width text files distributed in a ZIP archive.
 Important format notes:
 - the salary lower bound is encoded in CHF;
 - the interval width is encoded in cents;
-- the tax rate is encoded in hundredths of percent.
+- the fiscal payload is encoded in a 16-character field;
+- the tax rate is encoded in the last 4 digits of that fiscal payload,
+  in hundredths of percent.
 
-Example:
+Examples:
     0601VDA0N       20260101000495100000005000 0000000000000817
+    -> tax rate = 0817 = 8.17%
 
-means:
-    canton VD
-    tariff A0
-    no church tax
-    effective date 2026-01-01
-    salary bracket starting at 4,951 CHF
-    bracket width 50 CHF
-    tax rate 8.17%
+    0601ARA0N       20260101000115100000005000 0000000050000043
+    -> tax rate = 0043 = 0.43%
+
+This avoids misreading the full fiscal payload as a tax rate for cantons
+where the payload contains additional encoded information before the rate.
 """
 
 from __future__ import annotations
@@ -96,10 +96,12 @@ def parse_tariff_line(line: str) -> SwissWithholdingTaxBracket | None:
         16:24 effective date
         24:31 lower bound, in CHF
         31:42 interval width, in cents
-        43:59 tax rate, in hundredths of percent
+        43:59 fiscal payload
+        last 4 digits of fiscal payload: tax rate, in hundredths of percent
 
-    The tax rate is encoded so that:
-        0000000000000817 = 8.17%
+    The tax rate is encoded in the last four digits of the fiscal payload:
+        0000000000000817 -> 0817 = 8.17%
+        0000000050000043 -> 0043 = 0.43%
     """
 
     if not line.startswith("0601"):
@@ -115,11 +117,14 @@ def parse_tariff_line(line: str) -> SwissWithholdingTaxBracket | None:
 
     lower_bound_raw = line[24:31]
     interval_width_raw = line[31:42]
-    tax_rate_raw = line[43:59]
+
+    fiscal_payload_raw = line[43:59]
+    tax_rate_raw = fiscal_payload_raw[-4:]
 
     if not (
         lower_bound_raw.strip().isdigit()
         and interval_width_raw.strip().isdigit()
+        and fiscal_payload_raw.strip().isdigit()
         and tax_rate_raw.strip().isdigit()
     ):
         return None
@@ -295,7 +300,7 @@ def run_self_test() -> None:
     print("Cantons:", len(brackets_by_canton))
     print("Canton codes:", ", ".join(sorted(brackets_by_canton.keys())))
 
-    for canton_code in ["ZH", "GE", "VD"]:
+    for canton_code in ["AR", "ZH", "GE", "VD"]:
         brackets = brackets_by_canton.get(canton_code, [])
 
         print()
