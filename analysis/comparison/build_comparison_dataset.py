@@ -25,15 +25,23 @@ wage grid, the PPP factors (source, year, indicator code), the reference
 profile chosen for each country, and the Swiss canton population weights
 (source, year).
 
-Important limitation (see comparison_parameters_2026.json "notes"):
-France's net wage is net of social contributions only. Personal income tax
-(prelevement a la source) is not modeled because its rate depends on the
-household's personal tax situation, unlike Germany's Lohnsteuer, Belgium's
-precompte professionnel and Switzerland's impot a la source, which are all
-mandatory wage withholdings computed directly from the wage. Comparisons of
-"net after income tax" therefore exclude France; comparisons of "net before
-income tax" (net of social contributions only) are valid across all 4
-countries.
+Important note on France's income tax (see comparison_parameters_2026.json
+"notes"):
+France's "net after income tax" figure is the actual tax due by a single,
+childless reference taxpayer (1 part de quotient familial), computed via
+the true progressive income-tax bareme (marginal brackets) applied to the
+Mon-entreprise engine's "salarie . remuneration . net . imposable" tax base,
+annualized and reduced by the standard 10% deduction for professional
+expenses (see scripts/build_dataset_mon_entreprise.py:
+compute_progressive_income_tax). This is directly analogous to Germany's
+Lohnsteuer, Belgium's precompte professionnel and Switzerland's impot a la
+source: the actual mandatory tax liability for a single/childless reference
+profile, not an administrative withholding default. Note that most French
+employees are withheld at a personalized "prelevement a la source" rate
+set by the DGFiP from their full household's tax situation (which can
+differ from a single/childless taxpayer's liability), but the amount
+withheld is only an advance on the tax computed here, which is the amount
+definitively due.
 """
 
 from __future__ import annotations
@@ -175,6 +183,8 @@ def compute_france_row(
     employer_cost = indicators["employer_cost"]
     employee_contributions = indicators["employee_contributions"]
     employer_contributions = indicators["employer_contributions"]
+    income_tax = indicators["income_tax_monthly"]
+    net_after_income_tax = indicators["net_after_income_tax_monthly"]
 
     social_wedge_before_income_tax_rate = None
     if employer_cost and net_before_income_tax is not None:
@@ -182,9 +192,19 @@ def compute_france_row(
             (employer_cost - net_before_income_tax) / employer_cost
         )
 
+    total_wedge_after_income_tax_rate = None
+    if employer_cost and net_after_income_tax is not None:
+        total_wedge_after_income_tax_rate = (
+            (employer_cost - net_after_income_tax) / employer_cost
+        )
+
     cost_to_net_before_income_tax_ratio = None
     if net_before_income_tax:
         cost_to_net_before_income_tax_ratio = employer_cost / net_before_income_tax
+
+    cost_to_net_after_income_tax_ratio = None
+    if net_after_income_tax:
+        cost_to_net_after_income_tax_ratio = employer_cost / net_after_income_tax
 
     row = base_row(
         country="France",
@@ -193,7 +213,9 @@ def compute_france_row(
         reference_profile_id=profile_id,
         reference_profile_description=(
             "Non-executive employee, outside Alsace-Moselle, firm with "
-            "fewer than 50 employees, standard AT/MP rate, full-time."
+            "fewer than 50 employees, standard AT/MP rate, full-time. "
+            "Income tax: single, childless taxpayer (1 part), progressive "
+            "bareme."
         ),
         harmonized_wage_point_intl_usd=wage_point_intl_usd,
         ppp_factor=ppp_factor,
@@ -209,10 +231,10 @@ def compute_france_row(
             "employer_contributions_monthly_intl_usd": round_money(employer_contributions / ppp_factor),
             "net_before_income_tax_monthly_local": round_money(net_before_income_tax),
             "net_before_income_tax_monthly_intl_usd": round_money(net_before_income_tax / ppp_factor),
-            "income_tax_or_withholding_tax_monthly_local": None,
-            "income_tax_or_withholding_tax_monthly_intl_usd": None,
-            "net_after_income_tax_monthly_local": None,
-            "net_after_income_tax_monthly_intl_usd": None,
+            "income_tax_or_withholding_tax_monthly_local": round_money(income_tax),
+            "income_tax_or_withholding_tax_monthly_intl_usd": round_money(income_tax / ppp_factor),
+            "net_after_income_tax_monthly_local": round_money(net_after_income_tax),
+            "net_after_income_tax_monthly_intl_usd": round_money(net_after_income_tax / ppp_factor),
             "employer_cost_monthly_local": round_money(employer_cost),
             "employer_cost_monthly_intl_usd": round_money(employer_cost / ppp_factor),
             "social_wedge_before_income_tax_rate": (
@@ -220,21 +242,32 @@ def compute_france_row(
                 if social_wedge_before_income_tax_rate is not None
                 else None
             ),
-            "total_wedge_after_income_tax_rate": None,
+            "total_wedge_after_income_tax_rate": (
+                round(total_wedge_after_income_tax_rate, 6)
+                if total_wedge_after_income_tax_rate is not None
+                else None
+            ),
             "cost_to_net_before_income_tax_ratio": (
                 round(cost_to_net_before_income_tax_ratio, 6)
                 if cost_to_net_before_income_tax_ratio is not None
                 else None
             ),
-            "cost_to_net_after_income_tax_ratio": None,
-            "income_tax_modeled": False,
+            "cost_to_net_after_income_tax_ratio": (
+                round(cost_to_net_after_income_tax_ratio, 6)
+                if cost_to_net_after_income_tax_ratio is not None
+                else None
+            ),
+            "income_tax_modeled": True,
             "aggregation_method": "single_reference_profile",
             "below_minimum_wage": bool(gross_used < minimum_wage_monthly_eur),
             "national_minimum_wage_monthly_local": round_money(minimum_wage_monthly_eur),
             "note": (
-                "Personal income tax (prelevement a la source) is not modeled: "
-                "its rate depends on the household's personal tax situation and "
-                "cannot be derived from a generic wage-only simulation."
+                "Income tax shown is the actual tax due by a single, "
+                "childless reference taxpayer (1 part de quotient "
+                "familial), computed via the true progressive income-tax "
+                "bareme (marginal brackets) on the annualized net-taxable "
+                "salary after the standard 10% deduction; see methodology "
+                "notes."
             ),
         }
     )

@@ -16,6 +16,103 @@ PARTS_DIR = DATA_DIR / "parts"
 
 LOCAL_EVALUATOR_PATH = BASE_DIR / "scripts" / "evaluate_mon_entreprise_local.mjs"
 
+INCOME_TAX_PARAMETERS_PATH = (
+    BASE_DIR / "docs" / "data" / "france" / "france_income_tax_2026.json"
+)
+
+_INCOME_TAX_PARAMETERS_CACHE = None
+
+
+def load_income_tax_parameters():
+    """
+    Load and cache the full France income-tax parameter file. See
+    docs/data/france/france_income_tax_2026.json for the full methodology
+    notes and sources.
+    """
+    global _INCOME_TAX_PARAMETERS_CACHE
+
+    if _INCOME_TAX_PARAMETERS_CACHE is None:
+        with open(INCOME_TAX_PARAMETERS_PATH, "r", encoding="utf-8") as file:
+            _INCOME_TAX_PARAMETERS_CACHE = json.load(file)
+
+    return _INCOME_TAX_PARAMETERS_CACHE
+
+
+def compute_progressive_income_tax(net_imposable_monthly):
+    """
+    Compute the actual income tax owed by a single, childless reference
+    taxpayer (1 part de quotient familial), using the true progressive /
+    marginal-bracket barème de l'impot sur le revenu -- consistent with the
+    "single, no children" reference profiles already used for Germany and
+    Switzerland, and with the OECD "Taxing Wages" methodology cited by this
+    project's comparison module.
+
+    This replaces the earlier "taux neutre" approach (see
+    neutral_rate_grid_metropole in france_income_tax_2026.json, now kept for
+    documentation only): the taux neutre is a flat, non-personalized
+    withholding default that does not represent any specific taxpayer's
+    actual liability, whereas this function computes the real annual tax
+    due by a single/childless filer on their net-taxable salary.
+
+    Steps:
+      1. Annualize the monthly "net imposable" base (x12) -- this
+         corresponds to the gross salary income declared to the tax
+         authorities (case 1AJ), before the standard deduction.
+      2. Apply the 10% abattement forfaitaire for professional expenses,
+         bounded by its floor and ceiling.
+      3. Apply the progressive brackets marginally to the resulting taxable
+         income to get the annual tax due.
+      4. Divide by 12 to get a monthly-equivalent tax amount.
+
+    Note: "net imposable" (the tax base) is larger than "net social" / take
+    home pay before income tax, because it adds back non-deductible
+    CSG-CRDS and prevoyance contributions that are otherwise already
+    subtracted from gross pay. The computed tax is levied in cash from the
+    employee's net pay, not from the (larger, notional) tax base -- so
+    callers should subtract the returned tax amount from "net before income
+    tax" (net social), not from "net imposable", to get actual take-home
+    pay after income tax.
+
+    Returns (effective_rate, income_tax_monthly), where effective_rate is
+    the ratio of annual tax due to the annualized "net imposable" salary
+    (before the standard deduction).
+    """
+    if net_imposable_monthly is None:
+        return None, None
+
+    parameters = load_income_tax_parameters()
+    scale = parameters["progressive_income_tax_scale_2026"]
+    deduction_params = scale["standard_deduction"]
+    brackets = scale["brackets"]
+
+    annual_net_imposable = net_imposable_monthly * 12
+
+    deduction = annual_net_imposable * deduction_params["rate"]
+    deduction = max(deduction, deduction_params["floor_eur"])
+    deduction = min(deduction, deduction_params["ceiling_eur"])
+    deduction = min(deduction, annual_net_imposable)
+
+    taxable_annual = max(annual_net_imposable - deduction, 0.0)
+
+    annual_tax = 0.0
+    for bracket in brackets:
+        lower_bound = bracket["lower_bound_eur"]
+        upper_bound = bracket["upper_bound_eur"]
+
+        if taxable_annual <= lower_bound:
+            break
+
+        segment_upper = taxable_annual if upper_bound is None else min(taxable_annual, upper_bound)
+        annual_tax += (segment_upper - lower_bound) * bracket["rate"]
+
+    income_tax_monthly = annual_tax / 12
+
+    effective_rate = None
+    if annual_net_imposable:
+        effective_rate = annual_tax / annual_net_imposable
+
+    return effective_rate, income_tax_monthly
+
 
 BASE_EXPRESSIONS = [
     "salarié . contrat . salaire brut",
@@ -44,6 +141,9 @@ BASE_EXPRESSIONS = [
     "salarié . cotisations . formation professionnelle",
     "salarié . cotisations . taxe d'apprentissage",
     "salarié . cotisations . contribution au dialogue social",
+
+    # Income-tax base (used for the progressive income-tax calculation)
+    "salarié . rémunération . net . imposable",
 ]
 
 
@@ -330,8 +430,10 @@ def compute_indicators(result, gross_monthly, rgdu_expression=None):
     employer_apprenticeship_tax = extract_value(result, 19)
     employer_social_dialogue = extract_value(result, 20)
 
+    net_imposable = extract_value(result, 21)
+
     if rgdu_expression:
-        rgdu_monthly = extract_value(result, 21)
+        rgdu_monthly = extract_value(result, 22)
     else:
         rgdu_monthly = 0.0
 
@@ -412,10 +514,22 @@ def compute_indicators(result, gross_monthly, rgdu_expression=None):
     if employer_contributions_before_relief is not None:
         employer_other = employer_contributions_before_relief - employer_identified
 
+    income_tax_effective_rate, income_tax_monthly = compute_progressive_income_tax(
+        net_imposable
+    )
+
+    net_after_income_tax_monthly = None
+    if net_monthly is not None and income_tax_monthly is not None:
+        net_after_income_tax_monthly = net_monthly - income_tax_monthly
+
     return {
         "gross_used": gross_used,
         "net_monthly": net_monthly,
         "employer_cost": employer_cost,
+        "net_imposable": net_imposable,
+        "income_tax_effective_rate": income_tax_effective_rate,
+        "income_tax_monthly": income_tax_monthly,
+        "net_after_income_tax_monthly": net_after_income_tax_monthly,
         "total_contributions_api": total_contributions_api,
         "employer_contributions_api": employer_contributions_api,
         "employee_contributions_api": employee_contributions_api,
@@ -509,6 +623,11 @@ def make_success_row(
         "social_wedge_rate": safe_round(indicators["social_wedge_rate"], 4),
         "cost_to_net_ratio": safe_round(indicators["cost_to_net_ratio"], 4),
 
+        "net_imposable_monthly_eur": safe_round(indicators["net_imposable"], 2),
+        "income_tax_effective_rate": safe_round(indicators["income_tax_effective_rate"], 4),
+        "income_tax_monthly_eur": safe_round(indicators["income_tax_monthly"], 2),
+        "net_after_income_tax_monthly_eur": safe_round(indicators["net_after_income_tax_monthly"], 2),
+
         "rgdu_monthly_eur": safe_round(indicators["rgdu_monthly"], 2),
         "rgdu_rate_gross": safe_round(indicators["rgdu_rate_gross"], 4),
         "rgdu_rate_employer_cost": safe_round(indicators["rgdu_rate_employer_cost"], 4),
@@ -575,6 +694,11 @@ def make_error_row(
         "employer_contribution_rate": None,
         "social_wedge_rate": None,
         "cost_to_net_ratio": None,
+
+        "net_imposable_monthly_eur": None,
+        "income_tax_effective_rate": None,
+        "income_tax_monthly_eur": None,
+        "net_after_income_tax_monthly_eur": None,
 
         "rgdu_monthly_eur": None,
         "employee_csg_crds_monthly_eur": None,

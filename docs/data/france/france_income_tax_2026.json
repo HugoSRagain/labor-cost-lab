@@ -1,0 +1,115 @@
+{
+    "country": "France",
+    "country_code": "FR",
+    "module_name": "France - Impôt sur le revenu (barème progressif, salarié·e célibataire sans enfant)",
+    "version": "2026-01",
+    "effective_from": "2026-01-01",
+    "currency": "EUR",
+    "status": "active",
+    "description": "Estimation de l'impôt sur le revenu pour un salarié célibataire sans enfant (1 part de quotient familial), calculée via le barème progressif officiel applicable aux revenus 2025 (imposition 2026), appliqué au salaire net imposable annualisé après abattement forfaitaire de 10 % pour frais professionnels. La grille du taux neutre du prélèvement à la source (mécanisme de retenue mensuelle) est conservée ci-dessous à titre de documentation, mais n'est plus utilisée comme méthode de calcul pour la comparaison inter-pays.",
+
+    "methodology_note": [
+        "Méthode principale retenue pour ce module : le calcul de l'impôt réellement dû par un salarié célibataire sans enfant (1 part), via le barème progressif par tranches marginales de l'impôt sur le revenu, cohérent avec la logique 'profil de référence' déjà appliquée aux modules Allemagne (célibataire, sans enfant) et Suisse (célibataire, sans enfant, barème A0N), et avec la méthodologie OCDE 'Taxing Wages' explicitement citée dans ce module de comparaison.",
+        "Ce choix remplace l'approche initiale fondée sur le 'taux neutre' du prélèvement à la source (voir 'neutral_rate_grid_metropole' ci-dessous) : le taux neutre est un taux par défaut, non calibré sur la situation d'un contribuable donné, appliqué de façon uniforme (taux unique sur la totalité de la base, par palier) à tout salarié sans taux personnalisé transmis par la DGFiP. Il ne représente l'impôt réellement dû par aucun profil de contribuable en particulier, ce qui le rend impropre à une comparaison internationale par profil de référence.",
+        "Le barème progressif, à l'inverse, calcule l'impôt réellement dû par un célibataire sans enfant sur son revenu imposable annuel, tranche par tranche (taux marginal), exactement comme un salarié rempli sa déclaration de revenus -- rendant le résultat directement comparable aux retenues obligatoires réelles (Lohnsteuer allemande, précompte professionnel belge, impôt à la source suisse) déjà utilisées pour les 3 autres pays.",
+        "Le prélèvement à la source (PAS, taux neutre ou taux personnalisé) reste le mécanisme réel de perception mensuelle de l'impôt en France, mais il ne constitue qu'une avance : le montant définitivement dû est le résultat du calcul par barème progressif présenté ici, régularisé l'année suivante lors de la déclaration de revenus. Utiliser directement ce montant définitif (plutôt que le taux neutre, qui n'est qu'un acompte par défaut) est donc plus représentatif de la charge fiscale réelle d'un salarié célibataire sans enfant."
+    ],
+
+    "tax_base": {
+        "label_fr": "Salaire net imposable",
+        "definition": "Base 'salarié . rémunération . net . imposable' du moteur Mon-entreprise/Publicodes : net social + CSG-CRDS non déductible + cotisations de prévoyance employeur + cotisations de prévoyance salarié non déductibles, moins les abattements de paie (frais professionnels déductibles spécifiques, exonération stagiaires/apprentis, exonération prime d'impatriation, heures supplémentaires défiscalisées). C'est ce montant annualisé (x12) qui correspond au revenu brut déclaré ('traitements et salaires', case 1AJ) avant application de l'abattement forfaitaire de 10 % pour frais professionnels dans le calcul de l'impôt sur le revenu."
+    },
+
+    "progressive_income_tax_scale_2026": {
+        "applicable_to": "Revenus perçus en 2025, imposition 2026 (loi de finances 2026)",
+        "quotient_familial_parts": 1,
+        "household_type": "Célibataire, sans personne à charge (1 part de quotient familial)",
+        "taxable_base_definition": "Revenu net imposable annuel (salaire net imposable annualisé) diminué de l'abattement forfaitaire de 10 % pour frais professionnels",
+
+        "standard_deduction": {
+            "label_fr": "Abattement forfaitaire de 10 % pour frais professionnels",
+            "rate": 0.10,
+            "floor_eur": 509,
+            "ceiling_eur": 14555,
+            "applicable_year": "Revenus 2025",
+            "note": "L'abattement est égal à 10 % du revenu net imposable annuel, sans pouvoir être inférieur au plancher ni supérieur au plafond (le plafond ne joue qu'au-delà d'environ 144 550 €/an de revenu net imposable, hors de la grille de salaires de ce module)."
+        },
+
+        "brackets": [
+            {"lower_bound_eur": 0,       "upper_bound_eur": 11600,  "rate": 0.00},
+            {"lower_bound_eur": 11600,   "upper_bound_eur": 29579,  "rate": 0.11},
+            {"lower_bound_eur": 29579,   "upper_bound_eur": 84577,  "rate": 0.30},
+            {"lower_bound_eur": 84577,   "upper_bound_eur": 181917, "rate": 0.41},
+            {"lower_bound_eur": 181917,  "upper_bound_eur": null,   "rate": 0.45}
+        ],
+
+        "calculation_note": "Calcul par tranches marginales : seule la fraction du revenu imposable comprise dans chaque tranche est taxée au taux de cette tranche (contrairement au taux neutre du prélèvement à la source, qui applique un taux unique à la totalité de la base). Le résultat annuel est ensuite ramené à un montant mensuel (division par 12) pour être comparable aux autres indicateurs du module.",
+
+        "validation_example": {
+            "description": "Exemple officiel (service-public.gouv.fr) : salarié célibataire, revenu net imposable annuel (après abattement de 10 %) de 30 000 €",
+            "taxable_annual_eur": 30000,
+            "expected_tax_annual_eur": 2103.99,
+            "expected_effective_rate_on_taxable": 0.0701,
+            "detail": "0 % jusqu'à 11 600 € ; (29 579 - 11 600) x 11 % = 1 977,69 € ; (30 000 - 29 579) x 30 % = 126,30 € ; total = 2 103,99 €"
+        }
+    },
+
+    "neutral_rate_grid_metropole": {
+        "status": "reference_only",
+        "note_status": "Cette grille n'est plus utilisée pour calculer l'indicateur 'net après impôt' de ce module (voir 'progressive_income_tax_scale_2026' ci-dessus) ; elle est conservée à titre de documentation sur le mécanisme réel de retenue mensuelle du prélèvement à la source.",
+        "unit": "EUR net imposable mensuel",
+        "rate_type": "flat_rate_on_full_base",
+        "note": "Le taux de la tranche atteinte s'applique à la totalité de la base, pas seulement à la fraction dépassant le seuil bas.",
+        "brackets": [
+            {"lower_bound_eur": 0,      "upper_bound_eur": 1635,   "rate": 0.000},
+            {"lower_bound_eur": 1635,   "upper_bound_eur": 1698,   "rate": 0.005},
+            {"lower_bound_eur": 1698,   "upper_bound_eur": 1807,   "rate": 0.013},
+            {"lower_bound_eur": 1807,   "upper_bound_eur": 1928,   "rate": 0.021},
+            {"lower_bound_eur": 1928,   "upper_bound_eur": 2060,   "rate": 0.029},
+            {"lower_bound_eur": 2060,   "upper_bound_eur": 2170,   "rate": 0.035},
+            {"lower_bound_eur": 2170,   "upper_bound_eur": 2315,   "rate": 0.041},
+            {"lower_bound_eur": 2315,   "upper_bound_eur": 2738,   "rate": 0.053},
+            {"lower_bound_eur": 2738,   "upper_bound_eur": 3135,   "rate": 0.075},
+            {"lower_bound_eur": 3135,   "upper_bound_eur": 3571,   "rate": 0.099},
+            {"lower_bound_eur": 3571,   "upper_bound_eur": 4019,   "rate": 0.119},
+            {"lower_bound_eur": 4019,   "upper_bound_eur": 4690,   "rate": 0.138},
+            {"lower_bound_eur": 4690,   "upper_bound_eur": 5624,   "rate": 0.158},
+            {"lower_bound_eur": 5624,   "upper_bound_eur": 7037,   "rate": 0.179},
+            {"lower_bound_eur": 7037,   "upper_bound_eur": 8789,   "rate": 0.200},
+            {"lower_bound_eur": 8789,   "upper_bound_eur": 12200,  "rate": 0.240},
+            {"lower_bound_eur": 12200,  "upper_bound_eur": 16523,  "rate": 0.280},
+            {"lower_bound_eur": 16523,  "upper_bound_eur": 25937,  "rate": 0.330},
+            {"lower_bound_eur": 25937,  "upper_bound_eur": 55558,  "rate": 0.380},
+            {"lower_bound_eur": 55558,  "upper_bound_eur": null,   "rate": 0.430}
+        ]
+    },
+
+    "sources": [
+        {
+            "label": "service-public.gouv.fr - Barème de l'impôt sur le revenu 2026 (revenus 2025) et exemple de calcul par tranches",
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1419",
+            "retrieved": "2026-08-04"
+        },
+        {
+            "label": "Abattement forfaitaire de 10 % pour frais professionnels : plancher et plafond applicables aux revenus 2025",
+            "note": "Valeurs (plancher 509 €, plafond 14 555 €) recoupées sur plusieurs sources spécialisées ; confirmation officielle recommandée via la documentation impots.gouv.fr.",
+            "retrieved": "2026-08-04"
+        },
+        {
+            "label": "BOFiP - BOI-BAREME-000037-20260407, grilles de taux par défaut (taux neutre) du prélèvement à la source",
+            "url": "https://bofip.impots.gouv.fr/bofip/11255-PGP.html/identifiant=BOI-BAREME-000037-20260407",
+            "retrieved": "2026-08-04",
+            "note": "Conservée pour documenter le mécanisme réel de retenue mensuelle (voir 'neutral_rate_grid_metropole', statut 'reference_only')."
+        },
+        {
+            "label": "Article 204 H du Code général des impôts (base légale de la grille de taux par défaut)",
+            "retrieved": "2026-08-04"
+        }
+    ],
+
+    "notes": [
+        "Le calcul par barème progressif suppose un salarié célibataire sans enfant (1 part) qui ne déclare aucun autre revenu, charge ou réduction/crédit d'impôt -- comme pour les profils de référence Allemagne et Suisse, il s'agit d'un profil de référence simplifié, pas d'une moyenne de la population française.",
+        "Seule la grille de taux neutre métropole est documentée ci-dessus à titre de référence (les grilles spécifiques Guadeloupe/Martinique/La Réunion et Guyane/Mayotte ne sont pas modélisées, et ne sont de toute façon plus utilisées dans le calcul).",
+        "Le barème progressif et l'abattement forfaitaire sont révisés chaque année en loi de finances ; ceux-ci sont les valeurs applicables aux revenus perçus en 2025 (imposition 2026)."
+    ]
+}

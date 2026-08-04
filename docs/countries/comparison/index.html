@@ -225,9 +225,11 @@
                     <h3>Net après impôt</h3>
 
                     <p>
-                        Salaire net après retenue fiscale sur le salaire,
-                        comparable pour l'Allemagne, la Belgique et la Suisse
-                        uniquement.
+                        Salaire net après impôt sur le revenu, pour les 4
+                        pays. Pour la France, l'impôt est l'impôt réellement
+                        dû par un salarié célibataire sans enfant, calculé
+                        via le barème progressif — voir l'onglet
+                        Méthodologie.
                     </p>
                 </article>
             </div>
@@ -330,9 +332,10 @@
                     <h3>Net après impôt</h3>
 
                     <p class="chart-subtitle">
-                        Salaire net après retenue fiscale sur le salaire.
-                        La France n'est pas représentée : son prélèvement à
-                        la source dépend de la situation du foyer fiscal.
+                        Salaire net après impôt sur le revenu. Pour la
+                        France, l'impôt est l'impôt réellement dû par un
+                        salarié célibataire sans enfant, calculé via le
+                        barème progressif (voir l'onglet Méthodologie).
                     </p>
 
                     <div
@@ -579,15 +582,72 @@
                     canton unique.
                 </p>
 
-                <h3>6. Limites</h3>
+                <h3>6. Impôt sur le revenu en France : le barème progressif</h3>
+
+                <p>
+                    La France est incluse dans les indicateurs « après impôt »
+                    au moyen du barème progressif réel de l'impôt sur le
+                    revenu (tranches marginales 0 % / 11 % / 30 % / 41 % / 45 %,
+                    revenus 2025, imposition 2026), calculé pour un salarié
+                    célibataire sans enfant (1 part de quotient familial) — le
+                    même type de profil de référence (« célibataire, sans
+                    enfant ») déjà utilisé pour l'Allemagne et la Suisse. Le
+                    salaire net imposable mensuel (assiette « salarié .
+                    rémunération . net . imposable » calculée par le moteur
+                    Mon-entreprise) est annualisé, réduit de l'abattement
+                    forfaitaire de 10 % pour frais professionnels (dans la
+                    limite d'un plancher de 509 € et d'un plafond de
+                    14 555 €), puis soumis au barème par tranches marginales
+                    pour obtenir l'impôt annuel réellement dû, ramené ensuite
+                    à un montant mensuel.
+                </p>
+
+                <p>
+                    Ce choix est directement comparable à ce qui est fait pour
+                    les 3 autres pays : le Lohnsteuer allemand, le précompte
+                    professionnel belge et l'impôt à la source suisse sont
+                    tous des prélèvements obligatoires calculés directement à
+                    partir du salaire pour un profil « célibataire, sans
+                    enfant ». Le barème progressif calcule ici, de la même
+                    façon, l'impôt réellement dû par ce même type de profil en
+                    France.
+                </p>
 
                 <p class="method-note">
-                    Le prélèvement à la source français n'est pas modélisé :
-                    son taux dépend de la situation fiscale du foyer et ne
-                    peut pas être déduit d'une simulation générique fondée
-                    sur le seul salaire. Les indicateurs « après impôt » et
-                    les coins fiscaux totaux ne sont donc calculés que pour
-                    l'Allemagne, la Belgique et la Suisse.
+                    Avertissement méthodologique : ce calcul suppose un
+                    salarié célibataire sans enfant ne déclarant aucun autre
+                    revenu, charge ou réduction/crédit d'impôt — c'est un
+                    profil de référence simplifié, pas une moyenne de la
+                    population française. Par ailleurs, le prélèvement à la
+                    source (PAS) effectivement retenu chaque mois sur le
+                    bulletin de paie d'un salarié réel dépend d'un taux
+                    personnalisé transmis par la DGFiP (reflétant l'ensemble
+                    de la situation de son foyer fiscal) ou, à défaut, du
+                    taux neutre (taux par défaut, article 204 H du Code
+                    général des impôts, BOFiP BOI-BAREME-000037) : ces deux
+                    taux ne sont que des acomptes mensuels, régularisés
+                    l'année suivante sur la base du montant définitivement dû
+                    — c'est ce montant définitif, calculé ici via le barème
+                    progressif, qui est utilisé pour la comparaison.
+                </p>
+
+                <h3>7. Limites</h3>
+
+                <p class="method-note">
+                    Le calcul de l'impôt sur le revenu suppose un salarié
+                    célibataire sans enfant (1 part) sans autre revenu ni
+                    charge déductible : il ne représente pas la diversité des
+                    situations fiscales réelles (quotient familial différent,
+                    revenus additionnels, réductions et crédits d'impôt,
+                    taux personnalisé du prélèvement à la source, etc.).
+                    Seules les grilles applicables à la France métropolitaine
+                    sont utilisées (les grilles spécifiques à la Guadeloupe,
+                    la Martinique, La Réunion, la Guyane et Mayotte ne sont
+                    pas modélisées). Comme pour les autres pays, les
+                    indicateurs « après impôt » et les coins fiscaux totaux
+                    dépendent du profil de référence choisi et ne
+                    représentent pas la diversité des situations
+                    individuelles réelles.
                 </p>
             </div>
         </section>

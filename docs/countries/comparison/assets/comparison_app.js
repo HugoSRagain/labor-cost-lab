@@ -389,7 +389,6 @@ function renderComparisonNetBeforeTaxChart() {
 
 function renderComparisonNetAfterTaxChart() {
     const traces = COMPARISON_COUNTRY_ORDER
-        .filter(countryCode => countryCode !== "FR")
         .map(countryCode => {
             const data = getComparisonCountryData(countryCode);
 

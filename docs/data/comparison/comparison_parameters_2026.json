@@ -39,8 +39,8 @@
     "reference_profiles": {
         "FR": {
             "profile_id": "non_cadre__standard__lt50__standard__full_time",
-            "description": "Non-executive employee, outside Alsace-Moselle, firm with fewer than 50 employees, standard AT/MP rate, full-time.",
-            "compute_source": "scripts/build_dataset_mon_entreprise.py (Mon-entreprise / Publicodes engine)"
+            "description": "Non-executive employee, outside Alsace-Moselle, firm with fewer than 50 employees, standard AT/MP rate, full-time. Income tax is the actual tax due by a single, childless taxpayer (1 part de quotient familial), computed via the true progressive income-tax bareme (marginal brackets, see notes below), not a withholding-tax proxy.",
+            "compute_source": "scripts/build_dataset_mon_entreprise.py (Mon-entreprise / Publicodes engine + compute_progressive_income_tax), grid: docs/data/france/france_income_tax_2026.json"
         },
         "DE": {
             "profile_id": "germany__public_health__childless__outside_saxony",
@@ -95,9 +95,10 @@
         ]
     },
     "notes": [
-        "France's 'net' figure is net of social contributions only (net before personal income tax). Personal income tax (pr\u00e9l\u00e8vement \u00e0 la source) is not modeled because its rate depends on the household's personal tax situation and cannot be derived from a generic wage-only simulation.",
         "Germany, Belgium and Switzerland's 'net after income tax' figures include a mandatory wage withholding tax computed directly from the wage (Lohnsteuer, pr\u00e9compte professionnel, impot a la source), which does not require household-specific information beyond the modeled reference profile.",
-        "Comparisons using 'net after income tax' therefore cannot include France on a like-for-like basis; comparisons using 'net before income tax' (net of social contributions only) are valid across all 4 countries.",
+        "France's 'net after income tax' figure is the actual income tax due by a single, childless reference taxpayer (1 part de quotient familial), computed via the true progressive income-tax bar\u00e8me (marginal brackets), applied to the Mon-entreprise engine's 'net imposable' tax base (annualized, less the standard 10% deduction for professional expenses). This is directly analogous to the other three countries' actual mandatory tax liabilities for a single/childless reference profile. Note that most French employees are withheld at a personalized 'pr\u00e9l\u00e8vement \u00e0 la source' rate set by the DGFiP from their full household's tax situation (which can differ from a single/childless taxpayer's liability); the withheld amount is only an advance on the definitively-due tax computed here.",
+        "The non-personalized 'taux neutre' (grille des taux par d\u00e9faut, article 204 H CGI, BOFiP BOI-BAREME-000037) -- an earlier candidate proxy based on the monthly withholding mechanism rather than actual tax liability -- was evaluated and rejected as a comparison basis because it does not represent any specific taxpayer's real tax burden; it is kept in docs/data/france/france_income_tax_2026.json for reference only.",
+        "See docs/data/france/france_income_tax_2026.json for the full progressive bar\u00e8me, standard-deduction parameters, methodology notes and sources.",
         "All amounts are also cross-country comparable in international dollars (PPP) in addition to local currency."
     ]
 }
