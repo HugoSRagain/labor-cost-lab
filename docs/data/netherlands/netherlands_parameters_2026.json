@@ -1,0 +1,53 @@
+{
+    "country": "Netherlands",
+    "country_code": "NL",
+    "version": "2026-07",
+    "effective_from": "2026-07-01",
+    "status": "prototype_v1",
+    "currency": "EUR",
+    "wage_reference": {
+        "name": "Wettelijk minimumloon (WML)",
+        "gross_monthly_eur": 2338.44,
+        "hourly_rate_eur": 14.99,
+        "weekly_hours": 36,
+        "source": "Rijksoverheid, bedragen minimumloon 2026 (à partir du 1er juillet 2026)",
+        "note": "Depuis 2024, il n'existe plus de montant mensuel légal fixe aux Pays-Bas : le minimum légal est un montant horaire (14,99 EUR/heure à partir du 1er juillet 2026). Ce module utilise une semaine de référence de 36 heures (définition du temps plein retenue par le CBS, l'institut statistique néerlandais, pour ses statistiques salariales), soit 14,99 x 36 x 52/12 = 2 338,44 EUR/mois."
+    },
+    "grid": {
+        "min_multiple": 0.80,
+        "max_multiple": 6.00,
+        "step": 0.01
+    },
+    "social_security": {
+        "loonheffing_note": "L'impôt sur le revenu (Box 1) et les cotisations d'assurance nationale (AOW/Anw/Wlz) sont fusionnés en un seul prélèvement, le 'loonheffing'. Les barèmes, l'algemene heffingskorting et l'arbeidskorting sont implémentés dans analysis/netherlands/loonheffing_2026.py (voir netherlands_sources_2026.json pour les sources officielles).",
+        "employer_levies": {
+            "max_premieloon_annual_eur": 79409,
+            "max_premieloon_monthly_eur": 6617.42,
+            "ww_laag_rate": 0.0274,
+            "ww_hoog_rate": 0.0774,
+            "aof_laag_rate": 0.0627,
+            "aof_hoog_rate": 0.0763,
+            "zvw_werkgeversheffing_rate": 0.0610,
+            "wko_rate": 0.0050,
+            "note": "Toutes ces cotisations employeur sont plafonnées au 'maximum premieloon' annuel. Le profil de référence retient : WW taux bas (contrat à durée indéterminée), Aof taux élevé (grand employeur), Zvw-werkgeversheffing et Wko-heffing. Le Whk (Werkhervattingskas, WGA/ZW-flex), spécifique à chaque employeur/secteur, n'est pas modélisé (voir 'limits')."
+        }
+    },
+    "profiles": [
+        {
+            "profile_id": "netherlands__standard_permanent_contract",
+            "label_fr": "Pays-Bas · contrat à durée indéterminée, grand employeur",
+            "label_en": "Netherlands · permanent contract, large employer",
+            "ww_rate": 0.0274,
+            "aof_rate": 0.0763,
+            "zvw_rate": 0.0610,
+            "wko_rate": 0.0050
+        }
+    ],
+    "limits": [
+        "Le Whk (gedifferentieerde premie Werkhervattingskas, couvrant WGA/ZW-flex) n'est pas simulé : il est spécifique à chaque employeur et secteur, sans taux national unique.",
+        "Les cotisations de pension complémentaire (pensioenpremie) ne sont pas simulées : elles ne sont pas fixées par la loi mais par fonds de pension/CAO.",
+        "Le profil retient l'Aof taux élevé (grand employeur) et le WW taux bas (contrat à durée indéterminée) ; ce sont des choix explicites, ajustables.",
+        "Les crédits d'impôt dépendant d'un partenaire (IACK, etc.) et les situations de foyer autres que célibataire sans enfant ne sont pas simulées.",
+        "Seul le régime applicable à un salarié n'ayant pas atteint l'âge de l'AOW est simulé."
+    ]
+}

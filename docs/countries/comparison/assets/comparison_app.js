@@ -1,21 +1,34 @@
 const COMPARISON_DATA_PATH = "../../data/comparison/labour_cost_comparison_2026.csv";
+const COMPARISON_LANGUAGE_STORAGE_KEY = "comparison_language";
+const COMPARISON_TAB_STORAGE_KEY = "comparison_tab";
 
 let COMPARISON_DATA = [];
 
-const COMPARISON_COUNTRY_ORDER = ["FR", "DE", "BE", "CH"];
+const COMPARISON_COUNTRY_ORDER = ["FR", "DE", "BE", "CH", "NL"];
 
 const COMPARISON_COUNTRY_LABELS = {
-    FR: "France",
-    DE: "Allemagne",
-    BE: "Belgique",
-    CH: "Suisse"
+    fr: {
+        FR: "France",
+        DE: "Allemagne",
+        BE: "Belgique",
+        CH: "Suisse",
+        NL: "Pays-Bas"
+    },
+    en: {
+        FR: "France",
+        DE: "Germany",
+        BE: "Belgium",
+        CH: "Switzerland",
+        NL: "Netherlands"
+    }
 };
 
 const COMPARISON_COLORS = {
     FR: "#2563eb",
     DE: "#dc2626",
     BE: "#f59e0b",
-    CH: "#16a34a"
+    CH: "#16a34a",
+    NL: "#f97316"
 };
 
 
@@ -33,21 +46,17 @@ function applyStoredComparisonTheme() {
 
 
 function updateComparisonThemeButton(theme) {
-    const themeToggle = document.querySelector(".theme-toggle");
-
-    if (!themeToggle) {
-        return;
-    }
-
-    if (theme === "dark") {
-        themeToggle.textContent = "☀️";
-        themeToggle.title = "Light mode";
-        themeToggle.setAttribute("aria-label", "Light mode");
-    } else {
-        themeToggle.textContent = "🌙";
-        themeToggle.title = "Dark mode";
-        themeToggle.setAttribute("aria-label", "Dark mode");
-    }
+    document.querySelectorAll(".theme-toggle").forEach(function(themeToggle) {
+        if (theme === "dark") {
+            themeToggle.textContent = "☀️";
+            themeToggle.title = "Light mode";
+            themeToggle.setAttribute("aria-label", "Light mode");
+        } else {
+            themeToggle.textContent = "🌙";
+            themeToggle.title = "Dark mode";
+            themeToggle.setAttribute("aria-label", "Dark mode");
+        }
+    });
 }
 
 
@@ -62,7 +71,7 @@ function toggleTheme() {
         updateComparisonThemeButton("light");
     }
 
-    renderComparison();
+    renderComparison(getActiveI18nLanguage(COMPARISON_LANGUAGE_STORAGE_KEY));
 }
 
 
@@ -77,7 +86,12 @@ function cpNum(value) {
 }
 
 
-function usd(value) {
+function cpLocale(lang) {
+    return lang === "en" ? "en-US" : "fr-FR";
+}
+
+
+function usd(value, lang) {
     const number = cpNum(value);
 
     if (number === null) {
@@ -85,7 +99,7 @@ function usd(value) {
     }
 
     return number.toLocaleString(
-        "fr-FR",
+        cpLocale(lang),
         {
             minimumFractionDigits: 0,
             maximumFractionDigits: 0
@@ -94,18 +108,19 @@ function usd(value) {
 }
 
 
-function ratio(value) {
+function ratio(value, lang) {
     const number = cpNum(value);
 
     if (number === null) {
         return "—";
     }
 
-    return number.toFixed(2).replace(".", ",");
+    const text = number.toFixed(2);
+    return lang === "en" ? text : text.replace(".", ",");
 }
 
 
-function ratePercent(value) {
+function ratePercent(value, lang) {
     const number = cpNum(value);
 
     if (number === null) {
@@ -113,7 +128,7 @@ function ratePercent(value) {
     }
 
     return (number * 100).toLocaleString(
-        "fr-FR",
+        cpLocale(lang),
         {
             minimumFractionDigits: 1,
             maximumFractionDigits: 1
@@ -154,8 +169,8 @@ function getComparisonWageGrid() {
 }
 
 
-function getSelectedComparisonWage() {
-    const select = document.getElementById("comparison-wage-select");
+function getSelectedComparisonWage(lang) {
+    const select = getI18nElement("comparison-wage-select", lang);
 
     if (!select) {
         return 6000;
@@ -165,8 +180,8 @@ function getSelectedComparisonWage() {
 }
 
 
-function getSelectedComparisonMetric() {
-    const select = document.getElementById("comparison-data-metric-select");
+function getSelectedComparisonMetric(lang) {
+    const select = getI18nElement("comparison-data-metric-select", lang);
 
     if (!select) {
         return "net_before_income_tax_monthly_intl_usd";
@@ -199,8 +214,8 @@ function findComparisonRowAtWage(data, wage) {
 }
 
 
-function populateComparisonWageSelect() {
-    const select = document.getElementById("comparison-wage-select");
+function populateComparisonWageSelect(lang) {
+    const select = getI18nElement("comparison-wage-select", lang);
 
     if (!select) {
         return;
@@ -215,7 +230,7 @@ function populateComparisonWageSelect() {
         const option = document.createElement("option");
 
         option.value = String(wage);
-        option.textContent = usd(wage) + " internationaux";
+        option.textContent = usd(wage, lang) + (lang === "en" ? " international" : " internationaux");
 
         if (
             String(wage) === currentValue
@@ -229,7 +244,7 @@ function populateComparisonWageSelect() {
 }
 
 
-function comparisonBaseLayout(yAxisTitle) {
+function comparisonBaseLayout(lang, yAxisTitle) {
     const isDarkMode = document.body.classList.contains("dark-mode");
 
     const textColor = isDarkMode ? "#f9fafb" : "#0f172a";
@@ -260,7 +275,9 @@ function comparisonBaseLayout(yAxisTitle) {
         },
         xaxis: {
             title: {
-                text: "Salaire harmonisé, dollars internationaux (PPA)",
+                text: lang === "en"
+                    ? "Harmonized wage, international dollars (PPP)"
+                    : "Salaire harmonisé, dollars internationaux (PPA)",
                 standoff: 14
             },
             range: [1800, 12200],
@@ -310,19 +327,21 @@ function comparisonPlot(elementId, traces, layout) {
 }
 
 
-function comparisonCountryTrace(countryCode, x, y, hoverSuffix) {
+function comparisonCountryTrace(lang, countryCode, x, y, hoverSuffix) {
+    const label = COMPARISON_COUNTRY_LABELS[lang][countryCode];
+
     return {
         x: x,
         y: y,
         type: "scatter",
         mode: "lines",
-        name: COMPARISON_COUNTRY_LABELS[countryCode],
+        name: label,
         line: {
             color: COMPARISON_COLORS[countryCode],
             width: 3
         },
         hovertemplate:
-            COMPARISON_COUNTRY_LABELS[countryCode]
+            label
             + " : %{y:,.0f}"
             + (hoverSuffix || "")
             + "<extra></extra>"
@@ -330,21 +349,24 @@ function comparisonCountryTrace(countryCode, x, y, hoverSuffix) {
 }
 
 
-function renderComparisonMetrics() {
-    const wage = getSelectedComparisonWage();
+function renderComparisonMetrics(lang) {
+    const wage = getSelectedComparisonWage(lang);
 
     setTextContent(
-        "comparison-metrics-subtitle",
-        "Valeurs des 4 pays à "
-        + usd(wage)
-        + " internationaux mensuels, exprimées en dollars internationaux (PPA)."
+        "comparison-metrics-subtitle-" + lang,
+        (lang === "en" ? "Values for the 5 countries at " : "Valeurs des 5 pays à ")
+        + usd(wage, lang)
+        + (lang === "en"
+            ? " international monthly, expressed in international dollars (PPP)."
+            : " internationaux mensuels, exprimées en dollars internationaux (PPA).")
     );
 
     const fields = {
-        FR: "metric-comparison-fr-net",
-        DE: "metric-comparison-de-net",
-        BE: "metric-comparison-be-net",
-        CH: "metric-comparison-ch-net"
+        FR: "metric-comparison-fr-net-" + lang,
+        DE: "metric-comparison-de-net-" + lang,
+        BE: "metric-comparison-be-net-" + lang,
+        CH: "metric-comparison-ch-net-" + lang,
+        NL: "metric-comparison-nl-net-" + lang
     };
 
     COMPARISON_COUNTRY_ORDER.forEach(countryCode => {
@@ -357,17 +379,18 @@ function renderComparisonMetrics() {
 
         setTextContent(
             fields[countryCode],
-            usd(row.net_before_income_tax_monthly_intl_usd)
+            usd(row.net_before_income_tax_monthly_intl_usd, lang)
         );
     });
 }
 
 
-function renderComparisonNetBeforeTaxChart() {
+function renderComparisonNetBeforeTaxChart(lang) {
     const traces = COMPARISON_COUNTRY_ORDER.map(countryCode => {
         const data = getComparisonCountryData(countryCode);
 
         return comparisonCountryTrace(
+            lang,
             countryCode,
             data.map(row => cpNum(row.harmonized_wage_point_intl_usd)),
             data.map(row => cpNum(row.net_before_income_tax_monthly_intl_usd)),
@@ -375,24 +398,25 @@ function renderComparisonNetBeforeTaxChart() {
         );
     });
 
-    const layout = comparisonBaseLayout("Net avant impôt, intl $");
+    const layout = comparisonBaseLayout(lang, lang === "en" ? "Net before tax, intl $" : "Net avant impôt, intl $");
 
     layout.yaxis.ticksuffix = " $";
 
     comparisonPlot(
-        "chart-comparison-net-before-tax",
+        "chart-comparison-net-before-tax-" + lang,
         traces,
         layout
     );
 }
 
 
-function renderComparisonNetAfterTaxChart() {
+function renderComparisonNetAfterTaxChart(lang) {
     const traces = COMPARISON_COUNTRY_ORDER
         .map(countryCode => {
             const data = getComparisonCountryData(countryCode);
 
             return comparisonCountryTrace(
+                lang,
                 countryCode,
                 data.map(row => cpNum(row.harmonized_wage_point_intl_usd)),
                 data.map(row => cpNum(row.net_after_income_tax_monthly_intl_usd)),
@@ -400,23 +424,24 @@ function renderComparisonNetAfterTaxChart() {
             );
         });
 
-    const layout = comparisonBaseLayout("Net après impôt, intl $");
+    const layout = comparisonBaseLayout(lang, lang === "en" ? "Net after tax, intl $" : "Net après impôt, intl $");
 
     layout.yaxis.ticksuffix = " $";
 
     comparisonPlot(
-        "chart-comparison-net-after-tax",
+        "chart-comparison-net-after-tax-" + lang,
         traces,
         layout
     );
 }
 
 
-function renderComparisonEmployerCostChart() {
+function renderComparisonEmployerCostChart(lang) {
     const traces = COMPARISON_COUNTRY_ORDER.map(countryCode => {
         const data = getComparisonCountryData(countryCode);
 
         return comparisonCountryTrace(
+            lang,
             countryCode,
             data.map(row => cpNum(row.harmonized_wage_point_intl_usd)),
             data.map(row => cpNum(row.employer_cost_monthly_intl_usd)),
@@ -424,44 +449,49 @@ function renderComparisonEmployerCostChart() {
         );
     });
 
-    const layout = comparisonBaseLayout("Coût employeur, intl $");
+    const layout = comparisonBaseLayout(lang, lang === "en" ? "Employer cost, intl $" : "Coût employeur, intl $");
 
     layout.yaxis.ticksuffix = " $";
 
     comparisonPlot(
-        "chart-comparison-employer-cost",
+        "chart-comparison-employer-cost-" + lang,
         traces,
         layout
     );
 }
 
 
-function renderComparisonCostToNetChart() {
+function renderComparisonCostToNetChart(lang) {
     const traces = COMPARISON_COUNTRY_ORDER.map(countryCode => {
         const data = getComparisonCountryData(countryCode);
 
         return comparisonCountryTrace(
+            lang,
             countryCode,
             data.map(row => cpNum(row.harmonized_wage_point_intl_usd)),
             data.map(row => cpNum(row.cost_to_net_before_income_tax_ratio))
         );
     });
 
-    const layout = comparisonBaseLayout("Ratio coût employeur / net avant impôt");
+    const layout = comparisonBaseLayout(
+        lang,
+        lang === "en" ? "Employer cost / net before tax ratio" : "Ratio coût employeur / net avant impôt"
+    );
 
     comparisonPlot(
-        "chart-comparison-cost-to-net",
+        "chart-comparison-cost-to-net-" + lang,
         traces,
         layout
     );
 }
 
 
-function renderComparisonWedgeChart() {
+function renderComparisonWedgeChart(lang) {
     const traces = COMPARISON_COUNTRY_ORDER.map(countryCode => {
         const data = getComparisonCountryData(countryCode);
 
         return comparisonCountryTrace(
+            lang,
             countryCode,
             data.map(row => cpNum(row.harmonized_wage_point_intl_usd)),
             data.map(row => cpNum(row.social_wedge_before_income_tax_rate) * 100),
@@ -469,19 +499,22 @@ function renderComparisonWedgeChart() {
         );
     });
 
-    const layout = comparisonBaseLayout("Coin social avant impôt, % du coût employeur");
+    const layout = comparisonBaseLayout(
+        lang,
+        lang === "en" ? "Social wedge before tax, % of employer cost" : "Coin social avant impôt, % du coût employeur"
+    );
 
     layout.yaxis.ticksuffix = "%";
 
     comparisonPlot(
-        "chart-comparison-wedge",
+        "chart-comparison-wedge-" + lang,
         traces,
         layout
     );
 }
 
 
-function formatComparisonMetricValue(metric, value) {
+function formatComparisonMetricValue(metric, value, lang) {
     if (value === null || value === undefined || value === "") {
         return "—";
     }
@@ -490,37 +523,37 @@ function formatComparisonMetricValue(metric, value) {
         metric === "social_wedge_before_income_tax_rate"
         || metric === "total_wedge_after_income_tax_rate"
     ) {
-        return ratePercent(value);
+        return ratePercent(value, lang);
     }
 
     if (
         metric === "cost_to_net_before_income_tax_ratio"
         || metric === "cost_to_net_after_income_tax_ratio"
     ) {
-        return ratio(value);
+        return ratio(value, lang);
     }
 
-    return usd(value);
+    return usd(value, lang);
 }
 
 
-function renderComparisonDataTable() {
-    const tableBody = document.getElementById("comparison-data-table-body");
+function renderComparisonDataTable(lang) {
+    const tableBody = getI18nElement("comparison-data-table-body", lang);
 
     if (!tableBody) {
         return;
     }
 
-    const metric = getSelectedComparisonMetric();
+    const metric = getSelectedComparisonMetric(lang);
     const wageGrid = getComparisonWageGrid();
 
-    const caption = document.getElementById("comparison-data-caption");
-    const metricSelect = document.getElementById("comparison-data-metric-select");
+    const caption = getI18nElement("comparison-data-caption", lang);
+    const metricSelect = getI18nElement("comparison-data-metric-select", lang);
 
     if (caption && metricSelect) {
         caption.textContent = (
             metricSelect.options[metricSelect.selectedIndex].textContent.trim()
-            + " · une ligne par point de salaire harmonisé"
+            + (lang === "en" ? " · one row per harmonized wage point" : " · une ligne par point de salaire harmonisé")
         );
     }
 
@@ -539,7 +572,7 @@ function renderComparisonDataTable() {
 
         const cells = [
             {
-                text: usd(wage),
+                text: usd(wage, lang),
                 belowMinimumWage: false
             }
         ];
@@ -560,7 +593,7 @@ function renderComparisonDataTable() {
             }
 
             cells.push({
-                text: formatComparisonMetricValue(metric, value),
+                text: formatComparisonMetricValue(metric, value, lang),
                 belowMinimumWage: belowMinimumWage
             });
         });
@@ -573,11 +606,9 @@ function renderComparisonDataTable() {
             if (cell.belowMinimumWage) {
                 tableCell.textContent += " *";
                 tableCell.classList.add("below-minimum-wage");
-                tableCell.title = (
-                    "Salaire hypothétique, inférieur au salaire minimum "
-                    + "(ou de référence) national de ce pays à ce point de "
-                    + "la grille."
-                );
+                tableCell.title = lang === "en"
+                    ? "Hypothetical wage, below this country's national minimum (or reference) wage at this point of the harmonized grid."
+                    : "Salaire hypothétique, inférieur au salaire minimum (ou de référence) national de ce pays à ce point de la grille harmonisée.";
             }
 
             tableRow.appendChild(tableCell);
@@ -586,7 +617,7 @@ function renderComparisonDataTable() {
         tableBody.appendChild(tableRow);
     });
 
-    const footnote = document.getElementById("comparison-data-footnote");
+    const footnote = document.getElementById("comparison-data-footnote-" + lang);
 
     if (footnote) {
         footnote.style.display = hasBelowMinimumWage ? "block" : "none";
@@ -594,74 +625,62 @@ function renderComparisonDataTable() {
 }
 
 
-function renderComparison() {
-    renderComparisonMetrics();
-    renderComparisonNetBeforeTaxChart();
-    renderComparisonNetAfterTaxChart();
-    renderComparisonEmployerCostChart();
-    renderComparisonCostToNetChart();
-    renderComparisonWedgeChart();
-    renderComparisonDataTable();
+function renderComparison(lang) {
+    renderComparisonMetrics(lang);
+    renderComparisonNetBeforeTaxChart(lang);
+    renderComparisonNetAfterTaxChart(lang);
+    renderComparisonEmployerCostChart(lang);
+    renderComparisonCostToNetChart(lang);
+    renderComparisonWedgeChart(lang);
+    renderComparisonDataTable(lang);
 }
 
 
-function setupComparisonTabs() {
-    const buttons = document.querySelectorAll(".tab-button");
-    const panels = document.querySelectorAll(".tab-content");
+function comparisonOnTabShow(lang, tabName) {
+    if (tabName === "simulation") {
+        renderComparison(lang);
+    }
 
-    buttons.forEach(button => {
-        button.addEventListener("click", function() {
-            const target = button.dataset.tab;
+    if (tabName === "data") {
+        renderComparisonDataTable(lang);
+    }
+}
 
-            buttons.forEach(item => {
-                item.classList.remove("active");
-            });
 
-            panels.forEach(panel => {
-                panel.classList.remove("active");
-            });
+function showComparisonTab(lang, tabName) {
+    showLangTab(lang, tabName, {
+        tabStorageKey: COMPARISON_TAB_STORAGE_KEY,
+        onShow: comparisonOnTabShow
+    });
+}
 
-            button.classList.add("active");
 
-            const targetPanel = document.getElementById("tab-" + target);
-
-            if (targetPanel) {
-                targetPanel.classList.add("active");
-            }
-
-            if (target === "simulation") {
-                setTimeout(function() {
-                    renderComparison();
-                }, 80);
-            }
-
-            if (target === "data") {
-                setTimeout(function() {
-                    renderComparisonDataTable();
-                }, 80);
-            }
-        });
+function switchComparisonLanguage() {
+    switchLangLanguage({
+        storageKey: COMPARISON_LANGUAGE_STORAGE_KEY,
+        tabStorageKey: COMPARISON_TAB_STORAGE_KEY,
+        onShow: comparisonOnTabShow
     });
 }
 
 
 function setupComparisonEvents() {
-    const wageSelect = document.getElementById("comparison-wage-select");
-    const dataMetricSelect = document.getElementById(
-        "comparison-data-metric-select"
-    );
+    ["fr", "en"].forEach(function(lang) {
+        const wageSelect = getI18nElement("comparison-wage-select", lang);
+        const dataMetricSelect = getI18nElement("comparison-data-metric-select", lang);
 
-    if (wageSelect) {
-        wageSelect.addEventListener("change", function() {
-            renderComparisonMetrics();
-        });
-    }
+        if (wageSelect) {
+            wageSelect.addEventListener("change", function() {
+                renderComparisonMetrics(lang);
+            });
+        }
 
-    if (dataMetricSelect) {
-        dataMetricSelect.addEventListener("change", function() {
-            renderComparisonDataTable();
-        });
-    }
+        if (dataMetricSelect) {
+            dataMetricSelect.addEventListener("change", function() {
+                renderComparisonDataTable(lang);
+            });
+        }
+    });
 }
 
 
@@ -683,10 +702,16 @@ Papa.parse(
                 "rows"
             );
 
-            populateComparisonWageSelect();
-            setupComparisonTabs();
+            populateComparisonWageSelect("fr");
+            populateComparisonWageSelect("en");
             setupComparisonEvents();
-            renderComparison();
+
+            const initialLang = localStorage.getItem(COMPARISON_LANGUAGE_STORAGE_KEY) || "fr";
+            setLangLanguage(initialLang, {
+                storageKey: COMPARISON_LANGUAGE_STORAGE_KEY,
+                tabStorageKey: COMPARISON_TAB_STORAGE_KEY,
+                onShow: comparisonOnTabShow
+            });
         },
         error: function(error) {
             console.error(

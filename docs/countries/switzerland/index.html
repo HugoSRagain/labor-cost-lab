@@ -9,7 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
     <link rel="stylesheet" href="../../assets/style.css?v=27">
-    <script defer src="./assets/switzerland_app.js?v=1"></script>
+    <script defer src="../../assets/i18n_common.js?v=1"></script>
+    <script defer src="./assets/switzerland_app.js?v=2"></script>
 </head>
 
 <body>
@@ -23,431 +24,802 @@
         </span>
     </div>
 
-    <header class="hero">
-        <div>
-            <p class="eyebrow">
-                Labor Cost Lab · Switzerland module
-            </p>
+    <div class="language-section active" id="section-fr">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · Module Suisse
+                </p>
 
-            <h1>Swiss Labour Cost Lab</h1>
+                <h1>Swiss Labour Cost Lab</h1>
 
-            <p>
-                Module de simulation du coût employeur et du salaire net avant impôt
-                en Suisse. Cette première version calcule les cotisations sociales
-                nationales, une LPP standardisée, l’assurance accident et les principaux
-                indicateurs de coin social.
-            </p>
+                <p>
+                    Module de simulation du coût employeur et du salaire net avant impôt
+                    en Suisse. Cette première version calcule les cotisations sociales
+                    nationales, une LPP standardisée, l'assurance accident et les principaux
+                    indicateurs de coin social.
+                </p>
 
-            <p class="author-line">
-                Par Hugo Spring-Ragain, Économiste, CEDS Paris
-            </p>
-        </div>
-
-        <div class="header-actions">
-            <button
-                class="theme-toggle"
-                onclick="toggleTheme()"
-                title="Dark mode"
-                aria-label="Dark mode"
-            >
-                🌙
-            </button>
-        </div>
-    </header>
-
-    <main class="page-shell">
-        <section class="method-box">
-            <h2>Suisse · prototype social 2026</h2>
-
-            <p>
-                Le Swiss Labour Cost Lab simule le passage du salaire brut au salaire
-                net avant impôt et au coût employeur total, pour les 26 cantons suisses.
-                Dans cette première version, les cotisations sociales sont calculées
-                sur une base nationale homogène, tandis que la dimension cantonale est
-                préparée pour l’intégration ultérieure de l’impôt à la source.
-            </p>
-
-            <p>
-                Le module couvre l’AVS / AI / APG, l’assurance chômage, une hypothèse
-                standardisée de prévoyance professionnelle LPP et des hypothèses
-                benchmark d’assurance accident.
-            </p>
-
-            <p class="method-note">
-                Version actuelle : prototype social. Les différences fiscales entre
-                cantons ne sont pas encore intégrées ; le sélecteur cantonal prépare
-                l’architecture du futur module socio-fiscal.
-            </p>
-        </section>
-
-        <section class="method-box">
-            <h2>Ce que mesure le module suisse</h2>
-
-            <div class="method-grid">
-                <article>
-                    <h3>Salaire net avant impôt</h3>
-
-                    <p>
-                        Le salaire net avant impôt correspond au salaire brut diminué
-                        des cotisations salarié : AVS / AI / APG, chômage, LPP
-                        standardisée et assurance accident non professionnel.
-                    </p>
-                </article>
-
-                <article>
-                    <h3>Coût employeur</h3>
-
-                    <p>
-                        Le coût employeur additionne le salaire brut et les cotisations
-                        employeur : AVS / AI / APG, chômage, LPP employeur et accident
-                        professionnel.
-                    </p>
-                </article>
-
-                <article>
-                    <h3>Préparation cantonale</h3>
-
-                    <p>
-                        Le jeu de données contient déjà une ligne par canton et par
-                        niveau de salaire, afin d’intégrer ensuite les barèmes fiscaux
-                        cantonaux.
-                    </p>
-                </article>
-
-                <article>
-                    <h3>Coin social</h3>
-
-                    <p>
-                        Le coin social mesure l’écart entre le coût employeur total et
-                        le salaire net avant impôt, avant prise en compte de la fiscalité
-                        cantonale.
-                    </p>
-                </article>
+                <p class="author-line">
+                    Par Hugo Spring-Ragain, Économiste, CEDS Paris
+                </p>
             </div>
-        </section>
 
-        <nav class="tabs" aria-label="Navigation Suisse">
-            <button class="tab-button active" data-tab="simulation">
-                Simulation
-            </button>
-
-            <button class="tab-button" data-tab="data">
-                Données
-            </button>
-
-            <button class="tab-button" data-tab="methodology">
-                Méthodologie
-            </button>
-        </nav>
-
-        <section id="tab-simulation" class="tab-content active">
-            <div class="chart-card chart-card-wide">
-                <h3 id="switzerland-waterfall-title">
-                    Du salaire net avant impôt au coût employeur
-                </h3>
-
-                <p
-                    class="chart-subtitle"
-                    id="switzerland-waterfall-subtitle"
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
                 >
-                    Décomposition du passage du salaire net avant impôt au coût
-                    employeur total.
-                </p>
+                    🌙
+                </button>
 
-                <div class="profile-selector profile-selector-grid">
-                    <div class="selector-field">
-                        <label for="switzerland-canton-select">
-                            Canton de référence
-                        </label>
-
-                        <select id="switzerland-canton-select">
-                        </select>
-                    </div>
-
-                    <div class="selector-field">
-                        <label for="switzerland-waterfall-wage-select">
-                            Salaire brut mensuel sélectionné
-                        </label>
-
-                        <select id="switzerland-waterfall-wage-select">
-                            <option value="3000">3 000 CHF</option>
-                            <option value="5000" selected>5 000 CHF</option>
-                            <option value="8000">8 000 CHF</option>
-                            <option value="12000">12 000 CHF</option>
-                            <option value="16000">16 000 CHF</option>
-                            <option value="20000">20 000 CHF</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div
-                    id="chart-switzerland-waterfall"
-                    class="plotly-chart"
-                    aria-label="Décomposition du coût du travail en Suisse"
-                ></div>
+                <button class="language-toggle" onclick="switchSwitzerlandLanguage()">
+                    English
+                </button>
             </div>
+        </header>
 
-            <section class="dashboard-section-heading">
-                <h2>Graphiques complémentaires</h2>
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>Suisse · prototype social 2026</h2>
 
                 <p>
-                    Les graphiques suivants détaillent les salaires, le coût employeur,
-                    les taux de cotisation, les composantes sociales et le coin social
-                    avant impôt.
+                    Le Swiss Labour Cost Lab simule le passage du salaire brut au salaire
+                    net après impôt et au coût employeur total, pour les 26 cantons suisses.
+                    Les cotisations sociales sont calculées sur une base nationale homogène,
+                    tandis que l'impôt à la source (tarif A0, personne seule sans enfant)
+                    est calculé canton par canton.
                 </p>
-            </section>
-
-            <div class="charts-grid">
-                <div class="chart-card">
-                    <h3>Coût employeur, salaire brut et net avant impôt</h3>
-
-                    <p class="chart-subtitle">
-                        Comparaison du salaire brut, du salaire net avant impôt et du
-                        coût employeur selon le niveau de salaire mensuel brut.
-                    </p>
-
-                    <div
-                        id="chart-switzerland-cost"
-                        class="plotly-chart"
-                        aria-label="Coût employeur et salaire net en Suisse"
-                    ></div>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Taux effectifs de cotisation</h3>
-
-                    <p class="chart-subtitle">
-                        Taux salarié et taux employeur effectifs, incluant les
-                        cotisations sociales, la LPP standardisée et l’assurance accident.
-                    </p>
-
-                    <div
-                        id="chart-switzerland-rates"
-                        class="plotly-chart"
-                        aria-label="Taux de cotisation en Suisse"
-                    ></div>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Composantes salarié</h3>
-
-                    <p class="chart-subtitle">
-                        Décomposition des cotisations salarié : AVS / AI / APG,
-                        chômage, LPP et accident non professionnel.
-                    </p>
-
-                    <div
-                        id="chart-switzerland-employee-components"
-                        class="plotly-chart"
-                        aria-label="Cotisations salarié en Suisse"
-                    ></div>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Composantes employeur</h3>
-
-                    <p class="chart-subtitle">
-                        Décomposition des cotisations employeur : AVS / AI / APG,
-                        chômage, LPP et accident professionnel.
-                    </p>
-
-                    <div
-                        id="chart-switzerland-employer-components"
-                        class="plotly-chart"
-                        aria-label="Cotisations employeur en Suisse"
-                    ></div>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Coin social avant impôt</h3>
-
-                    <p class="chart-subtitle">
-                        Écart entre le coût employeur et le salaire net avant impôt,
-                        exprimé en montant et en part du coût employeur.
-                    </p>
-
-                    <div
-                        id="chart-switzerland-wedge"
-                        class="plotly-chart"
-                        aria-label="Coin social suisse"
-                    ></div>
-                </div>
-            </div>
-
-            <section class="dashboard-section-heading">
-                <h2>Indicateurs clés</h2>
 
                 <p>
-                    Les indicateurs ci-dessous sont calculés pour le canton sélectionné
-                    et un salaire brut mensuel de référence de 5 000 CHF.
+                    Le module couvre l'AVS / AI / APG, l'assurance chômage, une hypothèse
+                    standardisée de prévoyance professionnelle LPP, des hypothèses
+                    benchmark d'assurance accident et l'impôt à la source cantonal.
                 </p>
             </section>
 
-            <section class="metrics-grid" id="switzerland-metrics">
-                <article class="metric-card">
-                    <span class="metric-label">Salaire brut de référence</span>
-                    <strong id="metric-switzerland-reference-wage">—</strong>
-                    <span class="metric-note">CHF mensuels bruts</span>
-                </article>
+            <nav class="tabs" aria-label="Navigation Suisse">
+                <button class="tab-button active" data-tab="simulation" onclick="showSwitzerlandTab('fr', 'simulation')">
+                    Simulation
+                </button>
 
-                <article class="metric-card">
-                    <span class="metric-label">Net avant impôt</span>
-                    <strong id="metric-switzerland-net-before-tax">—</strong>
-                    <span class="metric-note">Après cotisations salarié</span>
-                </article>
+                <button class="tab-button" data-tab="data" onclick="showSwitzerlandTab('fr', 'data')">
+                    Données
+                </button>
 
-                <article class="metric-card">
-                    <span class="metric-label">Coût employeur</span>
-                    <strong id="metric-switzerland-employer-cost">—</strong>
-                    <span class="metric-note">Brut + cotisations employeur</span>
-                </article>
+                <button class="tab-button" data-tab="methodology" onclick="showSwitzerlandTab('fr', 'methodology')">
+                    Méthodologie
+                </button>
+            </nav>
 
-                <article class="metric-card">
-                    <span class="metric-label">Ratio coût / net</span>
-                    <strong id="metric-switzerland-cost-to-net">—</strong>
-                    <span class="metric-note">Avant impôt</span>
-                </article>
-            </section>
-        </section>
+            <section id="tab-fr-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="switzerland-waterfall-title-fr">
+                        Du salaire net avant impôt au coût employeur
+                    </h3>
 
-        <section id="tab-data" class="tab-content">
-            <div class="chart-card">
-                <h3>Données</h3>
-
-                <p class="chart-subtitle">
-                    Le jeu de données suisse peut être téléchargé au format CSV.
-                    Il contient une ligne par canton et par niveau de salaire brut
-                    mensuel, avec les cotisations salarié, les cotisations employeur,
-                    le salaire net avant impôt, le coût employeur et le coin social.
-                </p>
-
-                <div class="download-row" style="margin-top: 18px;">
-                    <a
-                        class="download-link"
-                        href="../../data/switzerland/switzerland_labour_cost_grid_2026.csv"
-                        download
+                    <p
+                        class="chart-subtitle"
+                        id="switzerland-waterfall-subtitle-fr"
                     >
-                        Télécharger le jeu de données Suisse
-                    </a>
+                        Décomposition du passage du salaire net avant impôt au coût
+                        employeur total.
+                    </p>
 
-                    <a
-                        class="download-link"
-                        href="../../data/switzerland/switzerland_parameters_2026.json"
-                        download
-                    >
-                        Télécharger les paramètres 2026
-                    </a>
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="switzerland-canton-select-fr">
+                                Canton de référence
+                            </label>
 
-                    <a
-                        class="download-link"
-                        href="../../data/switzerland/switzerland_sources_2026.json"
-                        download
-                    >
-                        Télécharger les sources 2026
-                    </a>
+                            <select id="switzerland-canton-select-fr">
+                            </select>
+                        </div>
+
+                        <div class="selector-field">
+                            <label for="switzerland-waterfall-wage-select-fr">
+                                Salaire brut mensuel sélectionné
+                            </label>
+
+                            <select id="switzerland-waterfall-wage-select-fr">
+                                <option value="3000">3 000 CHF</option>
+                                <option value="5000" selected>5 000 CHF</option>
+                                <option value="8000">8 000 CHF</option>
+                                <option value="12000">12 000 CHF</option>
+                                <option value="16000">16 000 CHF</option>
+                                <option value="20000">20 000 CHF</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-switzerland-waterfall-fr"
+                        class="plotly-chart"
+                        aria-label="Décomposition du coût du travail en Suisse"
+                    ></div>
                 </div>
 
-                <div class="profile-selector profile-selector-grid data-profile-selector">
-                    <div class="selector-field">
-                        <label for="switzerland-data-canton-select">
-                            Canton
-                        </label>
+                <section class="dashboard-section-heading">
+                    <h2>Graphiques complémentaires</h2>
 
-                        <select id="switzerland-data-canton-select">
-                        </select>
+                    <p>
+                        Les graphiques suivants détaillent les salaires, le coût employeur,
+                        les taux de cotisation, les composantes sociales et le coin social
+                        avant impôt.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Coût employeur, salaire brut et net avant impôt</h3>
+
+                        <p class="chart-subtitle">
+                            Comparaison du salaire brut, du salaire net avant impôt et du
+                            coût employeur selon le niveau de salaire mensuel brut.
+                        </p>
+
+                        <div
+                            id="chart-switzerland-cost-fr"
+                            class="plotly-chart"
+                            aria-label="Coût employeur et salaire net en Suisse"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Taux effectifs de cotisation</h3>
+
+                        <p class="chart-subtitle">
+                            Taux salarié et taux employeur effectifs, incluant les
+                            cotisations sociales, la LPP standardisée et l'assurance accident.
+                        </p>
+
+                        <div
+                            id="chart-switzerland-rates-fr"
+                            class="plotly-chart"
+                            aria-label="Taux de cotisation en Suisse"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Composantes salarié</h3>
+
+                        <p class="chart-subtitle">
+                            Décomposition des cotisations salarié : AVS / AI / APG,
+                            chômage, LPP et accident non professionnel.
+                        </p>
+
+                        <div
+                            id="chart-switzerland-employee-components-fr"
+                            class="plotly-chart"
+                            aria-label="Cotisations salarié en Suisse"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Composantes employeur</h3>
+
+                        <p class="chart-subtitle">
+                            Décomposition des cotisations employeur : AVS / AI / APG,
+                            chômage, LPP et accident professionnel.
+                        </p>
+
+                        <div
+                            id="chart-switzerland-employer-components-fr"
+                            class="plotly-chart"
+                            aria-label="Cotisations employeur en Suisse"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Coin social avant impôt</h3>
+
+                        <p class="chart-subtitle">
+                            Écart entre le coût employeur et le salaire net avant impôt,
+                            exprimé en montant et en part du coût employeur.
+                        </p>
+
+                        <div
+                            id="chart-switzerland-wedge-fr"
+                            class="plotly-chart"
+                            aria-label="Coin social suisse"
+                        ></div>
                     </div>
                 </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Indicateurs clés</h2>
+
+                    <p>
+                        Les indicateurs ci-dessous sont calculés pour le canton sélectionné
+                        et un salaire brut mensuel de référence de 5 000 CHF.
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="switzerland-metrics-fr">
+                    <article class="metric-card">
+                        <span class="metric-label">Salaire brut de référence</span>
+                        <strong id="metric-switzerland-reference-wage-fr">—</strong>
+                        <span class="metric-note">CHF mensuels bruts</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Net avant impôt</span>
+                        <strong id="metric-switzerland-net-before-tax-fr">—</strong>
+                        <span class="metric-note">Après cotisations salarié</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Impôt à la source</span>
+                        <strong id="metric-switzerland-withholding-tax-fr">—</strong>
+                        <span class="metric-note">Tarif A0</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Taux d'impôt à la source</span>
+                        <strong id="metric-switzerland-withholding-tax-rate-fr">—</strong>
+                        <span class="metric-note">Du salaire brut</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Net après impôt</span>
+                        <strong id="metric-switzerland-net-after-tax-fr">—</strong>
+                        <span class="metric-note">Après impôt à la source</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Coût employeur</span>
+                        <strong id="metric-switzerland-employer-cost-fr">—</strong>
+                        <span class="metric-note">Brut + cotisations employeur</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Ratio coût / net</span>
+                        <strong id="metric-switzerland-cost-to-net-fr">—</strong>
+                        <span class="metric-note">Après impôt à la source</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-fr-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Données</h3>
+
+                    <p class="chart-subtitle">
+                        Le jeu de données suisse peut être téléchargé au format CSV.
+                        Il contient une ligne par canton et par niveau de salaire brut
+                        mensuel, avec les cotisations salarié, les cotisations employeur,
+                        le salaire net avant impôt, le coût employeur et le coin social.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/switzerland/switzerland_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Télécharger le jeu de données Suisse
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/switzerland/switzerland_parameters_2026.json"
+                            download
+                        >
+                            Télécharger les paramètres 2026
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/switzerland/switzerland_sources_2026.json"
+                            download
+                        >
+                            Télécharger les sources 2026
+                        </a>
+                    </div>
+
+                    <div class="profile-selector profile-selector-grid data-profile-selector">
+                        <div class="selector-field">
+                            <label for="switzerland-data-canton-select-fr">
+                                Canton
+                            </label>
+
+                            <select id="switzerland-data-canton-select-fr">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Données du canton sélectionné</h3>
+
+                    <p
+                        class="chart-subtitle"
+                        id="switzerland-data-canton-caption-fr"
+                    >
+                        —
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Salaire brut</th>
+                                    <th>Net avant impôt</th>
+                                    <th>Coût employeur</th>
+                                    <th>Cotisations salarié</th>
+                                    <th>Cotisations employeur</th>
+                                    <th>Coin social</th>
+                                    <th>Taux salarié</th>
+                                    <th>Taux employeur</th>
+                                    <th>Coût / net</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="switzerland-data-table-body-fr">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-fr-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Méthodologie</h2>
+
+                    <p>
+                        Le module Suisse repose sur une simulation sociale standardisée.
+                        Il ne constitue pas un calculateur individuel de fiche de paie
+                        suisse. Il vise à produire des indicateurs comparables avec les
+                        autres modules du Labor Cost Lab.
+                    </p>
+
+                    <h3>1. Cotisations sociales nationales</h3>
+
+                    <p>
+                        Le module calcule les cotisations AVS / AI / APG et l'assurance
+                        chômage selon les paramètres intégrés dans le fichier de paramètres
+                        2026.
+                    </p>
+
+                    <h3>2. Prévoyance professionnelle LPP</h3>
+
+                    <p>
+                        La LPP est modélisée au moyen d'une hypothèse standardisée :
+                        salaire coordonné, déduction de coordination, seuil d'entrée et
+                        taux d'épargne correspondant à une classe d'âge de référence.
+                        Les plans effectifs peuvent varier selon les employeurs et les
+                        institutions de prévoyance.
+                    </p>
+
+                    <h3>3. Assurance accident</h3>
+
+                    <p>
+                        Les cotisations d'assurance accident sont intégrées au moyen de
+                        taux benchmark : accident non professionnel côté salarié et accident
+                        professionnel côté employeur.
+                    </p>
+
+                    <h3>4. Dimension cantonale</h3>
+
+                    <p>
+                        Le dataset contient les 26 cantons suisses. L'impôt à la source
+                        (tarif A0, personne seule sans enfant) est calculé séparément pour
+                        chaque canton à partir de son propre barème ; les cotisations
+                        sociales nationales, elles, restent identiques d'un canton à
+                        l'autre.
+                    </p>
+
+                    <h3>5. Limites</h3>
+
+                    <p class="method-note">
+                        Cette version ne simule pas encore l'impôt ordinaire cantonal et
+                        communal (déclaration annuelle, hors prélèvement à la source),
+                        les situations familiales complexes, les déductions fiscales
+                        individuelles, les régimes LPP spécifiques aux entreprises ni les
+                        primes d'assurance maladie.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="language-section" id="section-en">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · Switzerland module
+                </p>
+
+                <h1>Swiss Labour Cost Lab</h1>
+
+                <p>
+                    Simulation module for employer cost and net wage before tax in
+                    Switzerland. This first version computes national social
+                    contributions, a standardized LPP occupational pension, accident
+                    insurance, and the main social wedge indicators.
+                </p>
+
+                <p class="author-line">
+                    By Hugo Spring-Ragain, Economist, CEDS Paris
+                </p>
             </div>
 
-            <div class="chart-card">
-                <h3>Données du canton sélectionné</h3>
-
-                <p
-                    class="chart-subtitle"
-                    id="switzerland-data-canton-caption"
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
                 >
-                    —
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchSwitzerlandLanguage()">
+                    Français
+                </button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>Switzerland · 2026 social prototype</h2>
+
+                <p>
+                    The Swiss Labour Cost Lab simulates the path from the gross wage to
+                    the net wage after tax and total employer cost, for the 26 Swiss
+                    cantons. Social contributions are computed on a homogeneous
+                    national basis, while withholding tax (A0 tariff, single, no
+                    children) is computed canton by canton.
                 </p>
 
-                <div class="table-wrapper data-table-scroll data-table-panel">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Salaire brut</th>
-                                <th>Net avant impôt</th>
-                                <th>Coût employeur</th>
-                                <th>Cotisations salarié</th>
-                                <th>Cotisations employeur</th>
-                                <th>Coin social</th>
-                                <th>Taux salarié</th>
-                                <th>Taux employeur</th>
-                                <th>Coût / net</th>
-                            </tr>
-                        </thead>
+                <p>
+                    The module covers OASI / DI / EO, unemployment insurance, a
+                    standardized LPP occupational pension assumption, benchmark
+                    accident-insurance assumptions, and cantonal withholding tax.
+                </p>
+            </section>
 
-                        <tbody id="switzerland-data-table-body">
-                        </tbody>
-                    </table>
+            <nav class="tabs" aria-label="Switzerland navigation">
+                <button class="tab-button active" data-tab="simulation" onclick="showSwitzerlandTab('en', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showSwitzerlandTab('en', 'data')">
+                    Data
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showSwitzerlandTab('en', 'methodology')">
+                    Methodology
+                </button>
+            </nav>
+
+            <section id="tab-en-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="switzerland-waterfall-title-en">
+                        From net wage before tax to employer cost
+                    </h3>
+
+                    <p
+                        class="chart-subtitle"
+                        id="switzerland-waterfall-subtitle-en"
+                    >
+                        Breakdown of the path from net wage before tax to total
+                        employer cost.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="switzerland-canton-select-en">
+                                Reference canton
+                            </label>
+
+                            <select id="switzerland-canton-select-en">
+                            </select>
+                        </div>
+
+                        <div class="selector-field">
+                            <label for="switzerland-waterfall-wage-select-en">
+                                Selected monthly gross wage
+                            </label>
+
+                            <select id="switzerland-waterfall-wage-select-en">
+                                <option value="3000">CHF 3,000</option>
+                                <option value="5000" selected>CHF 5,000</option>
+                                <option value="8000">CHF 8,000</option>
+                                <option value="12000">CHF 12,000</option>
+                                <option value="16000">CHF 16,000</option>
+                                <option value="20000">CHF 20,000</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-switzerland-waterfall-en"
+                        class="plotly-chart"
+                        aria-label="Breakdown of labour cost in Switzerland"
+                    ></div>
                 </div>
-            </div>
-        </section>
 
-        <section id="tab-methodology" class="tab-content">
-            <div class="method-box">
-                <h2>Méthodologie</h2>
+                <section class="dashboard-section-heading">
+                    <h2>Additional charts</h2>
 
-                <p>
-                    Le module Suisse repose sur une simulation sociale standardisée.
-                    Il ne constitue pas un calculateur individuel de fiche de paie
-                    suisse. Il vise à produire des indicateurs comparables avec les
-                    autres modules du Labor Cost Lab.
-                </p>
+                    <p>
+                        The charts below detail wages, employer cost, contribution
+                        rates, social components, and the social wedge before tax.
+                    </p>
+                </section>
 
-                <h3>1. Cotisations sociales nationales</h3>
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Employer cost, gross wage, and net before tax</h3>
 
-                <p>
-                    Le module calcule les cotisations AVS / AI / APG et l’assurance
-                    chômage selon les paramètres intégrés dans le fichier de paramètres
-                    2026.
-                </p>
+                        <p class="chart-subtitle">
+                            Comparison of the gross wage, net wage before tax, and
+                            employer cost across the monthly gross wage level.
+                        </p>
 
-                <h3>2. Prévoyance professionnelle LPP</h3>
+                        <div
+                            id="chart-switzerland-cost-en"
+                            class="plotly-chart"
+                            aria-label="Employer cost and net wage in Switzerland"
+                        ></div>
+                    </div>
 
-                <p>
-                    La LPP est modélisée au moyen d’une hypothèse standardisée :
-                    salaire coordonné, déduction de coordination, seuil d’entrée et
-                    taux d’épargne correspondant à une classe d’âge de référence.
-                    Les plans effectifs peuvent varier selon les employeurs et les
-                    institutions de prévoyance.
-                </p>
+                    <div class="chart-card">
+                        <h3>Effective contribution rates</h3>
 
-                <h3>3. Assurance accident</h3>
+                        <p class="chart-subtitle">
+                            Effective employee and employer rates, including social
+                            contributions, the standardized LPP, and accident insurance.
+                        </p>
 
-                <p>
-                    Les cotisations d’assurance accident sont intégrées au moyen de
-                    taux benchmark : accident non professionnel côté salarié et accident
-                    professionnel côté employeur.
-                </p>
+                        <div
+                            id="chart-switzerland-rates-en"
+                            class="plotly-chart"
+                            aria-label="Contribution rates in Switzerland"
+                        ></div>
+                    </div>
 
-                <h3>4. Dimension cantonale</h3>
+                    <div class="chart-card">
+                        <h3>Employee components</h3>
 
-                <p>
-                    Le dataset contient les 26 cantons suisses. Dans cette version,
-                    les résultats sont identiques entre cantons car les barèmes fiscaux
-                    cantonaux ne sont pas encore intégrés. Cette structure prépare
-                    l’ajout de l’impôt à la source canton par canton.
-                </p>
+                        <p class="chart-subtitle">
+                            Breakdown of employee contributions: OASI / DI / EO,
+                            unemployment, LPP, and non-occupational accident insurance.
+                        </p>
 
-                <h3>5. Limites</h3>
+                        <div
+                            id="chart-switzerland-employee-components-en"
+                            class="plotly-chart"
+                            aria-label="Employee contributions in Switzerland"
+                        ></div>
+                    </div>
 
-                <p class="method-note">
-                    Cette version ne simule pas encore l’impôt à la source, l’impôt
-                    ordinaire cantonal et communal, les situations familiales complexes,
-                    les déductions fiscales individuelles, les régimes LPP spécifiques
-                    aux entreprises ni les primes d’assurance maladie.
-                </p>
-            </div>
-        </section>
-    </main>
+                    <div class="chart-card">
+                        <h3>Employer components</h3>
+
+                        <p class="chart-subtitle">
+                            Breakdown of employer contributions: OASI / DI / EO,
+                            unemployment, LPP, and occupational accident insurance.
+                        </p>
+
+                        <div
+                            id="chart-switzerland-employer-components-en"
+                            class="plotly-chart"
+                            aria-label="Employer contributions in Switzerland"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Social wedge before tax</h3>
+
+                        <p class="chart-subtitle">
+                            Gap between employer cost and net wage before tax, expressed
+                            as an amount and as a share of employer cost.
+                        </p>
+
+                        <div
+                            id="chart-switzerland-wedge-en"
+                            class="plotly-chart"
+                            aria-label="Swiss social wedge"
+                        ></div>
+                    </div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Key indicators</h2>
+
+                    <p>
+                        The indicators below are computed for the selected canton and a
+                        reference monthly gross wage of CHF 5,000.
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="switzerland-metrics-en">
+                    <article class="metric-card">
+                        <span class="metric-label">Reference gross wage</span>
+                        <strong id="metric-switzerland-reference-wage-en">—</strong>
+                        <span class="metric-note">Monthly gross CHF</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Net before tax</span>
+                        <strong id="metric-switzerland-net-before-tax-en">—</strong>
+                        <span class="metric-note">After employee contributions</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Withholding tax</span>
+                        <strong id="metric-switzerland-withholding-tax-en">—</strong>
+                        <span class="metric-note">A0 tariff</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Withholding tax rate</span>
+                        <strong id="metric-switzerland-withholding-tax-rate-en">—</strong>
+                        <span class="metric-note">Share of gross wage</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Net after tax</span>
+                        <strong id="metric-switzerland-net-after-tax-en">—</strong>
+                        <span class="metric-note">After withholding tax</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Employer cost</span>
+                        <strong id="metric-switzerland-employer-cost-en">—</strong>
+                        <span class="metric-note">Gross + employer contributions</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Cost / net ratio</span>
+                        <strong id="metric-switzerland-cost-to-net-en">—</strong>
+                        <span class="metric-note">After withholding tax</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-en-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Data</h3>
+
+                    <p class="chart-subtitle">
+                        The Swiss dataset can be downloaded as a CSV file. It contains
+                        one row per canton and monthly gross wage level, with employee
+                        contributions, employer contributions, net wage before tax,
+                        employer cost, and the social wedge.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/switzerland/switzerland_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Download the Switzerland dataset
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/switzerland/switzerland_parameters_2026.json"
+                            download
+                        >
+                            Download the 2026 parameters
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/switzerland/switzerland_sources_2026.json"
+                            download
+                        >
+                            Download the 2026 sources
+                        </a>
+                    </div>
+
+                    <div class="profile-selector profile-selector-grid data-profile-selector">
+                        <div class="selector-field">
+                            <label for="switzerland-data-canton-select-en">
+                                Canton
+                            </label>
+
+                            <select id="switzerland-data-canton-select-en">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Data for the selected canton</h3>
+
+                    <p
+                        class="chart-subtitle"
+                        id="switzerland-data-canton-caption-en"
+                    >
+                        —
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Gross wage</th>
+                                    <th>Net before tax</th>
+                                    <th>Employer cost</th>
+                                    <th>Employee contributions</th>
+                                    <th>Employer contributions</th>
+                                    <th>Social wedge</th>
+                                    <th>Employee rate</th>
+                                    <th>Employer rate</th>
+                                    <th>Cost / net</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="switzerland-data-table-body-en">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-en-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Methodology</h2>
+
+                    <p>
+                        The Switzerland module relies on a standardized social
+                        simulation. It is not an individual Swiss payslip calculator. It
+                        aims to produce indicators comparable with the Labor Cost Lab's
+                        other modules.
+                    </p>
+
+                    <h3>1. National social contributions</h3>
+
+                    <p>
+                        The module computes OASI / DI / EO and unemployment-insurance
+                        contributions using the parameters built into the 2026
+                        parameters file.
+                    </p>
+
+                    <h3>2. LPP occupational pension</h3>
+
+                    <p>
+                        The LPP is modeled using a standardized assumption: coordinated
+                        wage, coordination deduction, entry threshold, and a savings
+                        rate corresponding to a reference age bracket. Actual plans may
+                        vary by employer and pension institution.
+                    </p>
+
+                    <h3>3. Accident insurance</h3>
+
+                    <p>
+                        Accident-insurance contributions are integrated using benchmark
+                        rates: non-occupational accident on the employee side and
+                        occupational accident on the employer side.
+                    </p>
+
+                    <h3>4. Cantonal dimension</h3>
+
+                    <p>
+                        The dataset contains all 26 Swiss cantons. Withholding tax (A0
+                        tariff, single, no children) is computed separately for each
+                        canton from its own tax scale; national social contributions,
+                        by contrast, remain identical from one canton to another.
+                    </p>
+
+                    <h3>5. Limits</h3>
+
+                    <p class="method-note">
+                        This version does not yet simulate ordinary cantonal and
+                        communal tax (annual tax return, as opposed to withholding
+                        tax), complex family situations, individual tax deductions,
+                        company-specific LPP plans, or health-insurance premiums.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
 </body>
 </html>

@@ -1,6 +1,6 @@
 """
 Labor Cost Lab
-Cross-country comparison dataset builder (Phase 1: France, Germany, Belgium, Switzerland).
+Cross-country comparison dataset builder (France, Germany, Belgium, Switzerland, Netherlands).
 
 Methodology
 -----------
@@ -19,6 +19,17 @@ local-currency wage:
                  computed for all 26 cantons and aggregated with a
                  population-weighted average (Switzerland has no single
                  national wage-tax schedule; withholding tax is cantonal).
+    Netherlands: analysis/netherlands/build_netherlands_dataset.py (compute_row)
+
+Important note on the Netherlands (see comparison_parameters_2026.json
+"notes"):
+Unlike the other four countries, the Netherlands has no separate visible
+employee social-security contribution: the AOW/Anw/Wlz national-insurance
+premiums are bundled into the Box 1 wage-tax rate itself. This module
+therefore reports "employee_contributions_monthly_local" as 0 for the
+Netherlands, and the entire payroll deduction (income tax + national
+insurance combined, "loonheffing") appears under
+"income_tax_or_withholding_tax_monthly_local".
 
 See docs/data/comparison/comparison_parameters_2026.json for the harmonized
 wage grid, the PPP factors (source, year, indicator code), the reference
@@ -73,6 +84,7 @@ sys.path.insert(0, str(ROOT_DIR / "scripts"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "germany"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "belgium"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "switzerland"))
+sys.path.insert(0, str(ROOT_DIR / "analysis" / "netherlands"))
 
 import pandas as pd  # noqa: E402
 
@@ -105,6 +117,11 @@ from build_switzerland_dataset import (  # noqa: E402
 from swiss_withholding_tax_2026 import (  # noqa: E402
     compute_withholding_tax_monthly,
     load_withholding_tax_brackets,
+)
+
+from build_netherlands_dataset import (  # noqa: E402
+    compute_row as nl_compute_row,
+    load_parameters as nl_load_parameters,
 )
 
 
@@ -519,6 +536,89 @@ def compute_switzerland_row(
     return row
 
 
+# ---------------------------------------------------------------------------
+# Netherlands
+# ---------------------------------------------------------------------------
+
+def compute_netherlands_row(
+    wage_point_intl_usd: float,
+    ppp_factor: float,
+    profile: Dict[str, Any],
+    parameters: Dict[str, Any],
+) -> Dict[str, Any]:
+    gross_local = wage_point_intl_usd * ppp_factor
+    wage_reference = parameters["wage_reference"]["gross_monthly_eur"]
+    smic_multiple = gross_local / wage_reference
+
+    result = nl_compute_row(profile, smic_multiple, parameters)
+
+    employer_cost = result["employer_cost_monthly_eur"]
+    net_before_income_tax = result["net_before_income_tax_monthly_eur"]
+    net_after_income_tax = result["net_after_loonheffing_monthly_eur"]
+    income_tax = result["loonheffing_monthly_eur"]
+
+    row = base_row(
+        country="Netherlands",
+        country_code="NL",
+        currency_code="EUR",
+        reference_profile_id=profile["profile_id"],
+        reference_profile_description=(
+            "Permanent contract (WW low rate), large employer (Aof high "
+            "rate), single, childless, below AOW age, standard "
+            "loonheffingskorting (main/only job)."
+        ),
+        harmonized_wage_point_intl_usd=wage_point_intl_usd,
+        ppp_factor=ppp_factor,
+    )
+
+    cost_to_net_ratio = result["cost_to_net_ratio"]
+    cost_to_net_after_ratio = result["cost_to_net_after_loonheffing_ratio"]
+
+    row.update(
+        {
+            "gross_monthly_local": round_money(result["gross_monthly_eur"]),
+            "gross_monthly_intl_usd": round_money(result["gross_monthly_eur"] / ppp_factor),
+            "employee_contributions_monthly_local": 0.0,
+            "employee_contributions_monthly_intl_usd": 0.0,
+            "employer_contributions_monthly_local": round_money(result["employer_contributions_monthly_eur"]),
+            "employer_contributions_monthly_intl_usd": round_money(result["employer_contributions_monthly_eur"] / ppp_factor),
+            "net_before_income_tax_monthly_local": round_money(net_before_income_tax),
+            "net_before_income_tax_monthly_intl_usd": round_money(net_before_income_tax / ppp_factor),
+            "income_tax_or_withholding_tax_monthly_local": round_money(income_tax),
+            "income_tax_or_withholding_tax_monthly_intl_usd": round_money(income_tax / ppp_factor),
+            "net_after_income_tax_monthly_local": round_money(net_after_income_tax),
+            "net_after_income_tax_monthly_intl_usd": round_money(net_after_income_tax / ppp_factor),
+            "employer_cost_monthly_local": round_money(employer_cost),
+            "employer_cost_monthly_intl_usd": round_money(employer_cost / ppp_factor),
+            "social_wedge_before_income_tax_rate": round(
+                (employer_cost - net_before_income_tax) / employer_cost, 6
+            ) if employer_cost else None,
+            "total_wedge_after_income_tax_rate": round(
+                (employer_cost - net_after_income_tax) / employer_cost, 6
+            ) if employer_cost else None,
+            "cost_to_net_before_income_tax_ratio": round(cost_to_net_ratio, 6)
+            if cost_to_net_ratio == cost_to_net_ratio else None,
+            "cost_to_net_after_income_tax_ratio": round(cost_to_net_after_ratio, 6)
+            if cost_to_net_after_ratio == cost_to_net_after_ratio else None,
+            "income_tax_modeled": True,
+            "aggregation_method": "single_reference_profile",
+            "below_minimum_wage": bool(gross_local < wage_reference),
+            "national_minimum_wage_monthly_local": round_money(wage_reference),
+            "note": (
+                "The Netherlands has no separate employee social-security "
+                "contribution: AOW/Anw/Wlz national-insurance premiums are "
+                "bundled into the Box 1 wage-tax rate. The figure shown as "
+                "income tax is the full 'loonheffing' (income tax + "
+                "national insurance combined); employee_contributions is "
+                "0 by construction, not because no social insurance is "
+                "paid."
+            ),
+        }
+    )
+
+    return row
+
+
 def build_dataset() -> pd.DataFrame:
     parameters = load_json(PARAMETERS_PATH)
     ppp_values = parameters["ppp_conversion_factors"]["values"]
@@ -574,6 +674,14 @@ def build_dataset() -> pd.DataFrame:
         for code, population in canton_population.items()
     }
 
+    # --- Netherlands setup ---
+    nl_parameters = nl_load_parameters()
+    nl_profile_id = parameters["reference_profiles"]["NL"]["profile_id"]
+    nl_profile = next(
+        profile for profile in nl_parameters["profiles"]
+        if profile["profile_id"] == nl_profile_id
+    )
+
     rows: List[Dict[str, Any]] = []
 
     for wage_point in wage_grid:
@@ -616,6 +724,15 @@ def build_dataset() -> pd.DataFrame:
                 ch_withholding_tax_brackets,
                 canton_weights,
                 ch_minimum_wage_chf,
+            )
+        )
+
+        rows.append(
+            compute_netherlands_row(
+                wage_point,
+                ppp_values["NL"],
+                nl_profile,
+                nl_parameters,
             )
         )
 

@@ -140,7 +140,8 @@
         }
     </style>
 
-    <script defer src="./assets/comparison_app.js?v=1"></script>
+    <script defer src="../../assets/i18n_common.js?v=1"></script>
+    <script defer src="./assets/comparison_app.js?v=3"></script>
 </head>
 
 <body>
@@ -154,503 +155,1015 @@
         </span>
     </div>
 
-    <header class="hero">
-        <div>
-            <p class="eyebrow">
-                Labor Cost Lab · Comparaison internationale
-            </p>
+    <div class="language-section active" id="section-fr">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · Comparaison internationale
+                </p>
 
-            <h1>Comparaison internationale du coût du travail</h1>
+                <h1>Comparaison internationale du coût du travail</h1>
 
-            <p>
-                Ce module met en regard les quatre modules nationaux (France,
-                Allemagne, Belgique, Suisse) sur une grille de salaires
-                harmonisée, exprimée en dollars internationaux (parité de
-                pouvoir d'achat), afin de comparer des niveaux de vie
-                équivalents plutôt que des salaires nominaux.
-            </p>
+                <p>
+                    Ce module met en regard les cinq modules nationaux (France,
+                    Allemagne, Belgique, Suisse, Pays-Bas) sur une grille de
+                    salaires harmonisée, exprimée en dollars internationaux
+                    (parité de pouvoir d'achat), afin de comparer des niveaux de
+                    vie équivalents plutôt que des salaires nominaux.
+                </p>
 
-            <p class="author-line">
-                Par Hugo Spring-Ragain, Économiste, CEDS Paris
-            </p>
-        </div>
+                <p class="author-line">
+                    Par Hugo Spring-Ragain, Économiste, CEDS Paris
+                </p>
+            </div>
 
-        <div class="header-actions">
-            <button
-                class="theme-toggle"
-                onclick="toggleTheme()"
-                title="Dark mode"
-                aria-label="Dark mode"
-            >
-                🌙
-            </button>
-        </div>
-    </header>
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
 
-    <main class="page-shell">
-        <section class="method-box">
-            <h2>Ce que mesure la comparaison</h2>
+                <button class="language-toggle" onclick="switchComparisonLanguage()">
+                    English
+                </button>
+            </div>
+        </header>
 
-            <div class="method-grid">
-                <article>
-                    <h3>Grille harmonisée</h3>
+        <main class="page-shell">
+            <nav class="tabs" aria-label="Navigation comparaison">
+                <button class="tab-button active" data-tab="simulation" onclick="showComparisonTab('fr', 'simulation')">
+                    Comparaison
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showComparisonTab('fr', 'data')">
+                    Données
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showComparisonTab('fr', 'methodology')">
+                    Méthodologie
+                </button>
+            </nav>
+
+            <section id="tab-fr-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="comparison-metrics-title-fr">
+                        Comparaison à un point de salaire donné
+                    </h3>
+
+                    <p
+                        class="chart-subtitle"
+                        id="comparison-metrics-subtitle-fr"
+                    >
+                        Valeurs des 5 pays au point de salaire harmonisé
+                        sélectionné, exprimées en dollars internationaux (PPA).
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="comparison-wage-select-fr">
+                                Salaire harmonisé (dollars internationaux)
+                            </label>
+
+                            <select id="comparison-wage-select-fr">
+                            </select>
+                        </div>
+                    </div>
+
+                    <section class="metrics-grid" id="comparison-metrics-fr">
+                        <article class="metric-card">
+                            <span class="metric-label">France</span>
+                            <strong id="metric-comparison-fr-net-fr">—</strong>
+                            <span class="metric-note">Net avant impôt, intl $</span>
+                        </article>
+
+                        <article class="metric-card">
+                            <span class="metric-label">Allemagne</span>
+                            <strong id="metric-comparison-de-net-fr">—</strong>
+                            <span class="metric-note">Net avant impôt, intl $</span>
+                        </article>
+
+                        <article class="metric-card">
+                            <span class="metric-label">Belgique</span>
+                            <strong id="metric-comparison-be-net-fr">—</strong>
+                            <span class="metric-note">Net avant impôt, intl $</span>
+                        </article>
+
+                        <article class="metric-card">
+                            <span class="metric-label">Suisse</span>
+                            <strong id="metric-comparison-ch-net-fr">—</strong>
+                            <span class="metric-note">Net avant impôt, intl $</span>
+                        </article>
+
+                        <article class="metric-card">
+                            <span class="metric-label">Pays-Bas</span>
+                            <strong id="metric-comparison-nl-net-fr">—</strong>
+                            <span class="metric-note">Net avant impôt, intl $</span>
+                        </article>
+                    </section>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Graphiques comparatifs</h2>
+
+                    <p>
+                        Les graphiques suivants comparent les 5 pays sur toute la
+                        grille de salaires harmonisée, en dollars internationaux
+                        (PPA). Chaque courbe est calculée directement par le
+                        moteur du module national correspondant.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Net avant impôt</h3>
+
+                        <p class="chart-subtitle">
+                            Salaire net de cotisations sociales, comparable entre
+                            les 5 pays.
+                        </p>
+
+                        <div
+                            id="chart-comparison-net-before-tax-fr"
+                            class="plotly-chart"
+                            aria-label="Net avant impôt par pays"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Net après impôt</h3>
+
+                        <p class="chart-subtitle">
+                            Salaire net après impôt sur le revenu. Pour la
+                            France, l'impôt est l'impôt réellement dû par un
+                            salarié célibataire sans enfant, calculé via le
+                            barème progressif (voir l'onglet Méthodologie).
+                        </p>
+
+                        <div
+                            id="chart-comparison-net-after-tax-fr"
+                            class="plotly-chart"
+                            aria-label="Net après impôt par pays"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Coût employeur</h3>
+
+                        <p class="chart-subtitle">
+                            Coût employeur total (salaire brut + cotisations
+                            employeur) pour chaque pays.
+                        </p>
+
+                        <div
+                            id="chart-comparison-employer-cost-fr"
+                            class="plotly-chart"
+                            aria-label="Coût employeur par pays"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Ratio coût employeur / net avant impôt</h3>
+
+                        <p class="chart-subtitle">
+                            Montant de coût employeur nécessaire pour verser un
+                            dollar international de net avant impôt.
+                        </p>
+
+                        <div
+                            id="chart-comparison-cost-to-net-fr"
+                            class="plotly-chart"
+                            aria-label="Ratio coût / net par pays"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Coin socio-fiscal avant impôt</h3>
+
+                        <p class="chart-subtitle">
+                            Part du coût employeur qui ne se retrouve pas dans le
+                            net avant impôt (cotisations salarié et employeur).
+                        </p>
+
+                        <div
+                            id="chart-comparison-wedge-fr"
+                            class="plotly-chart"
+                            aria-label="Coin socio-fiscal par pays"
+                        ></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-fr-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Données</h3>
+
+                    <p class="chart-subtitle">
+                        Le jeu de données de comparaison peut être téléchargé au
+                        format CSV. Il contient une ligne par pays et par point de
+                        salaire harmonisé, en monnaie locale et en dollars
+                        internationaux (PPA).
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/comparison/labour_cost_comparison_2026.csv"
+                            download
+                        >
+                            Télécharger le jeu de données de comparaison
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/comparison/comparison_parameters_2026.json"
+                            download
+                        >
+                            Télécharger les paramètres 2026
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/comparison/comparison_sources_2026.json"
+                            download
+                        >
+                            Télécharger les sources 2026
+                        </a>
+                    </div>
+
+                    <div class="profile-selector profile-selector-grid data-profile-selector">
+                        <div class="selector-field">
+                            <label for="comparison-data-metric-select-fr">
+                                Indicateur affiché
+                            </label>
+
+                            <select id="comparison-data-metric-select-fr">
+                                <option value="net_before_income_tax_monthly_intl_usd" selected>
+                                    Net avant impôt (intl $)
+                                </option>
+                                <option value="net_after_income_tax_monthly_intl_usd">
+                                    Net après impôt (intl $)
+                                </option>
+                                <option value="employer_cost_monthly_intl_usd">
+                                    Coût employeur (intl $)
+                                </option>
+                                <option value="employee_contributions_monthly_intl_usd">
+                                    Cotisations salarié (intl $)
+                                </option>
+                                <option value="employer_contributions_monthly_intl_usd">
+                                    Cotisations employeur (intl $)
+                                </option>
+                                <option value="social_wedge_before_income_tax_rate">
+                                    Coin social avant impôt (taux)
+                                </option>
+                                <option value="total_wedge_after_income_tax_rate">
+                                    Coin total après impôt (taux)
+                                </option>
+                                <option value="cost_to_net_before_income_tax_ratio">
+                                    Ratio coût / net avant impôt
+                                </option>
+                                <option value="cost_to_net_after_income_tax_ratio">
+                                    Ratio coût / net après impôt
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Tableau comparatif</h3>
+
+                    <p
+                        class="chart-subtitle"
+                        id="comparison-data-caption-fr"
+                    >
+                        —
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Salaire harmonisé, intl $</th>
+                                    <th>France</th>
+                                    <th>Allemagne</th>
+                                    <th>Belgique</th>
+                                    <th>Suisse</th>
+                                    <th>Pays-Bas</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="comparison-data-table-body-fr">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p
+                        class="chart-subtitle"
+                        id="comparison-data-footnote-fr"
+                        style="display: none; margin-top: 10px;"
+                    >
+                        * Salaire hypothétique, inférieur au salaire minimum (ou
+                        de référence) national de ce pays à ce point de la
+                        grille harmonisée.
+                    </p>
+                </div>
+            </section>
+
+            <section id="tab-fr-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Méthodologie</h2>
+
+                    <p>
+                        Ce module ne redéfinit aucun paramètre national : il
+                        réutilise directement les moteurs de calcul des modules
+                        France, Allemagne, Belgique, Suisse et Pays-Bas, à des
+                        points de salaire communs.
+                    </p>
+
+                    <h3>1. Grille de salaires harmonisée</h3>
 
                     <p>
                         21 points de salaire, de 2 000 à 12 000 dollars
-                        internationaux mensuels, communs aux 4 pays, afin de
-                        couvrir aussi les grilles de salaire les plus basses.
+                        internationaux mensuels par pas de 500. La borne basse est
+                        volontairement fixée sous le plancher de salaire minimum
+                        (ou de référence) des 5 pays, une fois converti en dollars
+                        internationaux, afin que les grilles de salaire les plus
+                        basses restent visibles. Les points de salaire inférieurs
+                        au minimum légal d'un pays sont signalés par un
+                        astérisque (*) dans l'onglet Données : ils représentent
+                        un salaire hypothétique pour ce pays à ce point de la
+                        grille. Les seuils 2024/2026 convertis en dollars
+                        internationaux sont : France (SMIC) environ 2 604,
+                        Suisse environ 2 710, Belgique (RMMMG) environ 2 911,
+                        Pays-Bas (WML, salaire minimum légal) environ 3 152,
+                        Allemagne environ 3 434.
                     </p>
-                </article>
 
-                <article>
-                    <h3>Parité de pouvoir d'achat</h3>
+                    <h3>2. Conversion par parité de pouvoir d'achat</h3>
 
                     <p>
-                        Facteur de conversion PPA sur la consommation privée
-                        des ménages (Banque mondiale, PCI), appliqué
-                        individuellement à chacun des 4 pays.
+                        Chaque point de salaire harmonisé est converti dans la
+                        monnaie locale de chaque pays au moyen du facteur de
+                        parité de pouvoir d'achat sur la consommation privée des
+                        ménages (Banque mondiale, Programme de comparaison
+                        internationale, indicateur PA.NUS.PRVT.PP, année de
+                        référence 2024). Ce facteur est appliqué individuellement
+                        aux 5 pays, y compris la Suisse, selon la même logique que
+                        les comparaisons « Taxing Wages » de l'OCDE.
                     </p>
-                </article>
 
-                <article>
-                    <h3>Net avant impôt</h3>
+                    <h3>3. Calcul direct, sans interpolation</h3>
 
                     <p>
-                        Salaire net de cotisations sociales uniquement,
-                        comparable entre les 4 pays.
+                        Pour chaque salaire local obtenu, la fonction de calcul
+                        existante du module national correspondant est appelée
+                        directement. Les valeurs ne sont pas obtenues par
+                        interpolation de jeux de données déjà calculés.
                     </p>
-                </article>
 
-                <article>
-                    <h3>Net après impôt</h3>
+                    <h3>4. Profils de référence par pays</h3>
 
                     <p>
-                        Salaire net après impôt sur le revenu, pour les 4
-                        pays. Pour la France, l'impôt est l'impôt réellement
-                        dû par un salarié célibataire sans enfant, calculé
-                        via le barème progressif — voir l'onglet
-                        Méthodologie.
+                        France : non-cadre, hors Alsace-Moselle, entreprise de
+                        moins de 50 salariés, taux AT/MP standard, temps plein.
+                        Allemagne : assurance maladie publique, sans enfant, hors
+                        Saxe. Belgique : salarié du secteur privé (seul profil
+                        actuellement modélisé). Suisse : moyenne pondérée par la
+                        population des 26 cantons, barème A0N (personne seule,
+                        sans enfant, hors impôt d'église), hypothèses LPP et
+                        assurance accident standardisées. Pays-Bas : contrat à
+                        durée indéterminée (WW, taux bas – assurance chômage),
+                        grand employeur (Aof, taux élevé – fonds invalidité),
+                        célibataire sans enfant, hors âge de l'AOW (vieillesse).
                     </p>
-                </article>
-            </div>
-        </section>
 
-        <nav class="tabs" aria-label="Navigation comparaison">
-            <button class="tab-button active" data-tab="simulation">
-                Comparaison
-            </button>
+                    <h3>5. Agrégation cantonale suisse</h3>
 
-            <button class="tab-button" data-tab="data">
-                Données
-            </button>
+                    <p>
+                        La Suisse ne dispose pas d'un barème fiscal national
+                        unique : l'impôt à la source est fixé au niveau cantonal.
+                        La valeur suisse de référence est donc une moyenne
+                        pondérée par la population résidante permanente 2024 des
+                        26 cantons (Office fédéral de la statistique), et non un
+                        canton unique.
+                    </p>
 
-            <button class="tab-button" data-tab="methodology">
-                Méthodologie
-            </button>
-        </nav>
+                    <h3>6. Impôt sur le revenu en France : le barème progressif</h3>
 
-        <section id="tab-simulation" class="tab-content active">
-            <div class="chart-card chart-card-wide">
-                <h3 id="comparison-metrics-title">
-                    Comparaison à un point de salaire donné
-                </h3>
+                    <p>
+                        La France est incluse dans les indicateurs « après impôt »
+                        au moyen du barème progressif réel de l'impôt sur le
+                        revenu (tranches marginales 0 % / 11 % / 30 % / 41 % / 45 %,
+                        revenus 2025, imposition 2026), calculé pour un salarié
+                        célibataire sans enfant (1 part de quotient familial) — le
+                        même type de profil de référence (« célibataire, sans
+                        enfant ») déjà utilisé pour l'Allemagne et la Suisse. Le
+                        salaire net imposable mensuel (assiette « salarié .
+                        rémunération . net . imposable » calculée par le moteur
+                        Mon-entreprise) est annualisé, réduit de l'abattement
+                        forfaitaire de 10 % pour frais professionnels (dans la
+                        limite d'un plancher de 509 € et d'un plafond de
+                        14 555 €), puis soumis au barème par tranches marginales
+                        pour obtenir l'impôt annuel réellement dû, ramené ensuite
+                        à un montant mensuel.
+                    </p>
 
-                <p
-                    class="chart-subtitle"
-                    id="comparison-metrics-subtitle"
-                >
-                    Valeurs des 4 pays au point de salaire harmonisé
-                    sélectionné, exprimées en dollars internationaux (PPA).
+                    <p>
+                        Ce choix est directement comparable à ce qui est fait pour
+                        les 4 autres pays : le Lohnsteuer allemand, le précompte
+                        professionnel belge, l'impôt à la source suisse et le
+                        loonheffing néerlandais sont tous des prélèvements
+                        obligatoires calculés directement à partir du salaire pour
+                        un profil « célibataire, sans enfant ». Le barème
+                        progressif calcule ici, de la même façon, l'impôt
+                        réellement dû par ce même type de profil en France.
+                    </p>
+
+                    <p class="method-note">
+                        Avertissement méthodologique : ce calcul suppose un
+                        salarié célibataire sans enfant ne déclarant aucun autre
+                        revenu, charge ou réduction/crédit d'impôt — c'est un
+                        profil de référence simplifié, pas une moyenne de la
+                        population française. Par ailleurs, le prélèvement à la
+                        source (PAS) effectivement retenu chaque mois sur le
+                        bulletin de paie d'un salarié réel dépend d'un taux
+                        personnalisé transmis par la DGFiP (reflétant l'ensemble
+                        de la situation de son foyer fiscal) ou, à défaut, du
+                        taux neutre (taux par défaut, article 204 H du Code
+                        général des impôts, BOFiP BOI-BAREME-000037) : ces deux
+                        taux ne sont que des acomptes mensuels, régularisés
+                        l'année suivante sur la base du montant définitivement dû
+                        — c'est ce montant définitif, calculé ici via le barème
+                        progressif, qui est utilisé pour la comparaison.
+                    </p>
+
+                    <h3>7. Impôt sur le revenu aux Pays-Bas : le loonheffing</h3>
+
+                    <p>
+                        Contrairement aux quatre autres pays, les Pays-Bas ne
+                        prélèvent pas de cotisation sociale salarié distincte :
+                        les cotisations d'assurance nationale AOW (vieillesse),
+                        Anw (survivants) et Wlz (dépendance) sont fusionnées dans
+                        le taux de la première tranche du barème Box 1. Le
+                        salaire net avant impôt néerlandais est donc, dans ce
+                        module, égal au salaire brut, et l'indicateur « cotisations
+                        salarié » vaut 0 pour les Pays-Bas — non pas parce
+                        qu'aucune cotisation sociale n'est due, mais parce
+                        qu'elle est comptabilisée dans le loonheffing.
+                    </p>
+
+                    <p>
+                        Le loonheffing est calculé pour un salarié célibataire
+                        sans enfant via le barème progressif Box 1 2026 (35,75 %
+                        jusqu'à 38 883 € ; 37,56 % jusqu'à 78 426 € ; 49,50 %
+                        au-delà), diminué de deux crédits d'impôt calculés selon
+                        leur propre barème : l'algemene heffingskorting (crédit
+                        général) et l'arbeidskorting (crédit pour revenu du
+                        travail). Voir l'onglet Méthodologie du module Pays-Bas
+                        pour le détail complet.
+                    </p>
+
+                    <p class="method-note">
+                        Avertissement méthodologique : le profil de référence
+                        néerlandais retient un contrat à durée indéterminée (WW
+                        taux bas) et un grand employeur (Aof taux élevé) — des
+                        choix explicites, ajustables. Le Whk (Werkhervattingskas),
+                        spécifique à chaque employeur et secteur, n'est pas
+                        modélisé, non plus que les cotisations de pension
+                        complémentaire (non fixées par la loi) ni les crédits
+                        d'impôt dépendant d'un partenaire.
+                    </p>
+
+                    <h3>8. Limites</h3>
+
+                    <p class="method-note">
+                        Le calcul de l'impôt sur le revenu suppose un salarié
+                        célibataire sans enfant (1 part) sans autre revenu ni
+                        charge déductible : il ne représente pas la diversité des
+                        situations fiscales réelles (quotient familial différent,
+                        revenus additionnels, réductions et crédits d'impôt,
+                        taux personnalisé du prélèvement à la source, etc.).
+                        Seules les grilles applicables à la France métropolitaine
+                        sont utilisées (les grilles spécifiques à la Guadeloupe,
+                        la Martinique, La Réunion, la Guyane et Mayotte ne sont
+                        pas modélisées). Comme pour les autres pays, les
+                        indicateurs « après impôt » et les coins fiscaux totaux
+                        dépendent du profil de référence choisi et ne
+                        représentent pas la diversité des situations
+                        individuelles réelles.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="language-section" id="section-en">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · Cross-country comparison
                 </p>
 
-                <div class="profile-selector profile-selector-grid">
-                    <div class="selector-field">
-                        <label for="comparison-wage-select">
-                            Salaire harmonisé (dollars internationaux)
-                        </label>
-
-                        <select id="comparison-wage-select">
-                        </select>
-                    </div>
-                </div>
-
-                <section class="metrics-grid" id="comparison-metrics">
-                    <article class="metric-card">
-                        <span class="metric-label">France</span>
-                        <strong id="metric-comparison-fr-net">—</strong>
-                        <span class="metric-note">Net avant impôt, intl $</span>
-                    </article>
-
-                    <article class="metric-card">
-                        <span class="metric-label">Allemagne</span>
-                        <strong id="metric-comparison-de-net">—</strong>
-                        <span class="metric-note">Net avant impôt, intl $</span>
-                    </article>
-
-                    <article class="metric-card">
-                        <span class="metric-label">Belgique</span>
-                        <strong id="metric-comparison-be-net">—</strong>
-                        <span class="metric-note">Net avant impôt, intl $</span>
-                    </article>
-
-                    <article class="metric-card">
-                        <span class="metric-label">Suisse</span>
-                        <strong id="metric-comparison-ch-net">—</strong>
-                        <span class="metric-note">Net avant impôt, intl $</span>
-                    </article>
-                </section>
-            </div>
-
-            <section class="dashboard-section-heading">
-                <h2>Graphiques comparatifs</h2>
+                <h1>Cross-country comparison of labour costs</h1>
 
                 <p>
-                    Les graphiques suivants comparent les 4 pays sur toute la
-                    grille de salaires harmonisée, en dollars internationaux
-                    (PPA). Chaque courbe est calculée directement par le
-                    moteur du module national correspondant.
+                    This module compares the five national modules (France,
+                    Germany, Belgium, Switzerland, Netherlands) on a harmonized
+                    wage grid, expressed in international dollars (purchasing
+                    power parity), to compare equivalent standards of living
+                    rather than nominal wages.
                 </p>
+
+                <p class="author-line">
+                    By Hugo Spring-Ragain, Economist, CEDS Paris
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchComparisonLanguage()">
+                    Français
+                </button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <nav class="tabs" aria-label="Comparison navigation">
+                <button class="tab-button active" data-tab="simulation" onclick="showComparisonTab('en', 'simulation')">
+                    Comparison
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showComparisonTab('en', 'data')">
+                    Data
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showComparisonTab('en', 'methodology')">
+                    Methodology
+                </button>
+            </nav>
+
+            <section id="tab-en-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="comparison-metrics-title-en">
+                        Comparison at a given wage point
+                    </h3>
+
+                    <p
+                        class="chart-subtitle"
+                        id="comparison-metrics-subtitle-en"
+                    >
+                        Values for the 5 countries at the selected harmonized
+                        wage point, expressed in international dollars (PPP).
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="comparison-wage-select-en">
+                                Harmonized wage (international dollars)
+                            </label>
+
+                            <select id="comparison-wage-select-en">
+                            </select>
+                        </div>
+                    </div>
+
+                    <section class="metrics-grid" id="comparison-metrics-en">
+                        <article class="metric-card">
+                            <span class="metric-label">France</span>
+                            <strong id="metric-comparison-fr-net-en">—</strong>
+                            <span class="metric-note">Net before tax, intl $</span>
+                        </article>
+
+                        <article class="metric-card">
+                            <span class="metric-label">Germany</span>
+                            <strong id="metric-comparison-de-net-en">—</strong>
+                            <span class="metric-note">Net before tax, intl $</span>
+                        </article>
+
+                        <article class="metric-card">
+                            <span class="metric-label">Belgium</span>
+                            <strong id="metric-comparison-be-net-en">—</strong>
+                            <span class="metric-note">Net before tax, intl $</span>
+                        </article>
+
+                        <article class="metric-card">
+                            <span class="metric-label">Switzerland</span>
+                            <strong id="metric-comparison-ch-net-en">—</strong>
+                            <span class="metric-note">Net before tax, intl $</span>
+                        </article>
+
+                        <article class="metric-card">
+                            <span class="metric-label">Netherlands</span>
+                            <strong id="metric-comparison-nl-net-en">—</strong>
+                            <span class="metric-note">Net before tax, intl $</span>
+                        </article>
+                    </section>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Comparative charts</h2>
+
+                    <p>
+                        The charts below compare the 5 countries across the
+                        whole harmonized wage grid, in international dollars
+                        (PPP). Each curve is computed directly by the matching
+                        national module's engine.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Net before tax</h3>
+
+                        <p class="chart-subtitle">
+                            Wage net of social contributions, comparable
+                            across the 5 countries.
+                        </p>
+
+                        <div
+                            id="chart-comparison-net-before-tax-en"
+                            class="plotly-chart"
+                            aria-label="Net before tax by country"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Net after tax</h3>
+
+                        <p class="chart-subtitle">
+                            Net wage after income tax. For France, the tax is
+                            the actual tax due by a single, childless
+                            taxpayer, computed via the progressive bareme (see
+                            the Methodology tab).
+                        </p>
+
+                        <div
+                            id="chart-comparison-net-after-tax-en"
+                            class="plotly-chart"
+                            aria-label="Net after tax by country"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Employer cost</h3>
+
+                        <p class="chart-subtitle">
+                            Total employer cost (gross wage + employer
+                            contributions) for each country.
+                        </p>
+
+                        <div
+                            id="chart-comparison-employer-cost-en"
+                            class="plotly-chart"
+                            aria-label="Employer cost by country"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Employer cost / net before tax ratio</h3>
+
+                        <p class="chart-subtitle">
+                            Amount of employer cost needed to pay one
+                            international dollar of net wage before tax.
+                        </p>
+
+                        <div
+                            id="chart-comparison-cost-to-net-en"
+                            class="plotly-chart"
+                            aria-label="Cost / net ratio by country"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Socio-fiscal wedge before tax</h3>
+
+                        <p class="chart-subtitle">
+                            Share of employer cost that does not end up in net
+                            wage before tax (employee and employer
+                            contributions).
+                        </p>
+
+                        <div
+                            id="chart-comparison-wedge-en"
+                            class="plotly-chart"
+                            aria-label="Socio-fiscal wedge by country"
+                        ></div>
+                    </div>
+                </div>
             </section>
 
-            <div class="charts-grid">
+            <section id="tab-en-data" class="tab-content">
                 <div class="chart-card">
-                    <h3>Net avant impôt</h3>
+                    <h3>Data</h3>
 
                     <p class="chart-subtitle">
-                        Salaire net de cotisations sociales, comparable entre
-                        les 4 pays.
+                        The comparison dataset can be downloaded as a CSV
+                        file. It contains one row per country and harmonized
+                        wage point, in local currency and international
+                        dollars (PPP).
                     </p>
 
-                    <div
-                        id="chart-comparison-net-before-tax"
-                        class="plotly-chart"
-                        aria-label="Net avant impôt par pays"
-                    ></div>
-                </div>
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/comparison/labour_cost_comparison_2026.csv"
+                            download
+                        >
+                            Download the comparison dataset
+                        </a>
 
-                <div class="chart-card">
-                    <h3>Net après impôt</h3>
+                        <a
+                            class="download-link"
+                            href="../../data/comparison/comparison_parameters_2026.json"
+                            download
+                        >
+                            Download the 2026 parameters
+                        </a>
 
-                    <p class="chart-subtitle">
-                        Salaire net après impôt sur le revenu. Pour la
-                        France, l'impôt est l'impôt réellement dû par un
-                        salarié célibataire sans enfant, calculé via le
-                        barème progressif (voir l'onglet Méthodologie).
-                    </p>
+                        <a
+                            class="download-link"
+                            href="../../data/comparison/comparison_sources_2026.json"
+                            download
+                        >
+                            Download the 2026 sources
+                        </a>
+                    </div>
 
-                    <div
-                        id="chart-comparison-net-after-tax"
-                        class="plotly-chart"
-                        aria-label="Net après impôt par pays"
-                    ></div>
-                </div>
+                    <div class="profile-selector profile-selector-grid data-profile-selector">
+                        <div class="selector-field">
+                            <label for="comparison-data-metric-select-en">
+                                Indicator shown
+                            </label>
 
-                <div class="chart-card">
-                    <h3>Coût employeur</h3>
-
-                    <p class="chart-subtitle">
-                        Coût employeur total (salaire brut + cotisations
-                        employeur) pour chaque pays.
-                    </p>
-
-                    <div
-                        id="chart-comparison-employer-cost"
-                        class="plotly-chart"
-                        aria-label="Coût employeur par pays"
-                    ></div>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Ratio coût employeur / net avant impôt</h3>
-
-                    <p class="chart-subtitle">
-                        Montant de coût employeur nécessaire pour verser un
-                        dollar international de net avant impôt.
-                    </p>
-
-                    <div
-                        id="chart-comparison-cost-to-net"
-                        class="plotly-chart"
-                        aria-label="Ratio coût / net par pays"
-                    ></div>
-                </div>
-
-                <div class="chart-card chart-card-full">
-                    <h3>Coin socio-fiscal avant impôt</h3>
-
-                    <p class="chart-subtitle">
-                        Part du coût employeur qui ne se retrouve pas dans le
-                        net avant impôt (cotisations salarié et employeur).
-                    </p>
-
-                    <div
-                        id="chart-comparison-wedge"
-                        class="plotly-chart"
-                        aria-label="Coin socio-fiscal par pays"
-                    ></div>
-                </div>
-            </div>
-        </section>
-
-        <section id="tab-data" class="tab-content">
-            <div class="chart-card">
-                <h3>Données</h3>
-
-                <p class="chart-subtitle">
-                    Le jeu de données de comparaison peut être téléchargé au
-                    format CSV. Il contient une ligne par pays et par point de
-                    salaire harmonisé, en monnaie locale et en dollars
-                    internationaux (PPA).
-                </p>
-
-                <div class="download-row" style="margin-top: 18px;">
-                    <a
-                        class="download-link"
-                        href="../../data/comparison/labour_cost_comparison_2026.csv"
-                        download
-                    >
-                        Télécharger le jeu de données de comparaison
-                    </a>
-
-                    <a
-                        class="download-link"
-                        href="../../data/comparison/comparison_parameters_2026.json"
-                        download
-                    >
-                        Télécharger les paramètres 2026
-                    </a>
-
-                    <a
-                        class="download-link"
-                        href="../../data/comparison/comparison_sources_2026.json"
-                        download
-                    >
-                        Télécharger les sources 2026
-                    </a>
-                </div>
-
-                <div class="profile-selector profile-selector-grid data-profile-selector">
-                    <div class="selector-field">
-                        <label for="comparison-data-metric-select">
-                            Indicateur affiché
-                        </label>
-
-                        <select id="comparison-data-metric-select">
-                            <option value="net_before_income_tax_monthly_intl_usd" selected>
-                                Net avant impôt (intl $)
-                            </option>
-                            <option value="net_after_income_tax_monthly_intl_usd">
-                                Net après impôt (intl $)
-                            </option>
-                            <option value="employer_cost_monthly_intl_usd">
-                                Coût employeur (intl $)
-                            </option>
-                            <option value="employee_contributions_monthly_intl_usd">
-                                Cotisations salarié (intl $)
-                            </option>
-                            <option value="employer_contributions_monthly_intl_usd">
-                                Cotisations employeur (intl $)
-                            </option>
-                            <option value="social_wedge_before_income_tax_rate">
-                                Coin social avant impôt (taux)
-                            </option>
-                            <option value="total_wedge_after_income_tax_rate">
-                                Coin total après impôt (taux)
-                            </option>
-                            <option value="cost_to_net_before_income_tax_ratio">
-                                Ratio coût / net avant impôt
-                            </option>
-                            <option value="cost_to_net_after_income_tax_ratio">
-                                Ratio coût / net après impôt
-                            </option>
-                        </select>
+                            <select id="comparison-data-metric-select-en">
+                                <option value="net_before_income_tax_monthly_intl_usd" selected>
+                                    Net before tax (intl $)
+                                </option>
+                                <option value="net_after_income_tax_monthly_intl_usd">
+                                    Net after tax (intl $)
+                                </option>
+                                <option value="employer_cost_monthly_intl_usd">
+                                    Employer cost (intl $)
+                                </option>
+                                <option value="employee_contributions_monthly_intl_usd">
+                                    Employee contributions (intl $)
+                                </option>
+                                <option value="employer_contributions_monthly_intl_usd">
+                                    Employer contributions (intl $)
+                                </option>
+                                <option value="social_wedge_before_income_tax_rate">
+                                    Social wedge before tax (rate)
+                                </option>
+                                <option value="total_wedge_after_income_tax_rate">
+                                    Total wedge after tax (rate)
+                                </option>
+                                <option value="cost_to_net_before_income_tax_ratio">
+                                    Cost / net before tax ratio
+                                </option>
+                                <option value="cost_to_net_after_income_tax_ratio">
+                                    Cost / net after tax ratio
+                                </option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="chart-card">
-                <h3>Tableau comparatif</h3>
+                <div class="chart-card">
+                    <h3>Comparative table</h3>
 
-                <p
-                    class="chart-subtitle"
-                    id="comparison-data-caption"
-                >
-                    —
-                </p>
+                    <p
+                        class="chart-subtitle"
+                        id="comparison-data-caption-en"
+                    >
+                        —
+                    </p>
 
-                <div class="table-wrapper data-table-scroll data-table-panel">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Salaire harmonisé, intl $</th>
-                                <th>France</th>
-                                <th>Allemagne</th>
-                                <th>Belgique</th>
-                                <th>Suisse</th>
-                            </tr>
-                        </thead>
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Harmonized wage, intl $</th>
+                                    <th>France</th>
+                                    <th>Germany</th>
+                                    <th>Belgium</th>
+                                    <th>Switzerland</th>
+                                    <th>Netherlands</th>
+                                </tr>
+                            </thead>
 
-                        <tbody id="comparison-data-table-body">
-                        </tbody>
-                    </table>
+                            <tbody id="comparison-data-table-body-en">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p
+                        class="chart-subtitle"
+                        id="comparison-data-footnote-en"
+                        style="display: none; margin-top: 10px;"
+                    >
+                        * Hypothetical wage, below the national minimum (or
+                        reference) wage for that country at this point of the
+                        harmonized grid.
+                    </p>
                 </div>
+            </section>
 
-                <p
-                    class="chart-subtitle"
-                    id="comparison-data-footnote"
-                    style="display: none; margin-top: 10px;"
-                >
-                    * Salaire hypothétique, inférieur au salaire minimum (ou
-                    de référence) national de ce pays à ce point de la
-                    grille harmonisée.
-                </p>
-            </div>
-        </section>
+            <section id="tab-en-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Methodology</h2>
 
-        <section id="tab-methodology" class="tab-content">
-            <div class="method-box">
-                <h2>Méthodologie</h2>
+                    <p>
+                        This module does not redefine any national parameter:
+                        it directly reuses the calculation engines of the
+                        France, Germany, Belgium, Switzerland, and Netherlands
+                        modules, at common wage points.
+                    </p>
 
-                <p>
-                    Ce module ne redéfinit aucun paramètre national : il
-                    réutilise directement les moteurs de calcul des modules
-                    France, Allemagne, Belgique et Suisse, à des points de
-                    salaire communs.
-                </p>
+                    <h3>1. Harmonized wage grid</h3>
 
-                <h3>1. Grille de salaires harmonisée</h3>
+                    <p>
+                        21 wage points, from 2,000 to 12,000 international
+                        dollars per month in steps of 500. The lower bound is
+                        deliberately set below the minimum (or reference) wage
+                        floor of the 5 countries, once converted to
+                        international dollars, so that the lowest wage ranges
+                        remain visible. Wage points below a country's legal
+                        minimum are flagged with an asterisk (*) in the Data
+                        tab: they represent a hypothetical wage for that
+                        country at this point of the grid. The 2024/2026
+                        thresholds converted to international dollars are:
+                        France (SMIC) about 2,604, Switzerland about 2,710,
+                        Belgium (RMMMG) about 2,911, Netherlands (WML,
+                        statutory minimum wage) about 3,152, Germany about
+                        3,434.
+                    </p>
 
-                <p>
-                    21 points de salaire, de 2 000 à 12 000 dollars
-                    internationaux mensuels par pas de 500. La borne basse est
-                    volontairement fixée sous le plancher de salaire minimum
-                    (ou de référence) des 4 pays, une fois converti en dollars
-                    internationaux, afin que les grilles de salaire les plus
-                    basses restent visibles. Les points de salaire inférieurs
-                    au minimum légal d'un pays sont signalés par un
-                    astérisque (*) dans l'onglet Données : ils représentent
-                    un salaire hypothétique pour ce pays à ce point de la
-                    grille. Les seuils 2024 convertis en dollars
-                    internationaux sont : France (SMIC) environ 2 604,
-                    Suisse environ 2 710, Belgique (RMMMG) environ 2 911,
-                    Allemagne environ 3 434.
-                </p>
+                    <h3>2. Conversion by purchasing power parity</h3>
 
-                <h3>2. Conversion par parité de pouvoir d'achat</h3>
+                    <p>
+                        Each harmonized wage point is converted into each
+                        country's local currency using the household
+                        private-consumption purchasing-power-parity conversion
+                        factor (World Bank, International Comparison Program,
+                        indicator PA.NUS.PRVT.PP, 2024 reference year). This
+                        factor is applied individually to the 5 countries,
+                        including Switzerland, following the same logic as the
+                        OECD's "Taxing Wages" comparisons.
+                    </p>
 
-                <p>
-                    Chaque point de salaire harmonisé est converti dans la
-                    monnaie locale de chaque pays au moyen du facteur de
-                    parité de pouvoir d'achat sur la consommation privée des
-                    ménages (Banque mondiale, Programme de comparaison
-                    internationale, indicateur PA.NUS.PRVT.PP, année de
-                    référence 2024). Ce facteur est appliqué individuellement
-                    aux 4 pays, y compris la Suisse, selon la même logique que
-                    les comparaisons « Taxing Wages » de l'OCDE.
-                </p>
+                    <h3>3. Direct calculation, no interpolation</h3>
 
-                <h3>3. Calcul direct, sans interpolation</h3>
+                    <p>
+                        For each local wage obtained, the matching national
+                        module's existing calculation function is called
+                        directly. Values are not obtained by interpolating
+                        already-computed datasets.
+                    </p>
 
-                <p>
-                    Pour chaque salaire local obtenu, la fonction de calcul
-                    existante du module national correspondant est appelée
-                    directement. Les valeurs ne sont pas obtenues par
-                    interpolation de jeux de données déjà calculés.
-                </p>
+                    <h3>4. Reference profiles by country</h3>
 
-                <h3>4. Profils de référence par pays</h3>
+                    <p>
+                        France: non-executive employee, outside
+                        Alsace-Moselle, firm with fewer than 50 employees,
+                        standard AT/MP rate, full-time. Germany: public health
+                        insurance, childless, outside Saxony. Belgium:
+                        private-sector employee (the only profile currently
+                        modeled). Switzerland: population-weighted average
+                        across the 26 cantons, A0N tariff (single, no
+                        children, no church tax), standardized LPP and
+                        accident-insurance assumptions. Netherlands: permanent
+                        contract (WW, low rate – unemployment insurance),
+                        large employer (Aof, high rate – disability fund),
+                        single, no children, below AOW (state pension) age.
+                    </p>
 
-                <p>
-                    France : non-cadre, hors Alsace-Moselle, entreprise de
-                    moins de 50 salariés, taux AT/MP standard, temps plein.
-                    Allemagne : assurance maladie publique, sans enfant, hors
-                    Saxe. Belgique : salarié du secteur privé (seul profil
-                    actuellement modélisé). Suisse : moyenne pondérée par la
-                    population des 26 cantons, barème A0N (personne seule,
-                    sans enfant, hors impôt d'église), hypothèses LPP et
-                    assurance accident standardisées.
-                </p>
+                    <h3>5. Swiss cantonal aggregation</h3>
 
-                <h3>5. Agrégation cantonale suisse</h3>
+                    <p>
+                        Switzerland has no single national tax scale:
+                        withholding tax is set at the cantonal level. The
+                        Swiss reference value is therefore a population-weighted
+                        average across the 26 cantons (2024 permanent
+                        resident population, Federal Statistical Office), not
+                        a single canton.
+                    </p>
 
-                <p>
-                    La Suisse ne dispose pas d'un barème fiscal national
-                    unique : l'impôt à la source est fixé au niveau cantonal.
-                    La valeur suisse de référence est donc une moyenne
-                    pondérée par la population résidante permanente 2024 des
-                    26 cantons (Office fédéral de la statistique), et non un
-                    canton unique.
-                </p>
+                    <h3>6. Income tax in France: the progressive bareme</h3>
 
-                <h3>6. Impôt sur le revenu en France : le barème progressif</h3>
+                    <p>
+                        France is included in the "after tax" indicators via
+                        the actual progressive income-tax scale (marginal
+                        brackets 0% / 11% / 30% / 41% / 45%, 2025 income, 2026
+                        taxation), computed for a single, childless taxpayer
+                        (1 part de quotient familial) — the same type of
+                        reference profile ("single, childless") already used
+                        for Germany and Switzerland. The monthly net taxable
+                        salary (the "salarie . remuneration . net . imposable"
+                        base computed by the Mon-entreprise engine) is
+                        annualized, reduced by the standard 10% deduction for
+                        professional expenses (bounded by a floor of €509 and
+                        a ceiling of €14,555), then run through the
+                        progressive marginal-bracket scale to obtain the
+                        actual annual tax due, converted back to a monthly
+                        amount.
+                    </p>
 
-                <p>
-                    La France est incluse dans les indicateurs « après impôt »
-                    au moyen du barème progressif réel de l'impôt sur le
-                    revenu (tranches marginales 0 % / 11 % / 30 % / 41 % / 45 %,
-                    revenus 2025, imposition 2026), calculé pour un salarié
-                    célibataire sans enfant (1 part de quotient familial) — le
-                    même type de profil de référence (« célibataire, sans
-                    enfant ») déjà utilisé pour l'Allemagne et la Suisse. Le
-                    salaire net imposable mensuel (assiette « salarié .
-                    rémunération . net . imposable » calculée par le moteur
-                    Mon-entreprise) est annualisé, réduit de l'abattement
-                    forfaitaire de 10 % pour frais professionnels (dans la
-                    limite d'un plancher de 509 € et d'un plafond de
-                    14 555 €), puis soumis au barème par tranches marginales
-                    pour obtenir l'impôt annuel réellement dû, ramené ensuite
-                    à un montant mensuel.
-                </p>
+                    <p>
+                        This choice is directly comparable to what is done for
+                        the 4 other countries: German Lohnsteuer, Belgian
+                        precompte professionnel, Swiss withholding tax, and
+                        Dutch loonheffing are all mandatory levies computed
+                        directly from the wage for a "single, childless"
+                        profile. The progressive scale computes, in the same
+                        way, the tax actually due by this same profile type in
+                        France.
+                    </p>
 
-                <p>
-                    Ce choix est directement comparable à ce qui est fait pour
-                    les 3 autres pays : le Lohnsteuer allemand, le précompte
-                    professionnel belge et l'impôt à la source suisse sont
-                    tous des prélèvements obligatoires calculés directement à
-                    partir du salaire pour un profil « célibataire, sans
-                    enfant ». Le barème progressif calcule ici, de la même
-                    façon, l'impôt réellement dû par ce même type de profil en
-                    France.
-                </p>
+                    <p class="method-note">
+                        Methodological warning: this calculation assumes a
+                        single, childless taxpayer declaring no other income,
+                        charge, or tax reduction/credit — this is a simplified
+                        reference profile, not an average of the French
+                        population. Moreover, the withholding tax (PAS)
+                        actually deducted each month from a real employee's
+                        payslip depends on a personalized rate set by the
+                        DGFiP (reflecting their whole household's tax
+                        situation) or, failing that, the taux neutre (default
+                        rate, article 204 H of the General Tax Code, BOFiP
+                        BOI-BAREME-000037): both of these rates are only
+                        monthly advances, reconciled the following year
+                        against the amount definitively due — it is this
+                        definitive amount, computed here via the progressive
+                        scale, that is used for the comparison.
+                    </p>
 
-                <p class="method-note">
-                    Avertissement méthodologique : ce calcul suppose un
-                    salarié célibataire sans enfant ne déclarant aucun autre
-                    revenu, charge ou réduction/crédit d'impôt — c'est un
-                    profil de référence simplifié, pas une moyenne de la
-                    population française. Par ailleurs, le prélèvement à la
-                    source (PAS) effectivement retenu chaque mois sur le
-                    bulletin de paie d'un salarié réel dépend d'un taux
-                    personnalisé transmis par la DGFiP (reflétant l'ensemble
-                    de la situation de son foyer fiscal) ou, à défaut, du
-                    taux neutre (taux par défaut, article 204 H du Code
-                    général des impôts, BOFiP BOI-BAREME-000037) : ces deux
-                    taux ne sont que des acomptes mensuels, régularisés
-                    l'année suivante sur la base du montant définitivement dû
-                    — c'est ce montant définitif, calculé ici via le barème
-                    progressif, qui est utilisé pour la comparaison.
-                </p>
+                    <h3>7. Income tax in the Netherlands: the loonheffing</h3>
 
-                <h3>7. Limites</h3>
+                    <p>
+                        Unlike the other four countries, the Netherlands does
+                        not withhold a separate employee social contribution:
+                        the AOW (old age), Anw (survivors) and Wlz (long-term
+                        care) national-insurance contributions are bundled
+                        into the rate of the first Box 1 bracket. The Dutch
+                        net wage before tax is therefore, in this module,
+                        equal to the gross wage, and the "employee
+                        contributions" indicator is 0 for the Netherlands —
+                        not because no social contribution is due, but because
+                        it is accounted for within the loonheffing.
+                    </p>
 
-                <p class="method-note">
-                    Le calcul de l'impôt sur le revenu suppose un salarié
-                    célibataire sans enfant (1 part) sans autre revenu ni
-                    charge déductible : il ne représente pas la diversité des
-                    situations fiscales réelles (quotient familial différent,
-                    revenus additionnels, réductions et crédits d'impôt,
-                    taux personnalisé du prélèvement à la source, etc.).
-                    Seules les grilles applicables à la France métropolitaine
-                    sont utilisées (les grilles spécifiques à la Guadeloupe,
-                    la Martinique, La Réunion, la Guyane et Mayotte ne sont
-                    pas modélisées). Comme pour les autres pays, les
-                    indicateurs « après impôt » et les coins fiscaux totaux
-                    dépendent du profil de référence choisi et ne
-                    représentent pas la diversité des situations
-                    individuelles réelles.
-                </p>
-            </div>
-        </section>
-    </main>
+                    <p>
+                        Loonheffing is computed for a single, childless
+                        employee via the progressive 2026 Box 1 scale (35.75%
+                        up to €38,883; 37.56% up to €78,426; 49.50% above),
+                        reduced by two tax credits each computed on their own
+                        scale: the algemene heffingskorting (general credit)
+                        and the arbeidskorting (employment income credit). See
+                        the Netherlands module's Methodology tab for full
+                        detail.
+                    </p>
+
+                    <p class="method-note">
+                        Methodological warning: the Dutch reference profile
+                        uses a permanent contract (low WW rate) and a large
+                        employer (high Aof rate) — explicit, adjustable
+                        choices. The Whk (Werkhervattingskas), specific to
+                        each employer and sector, is not modeled, nor are
+                        occupational pension contributions (not set by law) or
+                        partner-dependent tax credits.
+                    </p>
+
+                    <h3>8. Limits</h3>
+
+                    <p class="method-note">
+                        The income-tax calculation assumes a single, childless
+                        taxpayer (1 part) with no other income or deductible
+                        charge: it does not represent the diversity of real
+                        tax situations (different family quotient, additional
+                        income, tax reductions and credits, personalized
+                        withholding-tax rate, etc.). Only the scales applicable
+                        to metropolitan France are used (the specific scales
+                        for Guadeloupe, Martinique, La Reunion, Guyane and
+                        Mayotte are not modeled). As for the other countries,
+                        the "after tax" indicators and total tax wedges depend
+                        on the chosen reference profile and do not represent
+                        the diversity of real individual situations.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
 </body>
 </html>

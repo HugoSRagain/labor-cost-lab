@@ -9,7 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
     <link rel="stylesheet" href="../../assets/style.css?v=26">
-    <script defer src="./assets/belgium_app.js?v=8"></script>
+    <script defer src="../../assets/i18n_common.js?v=1"></script>
+    <script defer src="./assets/belgium_app.js?v=9"></script>
 </head>
 
 <body>
@@ -23,508 +24,916 @@
         </span>
     </div>
 
-    <header class="hero">
-        <div>
-            <p class="eyebrow">
-                Labor Cost Lab · Belgium module
-            </p>
-
-            <h1>Belgian Labour Cost Lab</h1>
-
-            <p>
-                Module de simulation du coût du travail belge. Cette version calcule
-                le salaire brut, le salaire net avant précompte, le précompte
-                professionnel, le salaire net après précompte, le coût employeur
-                et les principaux indicateurs de coin social et socio-fiscal.
-            </p>
-
-            <p class="author-line">
-                Par Hugo Spring-Ragain, Économiste, CEDS Paris
-            </p>
-        </div>
-
-        <div class="header-actions">
-            <button
-                class="theme-toggle"
-                onclick="toggleTheme()"
-                title="Dark mode"
-                aria-label="Dark mode"
-            >
-                🌙
-            </button>
-        </div>
-    </header>
-
-    <main class="page-shell">
-        <section class="method-box">
-            <h2>Belgique · module socio-fiscal 2026</h2>
-
-            <p>
-                Le Belgian Labour Cost Lab simule le coût du travail en Belgique à
-                partir d’un profil salarié standard du secteur privé. Il combine le
-                GGMMI/RMMMG comme référence salariale, les cotisations sociales
-                salarié, les cotisations employeur, la réduction structurelle de
-                cotisations patronales et le précompte professionnel.
-            </p>
-
-            <p>
-                L’objectif est de mesurer, sur une échelle allant de 1 à 6 fois le
-                salaire minimum belge, la façon dont un euro de salaire brut se
-                transforme en revenu net pour le salarié, en coût total pour
-                l’employeur et en prélèvements sociaux et fiscaux.
-            </p>
-
-            <p class="method-note">
-                Scénario central : travailleur salarié du secteur privé, habitant du
-                Royaume, rémunération mensuelle régulière, isolé, sans enfant à charge,
-                sans avantage extra-légal, sans heures supplémentaires et sans revenu
-                exceptionnel.
-            </p>
-        </section>
-
-        <section class="method-box">
-            <h2>Ce que mesure le module belge</h2>
-
-            <div class="method-grid">
-                <article>
-                    <h3>Salaire net avant précompte</h3>
-
-                    <p>
-                        Le salaire net avant précompte correspond au salaire brut
-                        diminué des cotisations sociales salarié. Il mesure la part
-                        du salaire qui reste avant la retenue fiscale mensuelle.
-                    </p>
-                </article>
-
-                <article>
-                    <h3>Précompte professionnel</h3>
-
-                    <p>
-                        Le précompte professionnel est calculé à partir de la
-                        formule-clé 2026 du SPF Finances pour les rémunérations
-                        mensuelles régulières. Il permet d’approcher le salaire net
-                        effectivement versé après retenue fiscale.
-                    </p>
-                </article>
-
-                <article>
-                    <h3>Coût employeur</h3>
-
-                    <p>
-                        Le coût employeur additionne le salaire brut et les
-                        cotisations patronales, après prise en compte de la réduction
-                        structurelle employeur dans le profil standard retenu.
-                    </p>
-                </article>
-
-                <article>
-                    <h3>Coin socio-fiscal</h3>
-
-                    <p>
-                        Le coin socio-fiscal mesure l’écart entre le coût total pour
-                        l’employeur et le salaire net après précompte professionnel.
-                        Il synthétise l’effet combiné des cotisations sociales et de
-                        la fiscalité prélevée à la source.
-                    </p>
-                </article>
-            </div>
-        </section>
-
-        <nav class="tabs" aria-label="Navigation Belgique">
-            <button class="tab-button active" data-tab="simulation">
-                Simulation
-            </button>
-
-            <button class="tab-button" data-tab="data">
-                Données
-            </button>
-
-            <button class="tab-button" data-tab="methodology">
-                Méthodologie
-            </button>
-        </nav>
-
-        <section id="tab-simulation" class="tab-content active">
-            <div class="chart-card chart-card-wide">
-                <h3 id="belgium-waterfall-title">
-                    Du salaire net au coût employeur
-                </h3>
-
-                <p class="chart-subtitle" id="belgium-waterfall-subtitle">
-                    Décomposition du passage du salaire net après précompte au coût
-                    employeur total, en distinguant le précompte professionnel, les
-                    cotisations salarié, les cotisations employeur et la réduction
-                    structurelle.
+    <div class="language-section active" id="section-fr">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · Module Belgique
                 </p>
+
+                <h1>Belgian Labour Cost Lab</h1>
+
+                <p>
+                    Module de simulation du coût du travail belge. Cette version calcule
+                    le salaire brut, le salaire net avant précompte, le précompte
+                    professionnel, le salaire net après précompte, le coût employeur
+                    et les principaux indicateurs de coin social et socio-fiscal.
+                </p>
+
+                <p class="author-line">
+                    Par Hugo Spring-Ragain, Économiste, CEDS Paris
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchBelgiumLanguage()">
+                    English
+                </button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>Belgique · module socio-fiscal 2026</h2>
+
+                <p>
+                    Le Belgian Labour Cost Lab simule le coût du travail en Belgique à
+                    partir d'un profil salarié standard du secteur privé. Il combine le
+                    GGMMI/RMMMG comme référence salariale, les cotisations sociales
+                    salarié, les cotisations employeur, la réduction structurelle de
+                    cotisations patronales et le précompte professionnel.
+                </p>
+
+                <p>
+                    L'objectif est de mesurer, sur une échelle allant de 1 à 6 fois le
+                    salaire minimum belge, la façon dont un euro de salaire brut se
+                    transforme en revenu net pour le salarié, en coût total pour
+                    l'employeur et en prélèvements sociaux et fiscaux.
+                </p>
+
+            </section>
+
+            <nav class="tabs" aria-label="Navigation Belgique">
+                <button class="tab-button active" data-tab="simulation" onclick="showBelgiumTab('fr', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showBelgiumTab('fr', 'data')">
+                    Données
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showBelgiumTab('fr', 'methodology')">
+                    Méthodologie
+                </button>
+            </nav>
+
+            <section id="tab-fr-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="belgium-waterfall-title-fr">
+                        Du salaire net au coût employeur
+                    </h3>
+
+                    <p class="chart-subtitle" id="belgium-waterfall-subtitle-fr">
+                        Décomposition du passage du salaire net après précompte au coût
+                        employeur total, en distinguant le précompte professionnel, les
+                        cotisations salarié, les cotisations employeur et la réduction
+                        structurelle.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="belgium-waterfall-multiple-fr">
+                                Point de salaire sélectionné
+                            </label>
+
+                            <select id="belgium-waterfall-multiple-fr">
+                                <option value="1.00">1,00 salaire minimum</option>
+                                <option value="1.25">1,25 salaire minimum</option>
+                                <option value="1.50">1,50 salaire minimum</option>
+                                <option value="2.00" selected>2,00 salaires minimums</option>
+                                <option value="2.50">2,50 salaires minimums</option>
+                                <option value="3.00">3,00 salaires minimums</option>
+                                <option value="4.00">4,00 salaires minimums</option>
+                                <option value="5.00">5,00 salaires minimums</option>
+                                <option value="6.00">6,00 salaires minimums</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-belgium-waterfall-fr"
+                        class="plotly-chart"
+                        aria-label="Décomposition du coût du travail en Belgique"
+                    ></div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Graphiques complémentaires</h2>
+
+                    <p>
+                        Les graphiques suivants détaillent les salaires, les taux effectifs
+                        de cotisation, la réduction structurelle, le coin socio-fiscal et
+                        le rendement marginal du salaire brut.
+                    </p>
+                </section>
 
                 <div class="profile-selector profile-selector-grid">
                     <div class="selector-field">
-                        <label for="belgium-waterfall-multiple">
-                            Point de salaire sélectionné
+                        <label for="belgium-profile-select-fr">
+                            Profil pour les graphiques
                         </label>
 
-                        <select id="belgium-waterfall-multiple">
-                            <option value="1.00">1,00 salaire minimum</option>
-                            <option value="1.25">1,25 salaire minimum</option>
-                            <option value="1.50">1,50 salaire minimum</option>
-                            <option value="2.00" selected>2,00 salaires minimums</option>
-                            <option value="2.50">2,50 salaires minimums</option>
-                            <option value="3.00">3,00 salaires minimums</option>
-                            <option value="4.00">4,00 salaires minimums</option>
-                            <option value="5.00">5,00 salaires minimums</option>
-                            <option value="6.00">6,00 salaires minimums</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div
-                    id="chart-belgium-waterfall"
-                    class="plotly-chart"
-                    aria-label="Décomposition du coût du travail en Belgique"
-                ></div>
-            </div>
-
-            <section class="dashboard-section-heading">
-                <h2>Graphiques complémentaires</h2>
-
-                <p>
-                    Les graphiques suivants détaillent les salaires, les taux effectifs
-                    de cotisation, la réduction structurelle, le coin socio-fiscal et
-                    le rendement marginal du salaire brut.
-                </p>
-            </section>
-
-            <div class="profile-selector profile-selector-grid">
-                <div class="selector-field">
-                    <label for="belgium-profile-select">
-                        Profil pour les graphiques
-                    </label>
-
-                    <select id="belgium-profile-select">
-                        <option value="belgium__standard_private_sector" selected>
-                            Belgique · secteur privé standard
-                        </option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="charts-grid">
-                <div class="chart-card">
-                    <h3>Coût employeur, salaire brut et salaires nets</h3>
-
-                    <p class="chart-subtitle">
-                        Comparaison du salaire brut, du salaire net avant précompte,
-                        du salaire net après précompte professionnel et du coût
-                        employeur selon le multiple du salaire minimum belge.
-                    </p>
-
-                    <div
-                        id="chart-belgium-cost"
-                        class="plotly-chart"
-                        aria-label="Coût du travail en Belgique"
-                    ></div>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Taux effectifs de cotisation</h3>
-
-                    <p class="chart-subtitle">
-                        Taux salarié ONSS, taux employeur avant réduction et taux
-                        employeur effectif après réduction structurelle.
-                    </p>
-
-                    <div
-                        id="chart-belgium-rates"
-                        class="plotly-chart"
-                        aria-label="Taux de cotisation en Belgique"
-                    ></div>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Réduction structurelle des cotisations employeur</h3>
-
-                    <p class="chart-subtitle">
-                        Montant mensuel estimé de la réduction structurelle belge et
-                        effet sur les cotisations employeur dans le profil standard du
-                        secteur privé.
-                    </p>
-
-                    <div
-                        id="chart-belgium-structural-reduction"
-                        class="plotly-chart"
-                        aria-label="Réduction structurelle belge"
-                    ></div>
-
-                    <p class="method-note">
-                        La réduction est calculée pour la catégorie 1, avec un salaire
-                        trimestriel approximé par trois salaires mensuels. Les paramètres
-                        μ et βs sont fixés à 1 dans ce scénario.
-                    </p>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Coin social et coin socio-fiscal</h3>
-
-                    <p class="chart-subtitle">
-                        Comparaison du coin social avant précompte et du coin
-                        socio-fiscal après prise en compte du précompte professionnel.
-                    </p>
-
-                    <div
-                        id="chart-belgium-wedge"
-                        class="plotly-chart"
-                        aria-label="Coin social et socio-fiscal belge"
-                    ></div>
-                </div>
-
-                <div class="chart-card">
-                    <h3>Rendement marginal d’une hausse de salaire brut</h3>
-
-                    <p class="chart-subtitle">
-                        Part d’un euro supplémentaire de salaire brut conservée avant
-                        et après précompte professionnel. Scénario fiscal : travailleur
-                        salarié, habitant du Royaume, isolé, sans enfant à charge.
-                    </p>
-
-                    <div
-                        id="chart-belgium-fiscal-return"
-                        class="plotly-chart"
-                        aria-label="Rendement socio-fiscal d'une hausse de salaire brut en Belgique"
-                    ></div>
-
-                    <p class="method-note">
-                        Le précompte professionnel est calculé à partir de la formule-clé
-                        2026 du SPF Finances pour les rémunérations mensuelles régulières.
-                    </p>
-                </div>
-            </div>
-
-            <section class="dashboard-section-heading">
-                <h2>Indicateurs clés</h2>
-
-                <p>
-                    Les indicateurs ci-dessous sont calculés pour le profil sélectionné
-                    dans les graphiques complémentaires.
-                </p>
-            </section>
-
-            <section class="metrics-grid" id="belgium-metrics">
-                <article class="metric-card">
-                    <span class="metric-label">Salaire brut de référence</span>
-                    <strong id="metric-belgium-reference-wage">—</strong>
-                    <span class="metric-note">GGMMI / RMMMG mensuel</span>
-                </article>
-
-                <article class="metric-card">
-                    <span class="metric-label">Taux salarié</span>
-                    <strong id="metric-belgium-employee-rate">—</strong>
-                    <span class="metric-note">ONSS salarié</span>
-                </article>
-
-                <article class="metric-card">
-                    <span class="metric-label">Taux employeur effectif</span>
-                    <strong id="metric-belgium-employer-rate">—</strong>
-                    <span class="metric-note">Après réduction structurelle</span>
-                </article>
-
-                <article class="metric-card">
-                    <span class="metric-label">Ratio coût / net à 1 RMMMG</span>
-                    <strong id="metric-belgium-cost-to-net">—</strong>
-                    <span class="metric-note">Après précompte professionnel</span>
-                </article>
-            </section>
-        </section>
-
-        <section id="tab-data" class="tab-content">
-            <div class="chart-card">
-                <h3>Données</h3>
-
-                <p class="chart-subtitle">
-                    Le jeu de données belge peut être téléchargé au format CSV.
-                    Il contient l’ensemble des points de salaire simulés pour le
-                    profil belge standard : salaire brut, salaire net avant précompte,
-                    précompte professionnel, salaire net après précompte, coût employeur,
-                    cotisations et indicateurs de coin socio-fiscal.
-                </p>
-
-                <div class="download-row" style="margin-top: 18px;">
-                    <a
-                        class="download-link"
-                        href="../../data/belgium/belgium_labour_cost_grid_2026.csv"
-                        download
-                    >
-                        Télécharger le jeu de données Belgique
-                    </a>
-
-                    <a
-                        class="download-link"
-                        href="../../data/belgium/belgium_parameters_2026.json"
-                        download
-                    >
-                        Télécharger les paramètres 2026
-                    </a>
-
-                    <a
-                        class="download-link"
-                        href="../../data/belgium/belgium_sources_2026.json"
-                        download
-                    >
-                        Télécharger les sources 2026
-                    </a>
-                </div>
-
-                <div class="profile-selector profile-selector-grid data-profile-selector">
-                    <div class="selector-field">
-                        <label for="belgium-data-profile-select">
-                            Profil Belgique
-                        </label>
-
-                        <select id="belgium-data-profile-select">
+                        <select id="belgium-profile-select-fr">
                             <option value="belgium__standard_private_sector" selected>
-                                Secteur privé standard
+                                Belgique · secteur privé standard
                             </option>
                         </select>
                     </div>
                 </div>
-            </div>
 
-            <div class="chart-card">
-                <h3>Données du profil sélectionné</h3>
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Coût employeur, salaire brut et salaires nets</h3>
 
-                <p
-                    class="chart-subtitle"
-                    id="belgium-data-profile-caption"
-                >
-                    Secteur privé standard
-                </p>
+                        <p class="chart-subtitle">
+                            Comparaison du salaire brut, du salaire net avant précompte,
+                            du salaire net après précompte professionnel et du coût
+                            employeur selon le multiple du salaire minimum belge.
+                        </p>
 
-                <div class="table-wrapper data-table-scroll data-table-panel">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Multiple</th>
-                                <th>Salaire brut (€)</th>
-                                <th>Net avant précompte (€)</th>
-                                <th>Précompte (€)</th>
-                                <th>Net après précompte (€)</th>
-                                <th>Coût employeur (€)</th>
-                                <th>Cotisations salarié (€)</th>
-                                <th>Cotisations employeur (€)</th>
-                                <th>Coin social (€)</th>
-                                <th>Coin socio-fiscal (€)</th>
-                                <th>Taux salarié</th>
-                                <th>Taux employeur</th>
-                                <th>Coût / net avant précompte</th>
-                                <th>Coût / net après précompte</th>
-                            </tr>
-                        </thead>
+                        <div
+                            id="chart-belgium-cost-fr"
+                            class="plotly-chart"
+                            aria-label="Coût du travail en Belgique"
+                        ></div>
+                    </div>
 
-                        <tbody id="belgium-data-table-body">
-                        </tbody>
-                    </table>
+                    <div class="chart-card">
+                        <h3>Taux effectifs de cotisation</h3>
+
+                        <p class="chart-subtitle">
+                            Taux salarié ONSS, taux employeur avant réduction et taux
+                            employeur effectif après réduction structurelle.
+                        </p>
+
+                        <div
+                            id="chart-belgium-rates-fr"
+                            class="plotly-chart"
+                            aria-label="Taux de cotisation en Belgique"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Réduction structurelle des cotisations employeur</h3>
+
+                        <p class="chart-subtitle">
+                            Montant mensuel estimé de la réduction structurelle belge et
+                            effet sur les cotisations employeur dans le profil standard du
+                            secteur privé.
+                        </p>
+
+                        <div
+                            id="chart-belgium-structural-reduction-fr"
+                            class="plotly-chart"
+                            aria-label="Réduction structurelle belge"
+                        ></div>
+
+                        <p class="method-note">
+                            La réduction est calculée pour la catégorie 1, avec un salaire
+                            trimestriel approximé par trois salaires mensuels. Les paramètres
+                            μ et βs sont fixés à 1 dans ce scénario.
+                        </p>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Coin social et coin socio-fiscal</h3>
+
+                        <p class="chart-subtitle">
+                            Comparaison du coin social avant précompte et du coin
+                            socio-fiscal après prise en compte du précompte professionnel.
+                        </p>
+
+                        <div
+                            id="chart-belgium-wedge-fr"
+                            class="plotly-chart"
+                            aria-label="Coin social et socio-fiscal belge"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Rendement marginal d'une hausse de salaire brut</h3>
+
+                        <p class="chart-subtitle">
+                            Part d'un euro supplémentaire de salaire brut conservée avant
+                            et après précompte professionnel. Scénario fiscal : travailleur
+                            salarié, habitant du Royaume, isolé, sans enfant à charge.
+                        </p>
+
+                        <div
+                            id="chart-belgium-fiscal-return-fr"
+                            class="plotly-chart"
+                            aria-label="Rendement socio-fiscal d'une hausse de salaire brut en Belgique"
+                        ></div>
+
+                        <p class="method-note">
+                            Le précompte professionnel est calculé à partir de la formule-clé
+                            2026 du SPF Finances pour les rémunérations mensuelles régulières.
+                        </p>
+                    </div>
                 </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Indicateurs clés</h2>
+
+                    <p>
+                        Les indicateurs ci-dessous sont calculés pour le profil sélectionné
+                        dans les graphiques complémentaires.
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="belgium-metrics-fr">
+                    <article class="metric-card">
+                        <span class="metric-label">Salaire brut de référence</span>
+                        <strong id="metric-belgium-reference-wage-fr">—</strong>
+                        <span class="metric-note">GGMMI / RMMMG mensuel</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Taux salarié</span>
+                        <strong id="metric-belgium-employee-rate-fr">—</strong>
+                        <span class="metric-note">ONSS salarié</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Taux employeur effectif</span>
+                        <strong id="metric-belgium-employer-rate-fr">—</strong>
+                        <span class="metric-note">Après réduction structurelle</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Ratio coût / net à 1 RMMMG</span>
+                        <strong id="metric-belgium-cost-to-net-fr">—</strong>
+                        <span class="metric-note">Après précompte professionnel</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-fr-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Données</h3>
+
+                    <p class="chart-subtitle">
+                        Le jeu de données belge peut être téléchargé au format CSV.
+                        Il contient l'ensemble des points de salaire simulés pour le
+                        profil belge standard : salaire brut, salaire net avant précompte,
+                        précompte professionnel, salaire net après précompte, coût employeur,
+                        cotisations et indicateurs de coin socio-fiscal.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/belgium/belgium_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Télécharger le jeu de données Belgique
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/belgium/belgium_parameters_2026.json"
+                            download
+                        >
+                            Télécharger les paramètres 2026
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/belgium/belgium_sources_2026.json"
+                            download
+                        >
+                            Télécharger les sources 2026
+                        </a>
+                    </div>
+
+                    <div class="profile-selector profile-selector-grid data-profile-selector">
+                        <div class="selector-field">
+                            <label for="belgium-data-profile-select-fr">
+                                Profil Belgique
+                            </label>
+
+                            <select id="belgium-data-profile-select-fr">
+                                <option value="belgium__standard_private_sector" selected>
+                                    Secteur privé standard
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Données du profil sélectionné</h3>
+
+                    <p
+                        class="chart-subtitle"
+                        id="belgium-data-profile-caption-fr"
+                    >
+                        Secteur privé standard
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Multiple</th>
+                                    <th>Salaire brut (€)</th>
+                                    <th>Net avant précompte (€)</th>
+                                    <th>Précompte (€)</th>
+                                    <th>Net après précompte (€)</th>
+                                    <th>Coût employeur (€)</th>
+                                    <th>Cotisations salarié (€)</th>
+                                    <th>Cotisations employeur (€)</th>
+                                    <th>Coin social (€)</th>
+                                    <th>Coin socio-fiscal (€)</th>
+                                    <th>Taux salarié</th>
+                                    <th>Taux employeur</th>
+                                    <th>Coût / net avant précompte</th>
+                                    <th>Coût / net après précompte</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="belgium-data-table-body-fr">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-fr-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Méthodologie</h2>
+
+                    <p>
+                        Le module Belgique repose sur une simulation réglementaire du
+                        coût du travail dans le secteur privé standard. Le salaire brut
+                        est calculé comme multiple du GGMMI/RMMMG mensuel, utilisé comme
+                        référence de salaire minimum dans le module.
+                    </p>
+
+                    <h3>1. Cotisations sociales salarié</h3>
+
+                    <p>
+                        Le salaire net avant précompte est obtenu en retirant du salaire
+                        brut les cotisations sociales salarié. Dans le scénario standard,
+                        le taux salarié ONSS est fixé à 13,07 %.
+                    </p>
+
+                    <h3>2. Cotisations employeur et réduction structurelle</h3>
+
+                    <p>
+                        Le coût employeur est obtenu en ajoutant au salaire brut les
+                        cotisations employeur. Le module applique un taux employeur de
+                        base de 25 %, puis intègre la réduction structurelle employeur
+                        de catégorie 1.
+                    </p>
+
+                    <p>
+                        La réduction structurelle est calculée sur une base trimestrielle,
+                        le salaire de référence trimestriel étant approximé par trois
+                        salaires mensuels. Cette convention permet d'intégrer le mécanisme
+                        dans une grille mensuelle comparable aux modules France et Allemagne.
+                    </p>
+
+                    <h3>3. Précompte professionnel</h3>
+
+                    <p>
+                        Le précompte professionnel est calculé à partir de la formule-clé
+                        2026 du SPF Finances. Le calcul suit la logique applicable aux
+                        rémunérations mensuelles régulières : déduction des retenues
+                        sociales obligatoires, annualisation, déduction des frais
+                        professionnels forfaitaires, application du barème annuel,
+                        réduction correspondant à la quotité exemptée dans le cas d'un
+                        isolé, puis division par douze.
+                    </p>
+
+                    <h3>4. Indicateurs produits</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Net avant précompte :</strong>
+                            salaire brut diminué des cotisations sociales salarié.
+                        </li>
+
+                        <li>
+                            <strong>Net après précompte :</strong>
+                            net avant précompte diminué du précompte professionnel
+                            mensuel.
+                        </li>
+
+                        <li>
+                            <strong>Coût employeur :</strong>
+                            salaire brut augmenté des cotisations employeur après
+                            réduction structurelle.
+                        </li>
+
+                        <li>
+                            <strong>Coin social :</strong>
+                            différence entre le coût employeur et le net avant
+                            précompte.
+                        </li>
+
+                        <li>
+                            <strong>Coin socio-fiscal :</strong>
+                            différence entre le coût employeur et le net après
+                            précompte.
+                        </li>
+
+                        <li>
+                            <strong>Rendement marginal :</strong>
+                            part d'un euro supplémentaire de salaire brut conservée
+                            avant et après précompte professionnel.
+                        </li>
+                    </ul>
+
+                    <h3>5. Limites du scénario</h3>
+
+                    <p class="method-note">
+                        Le module ne simule pas encore les situations familiales complexes,
+                        les enfants à charge, les assurances de groupe, les heures
+                        supplémentaires, les avantages extra-légaux, les bonus à l'emploi
+                        spécifiques, les différences sectorielles fines, les régimes
+                        particuliers et les revenus exceptionnels. Ces limites sont assumées
+                        afin de produire un scénario central stable et comparable aux autres
+                        modules nationaux du Labor Cost Lab.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="language-section" id="section-en">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · Belgium module
+                </p>
+
+                <h1>Belgian Labour Cost Lab</h1>
+
+                <p>
+                    Simulation module for Belgian labour costs. This version computes
+                    the gross wage, net wage before withholding tax, the withholding
+                    tax (précompte professionnel), net wage after withholding tax, the
+                    employer cost, and the main social and socio-fiscal wedge
+                    indicators.
+                </p>
+
+                <p class="author-line">
+                    By Hugo Spring-Ragain, Economist, CEDS Paris
+                </p>
             </div>
-        </section>
 
-        <section id="tab-methodology" class="tab-content">
-            <div class="method-box">
-                <h2>Méthodologie</h2>
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
 
-                <p>
-                    Le module Belgique repose sur une simulation réglementaire du
-                    coût du travail dans le secteur privé standard. Le salaire brut
-                    est calculé comme multiple du GGMMI/RMMMG mensuel, utilisé comme
-                    référence de salaire minimum dans le module.
-                </p>
-
-                <h3>1. Cotisations sociales salarié</h3>
-
-                <p>
-                    Le salaire net avant précompte est obtenu en retirant du salaire
-                    brut les cotisations sociales salarié. Dans le scénario standard,
-                    le taux salarié ONSS est fixé à 13,07 %.
-                </p>
-
-                <h3>2. Cotisations employeur et réduction structurelle</h3>
-
-                <p>
-                    Le coût employeur est obtenu en ajoutant au salaire brut les
-                    cotisations employeur. Le module applique un taux employeur de
-                    base de 25 %, puis intègre la réduction structurelle employeur
-                    de catégorie 1.
-                </p>
-
-                <p>
-                    La réduction structurelle est calculée sur une base trimestrielle,
-                    le salaire de référence trimestriel étant approximé par trois
-                    salaires mensuels. Cette convention permet d’intégrer le mécanisme
-                    dans une grille mensuelle comparable aux modules France et Allemagne.
-                </p>
-
-                <h3>3. Précompte professionnel</h3>
-
-                <p>
-                    Le précompte professionnel est calculé à partir de la formule-clé
-                    2026 du SPF Finances. Le calcul suit la logique applicable aux
-                    rémunérations mensuelles régulières : déduction des retenues
-                    sociales obligatoires, annualisation, déduction des frais
-                    professionnels forfaitaires, application du barème annuel,
-                    réduction correspondant à la quotité exemptée dans le cas d’un
-                    isolé, puis division par douze.
-                </p>
-
-                <h3>4. Indicateurs produits</h3>
-
-                <ul>
-                    <li>
-                        <strong>Net avant précompte :</strong>
-                        salaire brut diminué des cotisations sociales salarié.
-                    </li>
-
-                    <li>
-                        <strong>Net après précompte :</strong>
-                        net avant précompte diminué du précompte professionnel
-                        mensuel.
-                    </li>
-
-                    <li>
-                        <strong>Coût employeur :</strong>
-                        salaire brut augmenté des cotisations employeur après
-                        réduction structurelle.
-                    </li>
-
-                    <li>
-                        <strong>Coin social :</strong>
-                        différence entre le coût employeur et le net avant
-                        précompte.
-                    </li>
-
-                    <li>
-                        <strong>Coin socio-fiscal :</strong>
-                        différence entre le coût employeur et le net après
-                        précompte.
-                    </li>
-
-                    <li>
-                        <strong>Rendement marginal :</strong>
-                        part d’un euro supplémentaire de salaire brut conservée
-                        avant et après précompte professionnel.
-                    </li>
-                </ul>
-
-                <h3>5. Limites du scénario</h3>
-
-                <p class="method-note">
-                    Le module ne simule pas encore les situations familiales complexes,
-                    les enfants à charge, les assurances de groupe, les heures
-                    supplémentaires, les avantages extra-légaux, les bonus à l’emploi
-                    spécifiques, les différences sectorielles fines, les régimes
-                    particuliers et les revenus exceptionnels. Ces limites sont assumées
-                    afin de produire un scénario central stable et comparable aux autres
-                    modules nationaux du Labor Cost Lab.
-                </p>
+                <button class="language-toggle" onclick="switchBelgiumLanguage()">
+                    Français
+                </button>
             </div>
-        </section>
-    </main>
+        </header>
+
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>Belgium · 2026 socio-fiscal module</h2>
+
+                <p>
+                    The Belgian Labour Cost Lab simulates Belgian labour costs for a
+                    standard private-sector employee. It combines the GGMMI/RMMMG as the
+                    wage reference, employee social contributions, employer
+                    contributions, the employer structural reduction, and the
+                    withholding tax (précompte professionnel).
+                </p>
+
+                <p>
+                    The goal is to measure, over a range from 1 to 6 times the Belgian
+                    minimum wage, how a euro of gross wage turns into net income for the
+                    employee, into total cost for the employer, and into social and
+                    fiscal levies.
+                </p>
+
+            </section>
+
+            <nav class="tabs" aria-label="Belgium navigation">
+                <button class="tab-button active" data-tab="simulation" onclick="showBelgiumTab('en', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showBelgiumTab('en', 'data')">
+                    Data
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showBelgiumTab('en', 'methodology')">
+                    Methodology
+                </button>
+            </nav>
+
+            <section id="tab-en-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="belgium-waterfall-title-en">
+                        From net wage to employer cost
+                    </h3>
+
+                    <p class="chart-subtitle" id="belgium-waterfall-subtitle-en">
+                        Breakdown of the path from net wage after withholding tax to
+                        total employer cost, distinguishing the withholding tax,
+                        employee contributions, employer contributions, and the
+                        structural reduction.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="belgium-waterfall-multiple-en">
+                                Selected wage point
+                            </label>
+
+                            <select id="belgium-waterfall-multiple-en">
+                                <option value="1.00">1.00 minimum wage</option>
+                                <option value="1.25">1.25 minimum wages</option>
+                                <option value="1.50">1.50 minimum wages</option>
+                                <option value="2.00" selected>2.00 minimum wages</option>
+                                <option value="2.50">2.50 minimum wages</option>
+                                <option value="3.00">3.00 minimum wages</option>
+                                <option value="4.00">4.00 minimum wages</option>
+                                <option value="5.00">5.00 minimum wages</option>
+                                <option value="6.00">6.00 minimum wages</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-belgium-waterfall-en"
+                        class="plotly-chart"
+                        aria-label="Breakdown of labour cost in Belgium"
+                    ></div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Additional charts</h2>
+
+                    <p>
+                        The charts below detail wages, effective contribution rates, the
+                        structural reduction, the socio-fiscal wedge, and the marginal
+                        return on a gross-wage increase.
+                    </p>
+                </section>
+
+                <div class="profile-selector profile-selector-grid">
+                    <div class="selector-field">
+                        <label for="belgium-profile-select-en">
+                            Profile for the charts
+                        </label>
+
+                        <select id="belgium-profile-select-en">
+                            <option value="belgium__standard_private_sector" selected>
+                                Belgium · standard private sector
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Employer cost, gross wage and net wages</h3>
+
+                        <p class="chart-subtitle">
+                            Comparison of the gross wage, net wage before withholding
+                            tax, net wage after withholding tax, and employer cost across
+                            the multiple of the Belgian minimum wage.
+                        </p>
+
+                        <div
+                            id="chart-belgium-cost-en"
+                            class="plotly-chart"
+                            aria-label="Labour cost in Belgium"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Effective contribution rates</h3>
+
+                        <p class="chart-subtitle">
+                            Employee NSSO rate, employer rate before reduction, and
+                            effective employer rate after the structural reduction.
+                        </p>
+
+                        <div
+                            id="chart-belgium-rates-en"
+                            class="plotly-chart"
+                            aria-label="Contribution rates in Belgium"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Structural reduction of employer contributions</h3>
+
+                        <p class="chart-subtitle">
+                            Estimated monthly amount of the Belgian structural reduction
+                            and its effect on employer contributions in the standard
+                            private-sector profile.
+                        </p>
+
+                        <div
+                            id="chart-belgium-structural-reduction-en"
+                            class="plotly-chart"
+                            aria-label="Belgian structural reduction"
+                        ></div>
+
+                        <p class="method-note">
+                            The reduction is computed for category 1, with a quarterly
+                            wage approximated by three monthly wages. The μ and βs
+                            parameters are fixed at 1 in this scenario.
+                        </p>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Social wedge and total socio-fiscal wedge</h3>
+
+                        <p class="chart-subtitle">
+                            Comparison of the social wedge before withholding tax and the
+                            total socio-fiscal wedge after accounting for the withholding
+                            tax.
+                        </p>
+
+                        <div
+                            id="chart-belgium-wedge-en"
+                            class="plotly-chart"
+                            aria-label="Social and socio-fiscal wedge in Belgium"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Marginal return on a gross-wage increase</h3>
+
+                        <p class="chart-subtitle">
+                            Share of an additional euro of gross wage kept before and
+                            after withholding tax. Tax scenario: employee, resident of
+                            the Kingdom, single, no dependent children.
+                        </p>
+
+                        <div
+                            id="chart-belgium-fiscal-return-en"
+                            class="plotly-chart"
+                            aria-label="Socio-fiscal return on a gross-wage increase in Belgium"
+                        ></div>
+
+                        <p class="method-note">
+                            The withholding tax is computed from the SPF Finances 2026
+                            key formula for regular monthly pay.
+                        </p>
+                    </div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Key indicators</h2>
+
+                    <p>
+                        The indicators below are computed for the profile selected in
+                        the additional charts.
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="belgium-metrics-en">
+                    <article class="metric-card">
+                        <span class="metric-label">Reference gross wage</span>
+                        <strong id="metric-belgium-reference-wage-en">—</strong>
+                        <span class="metric-note">Monthly GGMMI / RMMMG</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Employee rate</span>
+                        <strong id="metric-belgium-employee-rate-en">—</strong>
+                        <span class="metric-note">Employee NSSO</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Effective employer rate</span>
+                        <strong id="metric-belgium-employer-rate-en">—</strong>
+                        <span class="metric-note">After structural reduction</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Cost / net ratio at 1 RMMMG</span>
+                        <strong id="metric-belgium-cost-to-net-en">—</strong>
+                        <span class="metric-note">After withholding tax</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-en-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Data</h3>
+
+                    <p class="chart-subtitle">
+                        The Belgian dataset can be downloaded as a CSV file. It contains
+                        every simulated wage point for the standard Belgian profile:
+                        gross wage, net wage before withholding tax, withholding tax,
+                        net wage after withholding tax, employer cost, contributions,
+                        and socio-fiscal wedge indicators.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/belgium/belgium_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Download the Belgium dataset
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/belgium/belgium_parameters_2026.json"
+                            download
+                        >
+                            Download the 2026 parameters
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/belgium/belgium_sources_2026.json"
+                            download
+                        >
+                            Download the 2026 sources
+                        </a>
+                    </div>
+
+                    <div class="profile-selector profile-selector-grid data-profile-selector">
+                        <div class="selector-field">
+                            <label for="belgium-data-profile-select-en">
+                                Belgium profile
+                            </label>
+
+                            <select id="belgium-data-profile-select-en">
+                                <option value="belgium__standard_private_sector" selected>
+                                    Standard private sector
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Data for the selected profile</h3>
+
+                    <p
+                        class="chart-subtitle"
+                        id="belgium-data-profile-caption-en"
+                    >
+                        Standard private sector
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Multiple</th>
+                                    <th>Gross wage (€)</th>
+                                    <th>Net before withholding tax (€)</th>
+                                    <th>Withholding tax (€)</th>
+                                    <th>Net after withholding tax (€)</th>
+                                    <th>Employer cost (€)</th>
+                                    <th>Employee contributions (€)</th>
+                                    <th>Employer contributions (€)</th>
+                                    <th>Social wedge (€)</th>
+                                    <th>Total socio-fiscal wedge (€)</th>
+                                    <th>Employee rate</th>
+                                    <th>Employer rate</th>
+                                    <th>Cost / net before withholding tax</th>
+                                    <th>Cost / net after withholding tax</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="belgium-data-table-body-en">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-en-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Methodology</h2>
+
+                    <p>
+                        The Belgium module relies on a regulatory simulation of labour
+                        cost in the standard private sector. The gross wage is computed
+                        as a multiple of the monthly GGMMI/RMMMG, used as the
+                        minimum-wage reference in the module.
+                    </p>
+
+                    <h3>1. Employee social contributions</h3>
+
+                    <p>
+                        Net wage before withholding tax is obtained by subtracting
+                        employee social contributions from the gross wage. In the
+                        standard scenario, the employee NSSO rate is set at 13.07%.
+                    </p>
+
+                    <h3>2. Employer contributions and structural reduction</h3>
+
+                    <p>
+                        Employer cost is obtained by adding employer contributions to
+                        the gross wage. The module applies a base employer rate of 25%,
+                        then applies the category-1 employer structural reduction.
+                    </p>
+
+                    <p>
+                        The structural reduction is computed on a quarterly basis, with
+                        the quarterly reference wage approximated by three monthly
+                        wages. This convention allows the mechanism to be integrated
+                        into a monthly grid comparable to the France and Germany
+                        modules.
+                    </p>
+
+                    <h3>3. Withholding tax (précompte professionnel)</h3>
+
+                    <p>
+                        The withholding tax is computed from the SPF Finances 2026 key
+                        formula. The calculation follows the logic applicable to regular
+                        monthly pay: deduction of mandatory social contributions,
+                        annualization, deduction of standard professional expenses,
+                        application of the annual scale, the reduction corresponding to
+                        the exempt share for a single taxpayer, then division by twelve.
+                    </p>
+
+                    <h3>4. Indicators produced</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Net before withholding tax:</strong>
+                            gross wage minus employee social contributions.
+                        </li>
+
+                        <li>
+                            <strong>Net after withholding tax:</strong>
+                            net before withholding tax minus the monthly withholding
+                            tax.
+                        </li>
+
+                        <li>
+                            <strong>Employer cost:</strong>
+                            gross wage plus employer contributions after the structural
+                            reduction.
+                        </li>
+
+                        <li>
+                            <strong>Social wedge:</strong>
+                            difference between employer cost and net before withholding
+                            tax.
+                        </li>
+
+                        <li>
+                            <strong>Total socio-fiscal wedge:</strong>
+                            difference between employer cost and net after withholding
+                            tax.
+                        </li>
+
+                        <li>
+                            <strong>Marginal return:</strong>
+                            share of an additional euro of gross wage kept before and
+                            after withholding tax.
+                        </li>
+                    </ul>
+
+                    <h3>5. Limits of the scenario</h3>
+
+                    <p class="method-note">
+                        The module does not yet simulate complex family situations,
+                        dependent children, group insurance, overtime, fringe benefits,
+                        specific employment bonuses, fine-grained sectoral differences,
+                        special regimes, or exceptional income. These limits are
+                        accepted in order to produce a stable central scenario,
+                        comparable with the Labor Cost Lab's other national modules.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
 </body>
 </html>

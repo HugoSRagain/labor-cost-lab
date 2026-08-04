@@ -1,24 +1,24 @@
-const BELGIUM_DATA_PATH = "../../data/belgium/belgium_labour_cost_grid_2026.csv";
-const BELGIUM_LANGUAGE_STORAGE_KEY = "belgium_language";
-const BELGIUM_TAB_STORAGE_KEY = "belgium_tab";
+const NETHERLANDS_DATA_PATH = "../../data/netherlands/netherlands_labour_cost_grid_2026.csv";
+const NETHERLANDS_LANGUAGE_STORAGE_KEY = "netherlands_language";
+const NETHERLANDS_TAB_STORAGE_KEY = "netherlands_tab";
 
-let BELGIUM_DATA = [];
+let NETHERLANDS_DATA = [];
 
 
-function applyStoredBelgiumTheme() {
-    const storedTheme = localStorage.getItem("belgium-theme");
+function applyStoredNetherlandsTheme() {
+    const storedTheme = localStorage.getItem("netherlands-theme");
 
     if (storedTheme === "dark") {
         document.body.classList.add("dark-mode");
-        updateBelgiumThemeButton("dark");
+        updateNetherlandsThemeButton("dark");
     } else {
         document.body.classList.remove("dark-mode");
-        updateBelgiumThemeButton("light");
+        updateNetherlandsThemeButton("light");
     }
 }
 
 
-function updateBelgiumThemeButton(theme) {
+function updateNetherlandsThemeButton(theme) {
     document.querySelectorAll(".theme-toggle").forEach(function(themeToggle) {
         if (theme === "dark") {
             themeToggle.textContent = "☀️";
@@ -37,23 +37,26 @@ function toggleTheme() {
     const isDarkMode = document.body.classList.toggle("dark-mode");
 
     if (isDarkMode) {
-        localStorage.setItem("belgium-theme", "dark");
-        updateBelgiumThemeButton("dark");
+        localStorage.setItem("netherlands-theme", "dark");
+        updateNetherlandsThemeButton("dark");
     } else {
-        localStorage.setItem("belgium-theme", "light");
-        updateBelgiumThemeButton("light");
+        localStorage.setItem("netherlands-theme", "light");
+        updateNetherlandsThemeButton("light");
     }
 
-    renderBelgium(getActiveI18nLanguage(BELGIUM_LANGUAGE_STORAGE_KEY));
+    renderNetherlands(getActiveI18nLanguage(NETHERLANDS_LANGUAGE_STORAGE_KEY));
 }
 
 
-const BELGIUM_COLORS = {
+const NETHERLANDS_COLORS = {
     gross: "#2563eb",
     net: "#16a34a",
     afterTax: "#0891b2",
     employer: "#dc2626",
-    employee: "#9333ea",
+    ww: "#9333ea",
+    aof: "#ea580c",
+    zvw: "#0d9488",
+    wko: "#a16207",
     wedge: "#f97316",
     total: "#0f172a"
 };
@@ -70,14 +73,14 @@ function deNum(value) {
 }
 
 
-function beLocale(lang) {
+function nlLocale(lang) {
     return lang === "en" ? "en-US" : "fr-FR";
 }
 
 
 function deEuro(value, lang) {
     return deNum(value).toLocaleString(
-        beLocale(lang),
+        nlLocale(lang),
         {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
@@ -88,7 +91,7 @@ function deEuro(value, lang) {
 
 function dePct(value, lang) {
     return (deNum(value) * 100).toLocaleString(
-        beLocale(lang),
+        nlLocale(lang),
         {
             minimumFractionDigits: 1,
             maximumFractionDigits: 1
@@ -114,28 +117,28 @@ function setTextContent(elementId, value) {
 }
 
 
-function getBelgiumSelectedProfile(lang) {
-    const select = getI18nElement("belgium-profile-select", lang);
+function getNetherlandsSelectedProfile(lang) {
+    const select = getI18nElement("netherlands-profile-select", lang);
 
     if (!select) {
-        return "belgium__standard_private_sector";
+        return "netherlands__standard_permanent_contract";
     }
 
     return select.value;
 }
 
-function getBelgiumSelectedDataProfile(lang) {
-    const select = getI18nElement("belgium-data-profile-select", lang);
+function getNetherlandsSelectedDataProfile(lang) {
+    const select = getI18nElement("netherlands-data-profile-select", lang);
 
     if (!select) {
-        return getBelgiumSelectedProfile(lang);
+        return getNetherlandsSelectedProfile(lang);
     }
 
     return select.value;
 }
 
-function getBelgiumWaterfallMultiple(lang) {
-    const select = getI18nElement("belgium-waterfall-multiple", lang);
+function getNetherlandsWaterfallMultiple(lang) {
+    const select = getI18nElement("netherlands-waterfall-multiple", lang);
 
     if (!select) {
         return 2.00;
@@ -145,14 +148,14 @@ function getBelgiumWaterfallMultiple(lang) {
 }
 
 
-function getBelgiumProfileData(profileId) {
-    return BELGIUM_DATA
+function getNetherlandsProfileData(profileId) {
+    return NETHERLANDS_DATA
         .filter(row => row.profile_id === profileId)
         .sort((a, b) => deNum(a.smic_multiple) - deNum(b.smic_multiple));
 }
 
 
-function findBelgiumClosestRow(data, selectedMultiple) {
+function findNetherlandsClosestRow(data, selectedMultiple) {
     if (!data.length) {
         return null;
     }
@@ -177,7 +180,7 @@ function findBelgiumClosestRow(data, selectedMultiple) {
 }
 
 
-function belgiumBaseLayout(lang, yAxisTitle) {
+function netherlandsBaseLayout(lang, yAxisTitle) {
     const isDarkMode = document.body.classList.contains("dark-mode");
 
     const textColor = isDarkMode ? "#f9fafb" : "#0f172a";
@@ -241,7 +244,7 @@ function belgiumBaseLayout(lang, yAxisTitle) {
 }
 
 
-function belgiumPlot(elementId, traces, layout) {
+function netherlandsPlot(elementId, traces, layout) {
     const element = document.getElementById(elementId);
 
     if (!element) {
@@ -260,9 +263,9 @@ function belgiumPlot(elementId, traces, layout) {
 }
 
 
-function renderBelgiumMetrics(lang) {
-    const profileId = getBelgiumSelectedProfile(lang);
-    const profileData = getBelgiumProfileData(profileId);
+function renderNetherlandsMetrics(lang) {
+    const profileId = getNetherlandsSelectedProfile(lang);
+    const profileData = getNetherlandsProfileData(profileId);
     const referenceRow = profileData.find(row => deNum(row.smic_multiple) === 1);
 
     if (!referenceRow) {
@@ -270,42 +273,42 @@ function renderBelgiumMetrics(lang) {
     }
 
     setTextContent(
-        "metric-belgium-reference-wage-" + lang,
+        "metric-netherlands-reference-wage-" + lang,
         deEuro(referenceRow.gross_monthly_eur, lang) + " €"
     );
 
-    setTextContent(
-        "metric-belgium-employee-rate-" + lang,
-        dePct(referenceRow.employee_contribution_rate, lang)
+    const loonheffingRate = (
+        deNum(referenceRow.loonheffing_monthly_eur)
+        / deNum(referenceRow.gross_monthly_eur)
     );
 
     setTextContent(
-        "metric-belgium-employer-rate-" + lang,
+        "metric-netherlands-loonheffing-rate-" + lang,
+        dePct(loonheffingRate, lang)
+    );
+
+    setTextContent(
+        "metric-netherlands-employer-rate-" + lang,
         dePct(referenceRow.employer_contribution_rate, lang)
     );
 
-    const costToNetAfterTax = (
-        referenceRow.cost_to_net_after_withholding_tax_ratio
-        || referenceRow.cost_to_net_ratio
-    );
-
     setTextContent(
-        "metric-belgium-cost-to-net-" + lang,
-        deRatio(costToNetAfterTax, lang)
+        "metric-netherlands-cost-to-net-" + lang,
+        deRatio(referenceRow.cost_to_net_after_loonheffing_ratio, lang)
     );
 }
 
 
-function renderBelgiumWaterfallChart(lang) {
-    const profileId = getBelgiumSelectedProfile(lang);
-    const data = getBelgiumProfileData(profileId);
+function renderNetherlandsWaterfallChart(lang) {
+    const profileId = getNetherlandsSelectedProfile(lang);
+    const data = getNetherlandsProfileData(profileId);
 
     if (!data.length) {
         return;
     }
 
-    const selectedMultiple = getBelgiumWaterfallMultiple(lang);
-    const row = findBelgiumClosestRow(data, selectedMultiple);
+    const selectedMultiple = getNetherlandsWaterfallMultiple(lang);
+    const row = findNetherlandsClosestRow(data, selectedMultiple);
 
     if (!row) {
         return;
@@ -313,20 +316,13 @@ function renderBelgiumWaterfallChart(lang) {
 
     const actualMultiple = deNum(row.smic_multiple);
 
-    const netAfterTax = deNum(row.net_after_withholding_tax_monthly_eur);
-    const withholdingTax = deNum(row.withholding_tax_monthly_eur);
-    const netBeforeTax = deNum(row.net_before_income_tax_monthly_eur);
-    const employeeContrib = deNum(row.employee_contributions_monthly_eur);
+    const netAfterLoonheffing = deNum(row.net_after_loonheffing_monthly_eur);
+    const loonheffing = deNum(row.loonheffing_monthly_eur);
     const gross = deNum(row.gross_monthly_eur);
-
-    const employerContribBeforeReduction = deNum(
-        row.employer_contributions_before_reduction_monthly_eur
-    );
-
-    const structuralReduction = -deNum(
-        row.structural_reduction_monthly_eur
-    );
-
+    const ww = deNum(row.ww_monthly_eur);
+    const aof = deNum(row.aof_monthly_eur);
+    const zvw = deNum(row.zvw_monthly_eur);
+    const wko = deNum(row.wko_monthly_eur);
     const employerCost = deNum(row.employer_cost_monthly_eur);
 
     const multipleLabel = lang === "en"
@@ -334,40 +330,44 @@ function renderBelgiumWaterfallChart(lang) {
         : actualMultiple.toFixed(2).replace(".", ",") + " salaire(s) minimum(s)";
 
     setTextContent(
-        "belgium-waterfall-title-" + lang,
+        "netherlands-waterfall-title-" + lang,
         (lang === "en" ? "Breakdown at " : "Décomposition à ") + multipleLabel
     );
 
     setTextContent(
-        "belgium-waterfall-subtitle-" + lang,
+        "netherlands-waterfall-subtitle-" + lang,
         lang === "en"
-            ? "Detailed breakdown of the path from net wage after withholding tax "
-                + "to total employer cost, for a gross wage of "
+            ? "Detailed breakdown of the path from net wage after loonheffing "
+                + "to total employer cost (employer contributions detailed by "
+                + "WW: unemployment, Aof: disability, Zvw: health and Wko: "
+                + "childcare), for a gross wage of "
                 + deEuro(gross, lang) + " €."
-            : "Décomposition détaillée du passage du salaire net après précompte "
-                + "au coût employeur total, pour un salaire brut de "
+            : "Décomposition détaillée du passage du salaire net après loonheffing "
+                + "au coût employeur total (cotisations employeur détaillées par "
+                + "WW : chômage, Aof : invalidité, Zvw : maladie et Wko : garde "
+                + "d'enfants), pour un salaire brut de "
                 + deEuro(gross, lang) + " €."
     );
 
     const labels = lang === "en"
         ? [
-            "Net after withholding tax",
-            "Withholding tax",
-            "Net before withholding tax",
-            "Employee contributions",
-            "Gross wage",
-            "Employer contributions",
-            "Structural reduction",
+            "Net after loonheffing",
+            "Loonheffing",
+            "Gross (= net before loonheffing)",
+            "WW (unemployment)",
+            "Aof (disability)",
+            "Zvw (health)",
+            "Wko (childcare)",
             "Employer cost"
         ]
         : [
-            "Net après précompte",
-            "Précompte",
-            "Net avant précompte",
-            "Cotisations salarié",
-            "Salaire brut",
-            "Cotisations employeur",
-            "Réduction structurelle",
+            "Net après loonheffing",
+            "Loonheffing",
+            "Brut (= net avant loonheffing)",
+            "WW (chômage)",
+            "Aof (invalidité)",
+            "Zvw (maladie)",
+            "Wko (garde d'enfants)",
             "Coût employeur"
         ];
 
@@ -380,30 +380,30 @@ function renderBelgiumWaterfallChart(lang) {
                 "relative",
                 "total",
                 "relative",
-                "total",
+                "relative",
                 "relative",
                 "relative",
                 "total"
             ],
             x: labels,
             y: [
-                netAfterTax,
-                withholdingTax,
-                netBeforeTax,
-                employeeContrib,
+                netAfterLoonheffing,
+                loonheffing,
                 gross,
-                employerContribBeforeReduction,
-                structuralReduction,
+                ww,
+                aof,
+                zvw,
+                wko,
                 employerCost
             ],
             text: [
-                deEuro(netAfterTax, lang) + " €",
-                "+" + deEuro(withholdingTax, lang) + " €",
-                deEuro(netBeforeTax, lang) + " €",
-                "+" + deEuro(employeeContrib, lang) + " €",
+                deEuro(netAfterLoonheffing, lang) + " €",
+                "+" + deEuro(loonheffing, lang) + " €",
                 deEuro(gross, lang) + " €",
-                "+" + deEuro(employerContribBeforeReduction, lang) + " €",
-                deEuro(structuralReduction, lang) + " €",
+                "+" + deEuro(ww, lang) + " €",
+                "+" + deEuro(aof, lang) + " €",
+                "+" + deEuro(zvw, lang) + " €",
+                "+" + deEuro(wko, lang) + " €",
                 deEuro(employerCost, lang) + " €"
             ],
             textposition: "outside",
@@ -415,17 +415,17 @@ function renderBelgiumWaterfallChart(lang) {
             },
             increasing: {
                 marker: {
-                    color: BELGIUM_COLORS.wedge
+                    color: NETHERLANDS_COLORS.wedge
                 }
             },
             decreasing: {
                 marker: {
-                    color: BELGIUM_COLORS.employer
+                    color: NETHERLANDS_COLORS.employer
                 }
             },
             totals: {
                 marker: {
-                    color: BELGIUM_COLORS.gross
+                    color: NETHERLANDS_COLORS.gross
                 }
             },
             hovertemplate:
@@ -434,7 +434,7 @@ function renderBelgiumWaterfallChart(lang) {
         }
     ];
 
-    const layout = belgiumBaseLayout(lang, getI18nText(lang).y_amount);
+    const layout = netherlandsBaseLayout(lang, getI18nText(lang).y_amount);
 
     layout.xaxis.title = {
         text: ""
@@ -459,63 +459,51 @@ function renderBelgiumWaterfallChart(lang) {
         b: 125
     };
 
-    belgiumPlot(
-        "chart-belgium-waterfall-" + lang,
+    netherlandsPlot(
+        "chart-netherlands-waterfall-" + lang,
         traces,
         layout
     );
 }
 
-function renderBelgiumCostChart(lang) {
-    const profileId = getBelgiumSelectedProfile(lang);
-    const data = getBelgiumProfileData(profileId);
+function renderNetherlandsCostChart(lang) {
+    const profileId = getNetherlandsSelectedProfile(lang);
+    const data = getNetherlandsProfileData(profileId);
     const t = getI18nText(lang);
 
     const x = data.map(row => deNum(row.smic_multiple));
 
+    const hoverPrefix = lang === "en" ? "%{x:.2f} × WML<br>" : "%{x:.2f} × WML<br>";
+
     const traces = [
-        {
-            x: x,
-            y: data.map(row => deNum(row.net_before_income_tax_monthly_eur)),
-            type: "scatter",
-            mode: "lines",
-            name: lang === "en" ? "Net before withholding tax" : "Net avant précompte",
-            line: {
-                color: BELGIUM_COLORS.net,
-                width: 3
-            },
-            hovertemplate:
-                "%{x:.2f} × RMMMG<br>" +
-                (lang === "en" ? "Net before withholding tax: %{y:,.0f} €<extra></extra>" : "Net avant précompte : %{y:,.0f} €<extra></extra>")
-        },
-        {
-            x: x,
-            y: data.map(row => deNum(row.net_after_withholding_tax_monthly_eur)),
-            type: "scatter",
-            mode: "lines",
-            name: lang === "en" ? "Net after withholding tax" : "Net après précompte",
-            line: {
-                color: BELGIUM_COLORS.afterTax,
-                width: 3,
-                dash: "dot"
-            },
-            hovertemplate:
-                "%{x:.2f} × RMMMG<br>" +
-                (lang === "en" ? "Net after withholding tax: %{y:,.0f} €<extra></extra>" : "Net après précompte : %{y:,.0f} €<extra></extra>")
-        },
         {
             x: x,
             y: data.map(row => deNum(row.gross_monthly_eur)),
             type: "scatter",
             mode: "lines",
-            name: t.gross_wage,
+            name: lang === "en" ? "Gross (= net before loonheffing)" : "Brut (= net avant loonheffing)",
             line: {
-                color: BELGIUM_COLORS.gross,
+                color: NETHERLANDS_COLORS.gross,
                 width: 3
             },
             hovertemplate:
-                "%{x:.2f} × RMMMG<br>" +
-                t.gross_wage + " : %{y:,.0f} €<extra></extra>"
+                hoverPrefix +
+                (lang === "en" ? "Gross: %{y:,.0f} €<extra></extra>" : "Brut : %{y:,.0f} €<extra></extra>")
+        },
+        {
+            x: x,
+            y: data.map(row => deNum(row.net_after_loonheffing_monthly_eur)),
+            type: "scatter",
+            mode: "lines",
+            name: lang === "en" ? "Net after loonheffing" : "Net après loonheffing",
+            line: {
+                color: NETHERLANDS_COLORS.afterTax,
+                width: 3,
+                dash: "dot"
+            },
+            hovertemplate:
+                hoverPrefix +
+                (lang === "en" ? "Net after loonheffing: %{y:,.0f} €<extra></extra>" : "Net après loonheffing : %{y:,.0f} €<extra></extra>")
         },
         {
             x: x,
@@ -524,162 +512,177 @@ function renderBelgiumCostChart(lang) {
             mode: "lines",
             name: t.employer_cost,
             line: {
-                color: BELGIUM_COLORS.employer,
+                color: NETHERLANDS_COLORS.employer,
                 width: 3
             },
             hovertemplate:
-                "%{x:.2f} × RMMMG<br>" +
+                hoverPrefix +
                 t.employer_cost + " : %{y:,.0f} €<extra></extra>"
         }
     ];
 
-    const layout = belgiumBaseLayout(lang, t.y_amount);
+    const layout = netherlandsBaseLayout(lang, t.y_amount);
 
     layout.yaxis.ticksuffix = " €";
 
-    belgiumPlot(
-        "chart-belgium-cost-" + lang,
+    netherlandsPlot(
+        "chart-netherlands-cost-" + lang,
         traces,
         layout
     );
 }
 
 
-function renderBelgiumContributionRateChart(lang) {
-    const profileId = getBelgiumSelectedProfile(lang);
-    const data = getBelgiumProfileData(profileId);
+function renderNetherlandsRateChart(lang) {
+    const profileId = getNetherlandsSelectedProfile(lang);
+    const data = getNetherlandsProfileData(profileId);
 
     const x = data.map(row => deNum(row.smic_multiple));
 
     const traces = [
         {
             x: x,
-            y: data.map(row => deNum(row.employee_contribution_rate) * 100),
-            type: "scatter",
-            mode: "lines",
-            name: lang === "en" ? "Employee rate" : "Taux salarié",
-            line: {
-                color: BELGIUM_COLORS.employee,
-                width: 3
-            },
-            hovertemplate:
-                "%{x:.2f} × RMMMG<br>" +
-                (lang === "en" ? "Employee rate: %{y:.1f} %<extra></extra>" : "Taux salarié : %{y:.1f} %<extra></extra>")
-        },
-        {
-            x: x,
             y: data.map(row => (
-                deNum(row.employer_contribution_rate_before_reduction)
+                deNum(row.loonheffing_monthly_eur)
+                / deNum(row.gross_monthly_eur)
                 * 100
             )),
             type: "scatter",
             mode: "lines",
-            name: lang === "en" ? "Employer rate before reduction" : "Taux employeur avant réduction",
+            name: lang === "en" ? "Effective loonheffing rate" : "Taux de loonheffing effectif",
             line: {
-                color: BELGIUM_COLORS.employer,
-                width: 2,
-                dash: "dash"
+                color: NETHERLANDS_COLORS.total,
+                width: 3
             },
             hovertemplate:
-                "%{x:.2f} × RMMMG<br>" +
-                (lang === "en" ? "Before reduction: %{y:.1f} %<extra></extra>" : "Avant réduction : %{y:.1f} %<extra></extra>")
+                "%{x:.2f} × WML<br>" +
+                (lang === "en" ? "Effective loonheffing: %{y:.1f} %<extra></extra>" : "Loonheffing effectif : %{y:.1f} %<extra></extra>")
         },
         {
             x: x,
             y: data.map(row => deNum(row.employer_contribution_rate) * 100),
             type: "scatter",
             mode: "lines",
-            name: lang === "en" ? "Employer rate after reduction" : "Taux employeur après réduction",
+            name: lang === "en" ? "Effective employer rate" : "Taux employeur effectif",
             line: {
-                color: BELGIUM_COLORS.wedge,
-                width: 3
+                color: NETHERLANDS_COLORS.employer,
+                width: 3,
+                dash: "dash"
             },
             hovertemplate:
-                "%{x:.2f} × RMMMG<br>" +
-                (lang === "en" ? "After reduction: %{y:.1f} %<extra></extra>" : "Après réduction : %{y:.1f} %<extra></extra>")
+                "%{x:.2f} × WML<br>" +
+                (lang === "en" ? "Employer rate: %{y:.1f} %<extra></extra>" : "Taux employeur : %{y:.1f} %<extra></extra>")
         }
     ];
 
-    const layout = belgiumBaseLayout(lang, getI18nText(lang).y_rate);
+    const layout = netherlandsBaseLayout(lang, getI18nText(lang).y_rate);
 
     layout.yaxis.ticksuffix = "%";
-    layout.yaxis.range = [0, 35];
+    layout.yaxis.range = [0, 60];
 
-    belgiumPlot(
-        "chart-belgium-rates-" + lang,
+    netherlandsPlot(
+        "chart-netherlands-rates-" + lang,
         traces,
         layout
     );
 }
 
 
-function renderBelgiumStructuralReductionChart(lang) {
-    const profileId = getBelgiumSelectedProfile(lang);
-    const data = getBelgiumProfileData(profileId);
+function renderNetherlandsEmployerLeviesChart(lang) {
+    const profileId = getNetherlandsSelectedProfile(lang);
+    const data = getNetherlandsProfileData(profileId);
 
     const x = data.map(row => deNum(row.smic_multiple));
 
     const traces = [
         {
             x: x,
-            y: data.map(row => deNum(row.structural_reduction_monthly_eur)),
+            y: data.map(row => deNum(row.ww_monthly_eur)),
             type: "scatter",
             mode: "lines",
-            name: lang === "en" ? "Structural reduction" : "Réduction structurelle",
+            name: lang === "en" ? "WW (unemployment)" : "WW (chômage)",
             line: {
-                color: BELGIUM_COLORS.net,
-                width: 3
+                color: NETHERLANDS_COLORS.ww,
+                width: 2
             },
             hovertemplate:
-                "%{x:.2f} × RMMMG<br>" +
-                (lang === "en" ? "Structural reduction: %{y:,.0f} €<extra></extra>" : "Réduction structurelle : %{y:,.0f} €<extra></extra>")
+                "%{x:.2f} × WML<br>" +
+                "WW : %{y:,.0f} €<extra></extra>"
         },
         {
             x: x,
-            y: data.map(row => deNum(row.employer_contributions_before_reduction_monthly_eur)),
+            y: data.map(row => deNum(row.aof_monthly_eur)),
             type: "scatter",
             mode: "lines",
-            name: lang === "en" ? "Employer contributions before reduction" : "Cotisations employeur avant réduction",
+            name: lang === "en" ? "Aof (disability)" : "Aof (invalidité)",
             line: {
-                color: BELGIUM_COLORS.employer,
-                width: 2,
-                dash: "dash"
+                color: NETHERLANDS_COLORS.aof,
+                width: 2
             },
             hovertemplate:
-                "%{x:.2f} × RMMMG<br>" +
-                (lang === "en" ? "Before reduction: %{y:,.0f} €<extra></extra>" : "Cotisations avant réduction : %{y:,.0f} €<extra></extra>")
+                "%{x:.2f} × WML<br>" +
+                "Aof : %{y:,.0f} €<extra></extra>"
+        },
+        {
+            x: x,
+            y: data.map(row => deNum(row.zvw_monthly_eur)),
+            type: "scatter",
+            mode: "lines",
+            name: lang === "en" ? "Zvw-werkgeversheffing (health)" : "Zvw-werkgeversheffing (maladie)",
+            line: {
+                color: NETHERLANDS_COLORS.zvw,
+                width: 2
+            },
+            hovertemplate:
+                "%{x:.2f} × WML<br>" +
+                "Zvw : %{y:,.0f} €<extra></extra>"
+        },
+        {
+            x: x,
+            y: data.map(row => deNum(row.wko_monthly_eur)),
+            type: "scatter",
+            mode: "lines",
+            name: lang === "en" ? "Wko (childcare)" : "Wko (garde d'enfants)",
+            line: {
+                color: NETHERLANDS_COLORS.wko,
+                width: 2
+            },
+            hovertemplate:
+                "%{x:.2f} × WML<br>" +
+                "Wko : %{y:,.0f} €<extra></extra>"
         },
         {
             x: x,
             y: data.map(row => deNum(row.employer_contributions_monthly_eur)),
             type: "scatter",
             mode: "lines",
-            name: lang === "en" ? "Employer contributions after reduction" : "Cotisations employeur après réduction",
+            name: lang === "en" ? "Total employer contributions" : "Total cotisations employeur",
             line: {
-                color: BELGIUM_COLORS.wedge,
-                width: 3
+                color: NETHERLANDS_COLORS.total,
+                width: 3,
+                dash: "dot"
             },
             hovertemplate:
-                "%{x:.2f} × RMMMG<br>" +
-                (lang === "en" ? "After reduction: %{y:,.0f} €<extra></extra>" : "Cotisations après réduction : %{y:,.0f} €<extra></extra>")
+                "%{x:.2f} × WML<br>" +
+                (lang === "en" ? "Total: %{y:,.0f} €<extra></extra>" : "Total : %{y:,.0f} €<extra></extra>")
         }
     ];
 
-    const layout = belgiumBaseLayout(lang, getI18nText(lang).y_amount);
+    const layout = netherlandsBaseLayout(lang, getI18nText(lang).y_amount);
 
     layout.yaxis.ticksuffix = " €";
 
-    belgiumPlot(
-        "chart-belgium-structural-reduction-" + lang,
+    netherlandsPlot(
+        "chart-netherlands-employer-levies-" + lang,
         traces,
         layout
     );
 }
 
 
-function renderBelgiumWedgeChart(lang) {
-    const profileId = getBelgiumSelectedProfile(lang);
-    const data = getBelgiumProfileData(profileId);
+function renderNetherlandsWedgeChart(lang) {
+    const profileId = getNetherlandsSelectedProfile(lang);
+    const data = getNetherlandsProfileData(profileId);
     const t = getI18nText(lang);
 
     const x = data.map(row => deNum(row.smic_multiple));
@@ -696,17 +699,17 @@ function renderBelgiumWedgeChart(lang) {
             mode: "lines",
             name: lang === "en" ? "Social wedge / employer cost" : "Coin social / coût employeur",
             line: {
-                color: BELGIUM_COLORS.wedge,
+                color: NETHERLANDS_COLORS.wedge,
                 width: 3
             },
             hovertemplate:
-                "%{x:.2f} × RMMMG<br>" +
+                "%{x:.2f} × WML<br>" +
                 (lang === "en" ? "Social wedge: %{y:.1f} %<extra></extra>" : "Coin social : %{y:.1f} %<extra></extra>")
         },
         {
             x: x,
             y: data.map(row => (
-                deNum(row.total_wedge_after_withholding_tax_monthly_eur)
+                deNum(row.total_wedge_after_loonheffing_monthly_eur)
                 / deNum(row.employer_cost_monthly_eur)
                 * 100
             )),
@@ -714,12 +717,12 @@ function renderBelgiumWedgeChart(lang) {
             mode: "lines",
             name: lang === "en" ? "Total wedge / employer cost" : "Coin socio-fiscal / coût employeur",
             line: {
-                color: BELGIUM_COLORS.total,
+                color: NETHERLANDS_COLORS.total,
                 width: 3,
                 dash: "dot"
             },
             hovertemplate:
-                "%{x:.2f} × RMMMG<br>" +
+                "%{x:.2f} × WML<br>" +
                 (lang === "en" ? "Total wedge: %{y:.1f} %<extra></extra>" : "Coin socio-fiscal : %{y:.1f} %<extra></extra>")
         },
         {
@@ -727,36 +730,36 @@ function renderBelgiumWedgeChart(lang) {
             y: data.map(row => deNum(row.cost_to_net_ratio)),
             type: "scatter",
             mode: "lines",
-            name: lang === "en" ? "Cost / net ratio before withholding tax" : "Ratio coût / net avant précompte",
+            name: lang === "en" ? "Cost / net ratio before loonheffing" : "Ratio coût / net avant loonheffing",
             yaxis: "y2",
             line: {
-                color: BELGIUM_COLORS.gross,
+                color: NETHERLANDS_COLORS.gross,
                 width: 2,
                 dash: "dash"
             },
             hovertemplate:
-                "%{x:.2f} × RMMMG<br>" +
-                (lang === "en" ? "Cost / net before withholding tax: %{y:.2f}<extra></extra>" : "Coût / net avant précompte : %{y:.2f}<extra></extra>")
+                "%{x:.2f} × WML<br>" +
+                (lang === "en" ? "Cost / net before loonheffing: %{y:.2f}<extra></extra>" : "Coût / net avant loonheffing : %{y:.2f}<extra></extra>")
         },
         {
             x: x,
-            y: data.map(row => deNum(row.cost_to_net_after_withholding_tax_ratio)),
+            y: data.map(row => deNum(row.cost_to_net_after_loonheffing_ratio)),
             type: "scatter",
             mode: "lines",
-            name: lang === "en" ? "Cost / net ratio after withholding tax" : "Ratio coût / net après précompte",
+            name: lang === "en" ? "Cost / net ratio after loonheffing" : "Ratio coût / net après loonheffing",
             yaxis: "y2",
             line: {
-                color: BELGIUM_COLORS.afterTax,
+                color: NETHERLANDS_COLORS.afterTax,
                 width: 2,
                 dash: "longdash"
             },
             hovertemplate:
-                "%{x:.2f} × RMMMG<br>" +
-                (lang === "en" ? "Cost / net after withholding tax: %{y:.2f}<extra></extra>" : "Coût / net après précompte : %{y:.2f}<extra></extra>")
+                "%{x:.2f} × WML<br>" +
+                (lang === "en" ? "Cost / net after loonheffing: %{y:.2f}<extra></extra>" : "Coût / net après loonheffing : %{y:.2f}<extra></extra>")
         }
     ];
 
-    const layout = belgiumBaseLayout(lang, lang === "en" ? "Wedge / employer cost" : "Coin / coût employeur");
+    const layout = netherlandsBaseLayout(lang, lang === "en" ? "Wedge / employer cost" : "Coin / coût employeur");
 
     layout.yaxis.ticksuffix = "%";
     layout.yaxis.range = [0, 70];
@@ -773,28 +776,28 @@ function renderBelgiumWedgeChart(lang) {
         showgrid: false
     };
 
-    belgiumPlot(
-        "chart-belgium-wedge-" + lang,
+    netherlandsPlot(
+        "chart-netherlands-wedge-" + lang,
         traces,
         layout
     );
 }
 
 
-function renderBelgiumFiscalReturnChart(lang) {
-    const target = document.getElementById("chart-belgium-fiscal-return-" + lang);
+function renderNetherlandsFiscalReturnChart(lang) {
+    const target = document.getElementById("chart-netherlands-fiscal-return-" + lang);
 
     if (!target) {
         return;
     }
 
-    const profileId = getBelgiumSelectedProfile(lang);
+    const profileId = getNetherlandsSelectedProfile(lang);
 
-    const data = getBelgiumProfileData(profileId).filter(row => (
+    const data = getNetherlandsProfileData(profileId).filter(row => (
         Number.isFinite(deNum(row.marginal_net_before_income_tax_rate))
-        && Number.isFinite(deNum(row.marginal_net_after_withholding_tax_rate))
+        && Number.isFinite(deNum(row.marginal_net_after_loonheffing_rate))
         && Number.isFinite(deNum(row.marginal_social_wedge_rate))
-        && Number.isFinite(deNum(row.marginal_total_wedge_after_withholding_tax_rate))
+        && Number.isFinite(deNum(row.marginal_total_wedge_after_loonheffing_rate))
         && deNum(row.delta_gross_monthly_eur) > 0
     ));
 
@@ -809,32 +812,32 @@ function renderBelgiumFiscalReturnChart(lang) {
             )),
             type: "scatter",
             mode: "lines",
-            name: lang === "en" ? "Before withholding tax" : "Avant précompte",
+            name: lang === "en" ? "Before loonheffing" : "Avant loonheffing",
             line: {
-                color: BELGIUM_COLORS.net,
+                color: NETHERLANDS_COLORS.net,
                 width: 3
             },
             hovertemplate:
-                "%{x:.2f} × RMMMG<br>" +
-                (lang === "en" ? "Before withholding tax: %{y:.1f} %<extra></extra>" : "Avant précompte : %{y:.1f} %<extra></extra>")
+                "%{x:.2f} × WML<br>" +
+                (lang === "en" ? "Before loonheffing: %{y:.1f} %<extra></extra>" : "Avant loonheffing : %{y:.1f} %<extra></extra>")
         },
         {
             x: x,
             y: data.map(row => (
-                deNum(row.marginal_net_after_withholding_tax_rate)
+                deNum(row.marginal_net_after_loonheffing_rate)
                 * 100
             )),
             type: "scatter",
             mode: "lines",
-            name: lang === "en" ? "After withholding tax" : "Après précompte",
+            name: lang === "en" ? "After loonheffing" : "Après loonheffing",
             line: {
-                color: BELGIUM_COLORS.afterTax,
+                color: NETHERLANDS_COLORS.afterTax,
                 width: 3,
                 dash: "dot"
             },
             hovertemplate:
-                "%{x:.2f} × RMMMG<br>" +
-                (lang === "en" ? "After withholding tax: %{y:.1f} %<extra></extra>" : "Après précompte : %{y:.1f} %<extra></extra>")
+                "%{x:.2f} × WML<br>" +
+                (lang === "en" ? "After loonheffing: %{y:.1f} %<extra></extra>" : "Après loonheffing : %{y:.1f} %<extra></extra>")
         },
         {
             x: x,
@@ -846,35 +849,35 @@ function renderBelgiumFiscalReturnChart(lang) {
             mode: "lines",
             name: lang === "en" ? "Marginal social effect" : "Effet marginal social",
             line: {
-                color: BELGIUM_COLORS.wedge,
+                color: NETHERLANDS_COLORS.wedge,
                 width: 2,
                 dash: "dash"
             },
             hovertemplate:
-                "%{x:.2f} × RMMMG<br>" +
+                "%{x:.2f} × WML<br>" +
                 (lang === "en" ? "Social effect: %{y:.1f} %<extra></extra>" : "Effet social : %{y:.1f} %<extra></extra>")
         },
         {
             x: x,
             y: data.map(row => (
-                deNum(row.marginal_total_wedge_after_withholding_tax_rate)
+                deNum(row.marginal_total_wedge_after_loonheffing_rate)
                 * 100
             )),
             type: "scatter",
             mode: "lines",
             name: lang === "en" ? "Total marginal levy" : "Prélèvement marginal total",
             line: {
-                color: BELGIUM_COLORS.employer,
+                color: NETHERLANDS_COLORS.employer,
                 width: 2,
                 dash: "longdash"
             },
             hovertemplate:
-                "%{x:.2f} × RMMMG<br>" +
+                "%{x:.2f} × WML<br>" +
                 (lang === "en" ? "Total levy: %{y:.1f} %<extra></extra>" : "Prélèvement total : %{y:.1f} %<extra></extra>")
         }
     ];
 
-    const layout = belgiumBaseLayout(
+    const layout = netherlandsBaseLayout(
         lang,
         lang === "en"
             ? "Share of an additional euro of gross wage (%)"
@@ -884,60 +887,63 @@ function renderBelgiumFiscalReturnChart(lang) {
     layout.yaxis.ticksuffix = "%";
     layout.yaxis.range = [0, 120];
 
-    belgiumPlot(
-        "chart-belgium-fiscal-return-" + lang,
+    netherlandsPlot(
+        "chart-netherlands-fiscal-return-" + lang,
         traces,
         layout
     );
 }
 
 
-function renderBelgiumDataTable(lang) {
-    const tableBody = getI18nElement("belgium-data-table-body", lang);
+function renderNetherlandsDataTable(lang) {
+    const tableBody = getI18nElement("netherlands-data-table-body", lang);
 
     if (!tableBody) {
         return;
     }
 
-    const profileId = getBelgiumSelectedDataProfile(lang);
+    const profileId = getNetherlandsSelectedDataProfile(lang);
 
     const profileLabels = {
         fr: {
-            belgium__standard_private_sector: "Secteur privé standard"
+            netherlands__standard_permanent_contract: "CDI, grand employeur"
         },
         en: {
-            belgium__standard_private_sector: "Standard private sector"
+            netherlands__standard_permanent_contract: "Permanent contract, large employer"
         }
     };
 
-    const caption = getI18nElement("belgium-data-profile-caption", lang);
+    const caption = getI18nElement("netherlands-data-profile-caption", lang);
 
     if (caption) {
         caption.textContent = (profileLabels[lang] || profileLabels.fr)[profileId] || profileId;
     }
 
-    const data = getBelgiumProfileData(profileId);
+    const data = getNetherlandsProfileData(profileId);
 
     tableBody.innerHTML = "";
 
     data.forEach(row => {
         const tableRow = document.createElement("tr");
 
+        const loonheffingRate = (
+            deNum(row.loonheffing_monthly_eur)
+            / deNum(row.gross_monthly_eur)
+        );
+
         const cells = [
             deRatio(row.smic_multiple, lang),
             deEuro(row.gross_monthly_eur, lang),
-            deEuro(row.net_before_income_tax_monthly_eur, lang),
-            deEuro(row.withholding_tax_monthly_eur, lang),
-            deEuro(row.net_after_withholding_tax_monthly_eur, lang),
+            deEuro(row.loonheffing_monthly_eur, lang),
+            deEuro(row.net_after_loonheffing_monthly_eur, lang),
             deEuro(row.employer_cost_monthly_eur, lang),
-            deEuro(row.employee_contributions_monthly_eur, lang),
             deEuro(row.employer_contributions_monthly_eur, lang),
             deEuro(row.social_wedge_monthly_eur, lang),
-            deEuro(row.total_wedge_after_withholding_tax_monthly_eur, lang),
-            dePct(row.employee_contribution_rate, lang),
+            deEuro(row.total_wedge_after_loonheffing_monthly_eur, lang),
+            dePct(loonheffingRate, lang),
             dePct(row.employer_contribution_rate, lang),
             deRatio(row.cost_to_net_ratio, lang),
-            deRatio(row.cost_to_net_after_withholding_tax_ratio, lang)
+            deRatio(row.cost_to_net_after_loonheffing_ratio, lang)
         ];
 
         cells.forEach(cell => {
@@ -951,84 +957,84 @@ function renderBelgiumDataTable(lang) {
     });
 }
 
-function renderBelgium(lang) {
-    renderBelgiumMetrics(lang);
-    renderBelgiumWaterfallChart(lang);
-    renderBelgiumCostChart(lang);
-    renderBelgiumContributionRateChart(lang);
-    renderBelgiumStructuralReductionChart(lang);
-    renderBelgiumWedgeChart(lang);
-    renderBelgiumFiscalReturnChart(lang);
-    renderBelgiumDataTable(lang);
+function renderNetherlands(lang) {
+    renderNetherlandsMetrics(lang);
+    renderNetherlandsWaterfallChart(lang);
+    renderNetherlandsCostChart(lang);
+    renderNetherlandsRateChart(lang);
+    renderNetherlandsEmployerLeviesChart(lang);
+    renderNetherlandsWedgeChart(lang);
+    renderNetherlandsFiscalReturnChart(lang);
+    renderNetherlandsDataTable(lang);
 }
 
 
-function belgiumOnTabShow(lang, tabName) {
+function netherlandsOnTabShow(lang, tabName) {
     if (tabName === "simulation") {
-        renderBelgium(lang);
+        renderNetherlands(lang);
     }
 
     if (tabName === "data") {
-        renderBelgiumDataTable(lang);
+        renderNetherlandsDataTable(lang);
     }
 }
 
 
-function showBelgiumTab(lang, tabName) {
+function showNetherlandsTab(lang, tabName) {
     showLangTab(lang, tabName, {
-        tabStorageKey: BELGIUM_TAB_STORAGE_KEY,
-        onShow: belgiumOnTabShow
+        tabStorageKey: NETHERLANDS_TAB_STORAGE_KEY,
+        onShow: netherlandsOnTabShow
     });
 }
 
 
-function switchBelgiumLanguage() {
+function switchNetherlandsLanguage() {
     switchLangLanguage({
-        storageKey: BELGIUM_LANGUAGE_STORAGE_KEY,
-        tabStorageKey: BELGIUM_TAB_STORAGE_KEY,
-        onShow: belgiumOnTabShow
+        storageKey: NETHERLANDS_LANGUAGE_STORAGE_KEY,
+        tabStorageKey: NETHERLANDS_TAB_STORAGE_KEY,
+        onShow: netherlandsOnTabShow
     });
 }
 
 
-function setupBelgiumEvents() {
+function setupNetherlandsEvents() {
     ["fr", "en"].forEach(function(lang) {
-        const profileSelect = getI18nElement("belgium-profile-select", lang);
-        const dataProfileSelect = getI18nElement("belgium-data-profile-select", lang);
-        const waterfallMultipleSelect = getI18nElement("belgium-waterfall-multiple", lang);
+        const profileSelect = getI18nElement("netherlands-profile-select", lang);
+        const dataProfileSelect = getI18nElement("netherlands-data-profile-select", lang);
+        const waterfallMultipleSelect = getI18nElement("netherlands-waterfall-multiple", lang);
 
         if (profileSelect) {
             profileSelect.addEventListener("change", function() {
-                renderBelgium(lang);
+                renderNetherlands(lang);
             });
         }
 
         if (dataProfileSelect) {
             dataProfileSelect.addEventListener("change", function() {
-                renderBelgiumDataTable(lang);
+                renderNetherlandsDataTable(lang);
             });
         }
 
         if (waterfallMultipleSelect) {
             waterfallMultipleSelect.addEventListener("change", function() {
-                renderBelgiumWaterfallChart(lang);
+                renderNetherlandsWaterfallChart(lang);
             });
         }
     });
 }
 
 
-applyStoredBelgiumTheme();
+applyStoredNetherlandsTheme();
 
 
 Papa.parse(
-    BELGIUM_DATA_PATH,
+    NETHERLANDS_DATA_PATH,
     {
         download: true,
         header: true,
         dynamicTyping: false,
         complete: function(results) {
-            BELGIUM_DATA = results.data
+            NETHERLANDS_DATA = results.data
                 .filter(row => row.profile_id)
                 .sort((a, b) => (
                     deNum(a.smic_multiple)
@@ -1036,23 +1042,23 @@ Papa.parse(
                 ));
 
             console.log(
-                "Belgium Labour Cost Lab data loaded:",
-                BELGIUM_DATA.length,
+                "Netherlands Labour Cost Lab data loaded:",
+                NETHERLANDS_DATA.length,
                 "rows"
             );
 
-            setupBelgiumEvents();
+            setupNetherlandsEvents();
 
-            const initialLang = localStorage.getItem(BELGIUM_LANGUAGE_STORAGE_KEY) || "fr";
+            const initialLang = localStorage.getItem(NETHERLANDS_LANGUAGE_STORAGE_KEY) || "fr";
             setLangLanguage(initialLang, {
-                storageKey: BELGIUM_LANGUAGE_STORAGE_KEY,
-                tabStorageKey: BELGIUM_TAB_STORAGE_KEY,
-                onShow: belgiumOnTabShow
+                storageKey: NETHERLANDS_LANGUAGE_STORAGE_KEY,
+                tabStorageKey: NETHERLANDS_TAB_STORAGE_KEY,
+                onShow: netherlandsOnTabShow
             });
         },
         error: function(error) {
             console.error(
-                "Belgium CSV loading error:",
+                "Netherlands CSV loading error:",
                 error
             );
         }

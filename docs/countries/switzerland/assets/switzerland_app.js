@@ -1,4 +1,6 @@
 const SWITZERLAND_DATA_PATH = "../../data/switzerland/switzerland_labour_cost_grid_2026.csv";
+const SWITZERLAND_LANGUAGE_STORAGE_KEY = "switzerland_language";
+const SWITZERLAND_TAB_STORAGE_KEY = "switzerland_tab";
 
 let SWITZERLAND_DATA = [];
 
@@ -17,21 +19,17 @@ function applyStoredSwitzerlandTheme() {
 
 
 function updateSwitzerlandThemeButton(theme) {
-    const themeToggle = document.querySelector(".theme-toggle");
-
-    if (!themeToggle) {
-        return;
-    }
-
-    if (theme === "dark") {
-        themeToggle.textContent = "☀️";
-        themeToggle.title = "Light mode";
-        themeToggle.setAttribute("aria-label", "Light mode");
-    } else {
-        themeToggle.textContent = "🌙";
-        themeToggle.title = "Dark mode";
-        themeToggle.setAttribute("aria-label", "Dark mode");
-    }
+    document.querySelectorAll(".theme-toggle").forEach(function(themeToggle) {
+        if (theme === "dark") {
+            themeToggle.textContent = "☀️";
+            themeToggle.title = "Light mode";
+            themeToggle.setAttribute("aria-label", "Light mode");
+        } else {
+            themeToggle.textContent = "🌙";
+            themeToggle.title = "Dark mode";
+            themeToggle.setAttribute("aria-label", "Dark mode");
+        }
+    });
 }
 
 
@@ -46,7 +44,7 @@ function toggleTheme() {
         updateSwitzerlandThemeButton("light");
     }
 
-    renderSwitzerland();
+    renderSwitzerland(getActiveI18nLanguage(SWITZERLAND_LANGUAGE_STORAGE_KEY));
 }
 
 
@@ -75,9 +73,14 @@ function chNum(value) {
 }
 
 
-function chf(value) {
+function chLocale(lang) {
+    return lang === "en" ? "en-US" : "fr-FR";
+}
+
+
+function chf(value, lang) {
     return chNum(value).toLocaleString(
-        "fr-FR",
+        chLocale(lang),
         {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
@@ -86,9 +89,9 @@ function chf(value) {
 }
 
 
-function pct(value) {
+function pct(value, lang) {
     return (chNum(value) * 100).toLocaleString(
-        "fr-FR",
+        chLocale(lang),
         {
             minimumFractionDigits: 1,
             maximumFractionDigits: 1
@@ -97,14 +100,20 @@ function pct(value) {
 }
 
 
-function pctDirect(value) {
+function pctDirect(value, lang) {
     return chNum(value).toLocaleString(
-        "fr-FR",
+        chLocale(lang),
         {
             minimumFractionDigits: 1,
             maximumFractionDigits: 1
         }
     ) + " %";
+}
+
+
+function chRatio(value, lang) {
+    const text = chNum(value).toFixed(2);
+    return lang === "en" ? text : text.replace(".", ",");
 }
 
 
@@ -119,8 +128,8 @@ function setTextContent(elementId, value) {
 }
 
 
-function getSelectedCanton() {
-    const select = document.getElementById("switzerland-canton-select");
+function getSelectedCanton(lang) {
+    const select = getI18nElement("switzerland-canton-select", lang);
 
     if (!select) {
         return "ZH";
@@ -130,19 +139,19 @@ function getSelectedCanton() {
 }
 
 
-function getSelectedDataCanton() {
-    const select = document.getElementById("switzerland-data-canton-select");
+function getSelectedDataCanton(lang) {
+    const select = getI18nElement("switzerland-data-canton-select", lang);
 
     if (!select) {
-        return getSelectedCanton();
+        return getSelectedCanton(lang);
     }
 
     return select.value;
 }
 
 
-function getSelectedWaterfallWage() {
-    const select = document.getElementById("switzerland-waterfall-wage-select");
+function getSelectedWaterfallWage(lang) {
+    const select = getI18nElement("switzerland-waterfall-wage-select", lang);
 
     if (!select) {
         return 5000;
@@ -186,42 +195,44 @@ function getSwitzerlandCantons() {
 
 
 function populateCantonSelects() {
-    const selects = [
-        document.getElementById("switzerland-canton-select"),
-        document.getElementById("switzerland-data-canton-select")
-    ];
+    ["fr", "en"].forEach(function(lang) {
+        const selects = [
+            getI18nElement("switzerland-canton-select", lang),
+            getI18nElement("switzerland-data-canton-select", lang)
+        ];
 
-    const cantons = getSwitzerlandCantons();
+        const cantons = getSwitzerlandCantons();
 
-    selects.forEach(select => {
-        if (!select) {
-            return;
-        }
-
-        const currentValue = select.value;
-
-        select.innerHTML = "";
-
-        cantons.forEach(canton => {
-            const option = document.createElement("option");
-
-            option.value = canton.code;
-            option.textContent = (
-                canton.code
-                + " — "
-                + canton.nameFr
-                + " · "
-                + canton.municipality
-            );
-
-            if (
-                canton.code === currentValue
-                || (!currentValue && canton.code === "ZH")
-            ) {
-                option.selected = true;
+        selects.forEach(select => {
+            if (!select) {
+                return;
             }
 
-            select.appendChild(option);
+            const currentValue = select.value;
+
+            select.innerHTML = "";
+
+            cantons.forEach(canton => {
+                const option = document.createElement("option");
+
+                option.value = canton.code;
+                option.textContent = (
+                    canton.code
+                    + " — "
+                    + (lang === "en" ? canton.nameEn : canton.nameFr)
+                    + " · "
+                    + canton.municipality
+                );
+
+                if (
+                    canton.code === currentValue
+                    || (!currentValue && canton.code === "ZH")
+                ) {
+                    option.selected = true;
+                }
+
+                select.appendChild(option);
+            });
         });
     });
 }
@@ -252,7 +263,7 @@ function findClosestSwitzerlandRow(data, selectedWage) {
 }
 
 
-function switzerlandBaseLayout(yAxisTitle) {
+function switzerlandBaseLayout(lang, yAxisTitle) {
     const isDarkMode = document.body.classList.contains("dark-mode");
 
     const textColor = isDarkMode ? "#f9fafb" : "#0f172a";
@@ -283,7 +294,7 @@ function switzerlandBaseLayout(yAxisTitle) {
         },
         xaxis: {
             title: {
-                text: "Salaire brut mensuel, CHF",
+                text: lang === "en" ? "Monthly gross wage, CHF" : "Salaire brut mensuel, CHF",
                 standoff: 14
             },
             range: [2800, 20200],
@@ -333,8 +344,8 @@ function switzerlandPlot(elementId, traces, layout) {
 }
 
 
-function renderSwitzerlandMetrics() {
-    const cantonCode = getSelectedCanton();
+function renderSwitzerlandMetrics(lang) {
+    const cantonCode = getSelectedCanton(lang);
     const data = getSwitzerlandCantonData(cantonCode);
     const referenceRow = data.find(row => chNum(row.gross_monthly_chf) === 5000);
 
@@ -343,53 +354,51 @@ function renderSwitzerlandMetrics() {
     }
 
     setTextContent(
-        "metric-switzerland-reference-wage",
-        chf(referenceRow.gross_monthly_chf) + " CHF"
+        "metric-switzerland-reference-wage-" + lang,
+        chf(referenceRow.gross_monthly_chf, lang) + " CHF"
     );
 
     setTextContent(
-        "metric-switzerland-net-before-tax",
-        chf(referenceRow.net_before_tax_monthly_chf) + " CHF"
+        "metric-switzerland-net-before-tax-" + lang,
+        chf(referenceRow.net_before_tax_monthly_chf, lang) + " CHF"
     );
 
     setTextContent(
-        "metric-switzerland-net-after-tax",
-        chf(referenceRow.net_after_tax_monthly_chf) + " CHF"
+        "metric-switzerland-net-after-tax-" + lang,
+        chf(referenceRow.net_after_tax_monthly_chf, lang) + " CHF"
     );
 
     setTextContent(
-        "metric-switzerland-withholding-tax",
-        chf(referenceRow.withholding_tax_monthly_chf) + " CHF"
+        "metric-switzerland-withholding-tax-" + lang,
+        chf(referenceRow.withholding_tax_monthly_chf, lang) + " CHF"
     );
 
     setTextContent(
-        "metric-switzerland-withholding-tax-rate",
-        pctDirect(referenceRow.withholding_tax_rate_percent)
+        "metric-switzerland-withholding-tax-rate-" + lang,
+        pctDirect(referenceRow.withholding_tax_rate_percent, lang)
     );
 
     setTextContent(
-        "metric-switzerland-employer-cost",
-        chf(referenceRow.employer_cost_monthly_chf) + " CHF"
+        "metric-switzerland-employer-cost-" + lang,
+        chf(referenceRow.employer_cost_monthly_chf, lang) + " CHF"
     );
 
     setTextContent(
-        "metric-switzerland-cost-to-net",
-        chNum(referenceRow.cost_to_net_after_tax_ratio)
-            .toFixed(2)
-            .replace(".", ",")
+        "metric-switzerland-cost-to-net-" + lang,
+        chRatio(referenceRow.cost_to_net_after_tax_ratio, lang)
     );
 }
 
 
-function renderSwitzerlandWaterfallChart() {
-    const cantonCode = getSelectedCanton();
+function renderSwitzerlandWaterfallChart(lang) {
+    const cantonCode = getSelectedCanton(lang);
     const data = getSwitzerlandCantonData(cantonCode);
 
     if (!data.length) {
         return;
     }
 
-    const selectedWage = getSelectedWaterfallWage();
+    const selectedWage = getSelectedWaterfallWage(lang);
     const row = findClosestSwitzerlandRow(data, selectedWage);
 
     if (!row) {
@@ -415,28 +424,58 @@ function renderSwitzerlandWaterfallChart() {
     const employerCost = chNum(row.employer_cost_monthly_chf);
 
     setTextContent(
-        "switzerland-waterfall-title",
-        "Décomposition à "
-        + chf(gross)
-        + " CHF bruts mensuels"
+        "switzerland-waterfall-title-" + lang,
+        (lang === "en" ? "Breakdown at " : "Décomposition à ")
+        + chf(gross, lang)
+        + (lang === "en" ? " CHF monthly gross" : " CHF bruts mensuels")
     );
 
     setTextContent(
-        "switzerland-waterfall-subtitle",
-        "Canton "
-        + cantonCode
-        + " · tarif d’impôt à la source A0. "
-        + "Le salaire net après impôt est de "
-        + chf(netAfterTax)
-        + " CHF, dont "
-        + chf(withholdingTax)
-        + " CHF d’impôt à la source "
-        + "("
-        + pctDirect(withholdingTaxRate)
-        + "), pour un coût employeur de "
-        + chf(employerCost)
-        + " CHF."
+        "switzerland-waterfall-subtitle-" + lang,
+        lang === "en"
+            ? "Canton " + cantonCode + " · A0 withholding-tax tariff. "
+                + "Net wage after tax is CHF " + chf(netAfterTax, lang)
+                + ", including CHF " + chf(withholdingTax, lang) + " of withholding tax "
+                + "(" + pctDirect(withholdingTaxRate, lang) + "), for an employer cost of "
+                + chf(employerCost, lang) + " CHF."
+            : "Canton " + cantonCode + " · tarif d'impôt à la source A0. "
+                + "Le salaire net après impôt est de " + chf(netAfterTax, lang)
+                + " CHF, dont " + chf(withholdingTax, lang) + " CHF d'impôt à la source "
+                + "(" + pctDirect(withholdingTaxRate, lang) + "), pour un coût employeur de "
+                + chf(employerCost, lang) + " CHF."
     );
+
+    const labels = lang === "en"
+        ? [
+            "Net after tax",
+            "Withholding tax",
+            "Net before tax",
+            "OASI / DI / EO employee",
+            "Unemployment employee",
+            "LPP employee",
+            "Accident employee",
+            "Gross wage",
+            "OASI / DI / EO employer",
+            "Unemployment employer",
+            "LPP employer",
+            "Accident employer",
+            "Employer cost"
+        ]
+        : [
+            "Net après impôt",
+            "Impôt à la source",
+            "Net avant impôt",
+            "AVS / AI / APG salarié",
+            "Chômage salarié",
+            "LPP salarié",
+            "Accident salarié",
+            "Salaire brut",
+            "AVS / AI / APG employeur",
+            "Chômage employeur",
+            "LPP employeur",
+            "Accident employeur",
+            "Coût employeur"
+        ];
 
     const traces = [
         {
@@ -457,21 +496,7 @@ function renderSwitzerlandWaterfallChart() {
                 "relative",
                 "total"
             ],
-            x: [
-                "Net après impôt",
-                "Impôt à la source",
-                "Net avant impôt",
-                "AVS / AI / APG salarié",
-                "Chômage salarié",
-                "LPP salarié",
-                "Accident salarié",
-                "Salaire brut",
-                "AVS / AI / APG employeur",
-                "Chômage employeur",
-                "LPP employeur",
-                "Accident employeur",
-                "Coût employeur"
-            ],
+            x: labels,
             y: [
                 netAfterTax,
                 withholdingTax,
@@ -488,19 +513,19 @@ function renderSwitzerlandWaterfallChart() {
                 employerCost
             ],
             text: [
-                chf(netAfterTax) + " CHF",
-                "+" + chf(withholdingTax) + " CHF",
-                chf(netBeforeTax) + " CHF",
-                "+" + chf(employeeAhv) + " CHF",
-                "+" + chf(employeeUnemployment) + " CHF",
-                "+" + chf(employeeLpp) + " CHF",
-                "+" + chf(employeeAccident) + " CHF",
-                chf(gross) + " CHF",
-                "+" + chf(employerAhv) + " CHF",
-                "+" + chf(employerUnemployment) + " CHF",
-                "+" + chf(employerLpp) + " CHF",
-                "+" + chf(employerAccident) + " CHF",
-                chf(employerCost) + " CHF"
+                chf(netAfterTax, lang) + " CHF",
+                "+" + chf(withholdingTax, lang) + " CHF",
+                chf(netBeforeTax, lang) + " CHF",
+                "+" + chf(employeeAhv, lang) + " CHF",
+                "+" + chf(employeeUnemployment, lang) + " CHF",
+                "+" + chf(employeeLpp, lang) + " CHF",
+                "+" + chf(employeeAccident, lang) + " CHF",
+                chf(gross, lang) + " CHF",
+                "+" + chf(employerAhv, lang) + " CHF",
+                "+" + chf(employerUnemployment, lang) + " CHF",
+                "+" + chf(employerLpp, lang) + " CHF",
+                "+" + chf(employerAccident, lang) + " CHF",
+                chf(employerCost, lang) + " CHF"
             ],
             textposition: "outside",
             cliponaxis: false,
@@ -530,7 +555,7 @@ function renderSwitzerlandWaterfallChart() {
         }
     ];
 
-    const layout = switzerlandBaseLayout("Montant mensuel, CHF");
+    const layout = switzerlandBaseLayout(lang, lang === "en" ? "Monthly amount, CHF" : "Montant mensuel, CHF");
 
     layout.xaxis.title = {
         text: ""
@@ -554,18 +579,20 @@ function renderSwitzerlandWaterfallChart() {
     };
 
     switzerlandPlot(
-        "chart-switzerland-waterfall",
+        "chart-switzerland-waterfall-" + lang,
         traces,
         layout
     );
 }
 
 
-function renderSwitzerlandCostChart() {
-    const cantonCode = getSelectedCanton();
+function renderSwitzerlandCostChart(lang) {
+    const cantonCode = getSelectedCanton(lang);
     const data = getSwitzerlandCantonData(cantonCode);
+    const t = getI18nText(lang);
 
     const x = data.map(row => chNum(row.gross_monthly_chf));
+    const hoverWagePrefix = lang === "en" ? "CHF %{x:,.0f} gross<br>" : "%{x:,.0f} CHF bruts<br>";
 
     const traces = [
         {
@@ -573,77 +600,78 @@ function renderSwitzerlandCostChart() {
             y: data.map(row => chNum(row.net_after_tax_monthly_chf)),
             type: "scatter",
             mode: "lines",
-            name: "Net après impôt",
+            name: lang === "en" ? "Net after tax" : "Net après impôt",
             line: {
                 color: SWITZERLAND_COLORS.net,
                 width: 3
             },
             hovertemplate:
-                "%{x:,.0f} CHF bruts<br>" +
-                "Net après impôt : %{y:,.0f} CHF<extra></extra>"
+                hoverWagePrefix +
+                (lang === "en" ? "Net after tax: %{y:,.0f} CHF<extra></extra>" : "Net après impôt : %{y:,.0f} CHF<extra></extra>")
         },
         {
             x: x,
             y: data.map(row => chNum(row.net_before_tax_monthly_chf)),
             type: "scatter",
             mode: "lines",
-            name: "Net avant impôt",
+            name: lang === "en" ? "Net before tax" : "Net avant impôt",
             line: {
                 color: SWITZERLAND_COLORS.netBeforeTax,
                 width: 2,
                 dash: "dash"
             },
             hovertemplate:
-                "%{x:,.0f} CHF bruts<br>" +
-                "Net avant impôt : %{y:,.0f} CHF<extra></extra>"
+                hoverWagePrefix +
+                (lang === "en" ? "Net before tax: %{y:,.0f} CHF<extra></extra>" : "Net avant impôt : %{y:,.0f} CHF<extra></extra>")
         },
         {
             x: x,
             y: data.map(row => chNum(row.gross_monthly_chf)),
             type: "scatter",
             mode: "lines",
-            name: "Brut",
+            name: t.gross_wage,
             line: {
                 color: SWITZERLAND_COLORS.gross,
                 width: 3
             },
             hovertemplate:
-                "%{x:,.0f} CHF bruts<br>" +
-                "Brut : %{y:,.0f} CHF<extra></extra>"
+                hoverWagePrefix +
+                t.gross_wage + " : %{y:,.0f} CHF<extra></extra>"
         },
         {
             x: x,
             y: data.map(row => chNum(row.employer_cost_monthly_chf)),
             type: "scatter",
             mode: "lines",
-            name: "Coût employeur",
+            name: t.employer_cost,
             line: {
                 color: SWITZERLAND_COLORS.employer,
                 width: 3
             },
             hovertemplate:
-                "%{x:,.0f} CHF bruts<br>" +
-                "Coût employeur : %{y:,.0f} CHF<extra></extra>"
+                hoverWagePrefix +
+                t.employer_cost + " : %{y:,.0f} CHF<extra></extra>"
         }
     ];
 
-    const layout = switzerlandBaseLayout("Montant mensuel, CHF");
+    const layout = switzerlandBaseLayout(lang, t.y_amount.replace("euros", "CHF"));
 
     layout.yaxis.ticksuffix = " CHF";
 
     switzerlandPlot(
-        "chart-switzerland-cost",
+        "chart-switzerland-cost-" + lang,
         traces,
         layout
     );
 }
 
 
-function renderSwitzerlandRateChart() {
-    const cantonCode = getSelectedCanton();
+function renderSwitzerlandRateChart(lang) {
+    const cantonCode = getSelectedCanton(lang);
     const data = getSwitzerlandCantonData(cantonCode);
 
     const x = data.map(row => chNum(row.gross_monthly_chf));
+    const hoverWagePrefix = lang === "en" ? "CHF %{x:,.0f} gross<br>" : "%{x:,.0f} CHF bruts<br>";
 
     const traces = [
         {
@@ -651,63 +679,67 @@ function renderSwitzerlandRateChart() {
             y: data.map(row => chNum(row.employee_contribution_rate) * 100),
             type: "scatter",
             mode: "lines",
-            name: "Taux salarié",
+            name: lang === "en" ? "Employee rate" : "Taux salarié",
             line: {
                 color: SWITZERLAND_COLORS.employee,
                 width: 3
             },
             hovertemplate:
-                "%{x:,.0f} CHF bruts<br>" +
-                "Taux salarié : %{y:.1f} %<extra></extra>"
+                hoverWagePrefix +
+                (lang === "en" ? "Employee rate: %{y:.1f} %<extra></extra>" : "Taux salarié : %{y:.1f} %<extra></extra>")
         },
         {
             x: x,
             y: data.map(row => chNum(row.employer_contribution_rate) * 100),
             type: "scatter",
             mode: "lines",
-            name: "Taux employeur",
+            name: lang === "en" ? "Employer rate" : "Taux employeur",
             line: {
                 color: SWITZERLAND_COLORS.wedge,
                 width: 3
             },
             hovertemplate:
-                "%{x:,.0f} CHF bruts<br>" +
-                "Taux employeur : %{y:.1f} %<extra></extra>"
+                hoverWagePrefix +
+                (lang === "en" ? "Employer rate: %{y:.1f} %<extra></extra>" : "Taux employeur : %{y:.1f} %<extra></extra>")
         },
         {
             x: x,
             y: data.map(row => chNum(row.withholding_tax_rate_percent)),
             type: "scatter",
             mode: "lines",
-            name: "Impôt à la source",
+            name: lang === "en" ? "Withholding tax" : "Impôt à la source",
             line: {
                 color: SWITZERLAND_COLORS.tax,
                 width: 3
             },
             hovertemplate:
-                "%{x:,.0f} CHF bruts<br>" +
-                "Impôt à la source : %{y:.1f} %<extra></extra>"
+                hoverWagePrefix +
+                (lang === "en" ? "Withholding tax: %{y:.1f} %<extra></extra>" : "Impôt à la source : %{y:.1f} %<extra></extra>")
         }
     ];
 
-    const layout = switzerlandBaseLayout("Taux effectif");
+    const layout = switzerlandBaseLayout(lang, getI18nText(lang).y_rate);
 
     layout.yaxis.ticksuffix = "%";
     layout.yaxis.range = [0, 30];
 
     switzerlandPlot(
-        "chart-switzerland-rates",
+        "chart-switzerland-rates-" + lang,
         traces,
         layout
     );
 }
 
 
-function renderSwitzerlandEmployeeComponentsChart() {
-    const cantonCode = getSelectedCanton();
+function renderSwitzerlandEmployeeComponentsChart(lang) {
+    const cantonCode = getSelectedCanton(lang);
     const data = getSwitzerlandCantonData(cantonCode);
 
     const x = data.map(row => chNum(row.gross_monthly_chf));
+
+    const labels = lang === "en"
+        ? { ahv: "OASI / DI / EO", unemployment: "Unemployment", lpp: "LPP", accident: "Accident", tax: "Withholding tax" }
+        : { ahv: "AVS / AI / APG", unemployment: "Chômage", lpp: "LPP", accident: "Accident", tax: "Impôt à la source" };
 
     const traces = [
         {
@@ -715,7 +747,7 @@ function renderSwitzerlandEmployeeComponentsChart() {
             y: data.map(row => chNum(row.employee_ahv_iv_eo_monthly_chf)),
             type: "scatter",
             mode: "lines",
-            name: "AVS / AI / APG",
+            name: labels.ahv,
             stackgroup: "one",
             line: {
                 color: SWITZERLAND_COLORS.employee,
@@ -727,7 +759,7 @@ function renderSwitzerlandEmployeeComponentsChart() {
             y: data.map(row => chNum(row.employee_unemployment_monthly_chf)),
             type: "scatter",
             mode: "lines",
-            name: "Chômage",
+            name: labels.unemployment,
             stackgroup: "one",
             line: {
                 color: SWITZERLAND_COLORS.wedge,
@@ -739,7 +771,7 @@ function renderSwitzerlandEmployeeComponentsChart() {
             y: data.map(row => chNum(row.employee_lpp_monthly_chf)),
             type: "scatter",
             mode: "lines",
-            name: "LPP",
+            name: labels.lpp,
             stackgroup: "one",
             line: {
                 color: SWITZERLAND_COLORS.lpp,
@@ -751,7 +783,7 @@ function renderSwitzerlandEmployeeComponentsChart() {
             y: data.map(row => chNum(row.employee_accident_monthly_chf)),
             type: "scatter",
             mode: "lines",
-            name: "Accident",
+            name: labels.accident,
             stackgroup: "one",
             line: {
                 color: SWITZERLAND_COLORS.accident,
@@ -763,7 +795,7 @@ function renderSwitzerlandEmployeeComponentsChart() {
             y: data.map(row => chNum(row.withholding_tax_monthly_chf)),
             type: "scatter",
             mode: "lines",
-            name: "Impôt à la source",
+            name: labels.tax,
             stackgroup: "one",
             line: {
                 color: SWITZERLAND_COLORS.tax,
@@ -772,23 +804,30 @@ function renderSwitzerlandEmployeeComponentsChart() {
         }
     ];
 
-    const layout = switzerlandBaseLayout("Prélèvements salarié et impôt, CHF");
+    const layout = switzerlandBaseLayout(
+        lang,
+        lang === "en" ? "Employee levies and tax, CHF" : "Prélèvements salarié et impôt, CHF"
+    );
 
     layout.yaxis.ticksuffix = " CHF";
 
     switzerlandPlot(
-        "chart-switzerland-employee-components",
+        "chart-switzerland-employee-components-" + lang,
         traces,
         layout
     );
 }
 
 
-function renderSwitzerlandEmployerComponentsChart() {
-    const cantonCode = getSelectedCanton();
+function renderSwitzerlandEmployerComponentsChart(lang) {
+    const cantonCode = getSelectedCanton(lang);
     const data = getSwitzerlandCantonData(cantonCode);
 
     const x = data.map(row => chNum(row.gross_monthly_chf));
+
+    const labels = lang === "en"
+        ? { ahv: "OASI / DI / EO", unemployment: "Unemployment", lpp: "LPP", accident: "Accident" }
+        : { ahv: "AVS / AI / APG", unemployment: "Chômage", lpp: "LPP", accident: "Accident" };
 
     const traces = [
         {
@@ -796,7 +835,7 @@ function renderSwitzerlandEmployerComponentsChart() {
             y: data.map(row => chNum(row.employer_ahv_iv_eo_monthly_chf)),
             type: "scatter",
             mode: "lines",
-            name: "AVS / AI / APG",
+            name: labels.ahv,
             stackgroup: "one",
             line: {
                 color: SWITZERLAND_COLORS.employer,
@@ -808,7 +847,7 @@ function renderSwitzerlandEmployerComponentsChart() {
             y: data.map(row => chNum(row.employer_unemployment_monthly_chf)),
             type: "scatter",
             mode: "lines",
-            name: "Chômage",
+            name: labels.unemployment,
             stackgroup: "one",
             line: {
                 color: SWITZERLAND_COLORS.wedge,
@@ -820,7 +859,7 @@ function renderSwitzerlandEmployerComponentsChart() {
             y: data.map(row => chNum(row.employer_lpp_monthly_chf)),
             type: "scatter",
             mode: "lines",
-            name: "LPP",
+            name: labels.lpp,
             stackgroup: "one",
             line: {
                 color: SWITZERLAND_COLORS.lpp,
@@ -832,7 +871,7 @@ function renderSwitzerlandEmployerComponentsChart() {
             y: data.map(row => chNum(row.employer_accident_monthly_chf)),
             type: "scatter",
             mode: "lines",
-            name: "Accident",
+            name: labels.accident,
             stackgroup: "one",
             line: {
                 color: SWITZERLAND_COLORS.accident,
@@ -841,23 +880,27 @@ function renderSwitzerlandEmployerComponentsChart() {
         }
     ];
 
-    const layout = switzerlandBaseLayout("Cotisations employeur, CHF");
+    const layout = switzerlandBaseLayout(
+        lang,
+        lang === "en" ? "Employer contributions, CHF" : "Cotisations employeur, CHF"
+    );
 
     layout.yaxis.ticksuffix = " CHF";
 
     switzerlandPlot(
-        "chart-switzerland-employer-components",
+        "chart-switzerland-employer-components-" + lang,
         traces,
         layout
     );
 }
 
 
-function renderSwitzerlandWedgeChart() {
-    const cantonCode = getSelectedCanton();
+function renderSwitzerlandWedgeChart(lang) {
+    const cantonCode = getSelectedCanton(lang);
     const data = getSwitzerlandCantonData(cantonCode);
 
     const x = data.map(row => chNum(row.gross_monthly_chf));
+    const hoverWagePrefix = lang === "en" ? "CHF %{x:,.0f} gross<br>" : "%{x:,.0f} CHF bruts<br>";
 
     const traces = [
         {
@@ -865,35 +908,35 @@ function renderSwitzerlandWedgeChart() {
             y: data.map(row => chNum(row.social_wedge_monthly_chf)),
             type: "scatter",
             mode: "lines",
-            name: "Coin social",
+            name: getI18nText(lang).social_wedge,
             line: {
                 color: SWITZERLAND_COLORS.wedge,
                 width: 3
             },
             hovertemplate:
-                "%{x:,.0f} CHF bruts<br>" +
-                "Coin social : %{y:,.0f} CHF<extra></extra>"
+                hoverWagePrefix +
+                getI18nText(lang).social_wedge + " : %{y:,.0f} CHF<extra></extra>"
         },
         {
             x: x,
             y: data.map(row => chNum(row.total_wedge_after_tax_monthly_chf)),
             type: "scatter",
             mode: "lines",
-            name: "Coin total après impôt",
+            name: lang === "en" ? "Total wedge after tax" : "Coin total après impôt",
             line: {
                 color: SWITZERLAND_COLORS.tax,
                 width: 3
             },
             hovertemplate:
-                "%{x:,.0f} CHF bruts<br>" +
-                "Coin total après impôt : %{y:,.0f} CHF<extra></extra>"
+                hoverWagePrefix +
+                (lang === "en" ? "Total wedge after tax: %{y:,.0f} CHF<extra></extra>" : "Coin total après impôt : %{y:,.0f} CHF<extra></extra>")
         },
         {
             x: x,
             y: data.map(row => chNum(row.cost_to_net_after_tax_ratio)),
             type: "scatter",
             mode: "lines",
-            name: "Coût / net après impôt",
+            name: lang === "en" ? "Cost / net after tax" : "Coût / net après impôt",
             yaxis: "y2",
             line: {
                 color: SWITZERLAND_COLORS.total,
@@ -901,18 +944,18 @@ function renderSwitzerlandWedgeChart() {
                 dash: "dash"
             },
             hovertemplate:
-                "%{x:,.0f} CHF bruts<br>" +
-                "Coût / net après impôt : %{y:.2f}<extra></extra>"
+                hoverWagePrefix +
+                (lang === "en" ? "Cost / net after tax: %{y:.2f}<extra></extra>" : "Coût / net après impôt : %{y:.2f}<extra></extra>")
         }
     ];
 
-    const layout = switzerlandBaseLayout("Coin mensuel, CHF");
+    const layout = switzerlandBaseLayout(lang, lang === "en" ? "Monthly wedge, CHF" : "Coin mensuel, CHF");
 
     layout.yaxis.ticksuffix = " CHF";
 
     layout.yaxis2 = {
         title: {
-            text: "Ratio coût / net après impôt",
+            text: lang === "en" ? "Cost / net ratio after tax" : "Ratio coût / net après impôt",
             standoff: 16
         },
         overlaying: "y",
@@ -923,34 +966,34 @@ function renderSwitzerlandWedgeChart() {
     };
 
     switzerlandPlot(
-        "chart-switzerland-wedge",
+        "chart-switzerland-wedge-" + lang,
         traces,
         layout
     );
 }
 
 
-function renderSwitzerlandDataTable() {
-    const tableBody = document.getElementById("switzerland-data-table-body");
+function renderSwitzerlandDataTable(lang) {
+    const tableBody = getI18nElement("switzerland-data-table-body", lang);
 
     if (!tableBody) {
         return;
     }
 
-    const cantonCode = getSelectedDataCanton();
+    const cantonCode = getSelectedDataCanton(lang);
     const data = getSwitzerlandCantonData(cantonCode);
 
     const firstRow = data[0];
-    const caption = document.getElementById("switzerland-data-canton-caption");
+    const caption = getI18nElement("switzerland-data-canton-caption", lang);
 
     if (caption && firstRow) {
         caption.textContent = (
             firstRow.canton_code
             + " — "
-            + firstRow.canton_name_fr
+            + (lang === "en" ? firstRow.canton_name_en : firstRow.canton_name_fr)
             + " · "
             + firstRow.reference_municipality
-            + " · tarif A0"
+            + " · tariff A0"
         );
     }
 
@@ -960,18 +1003,15 @@ function renderSwitzerlandDataTable() {
         const tableRow = document.createElement("tr");
 
         const cells = [
-            chf(row.gross_monthly_chf) + " CHF",
-            chf(row.net_after_tax_monthly_chf) + " CHF",
-            chf(row.withholding_tax_monthly_chf) + " CHF",
-            pctDirect(row.withholding_tax_rate_percent),
-            chf(row.net_before_tax_monthly_chf) + " CHF",
-            chf(row.employer_cost_monthly_chf) + " CHF",
-            chf(row.employee_total_contrib_monthly_chf) + " CHF",
-            chf(row.employer_total_contrib_monthly_chf) + " CHF",
-            chf(row.total_wedge_after_tax_monthly_chf) + " CHF",
-            chNum(row.cost_to_net_after_tax_ratio)
-                .toFixed(2)
-                .replace(".", ",")
+            chf(row.gross_monthly_chf, lang) + " CHF",
+            chf(row.net_before_tax_monthly_chf, lang) + " CHF",
+            chf(row.employer_cost_monthly_chf, lang) + " CHF",
+            chf(row.employee_total_contrib_monthly_chf, lang) + " CHF",
+            chf(row.employer_total_contrib_monthly_chf, lang) + " CHF",
+            chf(row.social_wedge_monthly_chf, lang) + " CHF",
+            pct(row.employee_contribution_rate, lang),
+            pct(row.employer_contribution_rate, lang),
+            chRatio(row.cost_to_net_ratio, lang)
         ];
 
         cells.forEach(cell => {
@@ -986,84 +1026,70 @@ function renderSwitzerlandDataTable() {
 }
 
 
-function renderSwitzerland() {
-    renderSwitzerlandMetrics();
-    renderSwitzerlandWaterfallChart();
-    renderSwitzerlandCostChart();
-    renderSwitzerlandRateChart();
-    renderSwitzerlandEmployeeComponentsChart();
-    renderSwitzerlandEmployerComponentsChart();
-    renderSwitzerlandWedgeChart();
-    renderSwitzerlandDataTable();
+function renderSwitzerland(lang) {
+    renderSwitzerlandMetrics(lang);
+    renderSwitzerlandWaterfallChart(lang);
+    renderSwitzerlandCostChart(lang);
+    renderSwitzerlandRateChart(lang);
+    renderSwitzerlandEmployeeComponentsChart(lang);
+    renderSwitzerlandEmployerComponentsChart(lang);
+    renderSwitzerlandWedgeChart(lang);
+    renderSwitzerlandDataTable(lang);
 }
 
 
-function setupSwitzerlandTabs() {
-    const buttons = document.querySelectorAll(".tab-button");
-    const panels = document.querySelectorAll(".tab-content");
+function switzerlandOnTabShow(lang, tabName) {
+    if (tabName === "simulation") {
+        renderSwitzerland(lang);
+    }
 
-    buttons.forEach(button => {
-        button.addEventListener("click", function() {
-            const target = button.dataset.tab;
+    if (tabName === "data") {
+        renderSwitzerlandDataTable(lang);
+    }
+}
 
-            buttons.forEach(item => {
-                item.classList.remove("active");
-            });
 
-            panels.forEach(panel => {
-                panel.classList.remove("active");
-            });
+function showSwitzerlandTab(lang, tabName) {
+    showLangTab(lang, tabName, {
+        tabStorageKey: SWITZERLAND_TAB_STORAGE_KEY,
+        onShow: switzerlandOnTabShow
+    });
+}
 
-            button.classList.add("active");
 
-            const targetPanel = document.getElementById("tab-" + target);
-
-            if (targetPanel) {
-                targetPanel.classList.add("active");
-            }
-
-            if (target === "simulation") {
-                setTimeout(function() {
-                    renderSwitzerland();
-                }, 80);
-            }
-
-            if (target === "data") {
-                setTimeout(function() {
-                    renderSwitzerlandDataTable();
-                }, 80);
-            }
-        });
+function switchSwitzerlandLanguage() {
+    switchLangLanguage({
+        storageKey: SWITZERLAND_LANGUAGE_STORAGE_KEY,
+        tabStorageKey: SWITZERLAND_TAB_STORAGE_KEY,
+        onShow: switzerlandOnTabShow
     });
 }
 
 
 function setupSwitzerlandEvents() {
-    const cantonSelect = document.getElementById("switzerland-canton-select");
-    const dataCantonSelect = document.getElementById(
-        "switzerland-data-canton-select"
-    );
-    const waterfallWageSelect = document.getElementById(
-        "switzerland-waterfall-wage-select"
-    );
+    ["fr", "en"].forEach(function(lang) {
+        const cantonSelect = getI18nElement("switzerland-canton-select", lang);
+        const dataCantonSelect = getI18nElement("switzerland-data-canton-select", lang);
+        const waterfallWageSelect = getI18nElement("switzerland-waterfall-wage-select", lang);
 
-    if (cantonSelect) {
-        cantonSelect.addEventListener("change", function() {
-            renderSwitzerland();
-        });
-    }
+        if (cantonSelect) {
+            cantonSelect.addEventListener("change", function() {
+                renderSwitzerland(lang);
+            });
+        }
 
-    if (dataCantonSelect) {
-        dataCantonSelect.addEventListener("change", function() {
-            renderSwitzerlandDataTable();
-        });
-    }
+        if (dataCantonSelect) {
+            dataCantonSelect.addEventListener("change", function() {
+                renderSwitzerlandDataTable(lang);
+            });
+        }
 
-    if (waterfallWageSelect) {
-        waterfallWageSelect.addEventListener("change", function() {
-            renderSwitzerlandWaterfallChart();
-        });
-    }
+        if (waterfallWageSelect) {
+            waterfallWageSelect.addEventListener("change", function() {
+                renderSwitzerlandWaterfallChart(lang);
+            });
+        }
+    });
 }
 
 
@@ -1091,9 +1117,14 @@ Papa.parse(
             );
 
             populateCantonSelects();
-            setupSwitzerlandTabs();
             setupSwitzerlandEvents();
-            renderSwitzerland();
+
+            const initialLang = localStorage.getItem(SWITZERLAND_LANGUAGE_STORAGE_KEY) || "fr";
+            setLangLanguage(initialLang, {
+                storageKey: SWITZERLAND_LANGUAGE_STORAGE_KEY,
+                tabStorageKey: SWITZERLAND_TAB_STORAGE_KEY,
+                onShow: switzerlandOnTabShow
+            });
         },
         error: function(error) {
             console.error(

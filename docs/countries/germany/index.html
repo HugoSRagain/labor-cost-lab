@@ -9,7 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
     <link rel="stylesheet" href="../../assets/style.css?v=19">
-    <script defer src="./assets/germany_app.js?v=18"></script>
+    <script defer src="../../assets/i18n_common.js?v=1"></script>
+    <script defer src="./assets/germany_app.js?v=19"></script>
 </head>
 
 <body>
@@ -23,7 +24,7 @@
         </span>
     </div>
 
-    <div class="language-section active">
+    <div class="language-section active" id="section-fr">
         <header>
             <div>
                 <h1>German Labour Cost Lab</h1>
@@ -31,8 +32,7 @@
                     Prototype de simulation du coût du travail, du salaire net avant impôt
                     et des cotisations sociales en Allemagne.
                 </p>
-	        <p class="author-line">Par Hugo Spring-Ragain, Économiste, CEDS Paris</p>
-
+                <p class="author-line">Par Hugo Spring-Ragain, Économiste, CEDS Paris</p>
             </div>
 
             <div class="header-actions">
@@ -44,25 +44,29 @@
                 >
                     🌙
                 </button>
+
+                <button class="language-toggle" onclick="switchGermanyLanguage()">
+                    English
+                </button>
             </div>
         </header>
 
         <main>
             <nav class="tabs">
-                <button class="tab-button active" data-tab="simulation">
+                <button class="tab-button active" data-tab="simulation" onclick="showGermanyTab('fr', 'simulation')">
                     Simulation
                 </button>
 
-                <button class="tab-button" data-tab="data">
+                <button class="tab-button" data-tab="data" onclick="showGermanyTab('fr', 'data')">
                     Données
                 </button>
 
-                <button class="tab-button" data-tab="methodology">
+                <button class="tab-button" data-tab="methodology" onclick="showGermanyTab('fr', 'methodology')">
                     Méthodologie
                 </button>
             </nav>
 
-            <div class="tab-content active" id="tab-simulation">
+            <div class="tab-content active" id="tab-fr-simulation">
                 <section>
                     <div class="badge">
                         Moteur de calcul : simulation réglementaire · Allemagne 2026
@@ -75,14 +79,6 @@
                         du salaire net avant impôt, du coût employeur et des cotisations sociales
                         en Allemagne.
                     </p>
-
-                    <div class="method-box">
-                        <strong>Note méthodologique.</strong>
-                        Cette version ne repose pas sur une API publique équivalente à Mon-entreprise.
-                        Elle utilise une simulation réglementaire construite à partir des paramètres
-                        allemands de sécurité sociale pour 2026. Le salaire net affiché correspond
-                        au salaire net avant impôt sur le revenu.
-                    </div>
                 </section>
 
                 <section>
@@ -96,11 +92,11 @@
 
                     <div class="profile-selector profile-selector-grid" style="margin-bottom: 18px;">
                         <div class="selector-field">
-                            <label for="germany-waterfall-multiple">
+                            <label for="germany-waterfall-multiple-fr">
                                 Point de salaire sélectionné
                             </label>
 
-                            <select id="germany-waterfall-multiple">
+                            <select id="germany-waterfall-multiple-fr">
                                 <option value="1.00">1,00 salaire minimum</option>
                                 <option value="1.50">1,50 salaire minimum</option>
                                 <option value="2.00" selected>2,00 salaires minimums</option>
@@ -115,15 +111,15 @@
                     </div>
 
                     <div class="chart-card chart-card-wide germany-waterfall-card">
-                        <h3 id="germany-waterfall-title">
+                        <h3 id="germany-waterfall-title-fr">
                             Décomposition du coût du travail
                         </h3>
 
-                        <p class="chart-subtitle" id="germany-waterfall-subtitle">
+                        <p class="chart-subtitle" id="germany-waterfall-subtitle-fr">
                             Passage du salaire net avant impôt au coût total employeur.
                         </p>
 
-                        <div id="chart-germany-decomposition" class="plotly-chart"></div>
+                        <div id="chart-germany-decomposition-fr" class="plotly-chart"></div>
                     </div>
                 </section>
 
@@ -145,11 +141,11 @@
 
                     <div class="profile-selector profile-selector-grid" style="margin-bottom: 18px;">
                         <div class="selector-field">
-                            <label for="germany-profile-select">
+                            <label for="germany-profile-select-fr">
                                 Profil Allemagne
                             </label>
 
-                            <select id="germany-profile-select">
+                            <select id="germany-profile-select-fr">
                                 <option value="germany__public_health__with_children__outside_saxony" selected>
                                     Assurance publique · avec enfant · hors Saxe
                                 </option>
@@ -170,13 +166,13 @@
 
                         <div class="selector-field">
                             <label>
-                                Zones d’emploi affichées
+                                Zones d'emploi affichées
                             </label>
 
                             <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-top: 6px;">
                                 <input
                                     type="checkbox"
-                                    id="germany-zone-minijob"
+                                    id="germany-zone-minijob-fr"
                                     checked
                                 >
                                 Minijob
@@ -185,7 +181,7 @@
                             <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-top: 6px;">
                                 <input
                                     type="checkbox"
-                                    id="germany-zone-midijob"
+                                    id="germany-zone-midijob-fr"
                                     checked
                                 >
                                 Midijob / Übergangsbereich
@@ -194,7 +190,7 @@
                             <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-top: 6px;">
                                 <input
                                     type="checkbox"
-                                    id="germany-zone-standard"
+                                    id="germany-zone-standard-fr"
                                     checked
                                 >
                                 Emploi standard
@@ -209,7 +205,7 @@
                                 Comparaison du salaire brut, du salaire net avant impôt
                                 et du coût total employeur.
                             </p>
-                            <div id="chart-germany-cost" class="plotly-chart"></div>
+                            <div id="chart-germany-cost-fr" class="plotly-chart"></div>
                         </div>
 
                         <div class="chart-card">
@@ -217,7 +213,7 @@
                             <p class="chart-subtitle">
                                 Cotisations salarié et employeur rapportées au salaire brut.
                             </p>
-                            <div id="chart-germany-rates" class="plotly-chart"></div>
+                            <div id="chart-germany-rates-fr" class="plotly-chart"></div>
                         </div>
 
                         <div class="chart-card">
@@ -226,29 +222,29 @@
                                 Écart entre coût employeur et salaire net avant impôt,
                                 exprimé en part du coût employeur.
                             </p>
-                            <div id="chart-germany-wedge" class="plotly-chart"></div>
+                            <div id="chart-germany-wedge-fr" class="plotly-chart"></div>
                         </div>
 
-            <div class="chart-card">
-                <h3>Rendement socio-fiscal d’une hausse de salaire brut</h3>
+                        <div class="chart-card">
+                            <h3>Rendement socio-fiscal d'une hausse de salaire brut</h3>
 
-                <p>
-                    Part d’un euro supplémentaire de salaire brut conservée avant et après
-                    Lohnsteuer et Solidaritätszuschlag. Scénario fiscal : Steuerklasse I,
-                    assurance publique, sans Kirchensteuer.
-                </p>
+                            <p>
+                                Part d'un euro supplémentaire de salaire brut conservée avant et après
+                                Lohnsteuer et Solidaritätszuschlag. Scénario fiscal : Steuerklasse I,
+                                assurance publique, sans Kirchensteuer.
+                            </p>
 
-                <div
-                    id="chart-germany-fiscal-return"
-                    class="chart"
-                    aria-label="Rendement socio-fiscal d'une hausse de salaire brut en Allemagne"
-                ></div>
+                            <div
+                                id="chart-germany-fiscal-return-fr"
+                                class="chart"
+                                aria-label="Rendement socio-fiscal d'une hausse de salaire brut en Allemagne"
+                            ></div>
 
-                <p class="method-note">
-                    Calcul fiscal fondé sur le PAP 2026 allemand. Les résultats portent sur
-                    un salaire mensuel régulier hors revenus exceptionnels.
-                </p>
-            </div>
+                            <p class="method-note">
+                                Calcul fiscal fondé sur le PAP 2026 allemand. Les résultats portent sur
+                                un salaire mensuel régulier hors revenus exceptionnels.
+                            </p>
+                        </div>
 
                         <div class="chart-card">
                             <h3>Décomposition des cotisations sociales</h3>
@@ -256,7 +252,7 @@
                                 Comparaison des cotisations salarié et employeur par branche
                                 au niveau de 2 salaires minimums de référence.
                             </p>
-                            <div id="chart-germany-breakdown" class="plotly-chart"></div>
+                            <div id="chart-germany-breakdown-fr" class="plotly-chart"></div>
                         </div>
                     </div>
                 </section>
@@ -269,7 +265,7 @@
                             <div class="metric-label">
                                 Salaire net avant impôt à 1 salaire minimum
                             </div>
-                            <div class="metric-value" id="germany-net-minimum">
+                            <div class="metric-value" id="germany-net-minimum-fr">
                                 —
                             </div>
                         </div>
@@ -278,7 +274,7 @@
                             <div class="metric-label">
                                 Coût employeur à 1 salaire minimum
                             </div>
-                            <div class="metric-value" id="germany-cost-minimum">
+                            <div class="metric-value" id="germany-cost-minimum-fr">
                                 —
                             </div>
                         </div>
@@ -287,7 +283,7 @@
                             <div class="metric-label">
                                 Taux employeur apparent à 1 salaire minimum
                             </div>
-                            <div class="metric-value" id="germany-employer-rate">
+                            <div class="metric-value" id="germany-employer-rate-fr">
                                 —
                             </div>
                         </div>
@@ -296,7 +292,7 @@
                             <div class="metric-label">
                                 Ratio coût/net avant impôt à 2 salaires minimums
                             </div>
-                            <div class="metric-value" id="germany-cost-net-ratio">
+                            <div class="metric-value" id="germany-cost-net-ratio-fr">
                                 —
                             </div>
                         </div>
@@ -305,13 +301,13 @@
                 </section>
             </div>
 
-            <div class="tab-content" id="tab-data">
+            <div class="tab-content" id="tab-fr-data">
                 <section>
                     <h2>Données</h2>
 
                     <p class="interpretation">
                         Le jeu de données allemand peut être téléchargé au format CSV.
-                        Il contient l’ensemble des points de salaire et les quatre profils simulés :
+                        Il contient l'ensemble des points de salaire et les quatre profils simulés :
                         avec enfant hors Saxe, sans enfant hors Saxe, avec enfant en Saxe
                         et sans enfant en Saxe.
                     </p>
@@ -344,11 +340,11 @@
 
                     <div class="profile-selector profile-selector-grid" style="margin-top: 18px;">
                         <div class="selector-field">
-                            <label for="germany-data-profile-select">
+                            <label for="germany-data-profile-select-fr">
                                 Profil Allemagne
                             </label>
 
-                            <select id="germany-data-profile-select">
+                            <select id="germany-data-profile-select-fr">
                                 <option value="germany__public_health__with_children__outside_saxony" selected>
                                     Assurance publique · avec enfant · hors Saxe
                                 </option>
@@ -372,16 +368,16 @@
                 <section>
                     <h2>Données du profil sélectionné</h2>
 
-                    <p class="interpretation" id="germany-data-profile-label">
+                    <p class="interpretation" id="germany-data-profile-label-fr">
                         —
                     </p>
 
                     <div class="data-table-wrapper">
-                        <table class="data-table" id="germany-data-table">
+                        <table class="data-table" id="germany-data-table-fr">
                             <thead>
                                 <tr>
                                     <th>Multiple</th>
-                                    <th>Régime d’emploi</th>
+                                    <th>Régime d'emploi</th>
                                     <th>Salaire brut (€)</th>
                                     <th>Net avant impôt (€)</th>
                                     <th>Coût employeur (€)</th>
@@ -401,7 +397,7 @@
                 </section>
             </div>
 
-            <div class="tab-content" id="tab-methodology">
+            <div class="tab-content" id="tab-fr-methodology">
                 <section>
                     <h2>Méthodologie</h2>
 
@@ -414,13 +410,13 @@
                         <li>
                             <strong>Convention mensuelle.</strong>
                             Le salaire minimum mensuel de référence est calculé à partir
-                            d’une convention de 40 heures hebdomadaires, soit 173,33 heures
+                            d'une convention de 40 heures hebdomadaires, soit 173,33 heures
                             par mois.
                         </li>
 
                         <li>
                             <strong>Net affiché.</strong>
-                            Le module distingue le salaire net avant impôt, c’est-à-dire
+                            Le module distingue le salaire net avant impôt, c'est-à-dire
                             après cotisations salarié, et le salaire net après Lohnsteuer
                             et Solidaritätszuschlag dans le graphique de rendement
                             socio-fiscal.
@@ -472,7 +468,7 @@
 
                         <li>
                             <strong>Limites.</strong>
-                            L’assurance maladie privée, l’assurance accident, les conventions
+                            L'assurance maladie privée, l'assurance accident, les conventions
                             collectives, les effets de ménage, les revenus exceptionnels et les
                             règles spécifiques Minijob / Midijob ne sont pas encore simulés.
                         </li>
@@ -485,6 +481,461 @@
             German Labour Cost Lab · Prototype 2026 · Part of the Labor Cost Lab project
         </footer>
     </div>
+
+    <div class="language-section" id="section-en">
+        <header>
+            <div>
+                <h1>German Labour Cost Lab</h1>
+                <p>
+                    Prototype simulation of labour cost, net wage before income tax,
+                    and social contributions in Germany.
+                </p>
+                <p class="author-line">By Hugo Spring-Ragain, Economist, CEDS Paris</p>
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchGermanyLanguage()">
+                    Français
+                </button>
+            </div>
+        </header>
+
+        <main>
+            <nav class="tabs">
+                <button class="tab-button active" data-tab="simulation" onclick="showGermanyTab('en', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showGermanyTab('en', 'data')">
+                    Data
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showGermanyTab('en', 'methodology')">
+                    Methodology
+                </button>
+            </nav>
+
+            <div class="tab-content active" id="tab-en-simulation">
+                <section>
+                    <div class="badge">
+                        Calculation engine: regulatory simulation · Germany 2026
+                    </div>
+
+                    <h2>Purpose</h2>
+
+                    <p>
+                        German Labour Cost Lab provides reproducible simulations of the gross wage,
+                        net wage before income tax, employer cost, and social contributions
+                        in Germany.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>From net wage before income tax to employer cost</h2>
+
+                    <p class="interpretation">
+                        Detailed breakdown of the path from net wage before income tax to total
+                        employer cost. Employee and employer contributions are detailed by branch:
+                        pension, health, long-term care, and unemployment.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid" style="margin-bottom: 18px;">
+                        <div class="selector-field">
+                            <label for="germany-waterfall-multiple-en">
+                                Selected wage point
+                            </label>
+
+                            <select id="germany-waterfall-multiple-en">
+                                <option value="1.00">1.00 minimum wage</option>
+                                <option value="1.50">1.50 minimum wages</option>
+                                <option value="2.00" selected>2.00 minimum wages</option>
+                                <option value="2.42">2.42 minimum wages · health / care cap</option>
+                                <option value="3.00">3.00 minimum wages</option>
+                                <option value="3.51">3.51 minimum wages · pension / unemployment cap</option>
+                                <option value="4.00">4.00 minimum wages</option>
+                                <option value="5.00">5.00 minimum wages</option>
+                                <option value="6.00">6.00 minimum wages</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="chart-card chart-card-wide germany-waterfall-card">
+                        <h3 id="germany-waterfall-title-en">
+                            Labour cost breakdown
+                        </h3>
+
+                        <p class="chart-subtitle" id="germany-waterfall-subtitle-en">
+                            Path from net wage before income tax to total employer cost.
+                        </p>
+
+                        <div id="chart-germany-decomposition-en" class="plotly-chart"></div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Additional charts</h2>
+
+                    <p class="interpretation">
+                        The charts below describe effective rates, the social wedge, and the
+                        structure of contributions for the selected institutional profile.
+                    </p>
+
+                    <div class="method-box" style="margin-top: 14px; margin-bottom: 18px;">
+                        <strong>Reading the zones.</strong>
+                        The Minijob, Midijob, and Standard employment zones can be shown or
+                        hidden independently. They are shown for institutional context: the
+                        Minijob and Midijob regimes are identified in the grid, but their
+                        specific contribution rules are not yet applied in this version.
+                    </div>
+
+                    <div class="profile-selector profile-selector-grid" style="margin-bottom: 18px;">
+                        <div class="selector-field">
+                            <label for="germany-profile-select-en">
+                                Germany profile
+                            </label>
+
+                            <select id="germany-profile-select-en">
+                                <option value="germany__public_health__with_children__outside_saxony" selected>
+                                    Public insurance · with children · outside Saxony
+                                </option>
+
+                                <option value="germany__public_health__childless__outside_saxony">
+                                    Public insurance · childless · outside Saxony
+                                </option>
+
+                                <option value="germany__public_health__with_children__saxony">
+                                    Public insurance · with children · Saxony
+                                </option>
+
+                                <option value="germany__public_health__childless__saxony">
+                                    Public insurance · childless · Saxony
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="selector-field">
+                            <label>
+                                Employment zones shown
+                            </label>
+
+                            <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-top: 6px;">
+                                <input
+                                    type="checkbox"
+                                    id="germany-zone-minijob-en"
+                                    checked
+                                >
+                                Minijob
+                            </label>
+
+                            <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-top: 6px;">
+                                <input
+                                    type="checkbox"
+                                    id="germany-zone-midijob-en"
+                                    checked
+                                >
+                                Midijob / Übergangsbereich
+                            </label>
+
+                            <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; margin-top: 6px;">
+                                <input
+                                    type="checkbox"
+                                    id="germany-zone-standard-en"
+                                    checked
+                                >
+                                Standard employment
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <h3>From gross wage to employer cost</h3>
+                            <p class="chart-subtitle">
+                                Comparison of the gross wage, net wage before income tax,
+                                and total employer cost.
+                            </p>
+                            <div id="chart-germany-cost-en" class="plotly-chart"></div>
+                        </div>
+
+                        <div class="chart-card">
+                            <h3>Effective contribution rates</h3>
+                            <p class="chart-subtitle">
+                                Employee and employer contributions relative to the gross wage.
+                            </p>
+                            <div id="chart-germany-rates-en" class="plotly-chart"></div>
+                        </div>
+
+                        <div class="chart-card">
+                            <h3>Social wedge</h3>
+                            <p class="chart-subtitle">
+                                Gap between employer cost and net wage before income tax,
+                                expressed as a share of employer cost.
+                            </p>
+                            <div id="chart-germany-wedge-en" class="plotly-chart"></div>
+                        </div>
+
+                        <div class="chart-card">
+                            <h3>Socio-fiscal return on a gross-wage increase</h3>
+
+                            <p>
+                                Share of an additional euro of gross wage kept before and after
+                                Lohnsteuer and Solidaritätszuschlag. Tax scenario: Steuerklasse I,
+                                public insurance, no Kirchensteuer.
+                            </p>
+
+                            <div
+                                id="chart-germany-fiscal-return-en"
+                                class="chart"
+                                aria-label="Socio-fiscal return on a gross-wage increase in Germany"
+                            ></div>
+
+                            <p class="method-note">
+                                Tax calculation based on the German 2026 PAP. Results apply to a
+                                regular monthly wage excluding exceptional income.
+                            </p>
+                        </div>
+
+                        <div class="chart-card">
+                            <h3>Breakdown of social contributions</h3>
+                            <p class="chart-subtitle">
+                                Comparison of employee and employer contributions by branch
+                                at the 2 minimum-wage reference level.
+                            </p>
+                            <div id="chart-germany-breakdown-en" class="plotly-chart"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Key indicators</h2>
+
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-label">
+                                Net wage before income tax at 1 minimum wage
+                            </div>
+                            <div class="metric-value" id="germany-net-minimum-en">
+                                —
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-label">
+                                Employer cost at 1 minimum wage
+                            </div>
+                            <div class="metric-value" id="germany-cost-minimum-en">
+                                —
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-label">
+                                Apparent employer rate at 1 minimum wage
+                            </div>
+                            <div class="metric-value" id="germany-employer-rate-en">
+                                —
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-label">
+                                Cost/net ratio before income tax at 2 minimum wages
+                            </div>
+                            <div class="metric-value" id="germany-cost-net-ratio-en">
+                                —
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </div>
+
+            <div class="tab-content" id="tab-en-data">
+                <section>
+                    <h2>Data</h2>
+
+                    <p class="interpretation">
+                        The German dataset can be downloaded as a CSV file. It contains every
+                        wage point and the four simulated profiles: with children outside
+                        Saxony, childless outside Saxony, with children in Saxony, and
+                        childless in Saxony.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/germany/germany_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            ⬇ Download the Germany dataset
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/germany/germany_parameters_2026_01.json"
+                            download
+                        >
+                            ⬇ Download the 2026 parameters
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/germany/germany_sources_2026.json"
+                            download
+                        >
+                            ⬇ Download the 2026 sources
+                        </a>
+                    </div>
+
+                    <div class="profile-selector profile-selector-grid" style="margin-top: 18px;">
+                        <div class="selector-field">
+                            <label for="germany-data-profile-select-en">
+                                Germany profile
+                            </label>
+
+                            <select id="germany-data-profile-select-en">
+                                <option value="germany__public_health__with_children__outside_saxony" selected>
+                                    Public insurance · with children · outside Saxony
+                                </option>
+
+                                <option value="germany__public_health__childless__outside_saxony">
+                                    Public insurance · childless · outside Saxony
+                                </option>
+
+                                <option value="germany__public_health__with_children__saxony">
+                                    Public insurance · with children · Saxony
+                                </option>
+
+                                <option value="germany__public_health__childless__saxony">
+                                    Public insurance · childless · Saxony
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Data for the selected profile</h2>
+
+                    <p class="interpretation" id="germany-data-profile-label-en">
+                        —
+                    </p>
+
+                    <div class="data-table-wrapper">
+                        <table class="data-table" id="germany-data-table-en">
+                            <thead>
+                                <tr>
+                                    <th>Multiple</th>
+                                    <th>Employment regime</th>
+                                    <th>Gross wage (€)</th>
+                                    <th>Net before income tax (€)</th>
+                                    <th>Employer cost (€)</th>
+                                    <th>Employee contributions (€)</th>
+                                    <th>Employer contributions (€)</th>
+                                    <th>Social wedge (€)</th>
+                                    <th>Employee rate</th>
+                                    <th>Employer rate</th>
+                                    <th>Cost/net ratio</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <div class="tab-content" id="tab-en-methodology">
+                <section>
+                    <h2>Methodology</h2>
+
+                    <ul class="methodology-list">
+                        <li>
+                            <strong>Minimum wage.</strong>
+                            The hourly minimum wage used is €13.90 in 2026.
+                        </li>
+
+                        <li>
+                            <strong>Monthly convention.</strong>
+                            The monthly reference minimum wage is computed from a 40-hour
+                            weekly convention, i.e. 173.33 hours per month.
+                        </li>
+
+                        <li>
+                            <strong>Net wage shown.</strong>
+                            The module distinguishes the net wage before income tax (after
+                            employee contributions) from the net wage after Lohnsteuer and
+                            Solidaritätszuschlag shown in the socio-fiscal return chart.
+                        </li>
+
+                        <li>
+                            <strong>Health insurance.</strong>
+                            The simulation uses the general rate plus an average reference
+                            additional contribution.
+                        </li>
+
+                        <li>
+                            <strong>Long-term care.</strong>
+                            Four profiles are simulated to distinguish family situation and
+                            the specific split applicable in Saxony.
+                        </li>
+
+                        <li>
+                            <strong>Minijob and Midijob.</strong>
+                            The Minijob and Midijob / Übergangsbereich zones are identified in
+                            the dataset. Their specific contribution rules are not yet applied
+                            in this version.
+                        </li>
+
+                        <li>
+                            <strong>Caps.</strong>
+                            Health/care and pension/unemployment contributions are capped
+                            according to the 2026 regulatory values.
+                        </li>
+
+                        <li>
+                            <strong>Health / care threshold.</strong>
+                            The health and care cap is reached around 2.42 minimum wages in
+                            the simulation grid.
+                        </li>
+
+                        <li>
+                            <strong>Pension / unemployment threshold.</strong>
+                            The pension and unemployment cap is reached around 3.51 minimum
+                            wages in the simulation grid.
+                        </li>
+
+                        <li>
+                            <strong>Tax scenario.</strong>
+                            The tax calculation uses the German 2026 PAP in a standardized
+                            scenario: Steuerklasse I, public insurance, no Kirchensteuer, no
+                            other income, and no exceptional payment.
+                        </li>
+
+                        <li>
+                            <strong>Limits.</strong>
+                            Private health insurance, accident insurance, collective
+                            agreements, household effects, exceptional income, and specific
+                            Minijob / Midijob rules are not yet simulated.
+                        </li>
+                    </ul>
+                </section>
+            </div>
+        </main>
+
+        <footer>
+            German Labour Cost Lab · Prototype 2026 · Part of the Labor Cost Lab project
+        </footer>
+    </div>
 </body>
 </html>
-

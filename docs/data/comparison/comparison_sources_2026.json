@@ -1,7 +1,7 @@
 {
     "module_name": "Cross-Country Labour Cost Comparison",
     "version": "2026-01",
-    "countries_covered": ["France", "Germany", "Belgium", "Switzerland"],
+    "countries_covered": ["France", "Germany", "Belgium", "Switzerland", "Netherlands"],
     "sources": [
         {
             "id": "worldbank_icp_private_consumption_ppp",
@@ -57,11 +57,39 @@
                 "Reference documentation only: the non-personalized 'taux neutre' withholding mechanism (grille métropole, effective 1 May 2026) is no longer used to compute France's 'net after income tax' figure (see service_public_bareme_ir_2026 above); it is kept to document how the monthly prélèvement à la source actually works."
             ],
             "status": "official"
+        },
+        {
+            "id": "belastingdienst_box1_heffingskortingen_2026",
+            "institution": "Belastingdienst (Dutch Tax and Customs Administration)",
+            "institution_fr": "Belastingdienst (administration fiscale néerlandaise)",
+            "title": "Voorlopige aanslag 2026: gebruikte tarieven en heffingskortingen (Box 1, algemene heffingskorting, arbeidskorting)",
+            "url": "https://www.belastingdienst.nl/wps/wcm/connect/nl/voorlopige-aanslag/content/voorlopige-aanslag-tarieven-en-heffingskortingen",
+            "reference_year": 2026,
+            "retrieved": "2026-08-04",
+            "used_for": [
+                "Netherlands' loonheffing (Box 1 wage-tax brackets, algemene heffingskorting and arbeidskorting), the sole basis for the Netherlands' 'net after income tax' figure"
+            ],
+            "status": "official"
+        },
+        {
+            "id": "worldbank_icp_ppp_netherlands",
+            "institution": "World Bank, International Comparison Program (ICP)",
+            "institution_fr": "Banque mondiale, Programme de comparaison internationale (PCI)",
+            "title": "PPP conversion factor, private consumption (LCU per international $), Netherlands",
+            "indicator_code": "PA.NUS.PRVT.PP",
+            "url": "https://api.worldbank.org/v2/country/NLD/indicator/PA.NUS.PRVT.PP",
+            "reference_year": 2024,
+            "retrieved": "2026-08-04",
+            "used_for": [
+                "Converting the harmonized wage grid into Dutch euros and back into international dollars for the Netherlands"
+            ],
+            "status": "official"
         }
     ],
     "notes": [
-        "This module reuses each country's own reference dataset (France: Mon-entreprise/Publicodes engine; Germany: analysis/germany; Belgium: analysis/belgium; Switzerland: analysis/switzerland) and does not redefine any country-level parameter.",
+        "This module reuses each country's own reference dataset (France: Mon-entreprise/Publicodes engine; Germany: analysis/germany; Belgium: analysis/belgium; Switzerland: analysis/switzerland; Netherlands: analysis/netherlands) and does not redefine any country-level parameter.",
         "See docs/data/comparison/comparison_parameters_2026.json for the harmonized wage grid, the exact PPP values used, the reference profile chosen per country, and the Swiss canton population figures.",
-        "France's 'net after income tax' figure is the actual tax due by a single, childless reference taxpayer (1 part de quotient familial), computed via the true progressive income-tax barème (see docs/data/france/france_income_tax_2026.json), directly analogous to Germany, Belgium and Switzerland's actual mandatory tax liability for a single/childless reference profile. The non-personalized 'taux neutre' withholding schedule was evaluated as an initial proxy but rejected because it does not represent any specific taxpayer's actual tax burden; it remains documented for reference only."
+        "France's 'net after income tax' figure is the actual tax due by a single, childless reference taxpayer (1 part de quotient familial), computed via the true progressive income-tax barème (see docs/data/france/france_income_tax_2026.json), directly analogous to Germany, Belgium and Switzerland's actual mandatory tax liability for a single/childless reference profile. The non-personalized 'taux neutre' withholding schedule was evaluated as an initial proxy but rejected because it does not represent any specific taxpayer's actual tax burden; it remains documented for reference only.",
+        "The Netherlands has no separate employee social-security contribution: AOW/Anw/Wlz national-insurance premiums are bundled into the Box 1 wage-tax rate. See docs/data/netherlands/netherlands_sources_2026.json for the full loonheffing formulas, employer-levy rates and an independent cross-check against a secondary net-minimum-wage figure."
     ]
 }

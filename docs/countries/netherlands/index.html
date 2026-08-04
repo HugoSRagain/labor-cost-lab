@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Netherlands Labour Cost Lab</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+    <link rel="stylesheet" href="../../assets/style.css?v=26">
+    <script defer src="../../assets/i18n_common.js?v=1"></script>
+    <script defer src="./assets/netherlands_app.js?v=4"></script>
+</head>
+
+<body>
+    <div class="global-project-banner">
+        <a href="../../index.html">
+            ← Labor Cost Lab
+        </a>
+
+        <span>
+            Netherlands module · Available socio-fiscal version
+        </span>
+    </div>
+
+    <div class="language-section active" id="section-fr">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · Module Pays-Bas
+                </p>
+
+                <h1>Netherlands Labour Cost Lab</h1>
+
+                <p>
+                    Module de simulation du coût du travail néerlandais. Cette version
+                    calcule le salaire brut, le loonheffing (impôt sur le revenu et
+                    cotisations d'assurance nationale fusionnés), le salaire net après
+                    loonheffing, le coût employeur et les principaux indicateurs de
+                    coin social et socio-fiscal.
+                </p>
+
+                <p class="author-line">
+                    Par Hugo Spring-Ragain, Économiste, CEDS Paris
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchNetherlandsLanguage()">
+                    English
+                </button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>Pays-Bas · module socio-fiscal 2026</h2>
+
+                <p>
+                    Le Netherlands Labour Cost Lab simule le coût du travail aux
+                    Pays-Bas à partir d'un profil salarié standard, en contrat à
+                    durée indéterminée. Il combine le salaire minimum légal (WML)
+                    comme référence salariale, le loonheffing – impôt sur le
+                    revenu Box 1 et cotisations d'assurance nationale AOW
+                    (vieillesse), Anw (survivants) et Wlz (dépendance), fusionnés
+                    en un seul prélèvement – et les cotisations employeur : WW
+                    (chômage), Aof (invalidité), Zvw-werkgeversheffing (maladie)
+                    et Wko (garde d'enfants).
+                </p>
+
+                <p>
+                    L'objectif est de mesurer, sur une échelle allant de 1 à 6 fois
+                    le salaire minimum néerlandais, la façon dont un euro de
+                    salaire brut se transforme en revenu net pour le salarié, en
+                    coût total pour l'employeur et en prélèvements sociaux et
+                    fiscaux.
+                </p>
+            </section>
+
+            <nav class="tabs" aria-label="Navigation Pays-Bas">
+                <button class="tab-button active" data-tab="simulation" onclick="showNetherlandsTab('fr', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showNetherlandsTab('fr', 'data')">
+                    Données
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showNetherlandsTab('fr', 'methodology')">
+                    Méthodologie
+                </button>
+            </nav>
+
+            <section id="tab-fr-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="netherlands-waterfall-title-fr">
+                        Du salaire net au coût employeur
+                    </h3>
+
+                    <p class="chart-subtitle" id="netherlands-waterfall-subtitle-fr">
+                        Décomposition du passage du salaire net après loonheffing
+                        au coût employeur total, en distinguant le loonheffing et
+                        chacune des quatre cotisations employeur (WW, Aof,
+                        Zvw-werkgeversheffing, Wko).
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="netherlands-waterfall-multiple-fr">
+                                Point de salaire sélectionné
+                            </label>
+
+                            <select id="netherlands-waterfall-multiple-fr">
+                                <option value="1.00">1,00 salaire minimum</option>
+                                <option value="1.25">1,25 salaire minimum</option>
+                                <option value="1.50">1,50 salaire minimum</option>
+                                <option value="2.00" selected>2,00 salaires minimums</option>
+                                <option value="2.50">2,50 salaires minimums</option>
+                                <option value="3.00">3,00 salaires minimums</option>
+                                <option value="4.00">4,00 salaires minimums</option>
+                                <option value="5.00">5,00 salaires minimums</option>
+                                <option value="6.00">6,00 salaires minimums</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-netherlands-waterfall-fr"
+                        class="plotly-chart"
+                        aria-label="Décomposition du coût du travail aux Pays-Bas"
+                    ></div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Graphiques complémentaires</h2>
+
+                    <p>
+                        Les graphiques suivants détaillent les salaires, la
+                        répartition des cotisations employeur, le coin
+                        socio-fiscal et le rendement marginal du salaire brut.
+                    </p>
+                </section>
+
+                <div class="profile-selector profile-selector-grid">
+                    <div class="selector-field">
+                        <label for="netherlands-profile-select-fr">
+                            Profil pour les graphiques
+                        </label>
+
+                        <select id="netherlands-profile-select-fr">
+                            <option value="netherlands__standard_permanent_contract" selected>
+                                Pays-Bas · CDI, grand employeur
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Coût employeur, salaire brut et salaire net</h3>
+
+                        <p class="chart-subtitle">
+                            Comparaison du salaire brut (= net avant loonheffing),
+                            du salaire net après loonheffing et du coût employeur
+                            selon le multiple du salaire minimum néerlandais.
+                        </p>
+
+                        <div
+                            id="chart-netherlands-cost-fr"
+                            class="plotly-chart"
+                            aria-label="Coût du travail aux Pays-Bas"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Taux effectifs de prélèvement</h3>
+
+                        <p class="chart-subtitle">
+                            Taux de loonheffing effectif (sur le brut) et taux
+                            employeur effectif (cotisations employeur / brut).
+                        </p>
+
+                        <div
+                            id="chart-netherlands-rates-fr"
+                            class="plotly-chart"
+                            aria-label="Taux de prélèvement aux Pays-Bas"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Cotisations employeur, détail</h3>
+
+                        <p class="chart-subtitle">
+                            Montant mensuel de chaque cotisation employeur : WW
+                            (chômage), Aof (invalidité), Zvw-werkgeversheffing
+                            (assurance maladie) et Wko (garde d'enfants).
+                        </p>
+
+                        <div
+                            id="chart-netherlands-employer-levies-fr"
+                            class="plotly-chart"
+                            aria-label="Détail des cotisations employeur néerlandaises"
+                        ></div>
+
+                        <p class="method-note">
+                            Toutes les cotisations employeur sont plafonnées au
+                            maximum premieloon (79 409 €/an en 2026). Le Whk
+                            (Werkhervattingskas), spécifique à chaque employeur,
+                            n'est pas modélisé.
+                        </p>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Coin social et coin socio-fiscal</h3>
+
+                        <p class="chart-subtitle">
+                            Comparaison du coin social (cotisations employeur
+                            seules, puisqu'il n'y a pas de cotisation salarié
+                            distincte) et du coin socio-fiscal après loonheffing.
+                        </p>
+
+                        <div
+                            id="chart-netherlands-wedge-fr"
+                            class="plotly-chart"
+                            aria-label="Coin social et socio-fiscal néerlandais"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Rendement marginal d'une hausse de salaire brut</h3>
+
+                        <p class="chart-subtitle">
+                            Part d'un euro supplémentaire de salaire brut
+                            conservée avant et après loonheffing. La courbe
+                            « avant loonheffing » reste à 100 % puisqu'il n'y a
+                            pas de cotisation salarié distincte aux Pays-Bas.
+                        </p>
+
+                        <div
+                            id="chart-netherlands-fiscal-return-fr"
+                            class="plotly-chart"
+                            aria-label="Rendement socio-fiscal d'une hausse de salaire brut aux Pays-Bas"
+                        ></div>
+
+                        <p class="method-note">
+                            L'« effet marginal social » retombe à 0 % à partir
+                            d'environ 2,83 salaires minimums : au-delà de ce
+                            point, le salaire brut dépasse le maximum premieloon
+                            (6 617,42 €/mois en 2026), plafond commun aux quatre
+                            cotisations employeur. Un euro de salaire brut
+                            supplémentaire n'y génère alors plus aucune
+                            cotisation employeur additionnelle.
+                        </p>
+                    </div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Indicateurs clés</h2>
+
+                    <p>
+                        Les indicateurs ci-dessous sont calculés pour le profil
+                        sélectionné dans les graphiques complémentaires, au
+                        salaire minimum néerlandais (multiple = 1).
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="netherlands-metrics-fr">
+                    <article class="metric-card">
+                        <span class="metric-label">Salaire brut de référence</span>
+                        <strong id="metric-netherlands-reference-wage-fr">—</strong>
+                        <span class="metric-note">WML (salaire minimum) mensuel, 36h/semaine</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Taux de loonheffing effectif</span>
+                        <strong id="metric-netherlands-loonheffing-rate-fr">—</strong>
+                        <span class="metric-note">Loonheffing / salaire brut</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Taux employeur effectif</span>
+                        <strong id="metric-netherlands-employer-rate-fr">—</strong>
+                        <span class="metric-note">WW + Aof + Zvw + Wko (chômage, invalidité, maladie, garde d'enfants)</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Ratio coût / net à 1 WML (salaire minimum)</span>
+                        <strong id="metric-netherlands-cost-to-net-fr">—</strong>
+                        <span class="metric-note">Après loonheffing</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-fr-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Données</h3>
+
+                    <p class="chart-subtitle">
+                        Le jeu de données néerlandais peut être téléchargé au
+                        format CSV. Il contient l'ensemble des points de salaire
+                        simulés pour le profil standard : salaire brut,
+                        loonheffing, salaire net après loonheffing, coût
+                        employeur, cotisations et indicateurs de coin
+                        socio-fiscal.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/netherlands/netherlands_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Télécharger le jeu de données Pays-Bas
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/netherlands/netherlands_parameters_2026.json"
+                            download
+                        >
+                            Télécharger les paramètres 2026
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/netherlands/netherlands_sources_2026.json"
+                            download
+                        >
+                            Télécharger les sources 2026
+                        </a>
+                    </div>
+
+                    <div class="profile-selector profile-selector-grid data-profile-selector">
+                        <div class="selector-field">
+                            <label for="netherlands-data-profile-select-fr">
+                                Profil Pays-Bas
+                            </label>
+
+                            <select id="netherlands-data-profile-select-fr">
+                                <option value="netherlands__standard_permanent_contract" selected>
+                                    CDI, grand employeur
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Données du profil sélectionné</h3>
+
+                    <p
+                        class="chart-subtitle"
+                        id="netherlands-data-profile-caption-fr"
+                    >
+                        CDI, grand employeur
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Multiple</th>
+                                    <th>Salaire brut (€)</th>
+                                    <th>Loonheffing (€)</th>
+                                    <th>Net après loonheffing (€)</th>
+                                    <th>Coût employeur (€)</th>
+                                    <th>Cotisations employeur (€)</th>
+                                    <th>Coin social (€)</th>
+                                    <th>Coin socio-fiscal (€)</th>
+                                    <th>Taux loonheffing</th>
+                                    <th>Taux employeur</th>
+                                    <th>Coût / net avant loonheffing</th>
+                                    <th>Coût / net après loonheffing</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="netherlands-data-table-body-fr">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="chart-subtitle" style="margin-top: 10px;">
+                        Loonheffing = impôt sur le revenu (Box 1) et cotisations
+                        d'assurance nationale (AOW/Anw/Wlz) fusionnés. WW = chômage,
+                        Aof = invalidité, Zvw = maladie, Wko = garde d'enfants
+                        (voir l'onglet Méthodologie).
+                    </p>
+                </div>
+            </section>
+
+            <section id="tab-fr-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Méthodologie</h2>
+
+                    <p>
+                        Le module Pays-Bas repose sur une simulation
+                        réglementaire du coût du travail pour un salarié
+                        standard en contrat à durée indéterminée. Le salaire
+                        brut est calculé comme multiple du salaire minimum légal
+                        (WML) mensuel, utilisé comme référence de salaire
+                        minimum dans le module.
+                    </p>
+
+                    <h3>1. Salaire net avant loonheffing</h3>
+
+                    <p>
+                        Contrairement à la France, l'Allemagne, la Belgique et
+                        la Suisse, les Pays-Bas ne prélèvent pas de cotisation
+                        sociale salarié distincte du salaire brut : les
+                        cotisations d'assurance nationale AOW (vieillesse), Anw
+                        (survivants) et Wlz (dépendance) sont fusionnées dans le
+                        taux de la première tranche du barème Box 1. Le salaire
+                        net avant loonheffing est donc, dans ce module, égal au
+                        salaire brut.
+                    </p>
+
+                    <h3>2. Loonheffing (impôt et cotisations d'assurance nationale) : Box 1, algemene heffingskorting, arbeidskorting</h3>
+
+                    <p>
+                        Le loonheffing est calculé pour l'année 2026 selon le
+                        barème progressif Box 1 (35,75 % jusqu'à 38 883 € ;
+                        37,56 % jusqu'à 78 426 € ; 49,50 % au-delà), pour un
+                        salarié n'ayant pas atteint l'âge de l'AOW. Le revenu
+                        annuel brut est ensuite diminué de deux crédits d'impôt
+                        calculés selon leur barème propre : l'algemene
+                        heffingskorting (crédit général, dégressif au-delà de
+                        29 736 €) et l'arbeidskorting (crédit pour revenu du
+                        travail, croissant puis dégressif). Le résultat annuel,
+                        plancherné à zéro, est ramené à un montant mensuel.
+                    </p>
+
+                    <h3>3. Cotisations employeur</h3>
+
+                    <p>
+                        Le coût employeur est obtenu en ajoutant au salaire brut
+                        quatre cotisations employeur, toutes plafonnées au
+                        maximum premieloon (79 409 €/an en 2026) : la
+                        WW-premie (chômage, taux bas retenu pour un contrat à
+                        durée indéterminée), l'Aof-premie (fonds invalidité,
+                        taux élevé retenu pour un grand employeur), la
+                        Zvw-werkgeversheffing (participation employeur à
+                        l'assurance maladie) et la Wko-heffing (fonds garde
+                        d'enfants).
+                    </p>
+
+                    <h3>4. Indicateurs produits</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Net avant loonheffing :</strong>
+                            égal au salaire brut (aucune cotisation salarié
+                            distincte aux Pays-Bas).
+                        </li>
+
+                        <li>
+                            <strong>Net après loonheffing :</strong>
+                            salaire brut diminué du loonheffing mensuel.
+                        </li>
+
+                        <li>
+                            <strong>Coût employeur :</strong>
+                            salaire brut augmenté des cotisations employeur
+                            (WW : chômage + Aof : invalidité +
+                            Zvw-werkgeversheffing : maladie + Wko : garde
+                            d'enfants).
+                        </li>
+
+                        <li>
+                            <strong>Coin social :</strong>
+                            différence entre le coût employeur et le net avant
+                            loonheffing, c'est-à-dire les cotisations employeur
+                            seules.
+                        </li>
+
+                        <li>
+                            <strong>Coin socio-fiscal :</strong>
+                            différence entre le coût employeur et le net après
+                            loonheffing.
+                        </li>
+
+                        <li>
+                            <strong>Rendement marginal :</strong>
+                            part d'un euro supplémentaire de salaire brut
+                            conservée avant et après loonheffing.
+                        </li>
+                    </ul>
+
+                    <h3>5. Limites du scénario</h3>
+
+                    <p class="method-note">
+                        Le module ne simule pas le Whk (gedifferentieerde premie
+                        Werkhervattingskas, littéralement « fonds de reprise du
+                        travail » : cotisation spécifique à chaque employeur et
+                        secteur, sans taux national unique), les cotisations de
+                        pension complémentaire (non fixées par la loi mais par
+                        fonds de pension/CAO), les crédits d'impôt dépendant
+                        d'un partenaire (IACK, etc.), ni les situations de foyer
+                        autres que célibataire sans enfant. Le profil retient
+                        l'Aof taux élevé (grand employeur) et le WW taux bas
+                        (contrat à durée indéterminée) : ce sont des choix
+                        explicites, ajustables. Ces limites sont assumées afin
+                        de produire un scénario central stable et comparable aux
+                        autres modules nationaux du Labor Cost Lab.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="language-section" id="section-en">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · Netherlands module
+                </p>
+
+                <h1>Netherlands Labour Cost Lab</h1>
+
+                <p>
+                    Simulation module for Dutch labour costs. This version
+                    computes the gross wage, the loonheffing (income tax and
+                    national-insurance contributions combined), the net wage
+                    after loonheffing, the employer cost, and the main social
+                    and socio-fiscal wedge indicators.
+                </p>
+
+                <p class="author-line">
+                    By Hugo Spring-Ragain, Economist, CEDS Paris
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchNetherlandsLanguage()">
+                    Français
+                </button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>Netherlands · 2026 socio-fiscal module</h2>
+
+                <p>
+                    The Netherlands Labour Cost Lab simulates Dutch labour
+                    costs for a standard employee on a permanent contract. It
+                    combines the statutory minimum wage (WML) as the wage
+                    reference, the loonheffing – Box 1 income tax and
+                    national-insurance contributions AOW (old age), Anw
+                    (survivors) and Wlz (long-term care), merged into a single
+                    levy – and the employer contributions: WW (unemployment),
+                    Aof (disability), Zvw-werkgeversheffing (health) and Wko
+                    (childcare).
+                </p>
+
+                <p>
+                    The goal is to measure, over a range from 1 to 6 times the
+                    Dutch minimum wage, how a euro of gross wage turns into net
+                    income for the employee, into total cost for the employer,
+                    and into social and fiscal levies.
+                </p>
+            </section>
+
+            <nav class="tabs" aria-label="Netherlands navigation">
+                <button class="tab-button active" data-tab="simulation" onclick="showNetherlandsTab('en', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showNetherlandsTab('en', 'data')">
+                    Data
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showNetherlandsTab('en', 'methodology')">
+                    Methodology
+                </button>
+            </nav>
+
+            <section id="tab-en-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="netherlands-waterfall-title-en">
+                        From net wage to employer cost
+                    </h3>
+
+                    <p class="chart-subtitle" id="netherlands-waterfall-subtitle-en">
+                        Breakdown of the path from net wage after loonheffing
+                        to total employer cost, distinguishing loonheffing and
+                        each of the four employer contributions (WW, Aof,
+                        Zvw-werkgeversheffing, Wko).
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="netherlands-waterfall-multiple-en">
+                                Selected wage point
+                            </label>
+
+                            <select id="netherlands-waterfall-multiple-en">
+                                <option value="1.00">1.00 minimum wage</option>
+                                <option value="1.25">1.25 minimum wages</option>
+                                <option value="1.50">1.50 minimum wages</option>
+                                <option value="2.00" selected>2.00 minimum wages</option>
+                                <option value="2.50">2.50 minimum wages</option>
+                                <option value="3.00">3.00 minimum wages</option>
+                                <option value="4.00">4.00 minimum wages</option>
+                                <option value="5.00">5.00 minimum wages</option>
+                                <option value="6.00">6.00 minimum wages</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-netherlands-waterfall-en"
+                        class="plotly-chart"
+                        aria-label="Breakdown of Dutch labour cost"
+                    ></div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Additional charts</h2>
+
+                    <p>
+                        The charts below detail wages, the breakdown of
+                        employer contributions, the socio-fiscal wedge, and
+                        the marginal return on a gross-wage increase.
+                    </p>
+                </section>
+
+                <div class="profile-selector profile-selector-grid">
+                    <div class="selector-field">
+                        <label for="netherlands-profile-select-en">
+                            Profile for the charts
+                        </label>
+
+                        <select id="netherlands-profile-select-en">
+                            <option value="netherlands__standard_permanent_contract" selected>
+                                Netherlands · Permanent contract, large employer
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Employer cost, gross wage and net wage</h3>
+
+                        <p class="chart-subtitle">
+                            Comparison of the gross wage (= net wage before
+                            loonheffing), the net wage after loonheffing, and
+                            the employer cost across the multiple of the Dutch
+                            minimum wage.
+                        </p>
+
+                        <div
+                            id="chart-netherlands-cost-en"
+                            class="plotly-chart"
+                            aria-label="Labour cost in the Netherlands"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Effective levy rates</h3>
+
+                        <p class="chart-subtitle">
+                            Effective loonheffing rate (on the gross wage) and
+                            effective employer rate (employer contributions /
+                            gross wage).
+                        </p>
+
+                        <div
+                            id="chart-netherlands-rates-en"
+                            class="plotly-chart"
+                            aria-label="Levy rates in the Netherlands"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Employer contributions, detail</h3>
+
+                        <p class="chart-subtitle">
+                            Monthly amount of each employer contribution: WW
+                            (unemployment), Aof (disability),
+                            Zvw-werkgeversheffing (health insurance) and Wko
+                            (childcare).
+                        </p>
+
+                        <div
+                            id="chart-netherlands-employer-levies-en"
+                            class="plotly-chart"
+                            aria-label="Breakdown of Dutch employer contributions"
+                        ></div>
+
+                        <p class="method-note">
+                            All employer contributions are capped at the
+                            maximum premieloon (€79,409/year in 2026). The Whk
+                            (Werkhervattingskas), specific to each employer, is
+                            not modeled.
+                        </p>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Social wedge and total socio-fiscal wedge</h3>
+
+                        <p class="chart-subtitle">
+                            Comparison of the social wedge (employer
+                            contributions alone, since there is no separate
+                            employee contribution) and the total socio-fiscal
+                            wedge after loonheffing.
+                        </p>
+
+                        <div
+                            id="chart-netherlands-wedge-en"
+                            class="plotly-chart"
+                            aria-label="Social and socio-fiscal wedge in the Netherlands"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Marginal return on a gross-wage increase</h3>
+
+                        <p class="chart-subtitle">
+                            Share of an additional euro of gross wage kept
+                            before and after loonheffing. The "before
+                            loonheffing" curve stays at 100% since there is no
+                            separate employee contribution in the Netherlands.
+                        </p>
+
+                        <div
+                            id="chart-netherlands-fiscal-return-en"
+                            class="plotly-chart"
+                            aria-label="Socio-fiscal return on a gross-wage increase in the Netherlands"
+                        ></div>
+
+                        <p class="method-note">
+                            The "marginal social effect" drops to 0% from
+                            around 2.83 minimum wages: beyond that point, the
+                            gross wage exceeds the maximum premieloon
+                            (€6,617.42/month in 2026), the common cap on all
+                            four employer contributions. An additional euro of
+                            gross wage then generates no further employer
+                            contribution.
+                        </p>
+                    </div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Key indicators</h2>
+
+                    <p>
+                        The indicators below are computed for the profile
+                        selected in the additional charts, at the Dutch
+                        minimum wage (multiple = 1).
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="netherlands-metrics-en">
+                    <article class="metric-card">
+                        <span class="metric-label">Reference gross wage</span>
+                        <strong id="metric-netherlands-reference-wage-en">—</strong>
+                        <span class="metric-note">WML (minimum wage), monthly, 36h/week</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Effective loonheffing rate</span>
+                        <strong id="metric-netherlands-loonheffing-rate-en">—</strong>
+                        <span class="metric-note">Loonheffing / gross wage</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Effective employer rate</span>
+                        <strong id="metric-netherlands-employer-rate-en">—</strong>
+                        <span class="metric-note">WW + Aof + Zvw + Wko (unemployment, disability, health, childcare)</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Cost / net ratio at 1 WML (minimum wage)</span>
+                        <strong id="metric-netherlands-cost-to-net-en">—</strong>
+                        <span class="metric-note">After loonheffing</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-en-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Data</h3>
+
+                    <p class="chart-subtitle">
+                        The Dutch dataset can be downloaded as a CSV file. It
+                        contains every simulated wage point for the standard
+                        profile: gross wage, loonheffing, net wage after
+                        loonheffing, employer cost, contributions, and
+                        socio-fiscal wedge indicators.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/netherlands/netherlands_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Download the Netherlands dataset
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/netherlands/netherlands_parameters_2026.json"
+                            download
+                        >
+                            Download the 2026 parameters
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/netherlands/netherlands_sources_2026.json"
+                            download
+                        >
+                            Download the 2026 sources
+                        </a>
+                    </div>
+
+                    <div class="profile-selector profile-selector-grid data-profile-selector">
+                        <div class="selector-field">
+                            <label for="netherlands-data-profile-select-en">
+                                Netherlands profile
+                            </label>
+
+                            <select id="netherlands-data-profile-select-en">
+                                <option value="netherlands__standard_permanent_contract" selected>
+                                    Permanent contract, large employer
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Data for the selected profile</h3>
+
+                    <p
+                        class="chart-subtitle"
+                        id="netherlands-data-profile-caption-en"
+                    >
+                        Permanent contract, large employer
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Multiple</th>
+                                    <th>Gross wage (€)</th>
+                                    <th>Loonheffing (€)</th>
+                                    <th>Net after loonheffing (€)</th>
+                                    <th>Employer cost (€)</th>
+                                    <th>Employer contributions (€)</th>
+                                    <th>Social wedge (€)</th>
+                                    <th>Total socio-fiscal wedge (€)</th>
+                                    <th>Loonheffing rate</th>
+                                    <th>Employer rate</th>
+                                    <th>Cost / net before loonheffing</th>
+                                    <th>Cost / net after loonheffing</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="netherlands-data-table-body-en">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="chart-subtitle" style="margin-top: 10px;">
+                        Loonheffing = income tax (Box 1) and national-insurance
+                        contributions (AOW/Anw/Wlz) combined. WW = unemployment,
+                        Aof = disability, Zvw = health, Wko = childcare (see
+                        the Methodology tab).
+                    </p>
+                </div>
+            </section>
+
+            <section id="tab-en-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Methodology</h2>
+
+                    <p>
+                        The Netherlands module relies on a regulatory
+                        simulation of labour cost for a standard employee on a
+                        permanent contract. The gross wage is computed as a
+                        multiple of the monthly statutory minimum wage (WML),
+                        used as the minimum-wage reference in the module.
+                    </p>
+
+                    <h3>1. Net wage before loonheffing</h3>
+
+                    <p>
+                        Unlike France, Germany, Belgium and Switzerland, the
+                        Netherlands does not withhold a separate employee
+                        social contribution from the gross wage: the AOW (old
+                        age), Anw (survivors) and Wlz (long-term care)
+                        national-insurance contributions are bundled into the
+                        rate of the first Box 1 bracket. Net wage before
+                        loonheffing is therefore, in this module, equal to the
+                        gross wage.
+                    </p>
+
+                    <h3>2. Loonheffing (income tax and national-insurance contributions): Box 1, algemene heffingskorting, arbeidskorting</h3>
+
+                    <p>
+                        Loonheffing is computed for tax year 2026 using the
+                        progressive Box 1 scale (35.75% up to €38,883; 37.56%
+                        up to €78,426; 49.50% above), for an employee below
+                        AOW (state pension) age. Annual gross income is then
+                        reduced by two tax credits, each computed on its own
+                        scale: the algemene heffingskorting (general credit,
+                        phasing out above €29,736) and the arbeidskorting
+                        (employment tax credit, rising then phasing out). The
+                        annual result, floored at zero, is converted to a
+                        monthly amount.
+                    </p>
+
+                    <h3>3. Employer contributions</h3>
+
+                    <p>
+                        Employer cost is obtained by adding four employer
+                        contributions to the gross wage, all capped at the
+                        maximum premieloon (€79,409/year in 2026): the
+                        WW-premie (unemployment, low rate for a permanent
+                        contract), the Aof-premie (disability fund, high rate
+                        for a large employer), the Zvw-werkgeversheffing
+                        (employer's share of health insurance) and the
+                        Wko-heffing (childcare fund).
+                    </p>
+
+                    <h3>4. Indicators produced</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Net before loonheffing:</strong>
+                            equal to the gross wage (no separate employee
+                            contribution in the Netherlands).
+                        </li>
+
+                        <li>
+                            <strong>Net after loonheffing:</strong>
+                            gross wage minus monthly loonheffing.
+                        </li>
+
+                        <li>
+                            <strong>Employer cost:</strong>
+                            gross wage plus employer contributions (WW:
+                            unemployment + Aof: disability +
+                            Zvw-werkgeversheffing: health + Wko: childcare).
+                        </li>
+
+                        <li>
+                            <strong>Social wedge:</strong>
+                            difference between employer cost and net before
+                            loonheffing, i.e. employer contributions alone.
+                        </li>
+
+                        <li>
+                            <strong>Total socio-fiscal wedge:</strong>
+                            difference between employer cost and net after
+                            loonheffing.
+                        </li>
+
+                        <li>
+                            <strong>Marginal return:</strong>
+                            share of an additional euro of gross wage kept
+                            before and after loonheffing.
+                        </li>
+                    </ul>
+
+                    <h3>5. Limits of the scenario</h3>
+
+                    <p class="method-note">
+                        The module does not simulate the Whk (gedifferentieerde
+                        premie Werkhervattingskas, literally "return-to-work
+                        fund": a levy specific to each employer and sector,
+                        with no single national rate), occupational pension
+                        contributions (not set by law but by pension
+                        fund/collective agreement), partner-dependent tax
+                        credits (IACK, etc.), or household situations other
+                        than single with no children. The profile uses the
+                        high Aof rate (large employer) and the low WW rate
+                        (permanent contract): these are explicit, adjustable
+                        choices. These limits are accepted in order to produce
+                        a stable central scenario, comparable with the Labor
+                        Cost Lab's other national modules.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,90 @@
+{
+    "country": "Netherlands",
+    "country_code": "NL",
+    "version": "2026",
+    "status": "source_audit",
+    "sources": {
+        "box1_tax_brackets_2026": {
+            "label": "Box 1 belastingschijven en tarieven 2026 (onder AOW-leeftijd)",
+            "value": "0-38883: 35.75% ; 38883-78426: 37.56% ; >78426: 49.50%",
+            "source_name": "Belastingdienst",
+            "source_type": "official",
+            "url": "https://www.belastingdienst.nl/wps/wcm/connect/nl/voorlopige-aanslag/content/voorlopige-aanslag-tarieven-en-heffingskortingen",
+            "evidence": "Tarief box 1 (onder AOW-leeftijd) 2026: schijf 1 tot en met 38.883 euro 35,75%; schijf 2 tot en met 78.426 euro 37,56%; schijf 3 vanaf 78.426 euro 49,50%.",
+            "confidence": "high"
+        },
+        "algemene_heffingskorting_2026": {
+            "label": "Tabel algemene heffingskorting 2026",
+            "value": "max 3115 EUR tot 29736 EUR, afbouw 6,398% tot 78426 EUR, daarna 0",
+            "source_name": "Belastingdienst",
+            "source_type": "official",
+            "url": "https://www.belastingdienst.nl/wps/wcm/connect/nl/voorlopige-aanslag/content/voorlopige-aanslag-tarieven-en-heffingskortingen",
+            "confidence": "high"
+        },
+        "arbeidskorting_2026": {
+            "label": "Tabel arbeidskorting 2026 (onder AOW-leeftijd)",
+            "value": "8,324% tot 11965 ; 996 + 31,009% tot 25845 ; 5300 + 1,950% tot 45592 ; 5685 - 6,510% tot 132920 ; daarna 0",
+            "source_name": "Belastingdienst",
+            "source_type": "official",
+            "url": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/inkomstenbelasting/heffingskortingen_boxen_tarieven/heffingskortingen/arbeidskorting/tabel-arbeidskorting-2026",
+            "confidence": "high"
+        },
+        "employer_levies_2026": {
+            "label": "WW-premie (laag/hoog), Aof-premie (laag/hoog), Zvw-werkgeversheffing, Wko-heffing, maximum premieloon 2026",
+            "value": "WW laag 2,74% / hoog 7,74% ; Aof laag 6,27% / hoog 7,63% ; Zvw-werkgever 6,10% ; Wko 0,50% ; max premieloon 79 409 EUR/jaar",
+            "source_name": "Diverse bronnen (Randstad Werkpocket, Accountancy Vanmorgen / VN Vandaag, Vanoers.nl, BOVAG), recoupées entre elles",
+            "source_type": "secondary_multi_source",
+            "urls": [
+                "https://www.randstad.nl/werkgevers/werkpocket/wet-en-regelgeving/sociale-zekerheid/werknemersverzekeringen",
+                "https://www.accountancyvanmorgen.nl/2025/12/08/premiepercentages-werknemers-en-volksverzekeringen-2026-vastgesteld/",
+                "https://www.vanoers.nl/nieuws/hr-solutions/werkgeverslasten-2026/"
+            ],
+            "confidence": "medium_to_verify_before_production",
+            "implementation_status": "implemented_pending_official_confirmation"
+        },
+        "zvw_employee_not_withheld": {
+            "label": "Confirmation that Zvw employer levy is not withheld from a standard employee's net pay",
+            "source_name": "Randstad Werkpocket / search aggregation",
+            "source_type": "secondary",
+            "url": "https://www.randstad.nl/werkgevers/werkpocket/werkgeverslasten-en-subsidies/sociale-zekerheid/zorgverzekeringswet",
+            "evidence": "When employed, the employer pays the employer Zvw contribution (werkgeversheffing) over the salary - this is not withheld from the employee's salary.",
+            "confidence": "high"
+        },
+        "minimum_wage_reference": {
+            "label": "Wettelijk minimumloon (WML), bedragen 2026",
+            "value": "14,99 EUR/uur vanaf 1 juli 2026",
+            "source_name": "Rijksoverheid",
+            "source_type": "official",
+            "url": "https://www.rijksoverheid.nl/onderwerpen/minimumloon/bedragen-minimumloon/bedragen-minimumloon-2026",
+            "confidence": "high"
+        },
+        "ppp_conversion_factor": {
+            "label": "PPP conversion factor, households and NPISHs final consumption expenditure (LCU per international $), Netherlands, 2024",
+            "value": 0.74195,
+            "source_name": "World Bank, International Comparison Program (ICP)",
+            "source_type": "official",
+            "url": "https://api.worldbank.org/v2/country/NLD/indicator/PA.NUS.PRVT.PP",
+            "confidence": "high"
+        }
+    },
+    "validation": {
+        "method": "Independent cross-check against a secondary net-minimum-wage figure (not against a formula, to avoid circularity).",
+        "note": "For a 36h/week minimum-wage employee at the January 2026 rate (14.71 EUR/hour, gross 2 294.76 EUR/month), this module's loonheffing_2026.py computes a net monthly wage of 2 178.38 EUR, versus 2 146.13 EUR reported independently by a secondary source (nettoloonberekenen.nl / salarisvanmorgen.nl, January 2026 rate) -- a 1.5% gap, consistent with minor differences between the continuous annual formula used here and the official monthly withholding tables.",
+        "source_url": "https://www.nettoloonberekenen.nl/minimumloon-netto-2026/"
+    },
+    "audit_decision": {
+        "v0_scope": [
+            "Box 1 wage tax (progressive brackets), below AOW age",
+            "algemene heffingskorting",
+            "arbeidskorting",
+            "employer levies: WW (laag), Aof (hoog), Zvw-werkgeversheffing, Wko-heffing, all capped at max premieloon"
+        ],
+        "not_yet_included": [
+            "Whk (gedifferentieerde premie Werkhervattingskas)",
+            "occupational pension contributions",
+            "partner-income-dependent tax credits (IACK, etc.)",
+            "AOW-age / pensioner tax regime",
+            "regional or sectoral variations"
+        ]
+    }
+}

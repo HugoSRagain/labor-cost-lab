@@ -1,4 +1,6 @@
 var GERMANY_DATA = [];
+const GERMANY_LANGUAGE_STORAGE_KEY = "germany_language";
+const GERMANY_TAB_STORAGE_KEY = "germany_tab";
 
 function applyStoredGermanyTheme() {
     const storedTheme = localStorage.getItem("germany-theme");
@@ -14,21 +16,17 @@ function applyStoredGermanyTheme() {
 
 
 function updateGermanyThemeButton(theme) {
-    const themeToggle = document.querySelector(".theme-toggle");
-
-    if (!themeToggle) {
-        return;
-    }
-
-    if (theme === "dark") {
-        themeToggle.textContent = "☀️";
-        themeToggle.title = "Light mode";
-        themeToggle.setAttribute("aria-label", "Light mode");
-    } else {
-        themeToggle.textContent = "🌙";
-        themeToggle.title = "Dark mode";
-        themeToggle.setAttribute("aria-label", "Dark mode");
-    }
+    document.querySelectorAll(".theme-toggle").forEach(function(themeToggle) {
+        if (theme === "dark") {
+            themeToggle.textContent = "☀️";
+            themeToggle.title = "Light mode";
+            themeToggle.setAttribute("aria-label", "Light mode");
+        } else {
+            themeToggle.textContent = "🌙";
+            themeToggle.title = "Dark mode";
+            themeToggle.setAttribute("aria-label", "Dark mode");
+        }
+    });
 }
 
 
@@ -43,7 +41,7 @@ function toggleTheme() {
         updateGermanyThemeButton("light");
     }
 
-    renderGermany();
+    renderGermany(getActiveI18nLanguage(GERMANY_LANGUAGE_STORAGE_KEY));
 }
 
 const GERMANY_COLORS = {
@@ -87,16 +85,26 @@ function deNum(value) {
     return Number.isFinite(parsed) ? parsed : 0;
 }
 
-function deEuro(value) {
-    return Math.round(deNum(value)).toLocaleString("fr-FR") + " €";
+function geLocale(lang) {
+    return lang === "en" ? "en-US" : "fr-FR";
 }
 
-function dePct(value) {
-    return (deNum(value) * 100).toFixed(1).replace(".", ",") + " %";
+function deEuro(value, lang) {
+    return Math.round(deNum(value)).toLocaleString(geLocale(lang)) + " €";
 }
 
-function getGermanySelectedProfile() {
-    const select = document.getElementById("germany-profile-select");
+function dePct(value, lang) {
+    const text = (deNum(value) * 100).toFixed(1);
+    return (lang === "en" ? text : text.replace(".", ",")) + " %";
+}
+
+function deRatio(value, lang) {
+    const text = deNum(value).toFixed(2);
+    return lang === "en" ? text : text.replace(".", ",");
+}
+
+function getGermanySelectedProfile(lang) {
+    const select = getI18nElement("germany-profile-select", lang);
 
     if (!select) {
         return "germany__public_health__with_children__outside_saxony";
@@ -105,8 +113,8 @@ function getGermanySelectedProfile() {
     return select.value;
 }
 
-function getGermanyWaterfallMultiple() {
-    const select = document.getElementById("germany-waterfall-multiple");
+function getGermanyWaterfallMultiple(lang) {
+    const select = getI18nElement("germany-waterfall-multiple", lang);
 
     if (!select) {
         return 2.00;
@@ -115,10 +123,10 @@ function getGermanyWaterfallMultiple() {
     return deNum(select.value);
 }
 
-function getGermanyVisibleEmploymentZones() {
-    const minijob = document.getElementById("germany-zone-minijob");
-    const midijob = document.getElementById("germany-zone-midijob");
-    const standard = document.getElementById("germany-zone-standard");
+function getGermanyVisibleEmploymentZones(lang) {
+    const minijob = getI18nElement("germany-zone-minijob", lang);
+    const midijob = getI18nElement("germany-zone-midijob", lang);
+    const standard = getI18nElement("germany-zone-standard", lang);
 
     return {
         minijob: minijob ? minijob.checked : true,
@@ -127,15 +135,15 @@ function getGermanyVisibleEmploymentZones() {
     };
 }
 
-function getGermanyProfileData() {
-    const profileId = getGermanySelectedProfile();
+function getGermanyProfileData(lang) {
+    const profileId = getGermanySelectedProfile(lang);
 
     return GERMANY_DATA
         .filter(row => row.profile_id === profileId)
         .sort((a, b) => deNum(a.smic_multiple) - deNum(b.smic_multiple));
 }
 
-function germanyBaseLayout(yTitle) {
+function germanyBaseLayout(lang, yTitle) {
     const isDarkMode = document.body.classList.contains("dark-mode");
 
     const backgroundColor = isDarkMode ? "#111827" : "#ffffff";
@@ -181,7 +189,7 @@ function germanyBaseLayout(yTitle) {
         },
         xaxis: {
             title: {
-                text: "Multiple du salaire minimum allemand",
+                text: getI18nText(lang).x_axis_minimum_wage,
                 standoff: 14
             },
             range: [0.15, 6.05],
@@ -191,7 +199,9 @@ function germanyBaseLayout(yTitle) {
             tickcolor: axisColor,
             ticks: "outside",
             tickvals: [0.2, 0.5, 1, 2, 3, 4, 5, 6],
-            ticktext: ["0,2", "0,5", "1", "2", "3", "4", "5", "6"]
+            ticktext: lang === "en"
+                ? ["0.2", "0.5", "1", "2", "3", "4", "5", "6"]
+                : ["0,2", "0,5", "1", "2", "3", "4", "5", "6"]
         },
         yaxis: {
             title: {
@@ -253,8 +263,8 @@ function addGermanyCeilingLines(layout) {
     return layout;
 }
 
-function addGermanyEmploymentZones(layout) {
-    const visibleZones = getGermanyVisibleEmploymentZones();
+function addGermanyEmploymentZones(layout, lang) {
+    const visibleZones = getGermanyVisibleEmploymentZones(lang);
 
     if (!layout.shapes) {
         layout.shapes = [];
@@ -352,8 +362,8 @@ function findGermanyClosestRow(data, targetMultiple) {
     return closestRow;
 }
 
-function renderGermanyMetrics() {
-    const data = getGermanyProfileData();
+function renderGermanyMetrics(lang) {
+    const data = getGermanyProfileData(lang);
 
     if (!data.length) {
         return;
@@ -362,28 +372,30 @@ function renderGermanyMetrics() {
     const rowOne = findGermanyClosestRow(data, 1.00);
     const rowTwo = findGermanyClosestRow(data, 2.00);
 
-    document.getElementById("germany-net-minimum").textContent =
-        deEuro(rowOne.net_before_income_tax_monthly_eur);
-
-    document.getElementById("germany-cost-minimum").textContent =
-        deEuro(rowOne.employer_cost_monthly_eur);
-
-    document.getElementById("germany-employer-rate").textContent =
-        dePct(rowOne.employer_contribution_rate);
-
-    document.getElementById("germany-cost-net-ratio").textContent =
-        deNum(rowTwo.cost_to_net_ratio).toFixed(2);
+    setTextContentById("germany-net-minimum-" + lang, deEuro(rowOne.net_before_income_tax_monthly_eur, lang));
+    setTextContentById("germany-cost-minimum-" + lang, deEuro(rowOne.employer_cost_monthly_eur, lang));
+    setTextContentById("germany-employer-rate-" + lang, dePct(rowOne.employer_contribution_rate, lang));
+    setTextContentById("germany-cost-net-ratio-" + lang, deRatio(rowTwo.cost_to_net_ratio, lang));
 }
 
-function renderGermanyCostChart() {
-    const data = getGermanyProfileData();
+function setTextContentById(id, value) {
+    const element = document.getElementById(id);
+
+    if (element) {
+        element.textContent = value;
+    }
+}
+
+function renderGermanyCostChart(lang) {
+    const data = getGermanyProfileData(lang);
+    const t = getI18nText(lang);
 
     const traces = [
         {
             x: data.map(row => deNum(row.smic_multiple)),
             y: data.map(row => deNum(row.gross_monthly_eur)),
             mode: "lines",
-            name: "Salaire brut",
+            name: t.gross_wage,
             line: {
                 color: GERMANY_COLORS.green,
                 width: 2.5,
@@ -395,7 +407,7 @@ function renderGermanyCostChart() {
             x: data.map(row => deNum(row.smic_multiple)),
             y: data.map(row => deNum(row.net_before_income_tax_monthly_eur)),
             mode: "lines",
-            name: "Salaire net avant impôt",
+            name: lang === "en" ? "Net wage before income tax" : "Salaire net avant impôt",
             line: {
                 color: GERMANY_COLORS.orange,
                 width: 3
@@ -406,7 +418,7 @@ function renderGermanyCostChart() {
             x: data.map(row => deNum(row.smic_multiple)),
             y: data.map(row => deNum(row.employer_cost_monthly_eur)),
             mode: "lines",
-            name: "Coût employeur",
+            name: t.employer_cost,
             line: {
                 color: GERMANY_COLORS.blue,
                 width: 3
@@ -415,25 +427,25 @@ function renderGermanyCostChart() {
         }
     ];
 
-    let layout = germanyBaseLayout("Montant mensuel, euros");
-    layout = addGermanyEmploymentZones(layout);
+    let layout = germanyBaseLayout(lang, t.y_amount);
+    layout = addGermanyEmploymentZones(layout, lang);
     layout = addGermanyCeilingLines(layout);
 
     layout.yaxis.ticksuffix = " €";
 
-    germanyPlot("chart-germany-cost", traces, layout);
+    germanyPlot("chart-germany-cost-" + lang, traces, layout);
 }
 
 
-function renderGermanyContributionRateChart() {
-    const data = getGermanyProfileData();
+function renderGermanyContributionRateChart(lang) {
+    const data = getGermanyProfileData(lang);
 
     const traces = [
         {
             x: data.map(row => deNum(row.smic_multiple)),
             y: data.map(row => deNum(row.employee_contribution_rate) * 100),
             mode: "lines",
-            name: "Taux salarié",
+            name: lang === "en" ? "Employee rate" : "Taux salarié",
             line: {
                 color: GERMANY_COLORS.orange,
                 width: 3
@@ -444,7 +456,7 @@ function renderGermanyContributionRateChart() {
             x: data.map(row => deNum(row.smic_multiple)),
             y: data.map(row => deNum(row.employer_contribution_rate) * 100),
             mode: "lines",
-            name: "Taux employeur",
+            name: lang === "en" ? "Employer rate" : "Taux employeur",
             line: {
                 color: GERMANY_COLORS.blue,
                 width: 3
@@ -453,24 +465,24 @@ function renderGermanyContributionRateChart() {
         }
     ];
 
-    let layout = germanyBaseLayout("Taux effectif");
-    layout = addGermanyEmploymentZones(layout);
+    let layout = germanyBaseLayout(lang, getI18nText(lang).y_rate);
+    layout = addGermanyEmploymentZones(layout, lang);
     layout = addGermanyCeilingLines(layout);
 
     layout.yaxis.ticksuffix = "%";
 
-    germanyPlot("chart-germany-rates", traces, layout);
+    germanyPlot("chart-germany-rates-" + lang, traces, layout);
 }
 
-function renderGermanyWedgeChart() {
-    const data = getGermanyProfileData();
+function renderGermanyWedgeChart(lang) {
+    const data = getGermanyProfileData(lang);
 
     const traces = [
         {
             x: data.map(row => deNum(row.smic_multiple)),
             y: data.map(row => deNum(row.social_wedge_rate) * 100),
             mode: "lines",
-            name: "Coin social",
+            name: getI18nText(lang).social_wedge,
             line: {
                 color: GERMANY_COLORS.teal,
                 width: 3
@@ -481,18 +493,17 @@ function renderGermanyWedgeChart() {
         }
     ];
 
-    let layout = germanyBaseLayout("Coin social / coût employeur");
-    layout = addGermanyEmploymentZones(layout);
+    let layout = germanyBaseLayout(lang, lang === "en" ? "Social wedge / employer cost" : "Coin social / coût employeur");
+    layout = addGermanyEmploymentZones(layout, lang);
     layout = addGermanyCeilingLines(layout);
 
     layout.yaxis.ticksuffix = "%";
 
-    germanyPlot("chart-germany-wedge", traces, layout);
+    germanyPlot("chart-germany-wedge-" + lang, traces, layout);
 }
 
-function renderGermanyFiscalReturnChart() {
-    const profileId = getGermanySelectedProfile();
-    const profileData = getGermanyProfileData(profileId);
+function renderGermanyFiscalReturnChart(lang) {
+    const profileData = getGermanyProfileData(lang);
 
     if (!profileData.length) {
         return;
@@ -557,7 +568,7 @@ function renderGermanyFiscalReturnChart() {
             y: data.map(row => row.marginal_net_before_tax_share * 100),
             type: "scatter",
             mode: "lines",
-            name: "Avant IR",
+            name: lang === "en" ? "Before income tax" : "Avant IR",
             line: {
                 width: 3
             }
@@ -567,7 +578,7 @@ function renderGermanyFiscalReturnChart() {
             y: data.map(row => row.marginal_net_after_tax_share * 100),
             type: "scatter",
             mode: "lines",
-            name: "Après Lohnsteuer + Soli",
+            name: lang === "en" ? "After Lohnsteuer + Soli" : "Après Lohnsteuer + Soli",
             line: {
                 width: 3
             }
@@ -577,7 +588,7 @@ function renderGermanyFiscalReturnChart() {
             y: data.map(row => row.marginal_social_wedge * 100),
             type: "scatter",
             mode: "lines",
-            name: "Effet marginal social",
+            name: lang === "en" ? "Marginal social effect" : "Effet marginal social",
             line: {
                 width: 2,
                 dash: "dot"
@@ -588,7 +599,7 @@ function renderGermanyFiscalReturnChart() {
             y: data.map(row => row.marginal_total_tax_wedge * 100),
             type: "scatter",
             mode: "lines",
-            name: "Prélèvement marginal total estimé",
+            name: lang === "en" ? "Estimated total marginal levy" : "Prélèvement marginal total estimé",
             line: {
                 width: 2,
                 dash: "dash"
@@ -597,30 +608,33 @@ function renderGermanyFiscalReturnChart() {
     ];
 
     let layout = germanyBaseLayout(
-        "Part d’un euro supplémentaire de salaire brut"
+        lang,
+        lang === "en"
+            ? "Share of an additional euro of gross wage"
+            : "Part d'un euro supplémentaire de salaire brut"
     );
 
-    layout = addGermanyEmploymentZones(layout);
+    layout = addGermanyEmploymentZones(layout, lang);
     layout = addGermanyCeilingLines(layout);
 
     layout.yaxis.ticksuffix = "%";
     layout.yaxis.range = [-10, 110];
 
     germanyPlot(
-        "chart-germany-fiscal-return",
+        "chart-germany-fiscal-return-" + lang,
         traces,
         layout
     );
 }
 
-function renderGermanyDecompositionChart() {
-    const data = getGermanyProfileData();
+function renderGermanyDecompositionChart(lang) {
+    const data = getGermanyProfileData(lang);
 
     if (!data.length) {
         return;
     }
 
-    const selectedMultiple = getGermanyWaterfallMultiple();
+    const selectedMultiple = getGermanyWaterfallMultiple(lang);
     const row = findGermanyClosestRow(data, selectedMultiple);
 
     const actualMultiple = deNum(row.smic_multiple);
@@ -639,52 +653,66 @@ function renderGermanyDecompositionChart() {
     const employerCare = deNum(row.employer_care_monthly_eur);
     const employerUnemployment = deNum(row.employer_unemployment_monthly_eur);
 
-    const title = document.getElementById("germany-waterfall-title");
-    const subtitle = document.getElementById("germany-waterfall-subtitle");
+    const title = document.getElementById("germany-waterfall-title-" + lang);
+    const subtitle = document.getElementById("germany-waterfall-subtitle-" + lang);
+
+    const multipleLabel = lang === "en"
+        ? actualMultiple.toFixed(2) + " minimum wage(s)"
+        : actualMultiple.toFixed(2).replace(".", ",") + " salaire(s) minimum(s)";
 
     if (title) {
-        title.textContent =
-            "Décomposition à " +
-            actualMultiple.toFixed(2).replace(".", ",") +
-            " salaire(s) minimum(s)";
+        title.textContent = (lang === "en" ? "Breakdown at " : "Décomposition à ") + multipleLabel;
     }
 
     if (subtitle) {
-        subtitle.textContent =
-            "Décomposition détaillée du passage du salaire net avant impôt au coût employeur total, " +
-            "pour un salaire brut de " +
-            deEuro(gross) +
-            ".";
+        subtitle.textContent = lang === "en"
+            ? "Detailed breakdown of the path from net wage before income tax to total employer cost, "
+                + "for a gross wage of " + deEuro(gross, lang) + "."
+            : "Décomposition détaillée du passage du salaire net avant impôt au coût employeur total, "
+                + "pour un salaire brut de " + deEuro(gross, lang) + ".";
     }
 
     function employeePct(value) {
-        return (
-            deNum(value) / gross * 100
-        ).toFixed(1).replace(".", ",") + " % du brut";
+        const text = (deNum(value) / gross * 100).toFixed(1);
+        return lang === "en"
+            ? text + " % of gross"
+            : text.replace(".", ",") + " % du brut";
     }
 
     function employerPct(value) {
-        return (
-            deNum(value) / employerCost * 100
-        ).toFixed(1).replace(".", ",") + " % du coût";
+        const text = (deNum(value) / employerCost * 100).toFixed(1);
+        return lang === "en"
+            ? text + " % of cost"
+            : text.replace(".", ",") + " % du coût";
     }
-    const labels = [
-        "Salaire net<br>avant impôt",
 
-        "Retraite<br>salarié",
-        "Maladie<br>salarié",
-        "Dépendance<br>salarié",
-        "Chômage<br>salarié",
-
-        "Salaire<br>brut",
-
-        "Retraite<br>employeur",
-        "Maladie<br>employeur",
-        "Dépendance<br>employeur",
-        "Chômage<br>employeur",
-
-        "Coût<br>employeur"
-    ];
+    const labels = lang === "en"
+        ? [
+            "Net wage<br>before tax",
+            "Employee<br>pension",
+            "Employee<br>health",
+            "Employee<br>care",
+            "Employee<br>unemployment",
+            "Gross<br>wage",
+            "Employer<br>pension",
+            "Employer<br>health",
+            "Employer<br>care",
+            "Employer<br>unemployment",
+            "Employer<br>cost"
+        ]
+        : [
+            "Salaire net<br>avant impôt",
+            "Retraite<br>salarié",
+            "Maladie<br>salarié",
+            "Dépendance<br>salarié",
+            "Chômage<br>salarié",
+            "Salaire<br>brut",
+            "Retraite<br>employeur",
+            "Maladie<br>employeur",
+            "Dépendance<br>employeur",
+            "Chômage<br>employeur",
+            "Coût<br>employeur"
+        ];
 
     const traces = [
         {
@@ -726,21 +754,21 @@ function renderGermanyDecompositionChart() {
                 employerCost
             ],
             text: [
-                deEuro(netBeforeTax),
+                deEuro(netBeforeTax, lang),
 
-                "+" + deEuro(employeePension) + "<br>" + employeePct(employeePension),
-                "+" + deEuro(employeeHealth) + "<br>" + employeePct(employeeHealth),
-                "+" + deEuro(employeeCare) + "<br>" + employeePct(employeeCare),
-                "+" + deEuro(employeeUnemployment) + "<br>" + employeePct(employeeUnemployment),
+                "+" + deEuro(employeePension, lang) + "<br>" + employeePct(employeePension),
+                "+" + deEuro(employeeHealth, lang) + "<br>" + employeePct(employeeHealth),
+                "+" + deEuro(employeeCare, lang) + "<br>" + employeePct(employeeCare),
+                "+" + deEuro(employeeUnemployment, lang) + "<br>" + employeePct(employeeUnemployment),
 
-                deEuro(gross),
+                deEuro(gross, lang),
 
-                "+" + deEuro(employerPension) + "<br>" + employerPct(employerPension),
-                "+" + deEuro(employerHealth) + "<br>" + employerPct(employerHealth),
-                "+" + deEuro(employerCare) + "<br>" + employerPct(employerCare),
-                "+" + deEuro(employerUnemployment) + "<br>" + employerPct(employerUnemployment),
+                "+" + deEuro(employerPension, lang) + "<br>" + employerPct(employerPension),
+                "+" + deEuro(employerHealth, lang) + "<br>" + employerPct(employerHealth),
+                "+" + deEuro(employerCare, lang) + "<br>" + employerPct(employerCare),
+                "+" + deEuro(employerUnemployment, lang) + "<br>" + employerPct(employerUnemployment),
 
-                deEuro(employerCost)
+                deEuro(employerCost, lang)
             ],
             textposition: "outside",
             connector: {
@@ -766,12 +794,12 @@ function renderGermanyDecompositionChart() {
             },
             hovertemplate:
                 "<b>%{x}</b><br>" +
-                "Montant: %{y:,.0f} €" +
+                (lang === "en" ? "Amount: " : "Montant: ") + "%{y:,.0f} €" +
                 "<extra></extra>"
         }
     ];
 
-    const layout = germanyBaseLayout("Montant mensuel, euros");
+    const layout = germanyBaseLayout(lang, getI18nText(lang).y_amount);
 
     layout.height = 680;
     layout.showlegend = false;
@@ -802,11 +830,11 @@ function renderGermanyDecompositionChart() {
         b: 185
     };
 
-    germanyPlot("chart-germany-decomposition", traces, layout);
+    germanyPlot("chart-germany-decomposition-" + lang, traces, layout);
 }
 
-function renderGermanyContributionBreakdownChart() {
-    const data = getGermanyProfileData();
+function renderGermanyContributionBreakdownChart(lang) {
+    const data = getGermanyProfileData(lang);
 
     if (!data.length) {
         return;
@@ -814,12 +842,9 @@ function renderGermanyContributionBreakdownChart() {
 
     const row = findGermanyClosestRow(data, 2.00);
 
-    const labels = [
-        "Retraite",
-        "Maladie",
-        "Dépendance",
-        "Chômage"
-    ];
+    const labels = lang === "en"
+        ? ["Pension", "Health", "Long-term care", "Unemployment"]
+        : ["Retraite", "Maladie", "Dépendance", "Chômage"];
 
     const employeeValues = [
         deNum(row.employee_pension_monthly_eur),
@@ -835,41 +860,45 @@ function renderGermanyContributionBreakdownChart() {
         deNum(row.employer_unemployment_monthly_eur)
     ];
 
+    const employeeLabel = lang === "en" ? "Employee" : "Salarié";
+    const employerLabel = lang === "en" ? "Employer" : "Employeur";
+
     const traces = [
         {
             x: labels,
             y: employeeValues,
-            name: "Salarié",
+            name: employeeLabel,
             type: "bar",
             marker: {
                 color: "rgba(249, 115, 22, 0.82)"
             },
-            text: employeeValues.map(value => deEuro(value)),
+            text: employeeValues.map(value => deEuro(value, lang)),
             textposition: "outside",
             cliponaxis: false,
             hovertemplate:
                 "<b>%{x}</b><br>" +
-                "Salarié: %{y:,.0f} €" +
+                employeeLabel + ": %{y:,.0f} €" +
                 "<extra></extra>"
         },
         {
             x: labels,
             y: employerValues,
-            name: "Employeur",
+            name: employerLabel,
             type: "bar",
             marker: {
                 color: "rgba(37, 99, 235, 0.82)"
             },
-            text: employerValues.map(value => deEuro(value)),
+            text: employerValues.map(value => deEuro(value, lang)),
             textposition: "outside",
             hovertemplate:
                 "<b>%{x}</b><br>" +
-                "Employeur: %{y:,.0f} €" +
+                employerLabel + ": %{y:,.0f} €" +
                 "<extra></extra>"
         }
     ];
 
-    const layout = germanyBaseLayout("Montant mensuel, euros");
+    const t = getI18nText(lang);
+    const layout = germanyBaseLayout(lang, t.y_amount);
 
     layout.height = 430;
     layout.barmode = "group";
@@ -890,7 +919,7 @@ function renderGermanyContributionBreakdownChart() {
 
     layout.yaxis = {
         title: {
-            text: "Montant mensuel, euros",
+            text: t.y_amount,
             standoff: 16
         },
         showgrid: true,
@@ -909,30 +938,30 @@ function renderGermanyContributionBreakdownChart() {
         b: 82
     };
 
-    germanyPlot("chart-germany-breakdown", traces, layout);
+    germanyPlot("chart-germany-breakdown-" + lang, traces, layout);
 }
 
-function getGermanyDataSelectedProfile() {
-    const select = document.getElementById("germany-data-profile-select");
+function getGermanyDataSelectedProfile(lang) {
+    const select = getI18nElement("germany-data-profile-select", lang);
 
     if (!select) {
-        return getGermanySelectedProfile();
+        return getGermanySelectedProfile(lang);
     }
 
     return select.value;
 }
 
-function getGermanyDataProfileData() {
-    const profileId = getGermanyDataSelectedProfile();
+function getGermanyDataProfileData(lang) {
+    const profileId = getGermanyDataSelectedProfile(lang);
 
     return GERMANY_DATA
         .filter(row => row.profile_id === profileId)
         .sort((a, b) => deNum(a.smic_multiple) - deNum(b.smic_multiple));
 }
 
-function renderGermanyDataTable() {
-    const table = document.getElementById("germany-data-table");
-    const label = document.getElementById("germany-data-profile-label");
+function renderGermanyDataTable(lang) {
+    const table = document.getElementById("germany-data-table-" + lang);
+    const label = document.getElementById("germany-data-profile-label-" + lang);
 
     if (!table) {
         return;
@@ -944,13 +973,15 @@ function renderGermanyDataTable() {
         return;
     }
 
-    const data = getGermanyDataProfileData();
+    const data = getGermanyDataProfileData(lang);
 
     tbody.innerHTML = "";
 
     if (!data.length) {
         if (label) {
-            label.textContent = "Aucune donnée disponible pour ce profil.";
+            label.textContent = lang === "en"
+                ? "No data available for this profile."
+                : "Aucune donnée disponible pour ce profil.";
         }
 
         return;
@@ -959,24 +990,30 @@ function renderGermanyDataTable() {
     const firstRow = data[0];
 
     if (label) {
-        label.textContent = firstRow.profile_label_fr;
+        label.textContent = lang === "en"
+            ? (firstRow.profile_label_en || firstRow.profile_label_fr)
+            : firstRow.profile_label_fr;
     }
 
     data.forEach(row => {
         const tr = document.createElement("tr");
 
+        const regimeLabel = lang === "en"
+            ? (row.employment_regime_label_en || row.employment_regime_label_fr)
+            : row.employment_regime_label_fr;
+
         const cells = [
-            deNum(row.smic_multiple).toFixed(2).replace(".", ","),
-            row.employment_regime_label_fr,
-            deEuro(row.gross_monthly_eur),
-            deEuro(row.net_before_income_tax_monthly_eur),
-            deEuro(row.employer_cost_monthly_eur),
-            deEuro(row.employee_contributions_monthly_eur),
-            deEuro(row.employer_contributions_monthly_eur),
-            deEuro(row.social_wedge_monthly_eur),
-            dePct(row.employee_contribution_rate),
-            dePct(row.employer_contribution_rate),
-            deNum(row.cost_to_net_ratio).toFixed(2)
+            deRatio(row.smic_multiple, lang),
+            regimeLabel,
+            deEuro(row.gross_monthly_eur, lang),
+            deEuro(row.net_before_income_tax_monthly_eur, lang),
+            deEuro(row.employer_cost_monthly_eur, lang),
+            deEuro(row.employee_contributions_monthly_eur, lang),
+            deEuro(row.employer_contributions_monthly_eur, lang),
+            deEuro(row.social_wedge_monthly_eur, lang),
+            dePct(row.employee_contribution_rate, lang),
+            dePct(row.employer_contribution_rate, lang),
+            deRatio(row.cost_to_net_ratio, lang)
         ];
 
         cells.forEach(value => {
@@ -989,91 +1026,79 @@ function renderGermanyDataTable() {
     });
 }
 
-function renderGermany() {
-    renderGermanyMetrics();
-    renderGermanyCostChart();
-    renderGermanyContributionRateChart();
-    renderGermanyWedgeChart();
-    renderGermanyFiscalReturnChart();
-    renderGermanyDecompositionChart();
-    renderGermanyContributionBreakdownChart();
-    renderGermanyDataTable();
+function renderGermany(lang) {
+    renderGermanyMetrics(lang);
+    renderGermanyCostChart(lang);
+    renderGermanyContributionRateChart(lang);
+    renderGermanyWedgeChart(lang);
+    renderGermanyFiscalReturnChart(lang);
+    renderGermanyDecompositionChart(lang);
+    renderGermanyContributionBreakdownChart(lang);
+    renderGermanyDataTable(lang);
 }
 
-function setupGermanyTabs() {
-    const buttons = document.querySelectorAll(".tab-button");
-    const panels = document.querySelectorAll(".tab-content");
+function germanyOnTabShow(lang, tabName) {
+    if (tabName === "simulation") {
+        renderGermany(lang);
+    }
 
-    buttons.forEach(button => {
-        button.addEventListener("click", function() {
-            const target = button.dataset.tab;
+    if (tabName === "data") {
+        renderGermanyDataTable(lang);
+    }
+}
 
-            buttons.forEach(item => {
-                item.classList.remove("active");
-            });
+function showGermanyTab(lang, tabName) {
+    showLangTab(lang, tabName, {
+        tabStorageKey: GERMANY_TAB_STORAGE_KEY,
+        onShow: germanyOnTabShow
+    });
+}
 
-            panels.forEach(panel => {
-                panel.classList.remove("active");
-            });
-
-            button.classList.add("active");
-
-            const targetPanel = document.getElementById("tab-" + target);
-
-            if (targetPanel) {
-                targetPanel.classList.add("active");
-            }
-
-            if (target === "simulation") {
-                setTimeout(function() {
-                    renderGermany();
-                }, 80);
-            }
-
-            if (target === "data") {
-                setTimeout(function() {
-                    renderGermanyDataTable();
-                }, 80);
-            }
-        });
+function switchGermanyLanguage() {
+    switchLangLanguage({
+        storageKey: GERMANY_LANGUAGE_STORAGE_KEY,
+        tabStorageKey: GERMANY_TAB_STORAGE_KEY,
+        onShow: germanyOnTabShow
     });
 }
 
 function setupGermanyEvents() {
-    const profileSelect = document.getElementById("germany-profile-select");
-    const waterfallSelect = document.getElementById("germany-waterfall-multiple");
-    const dataProfileSelect = document.getElementById("germany-data-profile-select");
-    const minijobZone = document.getElementById("germany-zone-minijob");
-    const midijobZone = document.getElementById("germany-zone-midijob");
-    const standardZone = document.getElementById("germany-zone-standard");
+    ["fr", "en"].forEach(function(lang) {
+        const profileSelect = getI18nElement("germany-profile-select", lang);
+        const waterfallSelect = getI18nElement("germany-waterfall-multiple", lang);
+        const dataProfileSelect = getI18nElement("germany-data-profile-select", lang);
+        const minijobZone = getI18nElement("germany-zone-minijob", lang);
+        const midijobZone = getI18nElement("germany-zone-midijob", lang);
+        const standardZone = getI18nElement("germany-zone-standard", lang);
 
-    if (profileSelect) {
-        profileSelect.addEventListener("change", function() {
-            renderGermany();
-        });
-    }
-
-    if (waterfallSelect) {
-        waterfallSelect.addEventListener("change", function() {
-            renderGermanyDecompositionChart();
-        });
-    }
-
-    if (dataProfileSelect) {
-        dataProfileSelect.addEventListener("change", function() {
-            renderGermanyDataTable();
-        });
-    }
-
-    [minijobZone, midijobZone, standardZone].forEach(zoneCheckbox => {
-        if (zoneCheckbox) {
-            zoneCheckbox.addEventListener("change", function() {
-                renderGermanyCostChart();
-                renderGermanyContributionRateChart();
-                renderGermanyWedgeChart();
-                renderGermanyFiscalReturnChart();
+        if (profileSelect) {
+            profileSelect.addEventListener("change", function() {
+                renderGermany(lang);
             });
         }
+
+        if (waterfallSelect) {
+            waterfallSelect.addEventListener("change", function() {
+                renderGermanyDecompositionChart(lang);
+            });
+        }
+
+        if (dataProfileSelect) {
+            dataProfileSelect.addEventListener("change", function() {
+                renderGermanyDataTable(lang);
+            });
+        }
+
+        [minijobZone, midijobZone, standardZone].forEach(zoneCheckbox => {
+            if (zoneCheckbox) {
+                zoneCheckbox.addEventListener("change", function() {
+                    renderGermanyCostChart(lang);
+                    renderGermanyContributionRateChart(lang);
+                    renderGermanyWedgeChart(lang);
+                    renderGermanyFiscalReturnChart(lang);
+                });
+            }
+        });
     });
 }
 
@@ -1098,10 +1123,14 @@ function loadGermanyData() {
                 "rows"
             );
 
-	    setupGermanyTabs();
-	    setupGermanyEvents();
-	    renderGermany();
-	    renderGermanyDataTable();
+            setupGermanyEvents();
+
+            const initialLang = localStorage.getItem(GERMANY_LANGUAGE_STORAGE_KEY) || "fr";
+            setLangLanguage(initialLang, {
+                storageKey: GERMANY_LANGUAGE_STORAGE_KEY,
+                tabStorageKey: GERMANY_TAB_STORAGE_KEY,
+                onShow: germanyOnTabShow
+            });
         },
         error: function(error) {
             console.error("Germany CSV loading error:", error);
