@@ -1,0 +1,103 @@
+{
+    "module_name": "Cross-Country Labour Cost Comparison",
+    "version": "2026-01",
+    "countries": ["France", "Germany", "Belgium", "Switzerland"],
+    "methodology": [
+        "Comparison axis: absolute wage levels converted via purchasing power parity (PPP), not wages re-indexed to each country's own minimum wage.",
+        "PPP is applied individually to all 4 countries (including Switzerland), following the same logic as the OECD 'Taxing Wages' cross-country comparisons.",
+        "For each harmonized wage point (expressed in international dollars), the point is converted into each country's local currency using that country's own PPP factor, then each country's existing per-wage compute function is called directly on that local-currency wage. Values are not obtained by interpolating pre-generated national datasets.",
+        "The PPP indicator used is the household/private final consumption expenditure PPP conversion factor (not the GDP-based PPP), because the comparison is about the purchasing power of a wage for a household, not about aggregate output.",
+        "Switzerland does not have a single national wage-tax schedule: withholding tax is set at cantonal level. Switzerland's reference case is therefore a population-weighted average across all 26 cantons, rather than a single reference canton, in order to represent the country as a whole."
+    ],
+    "harmonized_wage_grid": {
+        "unit": "international dollars per month (private consumption PPP basis)",
+        "min_intl_usd": 2000,
+        "max_intl_usd": 12000,
+        "step_intl_usd": 500,
+        "note": "The lower bound (2,000 intl $) is set below all four countries' own minimum/reference wage floors once converted to international dollars, so that the lowest wage grids (close to and below each country's minimum wage) remain visible. Each row carries a 'below_minimum_wage' flag (and the corresponding 'national_minimum_wage_monthly_local' reference value) indicating whether that country's wage at that harmonized point falls below its own legal minimum/reference wage; such points are hypothetical for that country."
+    },
+    "national_minimum_wage_floors_intl_usd": {
+        "note": "Each country's own minimum/reference wage, converted to international dollars at the PPP factors above, for reference. Rows in the dataset below these levels are flagged 'below_minimum_wage' for that country.",
+        "FR": {"value_local": 1867.02, "currency": "EUR", "value_intl_usd": 2604.2, "source": "SMIC brut mensuel, config/scenarios.yml"},
+        "CH": {"value_local": 3000, "currency": "CHF", "value_intl_usd": 2709.5, "source": "gross_monthly_min_chf, docs/data/switzerland/switzerland_parameters_2026.json"},
+        "BE": {"value_local": 2189.81, "currency": "EUR", "value_intl_usd": 2911.4, "source": "GGMMI / RMMMG, docs/data/belgium/belgium_parameters_2026.json"},
+        "DE": {"value_local": 2409.33, "currency": "EUR", "value_intl_usd": 3434.3, "source": "Statutory minimum wage x monthly hours convention, analysis/germany parameters"}
+    },
+    "ppp_conversion_factors": {
+        "basis": "Household (private) final consumption expenditure PPP conversion factor, LCU per international dollar",
+        "source": "World Bank International Comparison Program (ICP)",
+        "indicator_code": "PA.NUS.PRVT.PP",
+        "reference_year": 2024,
+        "retrieved_via": "World Bank API (api.worldbank.org)",
+        "values": {
+            "FR": 0.716934,
+            "DE": 0.701547,
+            "BE": 0.752163,
+            "CH": 1.107209
+        }
+    },
+    "reference_profiles": {
+        "FR": {
+            "profile_id": "non_cadre__standard__lt50__standard__full_time",
+            "description": "Non-executive employee, outside Alsace-Moselle, firm with fewer than 50 employees, standard AT/MP rate, full-time.",
+            "compute_source": "scripts/build_dataset_mon_entreprise.py (Mon-entreprise / Publicodes engine)"
+        },
+        "DE": {
+            "profile_id": "germany__public_health__childless__outside_saxony",
+            "description": "Public health insurance, childless, outside Saxony.",
+            "compute_source": "analysis/germany/build_germany_dataset.py"
+        },
+        "BE": {
+            "profile_id": "belgium__standard_private_sector",
+            "description": "Standard private-sector employee (only profile currently modeled for Belgium).",
+            "compute_source": "analysis/belgium/build_belgium_dataset.py"
+        },
+        "CH": {
+            "profile_id": "switzerland__population_weighted_average_26_cantons__single_no_child_standard_lpp",
+            "description": "Population-weighted average across all 26 cantons, tariff A0N (single, no child, no church tax where available), standardized LPP/BVG and accident insurance assumptions.",
+            "compute_source": "analysis/switzerland/swiss_social_contributions_2026.py and analysis/switzerland/swiss_withholding_tax_2026.py, aggregated across cantons"
+        }
+    },
+    "switzerland_canton_population_weights": {
+        "source": "Swiss Federal Statistical Office (BFS), STAT-TAB px-x-0103010000_101",
+        "url": "https://www.pxweb.bfs.admin.ch/pxweb/fr/px-x-0103010000_101/px-x-0103010000_101/px-x-0103010000_101.px",
+        "reference_year": 2024,
+        "population_type": "Population r\u00e9sidante permanente",
+        "retrieved": "2026-08-04",
+        "total_population": 9051029,
+        "cantons": [
+            {"code": "ZH", "population": 1620020},
+            {"code": "BE", "population": 1071216},
+            {"code": "LU", "population": 437944},
+            {"code": "UR", "population": 38275},
+            {"code": "SZ", "population": 168931},
+            {"code": "OW", "population": 39662},
+            {"code": "NW", "population": 45345},
+            {"code": "GL", "population": 42371},
+            {"code": "ZG", "population": 133739},
+            {"code": "FR", "population": 346674},
+            {"code": "SO", "population": 289792},
+            {"code": "BS", "population": 201384},
+            {"code": "BL", "population": 301323},
+            {"code": "SH", "population": 88667},
+            {"code": "AR", "population": 56705},
+            {"code": "AI", "population": 16733},
+            {"code": "SG", "population": 540036},
+            {"code": "GR", "population": 206138},
+            {"code": "AG", "population": 735808},
+            {"code": "TG", "population": 299509},
+            {"code": "TI", "population": 358903},
+            {"code": "VD", "population": 855106},
+            {"code": "VS", "population": 371288},
+            {"code": "NE", "population": 179518},
+            {"code": "GE", "population": 531102},
+            {"code": "JU", "population": 74840}
+        ]
+    },
+    "notes": [
+        "France's 'net' figure is net of social contributions only (net before personal income tax). Personal income tax (pr\u00e9l\u00e8vement \u00e0 la source) is not modeled because its rate depends on the household's personal tax situation and cannot be derived from a generic wage-only simulation.",
+        "Germany, Belgium and Switzerland's 'net after income tax' figures include a mandatory wage withholding tax computed directly from the wage (Lohnsteuer, pr\u00e9compte professionnel, impot a la source), which does not require household-specific information beyond the modeled reference profile.",
+        "Comparisons using 'net after income tax' therefore cannot include France on a like-for-like basis; comparisons using 'net before income tax' (net of social contributions only) are valid across all 4 countries.",
+        "All amounts are also cross-country comparable in international dollars (PPP) in addition to local currency."
+    ]
+}

@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Labor Cost Lab · Comparaison internationale</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+    <link rel="stylesheet" href="../../assets/style.css?v=27">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-main: #f1f2ee;
+            --bg-card: #fbfcf9;
+
+            --text-main: #14181a;
+            --text-muted: #363c40;
+            --text-soft: #5f676b;
+
+            --blue: #1d5c40;
+            --blue-dark: #133f2c;
+            --blue-soft: #e3ece5;
+
+            --border: #d9dcd4;
+            --border-soft: #e6e8e1;
+        }
+
+        body.dark-mode {
+            --bg-main: #14181a;
+            --bg-card: #1c2124;
+
+            --text-main: #f1f2ee;
+            --text-muted: #c7cbc3;
+            --text-soft: #8b9294;
+
+            --blue: #4caf7d;
+            --blue-dark: #bfe3cd;
+            --blue-soft: #1f3327;
+
+            --border: #363c40;
+            --border-soft: #2a2f32;
+        }
+
+        body {
+            font-family: 'Archivo', "Segoe UI", Roboto, Arial, sans-serif;
+        }
+
+        .eyebrow {
+            display: block;
+            font-family: 'IBM Plex Mono', ui-monospace, monospace;
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--blue);
+            margin-bottom: 18px;
+        }
+
+        .global-project-banner {
+            color: var(--text-muted);
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-soft);
+        }
+
+        .global-project-banner a {
+            color: var(--text-main);
+        }
+
+        .global-project-banner a:hover {
+            color: var(--blue);
+        }
+
+        .global-project-banner span {
+            color: var(--text-soft);
+        }
+
+        body.dark-mode .global-project-banner {
+            color: var(--text-muted);
+            background: var(--bg-card);
+            border-bottom-color: var(--border-soft);
+        }
+
+        body.dark-mode .global-project-banner a {
+            color: var(--text-main);
+        }
+
+        body.dark-mode .global-project-banner a:hover {
+            color: var(--blue);
+        }
+
+        body.dark-mode .global-project-banner span {
+            color: var(--text-soft);
+        }
+
+        header {
+            background: var(--bg-card);
+            color: var(--text-main);
+            border-bottom: 4px solid var(--blue);
+        }
+
+        body.dark-mode header {
+            background: var(--bg-card);
+            border-bottom-color: var(--blue);
+        }
+
+        header h1 {
+            font-family: 'Archivo', sans-serif;
+            font-size: clamp(2rem, 4.4vw, 3.4rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.02;
+        }
+
+        header p {
+            color: var(--text-muted);
+        }
+
+        .author-line {
+            color: var(--text-soft);
+        }
+
+        .theme-toggle {
+            border-color: var(--border);
+            color: var(--text-main);
+        }
+
+        .theme-toggle:hover {
+            background: var(--blue-soft);
+        }
+
+        h2, h3 {
+            font-family: 'Archivo', sans-serif;
+            letter-spacing: -0.02em;
+        }
+    </style>
+
+    <script defer src="./assets/comparison_app.js?v=1"></script>
+</head>
+
+<body>
+    <div class="global-project-banner">
+        <a href="../../index.html">
+            ← Labor Cost Lab
+        </a>
+
+        <span>
+            Comparaison internationale · module transversal
+        </span>
+    </div>
+
+    <header class="hero">
+        <div>
+            <p class="eyebrow">
+                Labor Cost Lab · Comparaison internationale
+            </p>
+
+            <h1>Comparaison internationale du coût du travail</h1>
+
+            <p>
+                Ce module met en regard les quatre modules nationaux (France,
+                Allemagne, Belgique, Suisse) sur une grille de salaires
+                harmonisée, exprimée en dollars internationaux (parité de
+                pouvoir d'achat), afin de comparer des niveaux de vie
+                équivalents plutôt que des salaires nominaux.
+            </p>
+
+            <p class="author-line">
+                Par Hugo Spring-Ragain, Économiste, CEDS Paris
+            </p>
+        </div>
+
+        <div class="header-actions">
+            <button
+                class="theme-toggle"
+                onclick="toggleTheme()"
+                title="Dark mode"
+                aria-label="Dark mode"
+            >
+                🌙
+            </button>
+        </div>
+    </header>
+
+    <main class="page-shell">
+        <section class="method-box">
+            <h2>Ce que mesure la comparaison</h2>
+
+            <div class="method-grid">
+                <article>
+                    <h3>Grille harmonisée</h3>
+
+                    <p>
+                        21 points de salaire, de 2 000 à 12 000 dollars
+                        internationaux mensuels, communs aux 4 pays, afin de
+                        couvrir aussi les grilles de salaire les plus basses.
+                    </p>
+                </article>
+
+                <article>
+                    <h3>Parité de pouvoir d'achat</h3>
+
+                    <p>
+                        Facteur de conversion PPA sur la consommation privée
+                        des ménages (Banque mondiale, PCI), appliqué
+                        individuellement à chacun des 4 pays.
+                    </p>
+                </article>
+
+                <article>
+                    <h3>Net avant impôt</h3>
+
+                    <p>
+                        Salaire net de cotisations sociales uniquement,
+                        comparable entre les 4 pays.
+                    </p>
+                </article>
+
+                <article>
+                    <h3>Net après impôt</h3>
+
+                    <p>
+                        Salaire net après retenue fiscale sur le salaire,
+                        comparable pour l'Allemagne, la Belgique et la Suisse
+                        uniquement.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <nav class="tabs" aria-label="Navigation comparaison">
+            <button class="tab-button active" data-tab="simulation">
+                Comparaison
+            </button>
+
+            <button class="tab-button" data-tab="data">
+                Données
+            </button>
+
+            <button class="tab-button" data-tab="methodology">
+                Méthodologie
+            </button>
+        </nav>
+
+        <section id="tab-simulation" class="tab-content active">
+            <div class="chart-card chart-card-wide">
+                <h3 id="comparison-metrics-title">
+                    Comparaison à un point de salaire donné
+                </h3>
+
+                <p
+                    class="chart-subtitle"
+                    id="comparison-metrics-subtitle"
+                >
+                    Valeurs des 4 pays au point de salaire harmonisé
+                    sélectionné, exprimées en dollars internationaux (PPA).
+                </p>
+
+                <div class="profile-selector profile-selector-grid">
+                    <div class="selector-field">
+                        <label for="comparison-wage-select">
+                            Salaire harmonisé (dollars internationaux)
+                        </label>
+
+                        <select id="comparison-wage-select">
+                        </select>
+                    </div>
+                </div>
+
+                <section class="metrics-grid" id="comparison-metrics">
+                    <article class="metric-card">
+                        <span class="metric-label">France</span>
+                        <strong id="metric-comparison-fr-net">—</strong>
+                        <span class="metric-note">Net avant impôt, intl $</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Allemagne</span>
+                        <strong id="metric-comparison-de-net">—</strong>
+                        <span class="metric-note">Net avant impôt, intl $</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Belgique</span>
+                        <strong id="metric-comparison-be-net">—</strong>
+                        <span class="metric-note">Net avant impôt, intl $</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Suisse</span>
+                        <strong id="metric-comparison-ch-net">—</strong>
+                        <span class="metric-note">Net avant impôt, intl $</span>
+                    </article>
+                </section>
+            </div>
+
+            <section class="dashboard-section-heading">
+                <h2>Graphiques comparatifs</h2>
+
+                <p>
+                    Les graphiques suivants comparent les 4 pays sur toute la
+                    grille de salaires harmonisée, en dollars internationaux
+                    (PPA). Chaque courbe est calculée directement par le
+                    moteur du module national correspondant.
+                </p>
+            </section>
+
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3>Net avant impôt</h3>
+
+                    <p class="chart-subtitle">
+                        Salaire net de cotisations sociales, comparable entre
+                        les 4 pays.
+                    </p>
+
+                    <div
+                        id="chart-comparison-net-before-tax"
+                        class="plotly-chart"
+                        aria-label="Net avant impôt par pays"
+                    ></div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Net après impôt</h3>
+
+                    <p class="chart-subtitle">
+                        Salaire net après retenue fiscale sur le salaire.
+                        La France n'est pas représentée : son prélèvement à
+                        la source dépend de la situation du foyer fiscal.
+                    </p>
+
+                    <div
+                        id="chart-comparison-net-after-tax"
+                        class="plotly-chart"
+                        aria-label="Net après impôt par pays"
+                    ></div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Coût employeur</h3>
+
+                    <p class="chart-subtitle">
+                        Coût employeur total (salaire brut + cotisations
+                        employeur) pour chaque pays.
+                    </p>
+
+                    <div
+                        id="chart-comparison-employer-cost"
+                        class="plotly-chart"
+                        aria-label="Coût employeur par pays"
+                    ></div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Ratio coût employeur / net avant impôt</h3>
+
+                    <p class="chart-subtitle">
+                        Montant de coût employeur nécessaire pour verser un
+                        dollar international de net avant impôt.
+                    </p>
+
+                    <div
+                        id="chart-comparison-cost-to-net"
+                        class="plotly-chart"
+                        aria-label="Ratio coût / net par pays"
+                    ></div>
+                </div>
+
+                <div class="chart-card chart-card-full">
+                    <h3>Coin socio-fiscal avant impôt</h3>
+
+                    <p class="chart-subtitle">
+                        Part du coût employeur qui ne se retrouve pas dans le
+                        net avant impôt (cotisations salarié et employeur).
+                    </p>
+
+                    <div
+                        id="chart-comparison-wedge"
+                        class="plotly-chart"
+                        aria-label="Coin socio-fiscal par pays"
+                    ></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-data" class="tab-content">
+            <div class="chart-card">
+                <h3>Données</h3>
+
+                <p class="chart-subtitle">
+                    Le jeu de données de comparaison peut être téléchargé au
+                    format CSV. Il contient une ligne par pays et par point de
+                    salaire harmonisé, en monnaie locale et en dollars
+                    internationaux (PPA).
+                </p>
+
+                <div class="download-row" style="margin-top: 18px;">
+                    <a
+                        class="download-link"
+                        href="../../data/comparison/labour_cost_comparison_2026.csv"
+                        download
+                    >
+                        Télécharger le jeu de données de comparaison
+                    </a>
+
+                    <a
+                        class="download-link"
+                        href="../../data/comparison/comparison_parameters_2026.json"
+                        download
+                    >
+                        Télécharger les paramètres 2026
+                    </a>
+
+                    <a
+                        class="download-link"
+                        href="../../data/comparison/comparison_sources_2026.json"
+                        download
+                    >
+                        Télécharger les sources 2026
+                    </a>
+                </div>
+
+                <div class="profile-selector profile-selector-grid data-profile-selector">
+                    <div class="selector-field">
+                        <label for="comparison-data-metric-select">
+                            Indicateur affiché
+                        </label>
+
+                        <select id="comparison-data-metric-select">
+                            <option value="net_before_income_tax_monthly_intl_usd" selected>
+                                Net avant impôt (intl $)
+                            </option>
+                            <option value="net_after_income_tax_monthly_intl_usd">
+                                Net après impôt (intl $)
+                            </option>
+                            <option value="employer_cost_monthly_intl_usd">
+                                Coût employeur (intl $)
+                            </option>
+                            <option value="employee_contributions_monthly_intl_usd">
+                                Cotisations salarié (intl $)
+                            </option>
+                            <option value="employer_contributions_monthly_intl_usd">
+                                Cotisations employeur (intl $)
+                            </option>
+                            <option value="social_wedge_before_income_tax_rate">
+                                Coin social avant impôt (taux)
+                            </option>
+                            <option value="total_wedge_after_income_tax_rate">
+                                Coin total après impôt (taux)
+                            </option>
+                            <option value="cost_to_net_before_income_tax_ratio">
+                                Ratio coût / net avant impôt
+                            </option>
+                            <option value="cost_to_net_after_income_tax_ratio">
+                                Ratio coût / net après impôt
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h3>Tableau comparatif</h3>
+
+                <p
+                    class="chart-subtitle"
+                    id="comparison-data-caption"
+                >
+                    —
+                </p>
+
+                <div class="table-wrapper data-table-scroll data-table-panel">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Salaire harmonisé, intl $</th>
+                                <th>France</th>
+                                <th>Allemagne</th>
+                                <th>Belgique</th>
+                                <th>Suisse</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="comparison-data-table-body">
+                        </tbody>
+                    </table>
+                </div>
+
+                <p
+                    class="chart-subtitle"
+                    id="comparison-data-footnote"
+                    style="display: none; margin-top: 10px;"
+                >
+                    * Salaire hypothétique, inférieur au salaire minimum (ou
+                    de référence) national de ce pays à ce point de la
+                    grille harmonisée.
+                </p>
+            </div>
+        </section>
+
+        <section id="tab-methodology" class="tab-content">
+            <div class="method-box">
+                <h2>Méthodologie</h2>
+
+                <p>
+                    Ce module ne redéfinit aucun paramètre national : il
+                    réutilise directement les moteurs de calcul des modules
+                    France, Allemagne, Belgique et Suisse, à des points de
+                    salaire communs.
+                </p>
+
+                <h3>1. Grille de salaires harmonisée</h3>
+
+                <p>
+                    21 points de salaire, de 2 000 à 12 000 dollars
+                    internationaux mensuels par pas de 500. La borne basse est
+                    volontairement fixée sous le plancher de salaire minimum
+                    (ou de référence) des 4 pays, une fois converti en dollars
+                    internationaux, afin que les grilles de salaire les plus
+                    basses restent visibles. Les points de salaire inférieurs
+                    au minimum légal d'un pays sont signalés par un
+                    astérisque (*) dans l'onglet Données : ils représentent
+                    un salaire hypothétique pour ce pays à ce point de la
+                    grille. Les seuils 2024 convertis en dollars
+                    internationaux sont : France (SMIC) environ 2 604,
+                    Suisse environ 2 710, Belgique (RMMMG) environ 2 911,
+                    Allemagne environ 3 434.
+                </p>
+
+                <h3>2. Conversion par parité de pouvoir d'achat</h3>
+
+                <p>
+                    Chaque point de salaire harmonisé est converti dans la
+                    monnaie locale de chaque pays au moyen du facteur de
+                    parité de pouvoir d'achat sur la consommation privée des
+                    ménages (Banque mondiale, Programme de comparaison
+                    internationale, indicateur PA.NUS.PRVT.PP, année de
+                    référence 2024). Ce facteur est appliqué individuellement
+                    aux 4 pays, y compris la Suisse, selon la même logique que
+                    les comparaisons « Taxing Wages » de l'OCDE.
+                </p>
+
+                <h3>3. Calcul direct, sans interpolation</h3>
+
+                <p>
+                    Pour chaque salaire local obtenu, la fonction de calcul
+                    existante du module national correspondant est appelée
+                    directement. Les valeurs ne sont pas obtenues par
+                    interpolation de jeux de données déjà calculés.
+                </p>
+
+                <h3>4. Profils de référence par pays</h3>
+
+                <p>
+                    France : non-cadre, hors Alsace-Moselle, entreprise de
+                    moins de 50 salariés, taux AT/MP standard, temps plein.
+                    Allemagne : assurance maladie publique, sans enfant, hors
+                    Saxe. Belgique : salarié du secteur privé (seul profil
+                    actuellement modélisé). Suisse : moyenne pondérée par la
+                    population des 26 cantons, barème A0N (personne seule,
+                    sans enfant, hors impôt d'église), hypothèses LPP et
+                    assurance accident standardisées.
+                </p>
+
+                <h3>5. Agrégation cantonale suisse</h3>
+
+                <p>
+                    La Suisse ne dispose pas d'un barème fiscal national
+                    unique : l'impôt à la source est fixé au niveau cantonal.
+                    La valeur suisse de référence est donc une moyenne
+                    pondérée par la population résidante permanente 2024 des
+                    26 cantons (Office fédéral de la statistique), et non un
+                    canton unique.
+                </p>
+
+                <h3>6. Limites</h3>
+
+                <p class="method-note">
+                    Le prélèvement à la source français n'est pas modélisé :
+                    son taux dépend de la situation fiscale du foyer et ne
+                    peut pas être déduit d'une simulation générique fondée
+                    sur le seul salaire. Les indicateurs « après impôt » et
+                    les coins fiscaux totaux ne sont donc calculés que pour
+                    l'Allemagne, la Belgique et la Suisse.
+                </p>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

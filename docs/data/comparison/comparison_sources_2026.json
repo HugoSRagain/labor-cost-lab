@@ -1,0 +1,41 @@
+{
+    "module_name": "Cross-Country Labour Cost Comparison",
+    "version": "2026-01",
+    "countries_covered": ["France", "Germany", "Belgium", "Switzerland"],
+    "sources": [
+        {
+            "id": "worldbank_icp_private_consumption_ppp",
+            "institution": "World Bank, International Comparison Program (ICP)",
+            "institution_fr": "Banque mondiale, Programme de comparaison internationale (PCI)",
+            "title": "PPP conversion factor, private consumption (LCU per international $)",
+            "indicator_code": "PA.NUS.PRVT.PP",
+            "url": "https://api.worldbank.org/v2/country/FRA;DEU;BEL;CHE/indicator/PA.NUS.PRVT.PP",
+            "reference_year": 2024,
+            "retrieved": "2026-08-04",
+            "used_for": [
+                "Converting the harmonized wage grid (expressed in international dollars) into each country's local currency",
+                "Converting each country's local-currency outputs back into international dollars for cross-country comparison"
+            ],
+            "status": "official"
+        },
+        {
+            "id": "bfs_permanent_resident_population_by_canton",
+            "institution": "Swiss Federal Statistical Office (Office fédéral de la statistique, BFS/OFS)",
+            "institution_fr": "Office fédéral de la statistique",
+            "title": "Population résidante permanente et non permanente selon Année, Canton et Type de population",
+            "table_id": "px-x-0103010000_101",
+            "url": "https://www.pxweb.bfs.admin.ch/pxweb/fr/px-x-0103010000_101/px-x-0103010000_101/px-x-0103010000_101.px",
+            "reference_year": 2024,
+            "retrieved": "2026-08-04",
+            "used_for": [
+                "Population weights for the 26 Swiss cantons, used to compute a single population-weighted Swiss reference case (Switzerland has no single national withholding-tax schedule)"
+            ],
+            "status": "official"
+        }
+    ],
+    "notes": [
+        "This module reuses each country's own reference dataset (France: Mon-entreprise/Publicodes engine; Germany: analysis/germany; Belgium: analysis/belgium; Switzerland: analysis/switzerland) and does not redefine any country-level parameter.",
+        "See docs/data/comparison/comparison_parameters_2026.json for the harmonized wage grid, the exact PPP values used, the reference profile chosen per country, and the Swiss canton population figures.",
+        "France's personal income tax (prélèvement à la source) is not modeled in this comparison for the same reason it is not modeled in the France module itself: its rate depends on the household's personal tax situation and cannot be derived from a generic wage-only simulation. Germany, Belgium and Switzerland's income-tax withholdings are computed directly from the wage and are included."
+    ]
+}
