@@ -38,14 +38,14 @@
             "url": "https://www.estv.admin.ch/fr/baremes-impot-a-la-source-importation-systemes-de-comptabilite-salariale",
             "used_for": [
                 "Canton-level withholding-tax tables",
-                "Future integration of net after withholding tax by canton"
+                "Net after withholding tax by canton, tariff A0"
             ],
             "status": "official"
         }
     ],
     "notes": [
         "The first Swiss prototype separates national social contributions from canton-level fiscal parameters.",
-        "Withholding-tax integration will be implemented in a second step using official cantonal files.",
+        "Withholding-tax integration is implemented using the official cantonal tariff files (tariff A0, 2026 edition). The tax rate is read directly from the fixed-width tariff records; see analysis/switzerland/swiss_withholding_tax_2026.py for the field layout.",
         "The module uses benchmark assumptions for occupational pension and accident insurance because actual employer schemes vary."
     ]
 }
