@@ -29,9 +29,9 @@ const TEXT = {
         decomp_theoretical_cost: "Coût avant allègements",
         decomp_gross_wage: "Salaire brut",
         rgdu_zone: "RGDU 2026<br>zone dégressive",
-        flcl_e: "FLCL-E",
-        flcl_b: "FLCL-B",
-        flcl_r: "FLCL-R",
+        flcl_e: "Lab-E",
+        flcl_b: "Lab-B",
+        flcl_r: "Lab-R",
         flcl_e_desc: "de salaire net pour 100 € de coût employeur",
         flcl_b_desc: "du coût du travail absorbé par les prélèvements",
         flcl_r_desc: "points d’efficacité créés par les allègements généraux"
@@ -62,9 +62,9 @@ const TEXT = {
         decomp_theoretical_cost: "Cost before reliefs",
         decomp_gross_wage: "Gross wage",
         rgdu_zone: "RGDU 2026<br>degressive area",
-        flcl_e: "FLCL-E",
-        flcl_b: "FLCL-B",
-        flcl_r: "FLCL-R",
+        flcl_e: "Lab-E",
+        flcl_b: "Lab-B",
+        flcl_r: "Lab-R",
         flcl_e_desc: "of net wage for €100 of employer cost",
         flcl_b_desc: "of labour cost absorbed by contributions",
         flcl_r_desc: "efficiency points created by contribution reliefs"
@@ -2090,14 +2090,14 @@ function renderFlclIndex(data, lang) {
 
     if (progressivityCaption) {
         progressivityCaption.textContent = lang === "fr"
-            ? "Variation locale de FLCL-E autour de 1 SMIC."
-            : "Local change in FLCL-E around 1 SMIC.";
+            ? "Variation locale de Lab-E autour de 1 SMIC."
+            : "Local change in Lab-E around 1 SMIC.";
     }
 
     if (supportCaption) {
         supportCaption.textContent = lang === "fr"
-            ? "Écart FLCL-E entre 1 SMIC et 3 SMIC."
-            : "FLCL-E gap between 1 SMIC and 3 SMIC.";
+            ? "Écart Lab-E entre 1 SMIC et 3 SMIC."
+            : "Lab-E gap between 1 SMIC and 3 SMIC.";
     }
 }
 
@@ -2130,7 +2130,7 @@ function renderFlclRgduEffectChart(data, lang) {
                 color: COLORS.red,
                 width: 3
             },
-            name: "FLCL-R",
+            name: "Lab-R",
             type: "scatter"
         }
     ];
@@ -2256,8 +2256,8 @@ function renderFlclProgressivityChart(data, lang) {
             hovertemplate:
                 "<b>%{x:.2f}× SMIC</b><br>" +
                 (lang === "fr"
-                    ? "Variation de FLCL-E"
-                    : "Change in FLCL-E") +
+                    ? "Variation de Lab-E"
+                    : "Change in Lab-E") +
                 ": %{y:.2f} points / SMIC" +
                 "<extra></extra>",
             type: "scatter"
@@ -2269,8 +2269,8 @@ function renderFlclProgressivityChart(data, lang) {
         baseLayout(
             lang,
             lang === "fr"
-                ? "Points de FLCL-E par SMIC"
-                : "FLCL-E points per SMIC"
+                ? "Points de Lab-E par SMIC"
+                : "Lab-E points per SMIC"
         ),
         lang,
         rgduZone.x0,

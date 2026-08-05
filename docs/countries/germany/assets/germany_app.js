@@ -1037,6 +1037,308 @@ function renderGermany(lang) {
     renderGermanyDataTable(lang);
 }
 
+function computeGermanyFlclIndicators(row) {
+    const net = deNum(row.net_before_income_tax_monthly_eur);
+    const employerCost = deNum(row.employer_cost_monthly_eur);
+
+    const flclE = employerCost > 0 ? 100 * net / employerCost : 0;
+    const flclB = 100 - flclE;
+
+    return {
+        flclE,
+        flclB
+    };
+}
+
+function renderGermanyFlclIndexCards(lang) {
+    const t = getI18nText(lang);
+    const data = getGermanyProfileData(lang);
+
+    if (!data.length) {
+        return;
+    }
+
+    const row = findGermanyClosestRow(data, 1.0);
+    const indicators = computeGermanyFlclIndicators(row);
+
+    setTextContentById("germany-flcl-e-value-" + lang, indicators.flclE.toFixed(1));
+    setTextContentById("germany-flcl-b-value-" + lang, indicators.flclB.toFixed(1));
+
+    setTextContentById("germany-flcl-e-caption-" + lang, indicators.flclE.toFixed(1) + " € " + t.flcl_e_desc);
+    setTextContentById("germany-flcl-b-caption-" + lang, indicators.flclB.toFixed(1) + " % " + t.flcl_b_desc);
+}
+
+function renderGermanyFlclMarginalCards(lang) {
+    const t = getI18nText(lang);
+    const data = getGermanyProfileData(lang);
+
+    if (!data.length) {
+        return;
+    }
+
+    const marginalRows = [];
+
+    for (let i = 1; i < data.length; i++) {
+        const deltaNet = deNum(data[i].net_before_income_tax_monthly_eur) - deNum(data[i - 1].net_before_income_tax_monthly_eur);
+        const deltaCost = deNum(data[i].employer_cost_monthly_eur) - deNum(data[i - 1].employer_cost_monthly_eur);
+        const deltaMultiple = deNum(data[i].smic_multiple) - deNum(data[i - 1].smic_multiple);
+
+        if (deltaCost !== 0 && deltaMultiple !== 0) {
+            const current = computeGermanyFlclIndicators(data[i]);
+            const previous = computeGermanyFlclIndicators(data[i - 1]);
+
+            marginalRows.push({
+                smic_multiple: deNum(data[i].smic_multiple),
+                transmission: deltaNet / deltaCost,
+                capture: 1 - deltaNet / deltaCost,
+                progressivity: (current.flclE - previous.flclE) / deltaMultiple
+            });
+        }
+    }
+
+    const rowAtOne = marginalRows.length ? findGermanyClosestRow(marginalRows, 1.0) : null;
+    const oneRow = findGermanyClosestRow(data, 1.0);
+    const threeRow = findGermanyClosestRow(data, 3.0);
+
+    const support = (oneRow && threeRow)
+        ? computeGermanyFlclIndicators(oneRow).flclE - computeGermanyFlclIndicators(threeRow).flclE
+        : 0;
+
+    setTextContentById("germany-flcl-transmission-value-" + lang, rowAtOne ? (rowAtOne.transmission * 100).toFixed(1) + "%" : "—");
+    setTextContentById("germany-flcl-capture-value-" + lang, rowAtOne ? (rowAtOne.capture * 100).toFixed(1) + "%" : "—");
+    setTextContentById("germany-flcl-progressivity-value-" + lang, rowAtOne ? rowAtOne.progressivity.toFixed(1) + " pts" : "—");
+    setTextContentById("germany-flcl-support-value-" + lang, support.toFixed(1) + " pts");
+
+    setTextContentById("germany-flcl-transmission-caption-" + lang, t.marginal_transmission_desc);
+    setTextContentById("germany-flcl-capture-caption-" + lang, t.marginal_capture_desc);
+    setTextContentById("germany-flcl-progressivity-caption-" + lang, t.implicit_progressivity_desc);
+    setTextContentById("germany-flcl-support-caption-" + lang, t.low_wage_support_desc);
+}
+
+function renderGermanyFlclEChart(lang) {
+    const t = getI18nText(lang);
+    const data = getGermanyProfileData(lang);
+
+    const traces = [
+        {
+            x: data.map(row => deNum(row.smic_multiple)),
+            y: data.map(row => computeGermanyFlclIndicators(row).flclE),
+            type: "scatter",
+            mode: "lines",
+            name: t.flcl_e,
+            line: {
+                color: GERMANY_COLORS.orange,
+                width: 3
+            }
+        }
+    ];
+
+    let layout = germanyBaseLayout(lang, t.flcl_e);
+    layout = addGermanyEmploymentZones(layout, lang);
+    layout = addGermanyCeilingLines(layout);
+
+    germanyPlot("chart-germany-flcl-e-" + lang, traces, layout);
+}
+
+function renderGermanyFlclMarginalChart(lang) {
+    const t = getI18nText(lang);
+    const data = getGermanyProfileData(lang);
+
+    const x = [];
+    const transmission = [];
+    const capture = [];
+
+    for (let i = 1; i < data.length; i++) {
+        const deltaNet = deNum(data[i].net_before_income_tax_monthly_eur) - deNum(data[i - 1].net_before_income_tax_monthly_eur);
+        const deltaCost = deNum(data[i].employer_cost_monthly_eur) - deNum(data[i - 1].employer_cost_monthly_eur);
+
+        if (deltaCost === 0) {
+            continue;
+        }
+
+        const transmissionRate = deltaNet / deltaCost;
+
+        x.push(deNum(data[i].smic_multiple));
+        transmission.push(transmissionRate * 100);
+        capture.push((1 - transmissionRate) * 100);
+    }
+
+    const traces = [
+        {
+            x: x,
+            y: transmission,
+            mode: "lines",
+            name: t.marginal_transmission,
+            line: {
+                color: GERMANY_COLORS.green,
+                width: 3
+            }
+        },
+        {
+            x: x,
+            y: capture,
+            mode: "lines",
+            name: t.marginal_capture,
+            line: {
+                color: GERMANY_COLORS.red,
+                width: 3
+            }
+        }
+    ];
+
+    let layout = germanyBaseLayout(lang, "%");
+    layout = addGermanyEmploymentZones(layout, lang);
+    layout = addGermanyCeilingLines(layout);
+    layout.yaxis.ticksuffix = "%";
+
+    germanyPlot("chart-germany-flcl-marginal-" + lang, traces, layout);
+}
+
+function renderGermanyFlclProgressivityChart(lang) {
+    const t = getI18nText(lang);
+    const data = getGermanyProfileData(lang);
+
+    const x = [];
+    const progressivity = [];
+
+    for (let i = 1; i < data.length; i++) {
+        const current = computeGermanyFlclIndicators(data[i]);
+        const previous = computeGermanyFlclIndicators(data[i - 1]);
+        const deltaMultiple = deNum(data[i].smic_multiple) - deNum(data[i - 1].smic_multiple);
+
+        if (deltaMultiple === 0) {
+            continue;
+        }
+
+        x.push(deNum(data[i].smic_multiple));
+        progressivity.push((current.flclE - previous.flclE) / deltaMultiple);
+    }
+
+    const traces = [
+        {
+            x: x,
+            y: progressivity,
+            mode: "lines",
+            name: t.implicit_progressivity,
+            line: {
+                color: GERMANY_COLORS.purple,
+                width: 3
+            }
+        }
+    ];
+
+    let layout = germanyBaseLayout(
+        lang,
+        lang === "en" ? "Lab-E points per minimum wage" : "Points de Lab-E par salaire minimum"
+    );
+    layout = addGermanyEmploymentZones(layout, lang);
+    layout = addGermanyCeilingLines(layout);
+
+    layout.shapes = (layout.shapes || []).concat([{
+        type: "line",
+        xref: "paper",
+        yref: "y",
+        x0: 0,
+        x1: 1,
+        y0: 0,
+        y1: 0,
+        line: {
+            color: GERMANY_COLORS.gray,
+            dash: "dash",
+            width: 1.5
+        }
+    }]);
+
+    germanyPlot("chart-germany-flcl-progressivity-" + lang, traces, layout);
+}
+
+function renderGermanyFlclMarginalDestinationChart(lang) {
+    const data = getGermanyProfileData(lang);
+
+    const x = [];
+    const netShare = [];
+    const employeeShare = [];
+    const employerShare = [];
+
+    for (let i = 1; i < data.length; i++) {
+        const deltaCost = deNum(data[i].employer_cost_monthly_eur) - deNum(data[i - 1].employer_cost_monthly_eur);
+
+        if (deltaCost === 0) {
+            continue;
+        }
+
+        const deltaNet = deNum(data[i].net_before_income_tax_monthly_eur) - deNum(data[i - 1].net_before_income_tax_monthly_eur);
+        const deltaEmployee = deNum(data[i].employee_contributions_monthly_eur) - deNum(data[i - 1].employee_contributions_monthly_eur);
+        const deltaEmployer = deNum(data[i].employer_contributions_monthly_eur) - deNum(data[i - 1].employer_contributions_monthly_eur);
+
+        x.push(deNum(data[i].smic_multiple));
+        netShare.push(100 * deltaNet / deltaCost);
+        employeeShare.push(100 * deltaEmployee / deltaCost);
+        employerShare.push(100 * deltaEmployer / deltaCost);
+    }
+
+    const traces = [
+        {
+            x: x,
+            y: netShare,
+            type: "scatter",
+            mode: "lines",
+            stackgroup: "one",
+            name: lang === "en" ? "Net wage" : "Salaire net",
+            line: {
+                color: GERMANY_COLORS.orange,
+                width: 2
+            }
+        },
+        {
+            x: x,
+            y: employeeShare,
+            type: "scatter",
+            mode: "lines",
+            stackgroup: "one",
+            name: lang === "en" ? "Employee contributions" : "Cotisations salarié",
+            line: {
+                color: GERMANY_COLORS.teal,
+                width: 2
+            }
+        },
+        {
+            x: x,
+            y: employerShare,
+            type: "scatter",
+            mode: "lines",
+            stackgroup: "one",
+            name: lang === "en" ? "Employer contributions" : "Cotisations employeur",
+            line: {
+                color: GERMANY_COLORS.blue,
+                width: 2
+            }
+        }
+    ];
+
+    let layout = germanyBaseLayout(
+        lang,
+        lang === "en"
+            ? "Marginal destination of one additional euro, %"
+            : "Destination marginale d’un euro supplémentaire, %"
+    );
+    layout = addGermanyEmploymentZones(layout, lang);
+
+    layout.yaxis.ticksuffix = "%";
+    layout.yaxis.range = [0, 100];
+
+    germanyPlot("chart-germany-flcl-destination-" + lang, traces, layout);
+}
+
+function renderGermanyFlclIndex(lang) {
+    renderGermanyFlclIndexCards(lang);
+    renderGermanyFlclMarginalCards(lang);
+    renderGermanyFlclEChart(lang);
+    renderGermanyFlclMarginalChart(lang);
+    renderGermanyFlclProgressivityChart(lang);
+    renderGermanyFlclMarginalDestinationChart(lang);
+}
+
 function germanyOnTabShow(lang, tabName) {
     if (tabName === "simulation") {
         renderGermany(lang);
@@ -1044,6 +1346,10 @@ function germanyOnTabShow(lang, tabName) {
 
     if (tabName === "data") {
         renderGermanyDataTable(lang);
+    }
+
+    if (tabName === "flcl-index") {
+        renderGermanyFlclIndex(lang);
     }
 }
 
@@ -1074,6 +1380,7 @@ function setupGermanyEvents() {
         if (profileSelect) {
             profileSelect.addEventListener("change", function() {
                 renderGermany(lang);
+                renderGermanyFlclIndex(lang);
             });
         }
 
@@ -1096,6 +1403,10 @@ function setupGermanyEvents() {
                     renderGermanyContributionRateChart(lang);
                     renderGermanyWedgeChart(lang);
                     renderGermanyFiscalReturnChart(lang);
+                    renderGermanyFlclEChart(lang);
+                    renderGermanyFlclMarginalChart(lang);
+                    renderGermanyFlclProgressivityChart(lang);
+                    renderGermanyFlclMarginalDestinationChart(lang);
                 });
             }
         });

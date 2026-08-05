@@ -9,8 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
     <link rel="stylesheet" href="../../assets/style.css?v=27">
-    <script defer src="../../assets/i18n_common.js?v=1"></script>
-    <script defer src="./assets/uk_app.js?v=1"></script>
+    <script defer src="../../assets/i18n_common.js?v=3"></script>
+    <script defer src="./assets/uk_app.js?v=3"></script>
 </head>
 
 <body>
@@ -88,6 +88,10 @@
             <nav class="tabs" aria-label="Navigation Royaume-Uni">
                 <button class="tab-button active" data-tab="simulation" onclick="showUkTab('fr', 'simulation')">
                     Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showUkTab('fr', 'flcl-index')">
+                    Indice du Lab
                 </button>
 
                 <button class="tab-button" data-tab="data" onclick="showUkTab('fr', 'data')">
@@ -302,6 +306,94 @@
                 </section>
             </section>
 
+            <section id="tab-fr-flcl-index" class="tab-content">
+                <section class="chart-card">
+                    <h2>Indice du Lab</h2>
+                    <p class="chart-subtitle">
+                        Indicateurs d’efficacité salariale du coût du travail.
+                    </p>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-E</span>
+                            <strong id="uk-flcl-e-value-fr">—</strong>
+                            <span class="metric-note" id="uk-flcl-e-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-B</span>
+                            <strong id="uk-flcl-b-value-fr">—</strong>
+                            <span class="metric-note" id="uk-flcl-b-caption-fr"></span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Transmission marginale</span>
+                            <strong id="uk-flcl-transmission-value-fr">—</strong>
+                            <span class="metric-note" id="uk-flcl-transmission-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Captation marginale</span>
+                            <strong id="uk-flcl-capture-value-fr">—</strong>
+                            <span class="metric-note" id="uk-flcl-capture-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Progressivité implicite</span>
+                            <strong id="uk-flcl-progressivity-value-fr">—</strong>
+                            <span class="metric-note" id="uk-flcl-progressivity-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Soutien bas salaires</span>
+                            <strong id="uk-flcl-support-value-fr">—</strong>
+                            <span class="metric-note" id="uk-flcl-support-caption-fr"></span>
+                        </div>
+                    </div>
+
+                    <p class="method-note" style="margin-top: 16px;">
+                        Aucun allègement employeur ciblé et dégressif n’est modélisé pour
+                        le Royaume-Uni : l’indicateur Lab-R ne s’applique donc pas ici.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Indice du Lab</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × salaire net avant impôt / coût employeur.
+                        </p>
+                        <div id="chart-uk-flcl-e-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Transmission marginale</h3>
+                        <p class="chart-subtitle">
+                            Part d’une livre supplémentaire de coût employeur allant au salarié net.
+                        </p>
+                        <div id="chart-uk-flcl-marginal-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Progressivité implicite</h3>
+                        <p class="chart-subtitle">
+                            Variation de Lab-E lorsque le niveau de salaire augmente.
+                        </p>
+                        <div id="chart-uk-flcl-progressivity-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Destination marginale d’une livre supplémentaire de coût employeur</h3>
+                        <p class="chart-subtitle">
+                            Répartition marginale entre salaire net, cotisations salarié et cotisations employeur.
+                        </p>
+                        <div id="chart-uk-flcl-destination-fr" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </section>
+
             <section id="tab-fr-data" class="tab-content">
                 <div class="chart-card">
                     <h3>Données</h3>
@@ -488,7 +580,17 @@
                         </li>
                     </ul>
 
-                    <h3>5. Limites du scénario</h3>
+                    <h3>5. Indice du Lab</h3>
+
+                    <p>
+                        L'Indice du Lab mesure l'efficacité salariale du coût du travail,
+                        indépendamment de l'impôt sur le revenu. Lab-E = 100 × salaire net
+                        avant impôt / coût employeur, Lab-B = 100 − Lab-E. Aucun
+                        allègement employeur ciblé et dégressif n'est modélisé pour le
+                        Royaume-Uni : l'indicateur Lab-R ne s'applique donc pas ici.
+                    </p>
+
+                    <h3>6. Limites du scénario</h3>
 
                     <p class="method-note">
                         Le module ne simule pas le barème écossais de l'impôt sur
@@ -570,6 +672,10 @@
             <nav class="tabs" aria-label="United Kingdom navigation">
                 <button class="tab-button active" data-tab="simulation" onclick="showUkTab('en', 'simulation')">
                     Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showUkTab('en', 'flcl-index')">
+                    Lab Index
                 </button>
 
                 <button class="tab-button" data-tab="data" onclick="showUkTab('en', 'data')">
@@ -784,6 +890,94 @@
                 </section>
             </section>
 
+            <section id="tab-en-flcl-index" class="tab-content">
+                <section class="chart-card">
+                    <h2>Lab Index</h2>
+                    <p class="chart-subtitle">
+                        Labour cost efficiency indicators.
+                    </p>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-E</span>
+                            <strong id="uk-flcl-e-value-en">—</strong>
+                            <span class="metric-note" id="uk-flcl-e-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-B</span>
+                            <strong id="uk-flcl-b-value-en">—</strong>
+                            <span class="metric-note" id="uk-flcl-b-caption-en"></span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Marginal transmission</span>
+                            <strong id="uk-flcl-transmission-value-en">—</strong>
+                            <span class="metric-note" id="uk-flcl-transmission-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Marginal capture</span>
+                            <strong id="uk-flcl-capture-value-en">—</strong>
+                            <span class="metric-note" id="uk-flcl-capture-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Implicit progressivity</span>
+                            <strong id="uk-flcl-progressivity-value-en">—</strong>
+                            <span class="metric-note" id="uk-flcl-progressivity-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Low-wage support</span>
+                            <strong id="uk-flcl-support-value-en">—</strong>
+                            <span class="metric-note" id="uk-flcl-support-caption-en"></span>
+                        </div>
+                    </div>
+
+                    <p class="method-note" style="margin-top: 16px;">
+                        No targeted, degressive employer relief is modeled for the United
+                        Kingdom: the Lab-R indicator does not apply here.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Lab Index</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × net wage before income tax / employer cost.
+                        </p>
+                        <div id="chart-uk-flcl-e-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal transmission</h3>
+                        <p class="chart-subtitle">
+                            Share of one additional pound of employer cost reaching net wage.
+                        </p>
+                        <div id="chart-uk-flcl-marginal-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Implicit progressivity</h3>
+                        <p class="chart-subtitle">
+                            Change in Lab-E when the wage level increases.
+                        </p>
+                        <div id="chart-uk-flcl-progressivity-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal destination of one additional pound of employer cost</h3>
+                        <p class="chart-subtitle">
+                            Marginal split between net wage, employee contributions and employer contributions.
+                        </p>
+                        <div id="chart-uk-flcl-destination-en" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </section>
+
             <section id="tab-en-data" class="tab-content">
                 <div class="chart-card">
                     <h3>Data</h3>
@@ -965,7 +1159,17 @@
                         </li>
                     </ul>
 
-                    <h3>5. Limits of the scenario</h3>
+                    <h3>5. Lab Index</h3>
+
+                    <p>
+                        The Lab Index measures the wage efficiency of labour cost,
+                        independently of income tax. Lab-E = 100 × net wage before income
+                        tax / employer cost, Lab-B = 100 − Lab-E. No targeted, degressive
+                        employer relief is modeled for the United Kingdom: the Lab-R
+                        indicator therefore does not apply here.
+                    </p>
+
+                    <h3>6. Limits of the scenario</h3>
 
                     <p class="method-note">
                         The module does not simulate the Scottish income-tax

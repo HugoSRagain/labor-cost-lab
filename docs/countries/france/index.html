@@ -14,7 +14,7 @@
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <link rel="stylesheet" href="../../assets/style.css?v=19">
-    <script defer src="../../assets/app.js?v=10"></script>
+    <script defer src="../../assets/app.js?v=11"></script>
 </head>
 <body>
 
@@ -46,7 +46,7 @@
             <nav class="tabs" aria-label="Dashboard sections">
                 <button class="tab-button active" data-tab="simulation" onclick="showTab('en', 'simulation')">Simulation</button>
                 <button class="tab-button" data-tab="comparisons" onclick="showTab('en', 'comparisons')">Comparisons</button>
-                <button class="tab-button" data-tab="flcl-index" onclick="showTab('en', 'flcl-index')">FLCL Index</button>
+                <button class="tab-button" data-tab="flcl-index" onclick="showTab('en', 'flcl-index')">Lab Index</button>
                 <button class="tab-button" data-tab="data" onclick="showTab('en', 'data')">Data</button>
                 <button class="tab-button" data-tab="methodology" onclick="showTab('en', 'methodology')">Methodology</button>
                 <button class="tab-button" data-tab="contact" onclick="showTab('en', 'contact')">Contact</button>
@@ -772,7 +772,7 @@
 
             <div class="tab-panel" id="tab-en-flcl-index">
                 <section class="chart-card">
-                    <h2>FLCL Index</h2>
+                    <h2>Lab Index</h2>
                     <p class="chart-subtitle">
                         Labour cost efficiency indicators.
                     </p>
@@ -825,19 +825,19 @@
                     <div id="flcl-index-container-en">
                         <div class="metrics-grid" style="margin-top: 24px;">
                             <div class="metric-card">
-                                <div class="metric-label">FLCL Index · E</div>
+                                <div class="metric-label">Lab-E</div>
                                 <div class="metric-value" id="flcl-e-value-en">—</div>
                                 <div class="metric-caption" id="flcl-e-caption-en"></div>
                             </div>
 
                             <div class="metric-card">
-                                <div class="metric-label">FLCL Index · B</div>
+                                <div class="metric-label">Lab-B</div>
                                 <div class="metric-value" id="flcl-b-value-en">—</div>
                                 <div class="metric-caption" id="flcl-b-caption-en"></div>
                             </div>
 
                             <div class="metric-card">
-                                <div class="metric-label">FLCL Index · R</div>
+                                <div class="metric-label">Lab-R</div>
                                 <div class="metric-value" id="flcl-r-value-en">—</div>
                                 <div class="metric-caption" id="flcl-r-caption-en"></div>
                             </div>
@@ -870,15 +870,15 @@
                         </div>
 
                         <div class="chart-card chart-card-full" style="margin-top: 22px;">
-                            <h3>FLCL Index</h3>
+                            <h3>Lab Index</h3>
                             <p class="chart-subtitle">
-                                FLCL-E = 100 × net wage / employer cost.
+                                Lab-E = 100 × net wage / employer cost.
                             </p>
                             <div id="chart-flcl-e-en" class="plotly-chart lazy-chart"></div>
                         </div>
 
                         <div class="chart-card chart-card-full" style="margin-top: 22px;">
-                            <h3>FLCL-R</h3>
+                            <h3>Lab-R</h3>
                             <p class="chart-subtitle">
                                 Effect of general contribution reliefs on wage efficiency.
                             </p>
@@ -896,7 +896,7 @@
                         <div class="chart-card chart-card-full" style="margin-top: 22px;">
                             <h3>Implicit progressivity</h3>
                             <p class="chart-subtitle">
-                                Change in FLCL-E when the wage level increases.
+                                Change in Lab-E when the wage level increases.
                             </p>
                             <div id="chart-flcl-progressivity-en" class="plotly-chart lazy-chart"></div>
                         </div>
@@ -1100,7 +1100,7 @@
             <nav class="tabs" aria-label="Dashboard sections">
                 <button class="tab-button active" data-tab="simulation" onclick="showTab('fr', 'simulation')">Simulation</button>
                 <button class="tab-button" data-tab="comparisons" onclick="showTab('fr', 'comparisons')">Comparaisons</button>
-                			 <button class="tab-button" data-tab="flcl-index" onclick="showTab('fr', 'flcl-index')">Indice FLCL</button>
+                			 <button class="tab-button" data-tab="flcl-index" onclick="showTab('fr', 'flcl-index')">Indice du Lab</button>
                 <button class="tab-button" data-tab="data" onclick="showTab('fr', 'data')">Données</button>
                 <button class="tab-button" data-tab="methodology" onclick="showTab('fr', 'methodology')">Méthodologie</button>
                 <button class="tab-button" data-tab="contact" onclick="showTab('fr', 'contact')">Contact</button>
@@ -1827,7 +1827,7 @@
 
             <div class="tab-panel" id="tab-fr-flcl-index">
                 <section class="chart-card">
-                    <h2>Indice FLCL</h2>
+                    <h2>Indice du Lab</h2>
                     <p class="chart-subtitle">
                         Indicateurs d’efficacité salariale du coût du travail.
                     </p>
@@ -1880,19 +1880,19 @@
                     <div id="flcl-index-container-fr">
                         <div class="metrics-grid" style="margin-top: 24px;">
                             <div class="metric-card">
-                                <div class="metric-label">Indice FLCL · E</div>
+                                <div class="metric-label">Lab-E</div>
                                 <div class="metric-value" id="flcl-e-value-fr">—</div>
                                 <div class="metric-caption" id="flcl-e-caption-fr"></div>
                             </div>
 
                             <div class="metric-card">
-                                <div class="metric-label">Indice FLCL · B</div>
+                                <div class="metric-label">Lab-B</div>
                                 <div class="metric-value" id="flcl-b-value-fr">—</div>
                                 <div class="metric-caption" id="flcl-b-caption-fr"></div>
                             </div>
 
                             <div class="metric-card">
-                                <div class="metric-label">Indice FLCL · R</div>
+                                <div class="metric-label">Lab-R</div>
                                 <div class="metric-value" id="flcl-r-value-fr">—</div>
                                 <div class="metric-caption" id="flcl-r-caption-fr"></div>
                             </div>
@@ -1925,15 +1925,15 @@
                         </div>
 
                         <div class="chart-card chart-card-full" style="margin-top: 22px;">
-                            <h3>Indice FLCL</h3>
+                            <h3>Indice du Lab</h3>
                             <p class="chart-subtitle">
-                                FLCL-E = 100 × salaire net / coût employeur.
+                                Lab-E = 100 × salaire net / coût employeur.
                             </p>
                             <div id="chart-flcl-e-fr" class="plotly-chart lazy-chart"></div>
                         </div>
 
                         <div class="chart-card chart-card-full" style="margin-top: 22px;">
-                            <h3>FLCL-R</h3>
+                            <h3>Lab-R</h3>
                             <p class="chart-subtitle">
                                 Effet des allègements généraux sur l’efficacité salariale.
                             </p>
@@ -1951,7 +1951,7 @@
                         <div class="chart-card chart-card-full" style="margin-top: 22px;">
                             <h3>Progressivité implicite</h3>
                             <p class="chart-subtitle">
-                                Variation de FLCL-E lorsque le niveau de salaire augmente.
+                                Variation de Lab-E lorsque le niveau de salaire augmente.
                             </p>
                             <div id="chart-flcl-progressivity-fr" class="plotly-chart lazy-chart"></div>
                         </div>

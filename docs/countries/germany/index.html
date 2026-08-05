@@ -9,8 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
     <link rel="stylesheet" href="../../assets/style.css?v=19">
-    <script defer src="../../assets/i18n_common.js?v=1"></script>
-    <script defer src="./assets/germany_app.js?v=19"></script>
+    <script defer src="../../assets/i18n_common.js?v=3"></script>
+    <script defer src="./assets/germany_app.js?v=21"></script>
 </head>
 
 <body>
@@ -55,6 +55,10 @@
             <nav class="tabs">
                 <button class="tab-button active" data-tab="simulation" onclick="showGermanyTab('fr', 'simulation')">
                     Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showGermanyTab('fr', 'flcl-index')">
+                    Indice du Lab
                 </button>
 
                 <button class="tab-button" data-tab="data" onclick="showGermanyTab('fr', 'data')">
@@ -301,6 +305,94 @@
                 </section>
             </div>
 
+            <div class="tab-content" id="tab-fr-flcl-index">
+                <section class="chart-card">
+                    <h2>Indice du Lab</h2>
+                    <p class="chart-subtitle">
+                        Indicateurs d’efficacité salariale du coût du travail.
+                    </p>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <div class="metric-label">Lab-E</div>
+                            <div class="metric-value" id="germany-flcl-e-value-fr">—</div>
+                            <div class="metric-note" id="germany-flcl-e-caption-fr"></div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-label">Lab-B</div>
+                            <div class="metric-value" id="germany-flcl-b-value-fr">—</div>
+                            <div class="metric-note" id="germany-flcl-b-caption-fr"></div>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <div class="metric-label">Transmission marginale</div>
+                            <div class="metric-value" id="germany-flcl-transmission-value-fr">—</div>
+                            <div class="metric-note" id="germany-flcl-transmission-caption-fr"></div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-label">Captation marginale</div>
+                            <div class="metric-value" id="germany-flcl-capture-value-fr">—</div>
+                            <div class="metric-note" id="germany-flcl-capture-caption-fr"></div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-label">Progressivité implicite</div>
+                            <div class="metric-value" id="germany-flcl-progressivity-value-fr">—</div>
+                            <div class="metric-note" id="germany-flcl-progressivity-caption-fr"></div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-label">Soutien bas salaires</div>
+                            <div class="metric-value" id="germany-flcl-support-value-fr">—</div>
+                            <div class="metric-note" id="germany-flcl-support-caption-fr"></div>
+                        </div>
+                    </div>
+
+                    <p class="method-note" style="margin-top: 16px;">
+                        Aucun allègement employeur ciblé et dégressif n’est modélisé pour
+                        l’Allemagne : l’indicateur Lab-R ne s’applique donc pas ici.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Indice du Lab</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × salaire net avant impôt / coût employeur.
+                        </p>
+                        <div id="chart-germany-flcl-e-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Transmission marginale</h3>
+                        <p class="chart-subtitle">
+                            Part d’un euro supplémentaire de coût employeur allant au salarié net.
+                        </p>
+                        <div id="chart-germany-flcl-marginal-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Progressivité implicite</h3>
+                        <p class="chart-subtitle">
+                            Variation de Lab-E lorsque le niveau de salaire augmente.
+                        </p>
+                        <div id="chart-germany-flcl-progressivity-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Destination marginale d’un euro supplémentaire de coût employeur</h3>
+                        <p class="chart-subtitle">
+                            Répartition marginale entre salaire net, cotisations salarié et cotisations employeur.
+                        </p>
+                        <div id="chart-germany-flcl-destination-fr" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </div>
+
             <div class="tab-content" id="tab-fr-data">
                 <section>
                     <h2>Données</h2>
@@ -467,6 +559,16 @@
                         </li>
 
                         <li>
+                            <strong>Indice du Lab.</strong>
+                            Lab-E = 100 × salaire net avant impôt / coût employeur mesure
+                            l'efficacité salariale, indépendamment de l'impôt sur le revenu.
+                            Lab-B = 100 − Lab-E mesure la part du coût employeur absorbée
+                            par les cotisations sociales. Aucun allègement employeur ciblé et
+                            dégressif n'est modélisé pour l'Allemagne : l'indicateur Lab-R
+                            ne s'applique donc pas à ce module.
+                        </li>
+
+                        <li>
                             <strong>Limites.</strong>
                             L'assurance maladie privée, l'assurance accident, les conventions
                             collectives, les effets de ménage, les revenus exceptionnels et les
@@ -513,6 +615,10 @@
             <nav class="tabs">
                 <button class="tab-button active" data-tab="simulation" onclick="showGermanyTab('en', 'simulation')">
                     Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showGermanyTab('en', 'flcl-index')">
+                    Lab Index
                 </button>
 
                 <button class="tab-button" data-tab="data" onclick="showGermanyTab('en', 'data')">
@@ -759,6 +865,94 @@
                 </section>
             </div>
 
+            <div class="tab-content" id="tab-en-flcl-index">
+                <section class="chart-card">
+                    <h2>Lab Index</h2>
+                    <p class="chart-subtitle">
+                        Labour cost efficiency indicators.
+                    </p>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <div class="metric-label">Lab-E</div>
+                            <div class="metric-value" id="germany-flcl-e-value-en">—</div>
+                            <div class="metric-note" id="germany-flcl-e-caption-en"></div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-label">Lab-B</div>
+                            <div class="metric-value" id="germany-flcl-b-value-en">—</div>
+                            <div class="metric-note" id="germany-flcl-b-caption-en"></div>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <div class="metric-label">Marginal transmission</div>
+                            <div class="metric-value" id="germany-flcl-transmission-value-en">—</div>
+                            <div class="metric-note" id="germany-flcl-transmission-caption-en"></div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-label">Marginal capture</div>
+                            <div class="metric-value" id="germany-flcl-capture-value-en">—</div>
+                            <div class="metric-note" id="germany-flcl-capture-caption-en"></div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-label">Implicit progressivity</div>
+                            <div class="metric-value" id="germany-flcl-progressivity-value-en">—</div>
+                            <div class="metric-note" id="germany-flcl-progressivity-caption-en"></div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-label">Low-wage support</div>
+                            <div class="metric-value" id="germany-flcl-support-value-en">—</div>
+                            <div class="metric-note" id="germany-flcl-support-caption-en"></div>
+                        </div>
+                    </div>
+
+                    <p class="method-note" style="margin-top: 16px;">
+                        No targeted, degressive employer relief is modeled for Germany:
+                        the Lab-R indicator does not apply here.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Lab Index</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × net wage before income tax / employer cost.
+                        </p>
+                        <div id="chart-germany-flcl-e-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal transmission</h3>
+                        <p class="chart-subtitle">
+                            Share of one additional euro of employer cost reaching net wage.
+                        </p>
+                        <div id="chart-germany-flcl-marginal-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Implicit progressivity</h3>
+                        <p class="chart-subtitle">
+                            Change in Lab-E when the wage level increases.
+                        </p>
+                        <div id="chart-germany-flcl-progressivity-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal destination of one additional euro of employer cost</h3>
+                        <p class="chart-subtitle">
+                            Marginal split between net wage, employee contributions and employer contributions.
+                        </p>
+                        <div id="chart-germany-flcl-destination-en" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </div>
+
             <div class="tab-content" id="tab-en-data">
                 <section>
                     <h2>Data</h2>
@@ -920,6 +1114,16 @@
                             The tax calculation uses the German 2026 PAP in a standardized
                             scenario: Steuerklasse I, public insurance, no Kirchensteuer, no
                             other income, and no exceptional payment.
+                        </li>
+
+                        <li>
+                            <strong>Lab Index.</strong>
+                            Lab-E = 100 × net wage before income tax / employer cost
+                            measures wage efficiency, independently of income tax. Lab-B
+                            = 100 − Lab-E measures the share of employer cost absorbed by
+                            social contributions. No targeted, degressive employer relief
+                            is modeled for Germany: the Lab-R indicator therefore does not
+                            apply to this module.
                         </li>
 
                         <li>

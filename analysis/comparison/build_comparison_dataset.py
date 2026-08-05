@@ -62,6 +62,21 @@ set by the DGFiP from their full household's tax situation (which can
 differ from a single/childless taxpayer's liability), but the amount
 withheld is only an advance on the tax computed here, which is the amount
 definitively due.
+
+FLCL-E (labour cost efficiency index)
+--------------------------------------
+The output column "flcl_e_before_income_tax" is a derived indicator, not a
+country-specific compute-function output: flcl_e_before_income_tax = 100 *
+net_before_income_tax_monthly_intl_usd / employer_cost_monthly_intl_usd, for
+every country and every harmonized wage point. It mirrors the FLCL-E
+indicator already used in each national module's own "FLCL Index" tab (see
+docs/assets/app.js for France, and each country's own *_app.js). As in the
+national modules, this uses "net before income tax" (net of social
+contributions only), so it isolates the social-contribution wedge from
+personal income tax. The Netherlands' flcl_e_before_income_tax is
+structurally inflated for the same reason documented above: loonheffing
+bundles national insurance into the income-tax line, so its "net before
+income tax" is close to its gross wage.
 """
 
 from __future__ import annotations
@@ -849,7 +864,15 @@ def build_dataset() -> pd.DataFrame:
             )
         )
 
-    return pd.DataFrame(rows)
+    dataset = pd.DataFrame(rows)
+
+    dataset["flcl_e_before_income_tax"] = (
+        100
+        * dataset["net_before_income_tax_monthly_intl_usd"]
+        / dataset["employer_cost_monthly_intl_usd"]
+    )
+
+    return dataset
 
 
 def main() -> None:

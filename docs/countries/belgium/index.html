@@ -9,8 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
     <link rel="stylesheet" href="../../assets/style.css?v=26">
-    <script defer src="../../assets/i18n_common.js?v=1"></script>
-    <script defer src="./assets/belgium_app.js?v=9"></script>
+    <script defer src="../../assets/i18n_common.js?v=3"></script>
+    <script defer src="./assets/belgium_app.js?v=11"></script>
 </head>
 
 <body>
@@ -85,6 +85,10 @@
             <nav class="tabs" aria-label="Navigation Belgique">
                 <button class="tab-button active" data-tab="simulation" onclick="showBelgiumTab('fr', 'simulation')">
                     Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showBelgiumTab('fr', 'flcl-index')">
+                    Indice du Lab
                 </button>
 
                 <button class="tab-button" data-tab="data" onclick="showBelgiumTab('fr', 'data')">
@@ -287,6 +291,103 @@
                 </section>
             </section>
 
+            <section id="tab-fr-flcl-index" class="tab-content">
+                <section class="chart-card">
+                    <h2>Indice du Lab</h2>
+                    <p class="chart-subtitle">
+                        Indicateurs d’efficacité salariale du coût du travail.
+                    </p>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-E</span>
+                            <strong id="belgium-flcl-e-value-fr">—</strong>
+                            <span class="metric-note" id="belgium-flcl-e-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-B</span>
+                            <strong id="belgium-flcl-b-value-fr">—</strong>
+                            <span class="metric-note" id="belgium-flcl-b-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-R</span>
+                            <strong id="belgium-flcl-r-value-fr">—</strong>
+                            <span class="metric-note" id="belgium-flcl-r-caption-fr"></span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Transmission marginale</span>
+                            <strong id="belgium-flcl-transmission-value-fr">—</strong>
+                            <span class="metric-note" id="belgium-flcl-transmission-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Captation marginale</span>
+                            <strong id="belgium-flcl-capture-value-fr">—</strong>
+                            <span class="metric-note" id="belgium-flcl-capture-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Progressivité implicite</span>
+                            <strong id="belgium-flcl-progressivity-value-fr">—</strong>
+                            <span class="metric-note" id="belgium-flcl-progressivity-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Soutien bas salaires</span>
+                            <strong id="belgium-flcl-support-value-fr">—</strong>
+                            <span class="metric-note" id="belgium-flcl-support-caption-fr"></span>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Indice du Lab</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × salaire net avant précompte / coût employeur.
+                        </p>
+                        <div id="chart-belgium-flcl-e-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Lab-R</h3>
+                        <p class="chart-subtitle">
+                            Effet de la réduction structurelle employeur sur l’efficacité salariale.
+                        </p>
+                        <div id="chart-belgium-flcl-r-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Transmission marginale</h3>
+                        <p class="chart-subtitle">
+                            Part d’un euro supplémentaire de coût employeur allant au salarié net.
+                        </p>
+                        <div id="chart-belgium-flcl-marginal-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Progressivité implicite</h3>
+                        <p class="chart-subtitle">
+                            Variation de Lab-E lorsque le niveau de salaire augmente.
+                        </p>
+                        <div id="chart-belgium-flcl-progressivity-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Destination marginale d’un euro supplémentaire de coût employeur</h3>
+                        <p class="chart-subtitle">
+                            Répartition marginale entre salaire net, cotisations salarié et cotisations employeur.
+                        </p>
+                        <div id="chart-belgium-flcl-destination-fr" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </section>
+
             <section id="tab-fr-data" class="tab-content">
                 <div class="chart-card">
                     <h3>Données</h3>
@@ -464,7 +565,29 @@
                         </li>
                     </ul>
 
-                    <h3>5. Limites du scénario</h3>
+                    <h3>5. Indice du Lab</h3>
+
+                    <p>
+                        L'Indice du Lab mesure l'efficacité salariale du coût du travail,
+                        indépendamment du précompte professionnel. Lab-E = 100 × salaire
+                        net avant précompte / coût employeur (euros de net pour 100 euros
+                        de coût employeur). Lab-B = 100 − Lab-E (part du coût employeur
+                        absorbée par les cotisations sociales). Lab-R mesure le gain
+                        d'efficacité apporté par la réduction structurelle employeur : il
+                        compare Lab-E au Lab-E qui serait obtenu si le coût employeur
+                        incluait les cotisations employeur avant réduction.
+                    </p>
+
+                    <p class="method-note">
+                        La transmission marginale et la captation marginale mesurent la
+                        part d'un euro supplémentaire de coût employeur qui atteint,
+                        respectivement, le salarié net ou le système socio-fiscal. La
+                        progressivité implicite mesure la variation locale de Lab-E
+                        autour du salaire minimum. Le soutien bas salaires mesure l'écart
+                        de Lab-E entre 1 et 3 fois le salaire minimum.
+                    </p>
+
+                    <h3>6. Limites du scénario</h3>
 
                     <p class="method-note">
                         Le module ne simule pas encore les situations familiales complexes,
@@ -542,6 +665,10 @@
             <nav class="tabs" aria-label="Belgium navigation">
                 <button class="tab-button active" data-tab="simulation" onclick="showBelgiumTab('en', 'simulation')">
                     Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showBelgiumTab('en', 'flcl-index')">
+                    Lab Index
                 </button>
 
                 <button class="tab-button" data-tab="data" onclick="showBelgiumTab('en', 'data')">
@@ -745,6 +872,103 @@
                 </section>
             </section>
 
+            <section id="tab-en-flcl-index" class="tab-content">
+                <section class="chart-card">
+                    <h2>Lab Index</h2>
+                    <p class="chart-subtitle">
+                        Labour cost efficiency indicators.
+                    </p>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-E</span>
+                            <strong id="belgium-flcl-e-value-en">—</strong>
+                            <span class="metric-note" id="belgium-flcl-e-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-B</span>
+                            <strong id="belgium-flcl-b-value-en">—</strong>
+                            <span class="metric-note" id="belgium-flcl-b-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-R</span>
+                            <strong id="belgium-flcl-r-value-en">—</strong>
+                            <span class="metric-note" id="belgium-flcl-r-caption-en"></span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Marginal transmission</span>
+                            <strong id="belgium-flcl-transmission-value-en">—</strong>
+                            <span class="metric-note" id="belgium-flcl-transmission-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Marginal capture</span>
+                            <strong id="belgium-flcl-capture-value-en">—</strong>
+                            <span class="metric-note" id="belgium-flcl-capture-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Implicit progressivity</span>
+                            <strong id="belgium-flcl-progressivity-value-en">—</strong>
+                            <span class="metric-note" id="belgium-flcl-progressivity-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Low-wage support</span>
+                            <strong id="belgium-flcl-support-value-en">—</strong>
+                            <span class="metric-note" id="belgium-flcl-support-caption-en"></span>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Lab Index</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × net wage before withholding tax / employer cost.
+                        </p>
+                        <div id="chart-belgium-flcl-e-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Lab-R</h3>
+                        <p class="chart-subtitle">
+                            Effect of the employer structural reduction on wage efficiency.
+                        </p>
+                        <div id="chart-belgium-flcl-r-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal transmission</h3>
+                        <p class="chart-subtitle">
+                            Share of one additional euro of employer cost reaching net wage.
+                        </p>
+                        <div id="chart-belgium-flcl-marginal-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Implicit progressivity</h3>
+                        <p class="chart-subtitle">
+                            Change in Lab-E when the wage level increases.
+                        </p>
+                        <div id="chart-belgium-flcl-progressivity-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal destination of one additional euro of employer cost</h3>
+                        <p class="chart-subtitle">
+                            Marginal split between net wage, employee contributions and employer contributions.
+                        </p>
+                        <div id="chart-belgium-flcl-destination-en" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </section>
+
             <section id="tab-en-data" class="tab-content">
                 <div class="chart-card">
                     <h3>Data</h3>
@@ -921,7 +1145,29 @@
                         </li>
                     </ul>
 
-                    <h3>5. Limits of the scenario</h3>
+                    <h3>5. Lab Index</h3>
+
+                    <p>
+                        The Lab Index measures the wage efficiency of labour cost,
+                        independently of the withholding tax. Lab-E = 100 × net wage
+                        before withholding tax / employer cost (euros of net pay for 100
+                        euros of employer cost). Lab-B = 100 − Lab-E (share of employer
+                        cost absorbed by social contributions). Lab-R measures the
+                        efficiency gain brought by the employer structural reduction: it
+                        compares Lab-E to the Lab-E that would be obtained if employer
+                        cost included employer contributions before the reduction.
+                    </p>
+
+                    <p class="method-note">
+                        Marginal transmission and marginal capture measure the share of
+                        one additional euro of employer cost that reaches, respectively,
+                        the net wage or the socio-fiscal system. Implicit progressivity
+                        measures the local change in Lab-E around the minimum wage.
+                        Low-wage support measures the Lab-E gap between 1 and 3 times the
+                        minimum wage.
+                    </p>
+
+                    <h3>6. Limits of the scenario</h3>
 
                     <p class="method-note">
                         The module does not yet simulate complex family situations,

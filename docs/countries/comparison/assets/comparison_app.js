@@ -490,6 +490,28 @@ function renderComparisonCostToNetChart(lang) {
 }
 
 
+function renderComparisonFlclEChart(lang) {
+    const traces = COMPARISON_COUNTRY_ORDER.map(countryCode => {
+        const data = getComparisonCountryData(countryCode);
+
+        return comparisonCountryTrace(
+            lang,
+            countryCode,
+            data.map(row => cpNum(row.harmonized_wage_point_intl_usd)),
+            data.map(row => cpNum(row.flcl_e_before_income_tax))
+        );
+    });
+
+    const layout = comparisonBaseLayout(lang, "Lab-E");
+
+    comparisonPlot(
+        "chart-comparison-flcl-e-" + lang,
+        traces,
+        layout
+    );
+}
+
+
 function renderComparisonWedgeChart(lang) {
     const traces = COMPARISON_COUNTRY_ORDER.map(countryCode => {
         const data = getComparisonCountryData(countryCode);
@@ -535,6 +557,22 @@ function formatComparisonMetricValue(metric, value, lang) {
         || metric === "cost_to_net_after_income_tax_ratio"
     ) {
         return ratio(value, lang);
+    }
+
+    if (metric === "flcl_e_before_income_tax") {
+        const number = cpNum(value);
+
+        if (number === null) {
+            return "—";
+        }
+
+        return number.toLocaleString(
+            cpLocale(lang),
+            {
+                minimumFractionDigits: 1,
+                maximumFractionDigits: 1
+            }
+        );
     }
 
     return usd(value, lang);
@@ -636,6 +674,7 @@ function renderComparison(lang) {
     renderComparisonEmployerCostChart(lang);
     renderComparisonCostToNetChart(lang);
     renderComparisonWedgeChart(lang);
+    renderComparisonFlclEChart(lang);
     renderComparisonDataTable(lang);
 }
 

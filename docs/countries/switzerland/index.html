@@ -9,8 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
     <link rel="stylesheet" href="../../assets/style.css?v=27">
-    <script defer src="../../assets/i18n_common.js?v=1"></script>
-    <script defer src="./assets/switzerland_app.js?v=2"></script>
+    <script defer src="../../assets/i18n_common.js?v=3"></script>
+    <script defer src="./assets/switzerland_app.js?v=4"></script>
 </head>
 
 <body>
@@ -83,6 +83,10 @@
             <nav class="tabs" aria-label="Navigation Suisse">
                 <button class="tab-button active" data-tab="simulation" onclick="showSwitzerlandTab('fr', 'simulation')">
                     Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showSwitzerlandTab('fr', 'flcl-index')">
+                    Indice du Lab
                 </button>
 
                 <button class="tab-button" data-tab="data" onclick="showSwitzerlandTab('fr', 'data')">
@@ -282,6 +286,109 @@
                 </section>
             </section>
 
+            <section id="tab-fr-flcl-index" class="tab-content">
+                <section class="chart-card">
+                    <h2>Indice du Lab</h2>
+                    <p class="chart-subtitle">
+                        Indicateurs d’efficacité salariale du coût du travail, pour le
+                        canton sélectionné.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="switzerland-flcl-canton-select-fr">
+                                Canton
+                            </label>
+
+                            <select id="switzerland-flcl-canton-select-fr">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-E</span>
+                            <strong id="switzerland-flcl-e-value-fr">—</strong>
+                            <span class="metric-note" id="switzerland-flcl-e-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-B</span>
+                            <strong id="switzerland-flcl-b-value-fr">—</strong>
+                            <span class="metric-note" id="switzerland-flcl-b-caption-fr"></span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Transmission marginale</span>
+                            <strong id="switzerland-flcl-transmission-value-fr">—</strong>
+                            <span class="metric-note" id="switzerland-flcl-transmission-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Captation marginale</span>
+                            <strong id="switzerland-flcl-capture-value-fr">—</strong>
+                            <span class="metric-note" id="switzerland-flcl-capture-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Progressivité implicite</span>
+                            <strong id="switzerland-flcl-progressivity-value-fr">—</strong>
+                            <span class="metric-note" id="switzerland-flcl-progressivity-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Soutien bas salaires</span>
+                            <strong id="switzerland-flcl-support-value-fr">—</strong>
+                            <span class="metric-note" id="switzerland-flcl-support-caption-fr"></span>
+                        </div>
+                    </div>
+
+                    <p class="method-note" style="margin-top: 16px;">
+                        Aucun allègement employeur ciblé et dégressif n’est modélisé pour
+                        la Suisse : l’indicateur Lab-R ne s’applique donc pas ici. L’axe
+                        des salaires est exprimé en francs suisses bruts absolus (et non en
+                        multiple d’un salaire minimum), car la Suisse ne dispose pas d’un
+                        salaire minimum national unique.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Indice du Lab</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × salaire net avant impôt / coût employeur.
+                        </p>
+                        <div id="chart-switzerland-flcl-e-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Transmission marginale</h3>
+                        <p class="chart-subtitle">
+                            Part d’un franc supplémentaire de coût employeur allant au salarié net.
+                        </p>
+                        <div id="chart-switzerland-flcl-marginal-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Progressivité implicite</h3>
+                        <p class="chart-subtitle">
+                            Variation de Lab-E lorsque le niveau de salaire augmente.
+                        </p>
+                        <div id="chart-switzerland-flcl-progressivity-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Destination marginale d’un franc supplémentaire de coût employeur</h3>
+                        <p class="chart-subtitle">
+                            Répartition marginale entre salaire net, cotisations salarié et cotisations employeur.
+                        </p>
+                        <div id="chart-switzerland-flcl-destination-fr" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </section>
+
             <section id="tab-fr-data" class="tab-content">
                 <div class="chart-card">
                     <h3>Données</h3>
@@ -411,7 +518,20 @@
                         l'autre.
                     </p>
 
-                    <h3>5. Limites</h3>
+                    <h3>5. Indice du Lab</h3>
+
+                    <p>
+                        L'Indice du Lab mesure l'efficacité salariale du coût du travail,
+                        canton par canton. Lab-E = 100 × salaire net avant impôt / coût
+                        employeur, Lab-B = 100 − Lab-E. Aucun allègement employeur ciblé
+                        et dégressif n'est modélisé pour la Suisse : l'indicateur Lab-R ne
+                        s'applique donc pas ici. Faute de salaire minimum national unique,
+                        l'axe des salaires est exprimé en francs bruts absolus plutôt qu'en
+                        multiple d'un salaire de référence ; le soutien bas salaires
+                        compare les valeurs à 3 000 et 9 000 CHF bruts.
+                    </p>
+
+                    <h3>6. Limites</h3>
 
                     <p class="method-note">
                         Cette version ne simule pas encore l'impôt ordinaire cantonal et
@@ -484,6 +604,10 @@
             <nav class="tabs" aria-label="Switzerland navigation">
                 <button class="tab-button active" data-tab="simulation" onclick="showSwitzerlandTab('en', 'simulation')">
                     Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showSwitzerlandTab('en', 'flcl-index')">
+                    Lab Index
                 </button>
 
                 <button class="tab-button" data-tab="data" onclick="showSwitzerlandTab('en', 'data')">
@@ -682,6 +806,108 @@
                 </section>
             </section>
 
+            <section id="tab-en-flcl-index" class="tab-content">
+                <section class="chart-card">
+                    <h2>Lab Index</h2>
+                    <p class="chart-subtitle">
+                        Labour cost efficiency indicators, for the selected canton.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="switzerland-flcl-canton-select-en">
+                                Canton
+                            </label>
+
+                            <select id="switzerland-flcl-canton-select-en">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-E</span>
+                            <strong id="switzerland-flcl-e-value-en">—</strong>
+                            <span class="metric-note" id="switzerland-flcl-e-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-B</span>
+                            <strong id="switzerland-flcl-b-value-en">—</strong>
+                            <span class="metric-note" id="switzerland-flcl-b-caption-en"></span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Marginal transmission</span>
+                            <strong id="switzerland-flcl-transmission-value-en">—</strong>
+                            <span class="metric-note" id="switzerland-flcl-transmission-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Marginal capture</span>
+                            <strong id="switzerland-flcl-capture-value-en">—</strong>
+                            <span class="metric-note" id="switzerland-flcl-capture-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Implicit progressivity</span>
+                            <strong id="switzerland-flcl-progressivity-value-en">—</strong>
+                            <span class="metric-note" id="switzerland-flcl-progressivity-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Low-wage support</span>
+                            <strong id="switzerland-flcl-support-value-en">—</strong>
+                            <span class="metric-note" id="switzerland-flcl-support-caption-en"></span>
+                        </div>
+                    </div>
+
+                    <p class="method-note" style="margin-top: 16px;">
+                        No targeted, degressive employer relief is modeled for
+                        Switzerland: the Lab-R indicator does not apply here. The wage
+                        axis is expressed in absolute gross Swiss francs (not as a
+                        multiple of a minimum wage), since Switzerland has no single
+                        national minimum wage.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Lab Index</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × net wage before tax / employer cost.
+                        </p>
+                        <div id="chart-switzerland-flcl-e-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal transmission</h3>
+                        <p class="chart-subtitle">
+                            Share of one additional CHF of employer cost reaching net wage.
+                        </p>
+                        <div id="chart-switzerland-flcl-marginal-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Implicit progressivity</h3>
+                        <p class="chart-subtitle">
+                            Change in Lab-E when the wage level increases.
+                        </p>
+                        <div id="chart-switzerland-flcl-progressivity-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal destination of one additional CHF of employer cost</h3>
+                        <p class="chart-subtitle">
+                            Marginal split between net wage, employee contributions and employer contributions.
+                        </p>
+                        <div id="chart-switzerland-flcl-destination-en" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </section>
+
             <section id="tab-en-data" class="tab-content">
                 <div class="chart-card">
                     <h3>Data</h3>
@@ -809,7 +1035,20 @@
                         by contrast, remain identical from one canton to another.
                     </p>
 
-                    <h3>5. Limits</h3>
+                    <h3>5. Lab Index</h3>
+
+                    <p>
+                        The Lab Index measures the wage efficiency of labour cost, canton
+                        by canton. Lab-E = 100 × net wage before tax / employer cost,
+                        Lab-B = 100 − Lab-E. No targeted, degressive employer relief is
+                        modeled for Switzerland: the Lab-R indicator therefore does not
+                        apply here. In the absence of a single national minimum wage, the
+                        wage axis is expressed in absolute gross francs rather than as a
+                        multiple of a reference wage; low-wage support compares the values
+                        at 3,000 and 9,000 CHF gross.
+                    </p>
+
+                    <h3>6. Limits</h3>
 
                     <p class="method-note">
                         This version does not yet simulate ordinary cantonal and

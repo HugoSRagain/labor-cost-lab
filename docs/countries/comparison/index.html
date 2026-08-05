@@ -140,8 +140,8 @@
         }
     </style>
 
-    <script defer src="../../assets/i18n_common.js?v=1"></script>
-    <script defer src="./assets/comparison_app.js?v=4"></script>
+    <script defer src="../../assets/i18n_common.js?v=3"></script>
+    <script defer src="./assets/comparison_app.js?v=6"></script>
 </head>
 
 <body>
@@ -360,6 +360,28 @@
                             aria-label="Coin socio-fiscal par pays"
                         ></div>
                     </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Lab-E</h3>
+
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × net avant impôt / coût employeur, comparé
+                            entre pays à niveau de vie équivalent (PPA).
+                        </p>
+
+                        <div
+                            id="chart-comparison-flcl-e-fr"
+                            class="plotly-chart"
+                            aria-label="Lab-E par pays"
+                        ></div>
+
+                        <p class="method-note">
+                            Le Lab-E néerlandais est structurellement surestimé : le
+                            loonheffing fusionne l'assurance nationale et l'impôt sur le
+                            revenu, si bien que le « net avant impôt » utilisé ici est
+                            proche du salaire brut pour les Pays-Bas.
+                        </p>
+                    </div>
                 </div>
             </section>
 
@@ -433,6 +455,9 @@
                                 </option>
                                 <option value="cost_to_net_after_income_tax_ratio">
                                     Ratio coût / net après impôt
+                                </option>
+                                <option value="flcl_e_before_income_tax">
+                                    Lab-E
                                 </option>
                             </select>
                         </div>
@@ -673,7 +698,29 @@
                         complet.
                     </p>
 
-                    <h3>9. Limites</h3>
+                    <h3>9. Lab-E</h3>
+
+                    <p>
+                        L'indicateur Lab-E (100 × net avant impôt / coût employeur)
+                        mesure l'efficacité salariale du coût du travail. Il est calculé
+                        ici pour chaque pays et chaque point de salaire harmonisé, à
+                        partir des mêmes champs « net avant impôt » et « coût employeur »
+                        déjà utilisés pour les autres graphiques de comparaison — ce n'est
+                        pas une nouvelle grandeur recalculée par un moteur national, mais
+                        un ratio dérivé des colonnes existantes. Cet indicateur reprend
+                        exactement la définition Lab-E de l'onglet « Indice du Lab » de
+                        chaque module national.
+                    </p>
+
+                    <p class="method-note">
+                        Le Lab-E néerlandais est structurellement surestimé par rapport
+                        aux 5 autres pays : le loonheffing fusionne l'assurance nationale
+                        et l'impôt sur le revenu, si bien que le « net avant impôt »
+                        utilisé ici est proche du salaire brut pour les Pays-Bas (voir la
+                        note sur les Pays-Bas plus haut).
+                    </p>
+
+                    <h3>10. Limites</h3>
 
                     <p class="method-note">
                         Le calcul de l'impôt sur le revenu suppose un salarié
@@ -903,6 +950,29 @@
                             aria-label="Socio-fiscal wedge by country"
                         ></div>
                     </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Lab-E</h3>
+
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × net before tax / employer cost,
+                            compared across countries at an equivalent standard
+                            of living (PPP).
+                        </p>
+
+                        <div
+                            id="chart-comparison-flcl-e-en"
+                            class="plotly-chart"
+                            aria-label="Lab-E by country"
+                        ></div>
+
+                        <p class="method-note">
+                            The Dutch Lab-E is structurally overstated: loonheffing
+                            bundles national insurance with income tax, so the "net
+                            before tax" used here is close to the gross wage for the
+                            Netherlands.
+                        </p>
+                    </div>
                 </div>
             </section>
 
@@ -976,6 +1046,9 @@
                                 </option>
                                 <option value="cost_to_net_after_income_tax_ratio">
                                     Cost / net after tax ratio
+                                </option>
+                                <option value="flcl_e_before_income_tax">
+                                    Lab-E
                                 </option>
                             </select>
                         </div>
@@ -1213,7 +1286,27 @@
                         Kingdom module's Methodology tab for full detail.
                     </p>
 
-                    <h3>9. Limits</h3>
+                    <h3>9. Lab-E</h3>
+
+                    <p>
+                        The Lab-E indicator (100 × net before tax / employer cost)
+                        measures the wage efficiency of labour cost. It is computed here
+                        for every country and every harmonized wage point, from the same
+                        "net before tax" and "employer cost" fields already used for the
+                        other comparison charts — it is not a new quantity recomputed by a
+                        national engine, but a ratio derived from existing columns. This
+                        indicator uses exactly the same Lab-E definition as each national
+                        module's own "Lab Index" tab.
+                    </p>
+
+                    <p class="method-note">
+                        The Dutch Lab-E is structurally overstated relative to the other
+                        5 countries: loonheffing bundles national insurance with income
+                        tax, so the "net before tax" used here is close to the gross wage
+                        for the Netherlands (see the Netherlands note above).
+                    </p>
+
+                    <h3>10. Limits</h3>
 
                     <p class="method-note">
                         The income-tax calculation assumes a single, childless

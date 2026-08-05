@@ -1025,6 +1025,318 @@ function renderUk(lang) {
 }
 
 
+function computeUkFlclIndicators(row) {
+    const net = ukNum(row.net_before_income_tax_monthly_gbp);
+    const employerCost = ukNum(row.employer_cost_monthly_gbp);
+
+    const flclE = employerCost > 0 ? 100 * net / employerCost : 0;
+    const flclB = 100 - flclE;
+
+    return {
+        flclE,
+        flclB
+    };
+}
+
+
+function renderUkFlclIndexCards(lang) {
+    const t = getI18nText(lang);
+    const profileId = getUkSelectedProfile(lang);
+    const data = getUkProfileData(profileId);
+    const row = findUkClosestRow(data, 1.0);
+
+    if (!row) {
+        return;
+    }
+
+    const indicators = computeUkFlclIndicators(row);
+
+    setTextContent("uk-flcl-e-value-" + lang, indicators.flclE.toFixed(1));
+    setTextContent("uk-flcl-b-value-" + lang, indicators.flclB.toFixed(1));
+
+    setTextContent("uk-flcl-e-caption-" + lang, indicators.flclE.toFixed(1) + " £ " + t.flcl_e_desc);
+    setTextContent("uk-flcl-b-caption-" + lang, indicators.flclB.toFixed(1) + " % " + t.flcl_b_desc);
+}
+
+
+function renderUkFlclMarginalCards(lang) {
+    const t = getI18nText(lang);
+    const profileId = getUkSelectedProfile(lang);
+    const data = getUkProfileData(profileId);
+
+    const marginalRows = [];
+
+    for (let i = 1; i < data.length; i++) {
+        const deltaNet = ukNum(data[i].net_before_income_tax_monthly_gbp) - ukNum(data[i - 1].net_before_income_tax_monthly_gbp);
+        const deltaCost = ukNum(data[i].employer_cost_monthly_gbp) - ukNum(data[i - 1].employer_cost_monthly_gbp);
+        const deltaMultiple = ukNum(data[i].smic_multiple) - ukNum(data[i - 1].smic_multiple);
+
+        if (deltaCost !== 0 && deltaMultiple !== 0) {
+            const current = computeUkFlclIndicators(data[i]);
+            const previous = computeUkFlclIndicators(data[i - 1]);
+
+            marginalRows.push({
+                smic_multiple: ukNum(data[i].smic_multiple),
+                transmission: deltaNet / deltaCost,
+                capture: 1 - deltaNet / deltaCost,
+                progressivity: (current.flclE - previous.flclE) / deltaMultiple
+            });
+        }
+    }
+
+    const rowAtOne = findUkClosestRow(marginalRows, 1.0);
+    const oneRow = findUkClosestRow(data, 1.0);
+    const threeRow = findUkClosestRow(data, 3.0);
+
+    const support = (oneRow && threeRow)
+        ? computeUkFlclIndicators(oneRow).flclE - computeUkFlclIndicators(threeRow).flclE
+        : 0;
+
+    setTextContent("uk-flcl-transmission-value-" + lang, rowAtOne ? (rowAtOne.transmission * 100).toFixed(1) + "%" : "—");
+    setTextContent("uk-flcl-capture-value-" + lang, rowAtOne ? (rowAtOne.capture * 100).toFixed(1) + "%" : "—");
+    setTextContent("uk-flcl-progressivity-value-" + lang, rowAtOne ? rowAtOne.progressivity.toFixed(1) + " pts" : "—");
+    setTextContent("uk-flcl-support-value-" + lang, support.toFixed(1) + " pts");
+
+    setTextContent("uk-flcl-transmission-caption-" + lang, t.marginal_transmission_desc);
+    setTextContent("uk-flcl-capture-caption-" + lang, t.marginal_capture_desc);
+    setTextContent("uk-flcl-progressivity-caption-" + lang, t.implicit_progressivity_desc);
+    setTextContent("uk-flcl-support-caption-" + lang, t.low_wage_support_desc);
+}
+
+
+function renderUkFlclEChart(lang) {
+    const t = getI18nText(lang);
+    const profileId = getUkSelectedProfile(lang);
+    const data = getUkProfileData(profileId);
+
+    const traces = [
+        {
+            x: data.map(row => ukNum(row.smic_multiple)),
+            y: data.map(row => computeUkFlclIndicators(row).flclE),
+            type: "scatter",
+            mode: "lines",
+            name: t.flcl_e,
+            line: {
+                color: UK_COLORS.net,
+                width: 3
+            },
+            hovertemplate:
+                "%{x:.2f} × NLW<br>" +
+                t.flcl_e + " : %{y:.1f}<extra></extra>"
+        }
+    ];
+
+    const layout = ukBaseLayout(lang, t.flcl_e);
+    layout.height = 450;
+
+    ukPlot("chart-uk-flcl-e-" + lang, traces, layout);
+}
+
+
+function renderUkFlclMarginalChart(lang) {
+    const t = getI18nText(lang);
+    const profileId = getUkSelectedProfile(lang);
+    const data = getUkProfileData(profileId);
+
+    const x = [];
+    const transmission = [];
+    const capture = [];
+
+    for (let i = 1; i < data.length; i++) {
+        const deltaNet = ukNum(data[i].net_before_income_tax_monthly_gbp) - ukNum(data[i - 1].net_before_income_tax_monthly_gbp);
+        const deltaCost = ukNum(data[i].employer_cost_monthly_gbp) - ukNum(data[i - 1].employer_cost_monthly_gbp);
+
+        if (deltaCost === 0) {
+            continue;
+        }
+
+        const transmissionRate = deltaNet / deltaCost;
+
+        x.push(ukNum(data[i].smic_multiple));
+        transmission.push(transmissionRate * 100);
+        capture.push((1 - transmissionRate) * 100);
+    }
+
+    const traces = [
+        {
+            x: x,
+            y: transmission,
+            mode: "lines",
+            name: t.marginal_transmission,
+            line: {
+                color: UK_COLORS.ni,
+                width: 3
+            }
+        },
+        {
+            x: x,
+            y: capture,
+            mode: "lines",
+            name: t.marginal_capture,
+            line: {
+                color: UK_COLORS.wedge,
+                width: 3
+            }
+        }
+    ];
+
+    const layout = ukBaseLayout(lang, "%");
+    layout.height = 400;
+    layout.yaxis.ticksuffix = "%";
+
+    ukPlot("chart-uk-flcl-marginal-" + lang, traces, layout);
+}
+
+
+function renderUkFlclProgressivityChart(lang) {
+    const t = getI18nText(lang);
+    const profileId = getUkSelectedProfile(lang);
+    const data = getUkProfileData(profileId);
+
+    const x = [];
+    const progressivity = [];
+
+    for (let i = 1; i < data.length; i++) {
+        const current = computeUkFlclIndicators(data[i]);
+        const previous = computeUkFlclIndicators(data[i - 1]);
+        const deltaMultiple = ukNum(data[i].smic_multiple) - ukNum(data[i - 1].smic_multiple);
+
+        if (deltaMultiple === 0) {
+            continue;
+        }
+
+        x.push(ukNum(data[i].smic_multiple));
+        progressivity.push((current.flclE - previous.flclE) / deltaMultiple);
+    }
+
+    const traces = [
+        {
+            x: x,
+            y: progressivity,
+            mode: "lines",
+            name: t.implicit_progressivity,
+            line: {
+                color: UK_COLORS.employee,
+                width: 3
+            }
+        }
+    ];
+
+    const layout = ukBaseLayout(
+        lang,
+        lang === "en" ? "Lab-E points per minimum wage" : "Points de Lab-E par salaire minimum"
+    );
+    layout.height = 400;
+
+    layout.shapes = [{
+        type: "line",
+        xref: "paper",
+        yref: "y",
+        x0: 0,
+        x1: 1,
+        y0: 0,
+        y1: 0,
+        line: {
+            color: "#94a3b8",
+            dash: "dash",
+            width: 1.5
+        }
+    }];
+
+    ukPlot("chart-uk-flcl-progressivity-" + lang, traces, layout);
+}
+
+
+function renderUkFlclMarginalDestinationChart(lang) {
+    const profileId = getUkSelectedProfile(lang);
+    const data = getUkProfileData(profileId);
+
+    const x = [];
+    const netShare = [];
+    const employeeShare = [];
+    const employerShare = [];
+
+    for (let i = 1; i < data.length; i++) {
+        const deltaCost = ukNum(data[i].employer_cost_monthly_gbp) - ukNum(data[i - 1].employer_cost_monthly_gbp);
+
+        if (deltaCost === 0) {
+            continue;
+        }
+
+        const deltaNet = ukNum(data[i].net_before_income_tax_monthly_gbp) - ukNum(data[i - 1].net_before_income_tax_monthly_gbp);
+        const deltaEmployee = ukNum(data[i].employee_contributions_monthly_gbp) - ukNum(data[i - 1].employee_contributions_monthly_gbp);
+        const deltaEmployer = ukNum(data[i].employer_contributions_monthly_gbp) - ukNum(data[i - 1].employer_contributions_monthly_gbp);
+
+        x.push(ukNum(data[i].smic_multiple));
+        netShare.push(100 * deltaNet / deltaCost);
+        employeeShare.push(100 * deltaEmployee / deltaCost);
+        employerShare.push(100 * deltaEmployer / deltaCost);
+    }
+
+    const traces = [
+        {
+            x: x,
+            y: netShare,
+            type: "scatter",
+            mode: "lines",
+            stackgroup: "one",
+            name: lang === "en" ? "Net wage" : "Salaire net",
+            line: {
+                color: UK_COLORS.net,
+                width: 2
+            }
+        },
+        {
+            x: x,
+            y: employeeShare,
+            type: "scatter",
+            mode: "lines",
+            stackgroup: "one",
+            name: lang === "en" ? "Employee contributions" : "Cotisations salarié",
+            line: {
+                color: UK_COLORS.employee,
+                width: 2
+            }
+        },
+        {
+            x: x,
+            y: employerShare,
+            type: "scatter",
+            mode: "lines",
+            stackgroup: "one",
+            name: lang === "en" ? "Employer contributions" : "Cotisations employeur",
+            line: {
+                color: UK_COLORS.employer,
+                width: 2
+            }
+        }
+    ];
+
+    const layout = ukBaseLayout(
+        lang,
+        lang === "en"
+            ? "Marginal destination of one additional pound, %"
+            : "Destination marginale d’une livre supplémentaire, %"
+    );
+
+    layout.height = 450;
+    layout.yaxis.ticksuffix = "%";
+    layout.yaxis.range = [0, 100];
+
+    ukPlot("chart-uk-flcl-destination-" + lang, traces, layout);
+}
+
+
+function renderUkFlclIndex(lang) {
+    renderUkFlclIndexCards(lang);
+    renderUkFlclMarginalCards(lang);
+    renderUkFlclEChart(lang);
+    renderUkFlclMarginalChart(lang);
+    renderUkFlclProgressivityChart(lang);
+    renderUkFlclMarginalDestinationChart(lang);
+}
+
+
 function ukOnTabShow(lang, tabName) {
     if (tabName === "simulation") {
         renderUk(lang);
@@ -1032,6 +1344,10 @@ function ukOnTabShow(lang, tabName) {
 
     if (tabName === "data") {
         renderUkDataTable(lang);
+    }
+
+    if (tabName === "flcl-index") {
+        renderUkFlclIndex(lang);
     }
 }
 
@@ -1062,6 +1378,7 @@ function setupUkEvents() {
         if (profileSelect) {
             profileSelect.addEventListener("change", function() {
                 renderUk(lang);
+                renderUkFlclIndex(lang);
             });
         }
 

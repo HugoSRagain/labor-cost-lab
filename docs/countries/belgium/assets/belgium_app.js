@@ -963,6 +963,364 @@ function renderBelgium(lang) {
 }
 
 
+function computeBelgiumFlclIndicators(row) {
+    const net = deNum(row.net_before_income_tax_monthly_eur);
+    const employerCost = deNum(row.employer_cost_monthly_eur);
+    const structuralReduction = deNum(row.structural_reduction_monthly_eur);
+
+    const flclE = employerCost > 0 ? 100 * net / employerCost : 0;
+    const flclB = 100 - flclE;
+
+    const costWithoutReduction = employerCost + structuralReduction;
+    const flclEWithoutReduction = costWithoutReduction > 0
+        ? 100 * net / costWithoutReduction
+        : 0;
+    const flclR = flclE - flclEWithoutReduction;
+
+    return {
+        flclE,
+        flclB,
+        flclR
+    };
+}
+
+
+function renderBelgiumFlclIndexCards(lang) {
+    const t = getI18nText(lang);
+    const profileId = getBelgiumSelectedProfile(lang);
+    const data = getBelgiumProfileData(profileId);
+    const row = findBelgiumClosestRow(data, 1.0);
+
+    if (!row) {
+        return;
+    }
+
+    const indicators = computeBelgiumFlclIndicators(row);
+
+    setTextContent("belgium-flcl-e-value-" + lang, indicators.flclE.toFixed(1));
+    setTextContent("belgium-flcl-b-value-" + lang, indicators.flclB.toFixed(1));
+    setTextContent("belgium-flcl-r-value-" + lang, "+" + indicators.flclR.toFixed(1) + " pts");
+
+    setTextContent("belgium-flcl-e-caption-" + lang, indicators.flclE.toFixed(1) + " € " + t.flcl_e_desc);
+    setTextContent("belgium-flcl-b-caption-" + lang, indicators.flclB.toFixed(1) + " % " + t.flcl_b_desc);
+    setTextContent("belgium-flcl-r-caption-" + lang, t.flcl_r_desc);
+}
+
+
+function renderBelgiumFlclMarginalCards(lang) {
+    const t = getI18nText(lang);
+    const profileId = getBelgiumSelectedProfile(lang);
+    const data = getBelgiumProfileData(profileId);
+
+    const marginalRows = [];
+
+    for (let i = 1; i < data.length; i++) {
+        const deltaNet = deNum(data[i].net_before_income_tax_monthly_eur) - deNum(data[i - 1].net_before_income_tax_monthly_eur);
+        const deltaCost = deNum(data[i].employer_cost_monthly_eur) - deNum(data[i - 1].employer_cost_monthly_eur);
+        const deltaMultiple = deNum(data[i].smic_multiple) - deNum(data[i - 1].smic_multiple);
+
+        if (deltaCost !== 0 && deltaMultiple !== 0) {
+            const current = computeBelgiumFlclIndicators(data[i]);
+            const previous = computeBelgiumFlclIndicators(data[i - 1]);
+
+            marginalRows.push({
+                smic_multiple: deNum(data[i].smic_multiple),
+                transmission: deltaNet / deltaCost,
+                capture: 1 - deltaNet / deltaCost,
+                progressivity: (current.flclE - previous.flclE) / deltaMultiple
+            });
+        }
+    }
+
+    const rowAtOne = findBelgiumClosestRow(marginalRows, 1.0);
+    const oneRow = findBelgiumClosestRow(data, 1.0);
+    const threeRow = findBelgiumClosestRow(data, 3.0);
+
+    const support = (oneRow && threeRow)
+        ? computeBelgiumFlclIndicators(oneRow).flclE - computeBelgiumFlclIndicators(threeRow).flclE
+        : 0;
+
+    setTextContent("belgium-flcl-transmission-value-" + lang, rowAtOne ? (rowAtOne.transmission * 100).toFixed(1) + "%" : "—");
+    setTextContent("belgium-flcl-capture-value-" + lang, rowAtOne ? (rowAtOne.capture * 100).toFixed(1) + "%" : "—");
+    setTextContent("belgium-flcl-progressivity-value-" + lang, rowAtOne ? rowAtOne.progressivity.toFixed(1) + " pts" : "—");
+    setTextContent("belgium-flcl-support-value-" + lang, support.toFixed(1) + " pts");
+
+    setTextContent("belgium-flcl-transmission-caption-" + lang, t.marginal_transmission_desc);
+    setTextContent("belgium-flcl-capture-caption-" + lang, t.marginal_capture_desc);
+    setTextContent("belgium-flcl-progressivity-caption-" + lang, t.implicit_progressivity_desc);
+    setTextContent("belgium-flcl-support-caption-" + lang, t.low_wage_support_desc);
+}
+
+
+function renderBelgiumFlclEChart(lang) {
+    const t = getI18nText(lang);
+    const profileId = getBelgiumSelectedProfile(lang);
+    const data = getBelgiumProfileData(profileId);
+
+    const traces = [
+        {
+            x: data.map(row => deNum(row.smic_multiple)),
+            y: data.map(row => computeBelgiumFlclIndicators(row).flclE),
+            type: "scatter",
+            mode: "lines",
+            name: t.flcl_e,
+            line: {
+                color: BELGIUM_COLORS.net,
+                width: 3
+            },
+            hovertemplate:
+                "%{x:.2f} × RMMMG<br>" +
+                t.flcl_e + " : %{y:.1f}<extra></extra>"
+        }
+    ];
+
+    const layout = belgiumBaseLayout(lang, t.flcl_e);
+    layout.height = 450;
+
+    belgiumPlot("chart-belgium-flcl-e-" + lang, traces, layout);
+}
+
+
+function renderBelgiumFlclRChart(lang) {
+    const t = getI18nText(lang);
+    const profileId = getBelgiumSelectedProfile(lang);
+    const data = getBelgiumProfileData(profileId);
+
+    const traces = [
+        {
+            x: data.map(row => deNum(row.smic_multiple)),
+            y: data.map(row => computeBelgiumFlclIndicators(row).flclR),
+            type: "scatter",
+            mode: "lines",
+            name: t.flcl_r,
+            line: {
+                color: BELGIUM_COLORS.wedge,
+                width: 3
+            },
+            hovertemplate:
+                "%{x:.2f} × RMMMG<br>" +
+                (lang === "en" ? "Efficiency gain" : "Gain d’efficacité") + " : %{y:.1f} pts<extra></extra>"
+        }
+    ];
+
+    const layout = belgiumBaseLayout(
+        lang,
+        lang === "en" ? "Efficiency gain, points" : "Gain d’efficacité, points"
+    );
+    layout.height = 400;
+
+    belgiumPlot("chart-belgium-flcl-r-" + lang, traces, layout);
+}
+
+
+function renderBelgiumFlclMarginalChart(lang) {
+    const t = getI18nText(lang);
+    const profileId = getBelgiumSelectedProfile(lang);
+    const data = getBelgiumProfileData(profileId);
+
+    const x = [];
+    const transmission = [];
+    const capture = [];
+
+    for (let i = 1; i < data.length; i++) {
+        const deltaNet = deNum(data[i].net_before_income_tax_monthly_eur) - deNum(data[i - 1].net_before_income_tax_monthly_eur);
+        const deltaCost = deNum(data[i].employer_cost_monthly_eur) - deNum(data[i - 1].employer_cost_monthly_eur);
+
+        if (deltaCost === 0) {
+            continue;
+        }
+
+        const transmissionRate = deltaNet / deltaCost;
+
+        x.push(deNum(data[i].smic_multiple));
+        transmission.push(transmissionRate * 100);
+        capture.push((1 - transmissionRate) * 100);
+    }
+
+    const traces = [
+        {
+            x: x,
+            y: transmission,
+            mode: "lines",
+            name: t.marginal_transmission,
+            line: {
+                color: BELGIUM_COLORS.net,
+                width: 3
+            }
+        },
+        {
+            x: x,
+            y: capture,
+            mode: "lines",
+            name: t.marginal_capture,
+            line: {
+                color: BELGIUM_COLORS.wedge,
+                width: 3
+            }
+        }
+    ];
+
+    const layout = belgiumBaseLayout(lang, "%");
+    layout.height = 400;
+    layout.yaxis.ticksuffix = "%";
+
+    belgiumPlot("chart-belgium-flcl-marginal-" + lang, traces, layout);
+}
+
+
+function renderBelgiumFlclProgressivityChart(lang) {
+    const t = getI18nText(lang);
+    const profileId = getBelgiumSelectedProfile(lang);
+    const data = getBelgiumProfileData(profileId);
+
+    const x = [];
+    const progressivity = [];
+
+    for (let i = 1; i < data.length; i++) {
+        const current = computeBelgiumFlclIndicators(data[i]);
+        const previous = computeBelgiumFlclIndicators(data[i - 1]);
+        const deltaMultiple = deNum(data[i].smic_multiple) - deNum(data[i - 1].smic_multiple);
+
+        if (deltaMultiple === 0) {
+            continue;
+        }
+
+        x.push(deNum(data[i].smic_multiple));
+        progressivity.push((current.flclE - previous.flclE) / deltaMultiple);
+    }
+
+    const traces = [
+        {
+            x: x,
+            y: progressivity,
+            mode: "lines",
+            name: t.implicit_progressivity,
+            line: {
+                color: BELGIUM_COLORS.employee,
+                width: 3
+            },
+            hovertemplate:
+                "%{x:.2f} × RMMMG<br>" +
+                (lang === "en" ? "Change in Lab-E" : "Variation de Lab-E") + " : %{y:.2f}<extra></extra>"
+        }
+    ];
+
+    const layout = belgiumBaseLayout(
+        lang,
+        lang === "en" ? "Lab-E points per minimum wage" : "Points de Lab-E par RMMMG"
+    );
+    layout.height = 400;
+
+    layout.shapes = [{
+        type: "line",
+        xref: "paper",
+        yref: "y",
+        x0: 0,
+        x1: 1,
+        y0: 0,
+        y1: 0,
+        line: {
+            color: "#94a3b8",
+            dash: "dash",
+            width: 1.5
+        }
+    }];
+
+    belgiumPlot("chart-belgium-flcl-progressivity-" + lang, traces, layout);
+}
+
+
+function renderBelgiumFlclMarginalDestinationChart(lang) {
+    const profileId = getBelgiumSelectedProfile(lang);
+    const data = getBelgiumProfileData(profileId);
+
+    const x = [];
+    const netShare = [];
+    const employeeShare = [];
+    const employerShare = [];
+
+    for (let i = 1; i < data.length; i++) {
+        const deltaCost = deNum(data[i].employer_cost_monthly_eur) - deNum(data[i - 1].employer_cost_monthly_eur);
+
+        if (deltaCost === 0) {
+            continue;
+        }
+
+        const deltaNet = deNum(data[i].net_before_income_tax_monthly_eur) - deNum(data[i - 1].net_before_income_tax_monthly_eur);
+        const deltaEmployee = deNum(data[i].employee_contributions_monthly_eur) - deNum(data[i - 1].employee_contributions_monthly_eur);
+        const deltaEmployer = deNum(data[i].employer_contributions_monthly_eur) - deNum(data[i - 1].employer_contributions_monthly_eur);
+
+        x.push(deNum(data[i].smic_multiple));
+        netShare.push(100 * deltaNet / deltaCost);
+        employeeShare.push(100 * deltaEmployee / deltaCost);
+        employerShare.push(100 * deltaEmployer / deltaCost);
+    }
+
+    const traces = [
+        {
+            x: x,
+            y: netShare,
+            type: "scatter",
+            mode: "lines",
+            stackgroup: "one",
+            name: lang === "en" ? "Net wage" : "Salaire net",
+            line: {
+                color: BELGIUM_COLORS.net,
+                width: 2
+            }
+        },
+        {
+            x: x,
+            y: employeeShare,
+            type: "scatter",
+            mode: "lines",
+            stackgroup: "one",
+            name: lang === "en" ? "Employee contributions" : "Cotisations salarié",
+            line: {
+                color: BELGIUM_COLORS.employee,
+                width: 2
+            }
+        },
+        {
+            x: x,
+            y: employerShare,
+            type: "scatter",
+            mode: "lines",
+            stackgroup: "one",
+            name: lang === "en" ? "Employer contributions" : "Cotisations employeur",
+            line: {
+                color: BELGIUM_COLORS.employer,
+                width: 2
+            }
+        }
+    ];
+
+    const layout = belgiumBaseLayout(
+        lang,
+        lang === "en"
+            ? "Marginal destination of one additional euro, %"
+            : "Destination marginale d’un euro supplémentaire, %"
+    );
+
+    layout.height = 450;
+    layout.yaxis.ticksuffix = "%";
+    layout.yaxis.range = [0, 100];
+
+    belgiumPlot("chart-belgium-flcl-destination-" + lang, traces, layout);
+}
+
+
+function renderBelgiumFlclIndex(lang) {
+    renderBelgiumFlclIndexCards(lang);
+    renderBelgiumFlclMarginalCards(lang);
+    renderBelgiumFlclEChart(lang);
+    renderBelgiumFlclRChart(lang);
+    renderBelgiumFlclMarginalChart(lang);
+    renderBelgiumFlclProgressivityChart(lang);
+    renderBelgiumFlclMarginalDestinationChart(lang);
+}
+
+
 function belgiumOnTabShow(lang, tabName) {
     if (tabName === "simulation") {
         renderBelgium(lang);
@@ -970,6 +1328,10 @@ function belgiumOnTabShow(lang, tabName) {
 
     if (tabName === "data") {
         renderBelgiumDataTable(lang);
+    }
+
+    if (tabName === "flcl-index") {
+        renderBelgiumFlclIndex(lang);
     }
 }
 
@@ -1000,6 +1362,7 @@ function setupBelgiumEvents() {
         if (profileSelect) {
             profileSelect.addEventListener("change", function() {
                 renderBelgium(lang);
+                renderBelgiumFlclIndex(lang);
             });
         }
 
