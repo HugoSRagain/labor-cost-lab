@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>UK Labour Cost Lab</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+    <link rel="stylesheet" href="../../assets/style.css?v=27">
+    <script defer src="../../assets/i18n_common.js?v=1"></script>
+    <script defer src="./assets/uk_app.js?v=1"></script>
+</head>
+
+<body>
+    <div class="global-project-banner">
+        <a href="../../index.html">
+            ← Labor Cost Lab
+        </a>
+
+        <span>
+            United Kingdom module · Available socio-fiscal version
+        </span>
+    </div>
+
+    <div class="language-section active" id="section-fr">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · Module Royaume-Uni
+                </p>
+
+                <h1>UK Labour Cost Lab</h1>
+
+                <p>
+                    Module de simulation du coût du travail au Royaume-Uni. Cette
+                    version calcule le salaire brut, l'impôt sur le revenu (PAYE),
+                    les National Insurance salarié et employeur, la pension
+                    d'entreprise obligatoire (auto-enrolment), le coût employeur et
+                    les principaux indicateurs de coin social et socio-fiscal.
+                </p>
+
+                <p class="author-line">
+                    Par Hugo Spring-Ragain, Économiste, CEDS Paris
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchUkLanguage()">
+                    English
+                </button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>Royaume-Uni · module socio-fiscal 2026</h2>
+
+                <p>
+                    Le UK Labour Cost Lab simule le coût du travail au Royaume-Uni
+                    à partir d'un profil salarié standard, hors Écosse. Il combine
+                    le National Living Wage (NLW) comme référence salariale,
+                    l'impôt sur le revenu PAYE (barème rUK, abattement personnel
+                    dégressif), les National Insurance de classe 1 (salarié et
+                    employeur) et la pension d'entreprise obligatoire
+                    (auto-enrolment, taux minimaux légaux).
+                </p>
+
+                <p>
+                    L'objectif est de mesurer, sur une échelle allant de 1 à 6 fois
+                    le salaire minimum britannique, la façon dont une livre de
+                    salaire brut se transforme en revenu net pour le salarié, en
+                    coût total pour l'employeur et en prélèvements sociaux et
+                    fiscaux.
+                </p>
+            </section>
+
+            <nav class="tabs" aria-label="Navigation Royaume-Uni">
+                <button class="tab-button active" data-tab="simulation" onclick="showUkTab('fr', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showUkTab('fr', 'data')">
+                    Données
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showUkTab('fr', 'methodology')">
+                    Méthodologie
+                </button>
+            </nav>
+
+            <section id="tab-fr-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="uk-waterfall-title-fr">
+                        Du salaire net au coût employeur
+                    </h3>
+
+                    <p class="chart-subtitle" id="uk-waterfall-subtitle-fr">
+                        Décomposition du passage du salaire net après impôt au coût
+                        employeur total, en distinguant l'impôt sur le revenu, les
+                        National Insurance et la pension d'entreprise, côté salarié
+                        et côté employeur.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="uk-waterfall-multiple-fr">
+                                Point de salaire sélectionné
+                            </label>
+
+                            <select id="uk-waterfall-multiple-fr">
+                                <option value="1.00">1,00 salaire minimum</option>
+                                <option value="1.25">1,25 salaire minimum</option>
+                                <option value="1.50">1,50 salaire minimum</option>
+                                <option value="2.00" selected>2,00 salaires minimums</option>
+                                <option value="2.50">2,50 salaires minimums</option>
+                                <option value="3.00">3,00 salaires minimums</option>
+                                <option value="4.00">4,00 salaires minimums</option>
+                                <option value="5.00">5,00 salaires minimums</option>
+                                <option value="6.00">6,00 salaires minimums</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-uk-waterfall-fr"
+                        class="plotly-chart"
+                        aria-label="Décomposition du coût du travail au Royaume-Uni"
+                    ></div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Graphiques complémentaires</h2>
+
+                    <p>
+                        Les graphiques suivants détaillent les salaires, les taux
+                        effectifs, le détail des prélèvements salarié et employeur,
+                        le coin socio-fiscal et le rendement marginal du salaire
+                        brut.
+                    </p>
+                </section>
+
+                <div class="profile-selector profile-selector-grid">
+                    <div class="selector-field">
+                        <label for="uk-profile-select-fr">
+                            Profil pour les graphiques
+                        </label>
+
+                        <select id="uk-profile-select-fr">
+                            <option value="uk__standard_employee_ruk" selected>
+                                Royaume-Uni · salarié standard, hors Écosse
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Coût employeur, salaire brut et salaires nets</h3>
+
+                        <p class="chart-subtitle">
+                            Comparaison du salaire brut, du salaire net avant impôt,
+                            du salaire net après impôt et du coût employeur selon le
+                            multiple du salaire minimum britannique.
+                        </p>
+
+                        <div
+                            id="chart-uk-cost-fr"
+                            class="plotly-chart"
+                            aria-label="Coût du travail au Royaume-Uni"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Taux effectifs de prélèvement</h3>
+
+                        <p class="chart-subtitle">
+                            Taux salarié (National Insurance + pension), taux
+                            employeur (National Insurance + pension) et taux
+                            d'imposition effectif.
+                        </p>
+
+                        <div
+                            id="chart-uk-rates-fr"
+                            class="plotly-chart"
+                            aria-label="Taux de prélèvement au Royaume-Uni"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Prélèvements salarié, détail</h3>
+
+                        <p class="chart-subtitle">
+                            Montant mensuel des National Insurance salarié et de la
+                            cotisation salarié à la pension d'entreprise.
+                        </p>
+
+                        <div
+                            id="chart-uk-employee-components-fr"
+                            class="plotly-chart"
+                            aria-label="Détail des prélèvements salarié britanniques"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Cotisations employeur, détail</h3>
+
+                        <p class="chart-subtitle">
+                            Montant mensuel des National Insurance employeur et de la
+                            cotisation employeur à la pension d'entreprise.
+                        </p>
+
+                        <div
+                            id="chart-uk-employer-components-fr"
+                            class="plotly-chart"
+                            aria-label="Détail des cotisations employeur britanniques"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Coin social et coin socio-fiscal</h3>
+
+                        <p class="chart-subtitle">
+                            Comparaison du coin social avant impôt et du coin
+                            socio-fiscal après impôt sur le revenu.
+                        </p>
+
+                        <div
+                            id="chart-uk-wedge-fr"
+                            class="plotly-chart"
+                            aria-label="Coin social et socio-fiscal britannique"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Rendement marginal d'une hausse de salaire brut</h3>
+
+                        <p class="chart-subtitle">
+                            Part d'une livre supplémentaire de salaire brut
+                            conservée avant et après impôt sur le revenu.
+                        </p>
+
+                        <div
+                            id="chart-uk-fiscal-return-fr"
+                            class="plotly-chart"
+                            aria-label="Rendement socio-fiscal d'une hausse de salaire brut au Royaume-Uni"
+                        ></div>
+
+                        <p class="method-note">
+                            L'effet marginal évolue par paliers autour des seuils de
+                            National Insurance (12 570 £ et 50 270 £/an), de l'abattement
+                            personnel dégressif (100 000-125 140 £/an) et des tranches
+                            d'impôt sur le revenu.
+                        </p>
+                    </div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Indicateurs clés</h2>
+
+                    <p>
+                        Les indicateurs ci-dessous sont calculés pour le profil
+                        sélectionné dans les graphiques complémentaires, au salaire
+                        minimum britannique (multiple = 1).
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="uk-metrics-fr">
+                    <article class="metric-card">
+                        <span class="metric-label">Salaire brut de référence</span>
+                        <strong id="metric-uk-reference-wage-fr">—</strong>
+                        <span class="metric-note">NLW mensuel (37,5h/semaine)</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Taux d'imposition effectif</span>
+                        <strong id="metric-uk-income-tax-rate-fr">—</strong>
+                        <span class="metric-note">Impôt sur le revenu / brut</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Taux employeur effectif</span>
+                        <strong id="metric-uk-employer-rate-fr">—</strong>
+                        <span class="metric-note">National Insurance + pension</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Ratio coût / net à 1 NLW</span>
+                        <strong id="metric-uk-cost-to-net-fr">—</strong>
+                        <span class="metric-note">Après impôt</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-fr-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Données</h3>
+
+                    <p class="chart-subtitle">
+                        Le jeu de données britannique peut être téléchargé au
+                        format CSV. Il contient l'ensemble des points de salaire
+                        simulés pour le profil standard : salaire brut, impôt sur
+                        le revenu, National Insurance, pension d'entreprise, coût
+                        employeur et indicateurs de coin socio-fiscal.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/uk/uk_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Télécharger le jeu de données Royaume-Uni
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/uk/uk_parameters_2026.json"
+                            download
+                        >
+                            Télécharger les paramètres 2026
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/uk/uk_sources_2026.json"
+                            download
+                        >
+                            Télécharger les sources 2026
+                        </a>
+                    </div>
+
+                    <div class="profile-selector profile-selector-grid data-profile-selector">
+                        <div class="selector-field">
+                            <label for="uk-data-profile-select-fr">
+                                Profil Royaume-Uni
+                            </label>
+
+                            <select id="uk-data-profile-select-fr">
+                                <option value="uk__standard_employee_ruk" selected>
+                                    Salarié standard, hors Écosse
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Données du profil sélectionné</h3>
+
+                    <p
+                        class="chart-subtitle"
+                        id="uk-data-profile-caption-fr"
+                    >
+                        Salarié standard, hors Écosse
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Multiple</th>
+                                    <th>Salaire brut (£)</th>
+                                    <th>Net avant impôt (£)</th>
+                                    <th>Impôt sur le revenu (£)</th>
+                                    <th>Net après impôt (£)</th>
+                                    <th>Coût employeur (£)</th>
+                                    <th>Cotisations salarié (£)</th>
+                                    <th>Cotisations employeur (£)</th>
+                                    <th>Coin social (£)</th>
+                                    <th>Coin socio-fiscal (£)</th>
+                                    <th>Taux employeur</th>
+                                    <th>Coût / net après impôt</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="uk-data-table-body-fr">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="chart-subtitle" style="margin-top: 10px;">
+                        Cotisations salarié = National Insurance + pension
+                        d'entreprise (salarié). Cotisations employeur = National
+                        Insurance + pension d'entreprise (employeur). Voir l'onglet
+                        Méthodologie.
+                    </p>
+                </div>
+            </section>
+
+            <section id="tab-fr-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Méthodologie</h2>
+
+                    <p>
+                        Le module Royaume-Uni repose sur une simulation
+                        réglementaire du coût du travail pour un salarié standard,
+                        résident hors Écosse, à temps plein. Le salaire brut est
+                        calculé comme multiple du National Living Wage (NLW)
+                        mensuel, utilisé comme référence de salaire minimum dans le
+                        module.
+                    </p>
+
+                    <h3>1. Impôt sur le revenu (PAYE)</h3>
+
+                    <p>
+                        L'impôt sur le revenu utilise le barème progressif rUK
+                        (Angleterre, Pays de Galles, Irlande du Nord) pour l'année
+                        fiscale 2026/27 : abattement personnel (Personal Allowance)
+                        de 12 570 £, dégressif d'1 £ pour chaque tranche de 2 £ de
+                        revenu au-delà de 100 000 £ (nul à partir de 125 140 £),
+                        puis 20 % jusqu'à 50 270 £, 40 % jusqu'à 125 140 £ et 45 %
+                        au-delà. L'Écosse applique des taux dévolus distincts, non
+                        modélisés ici.
+                    </p>
+
+                    <h3>2. National Insurance (classe 1)</h3>
+
+                    <p>
+                        Le salarié paie 8 % de National Insurance entre le Primary
+                        Threshold (12 570 £/an) et l'Upper Earnings Limit
+                        (50 270 £/an), puis 2 % au-delà. L'employeur paie 15 % au-delà
+                        du Secondary Threshold (5 000 £/an), sans plafond.
+                    </p>
+
+                    <h3>3. Pension d'entreprise obligatoire (auto-enrolment)</h3>
+
+                    <p>
+                        Depuis la loi de 2008 sur les pensions (Pensions Act 2008),
+                        tout salarié éligible est automatiquement affilié à une
+                        pension d'entreprise, financée par une cotisation salarié
+                        d'au moins 5 % et une cotisation employeur d'au moins 3 % du
+                        salaire compris dans la tranche de référence (6 240 £ à
+                        50 270 £/an). Ce module retient ces taux minimaux légaux,
+                        selon un montage « net pay » : la cotisation salarié réduit
+                        le revenu imposable avant impôt sur le revenu, mais pas
+                        l'assiette des National Insurance.
+                    </p>
+
+                    <h3>4. Indicateurs produits</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Net avant impôt :</strong>
+                            salaire brut diminué des National Insurance salarié et
+                            de la cotisation salarié à la pension d'entreprise.
+                        </li>
+
+                        <li>
+                            <strong>Net après impôt :</strong>
+                            net avant impôt diminué de l'impôt sur le revenu
+                            mensuel.
+                        </li>
+
+                        <li>
+                            <strong>Coût employeur :</strong>
+                            salaire brut augmenté des National Insurance employeur
+                            et de la cotisation employeur à la pension
+                            d'entreprise.
+                        </li>
+
+                        <li>
+                            <strong>Coin social :</strong>
+                            différence entre le coût employeur et le net avant
+                            impôt.
+                        </li>
+
+                        <li>
+                            <strong>Coin socio-fiscal :</strong>
+                            différence entre le coût employeur et le net après
+                            impôt.
+                        </li>
+
+                        <li>
+                            <strong>Rendement marginal :</strong>
+                            part d'une livre supplémentaire de salaire brut
+                            conservée avant et après impôt sur le revenu.
+                        </li>
+                    </ul>
+
+                    <h3>5. Limites du scénario</h3>
+
+                    <p class="method-note">
+                        Le module ne simule pas le barème écossais de l'impôt sur
+                        le revenu, l'Apprenticeship Levy (0,5 % de la masse
+                        salariale, employeurs de plus de 3 millions £ de masse
+                        salariale annuelle), le remboursement de prêt étudiant, le
+                        marriage allowance, les avantages en nature, ni les
+                        cotisations de pension d'entreprise au-delà du minimum
+                        légal. Le profil retient un salarié à temps plein avec un
+                        code fiscal standard (1257L, cumulatif) et une affiliation
+                        sans opt-out à la pension d'entreprise. Ces limites sont
+                        assumées afin de produire un scénario central stable et
+                        comparable aux autres modules nationaux du Labor Cost Lab.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="language-section" id="section-en">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · United Kingdom module
+                </p>
+
+                <h1>UK Labour Cost Lab</h1>
+
+                <p>
+                    Simulation module for UK labour costs. This version computes
+                    the gross wage, PAYE income tax, employee and employer
+                    National Insurance, the mandatory workplace pension
+                    (automatic enrolment), the employer cost, and the main social
+                    and socio-fiscal wedge indicators.
+                </p>
+
+                <p class="author-line">
+                    By Hugo Spring-Ragain, Economist, CEDS Paris
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchUkLanguage()">
+                    Français
+                </button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>United Kingdom · 2026 socio-fiscal module</h2>
+
+                <p>
+                    The UK Labour Cost Lab simulates UK labour costs for a
+                    standard employee, outside Scotland. It combines the National
+                    Living Wage (NLW) as the wage reference, PAYE income tax (rUK
+                    scale, tapered Personal Allowance), Class 1 National Insurance
+                    (employee and employer), and the mandatory workplace pension
+                    (automatic enrolment, statutory minimum rates).
+                </p>
+
+                <p>
+                    The goal is to measure, over a range from 1 to 6 times the UK
+                    minimum wage, how a pound of gross wage turns into net income
+                    for the employee, into total cost for the employer, and into
+                    social and fiscal levies.
+                </p>
+            </section>
+
+            <nav class="tabs" aria-label="United Kingdom navigation">
+                <button class="tab-button active" data-tab="simulation" onclick="showUkTab('en', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showUkTab('en', 'data')">
+                    Data
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showUkTab('en', 'methodology')">
+                    Methodology
+                </button>
+            </nav>
+
+            <section id="tab-en-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="uk-waterfall-title-en">
+                        From net wage to employer cost
+                    </h3>
+
+                    <p class="chart-subtitle" id="uk-waterfall-subtitle-en">
+                        Breakdown of the path from net wage after tax to total
+                        employer cost, distinguishing income tax, National
+                        Insurance, and the workplace pension, on both the employee
+                        and employer sides.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="uk-waterfall-multiple-en">
+                                Selected wage point
+                            </label>
+
+                            <select id="uk-waterfall-multiple-en">
+                                <option value="1.00">1.00 minimum wage</option>
+                                <option value="1.25">1.25 minimum wages</option>
+                                <option value="1.50">1.50 minimum wages</option>
+                                <option value="2.00" selected>2.00 minimum wages</option>
+                                <option value="2.50">2.50 minimum wages</option>
+                                <option value="3.00">3.00 minimum wages</option>
+                                <option value="4.00">4.00 minimum wages</option>
+                                <option value="5.00">5.00 minimum wages</option>
+                                <option value="6.00">6.00 minimum wages</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-uk-waterfall-en"
+                        class="plotly-chart"
+                        aria-label="Breakdown of labour cost in the United Kingdom"
+                    ></div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Additional charts</h2>
+
+                    <p>
+                        The charts below detail wages, effective rates, the
+                        breakdown of employee and employer levies, the
+                        socio-fiscal wedge, and the marginal return on a
+                        gross-wage increase.
+                    </p>
+                </section>
+
+                <div class="profile-selector profile-selector-grid">
+                    <div class="selector-field">
+                        <label for="uk-profile-select-en">
+                            Profile for the charts
+                        </label>
+
+                        <select id="uk-profile-select-en">
+                            <option value="uk__standard_employee_ruk" selected>
+                                United Kingdom · standard employee, outside Scotland
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Employer cost, gross wage and net wages</h3>
+
+                        <p class="chart-subtitle">
+                            Comparison of the gross wage, net wage before tax, net
+                            wage after tax, and employer cost across the multiple
+                            of the UK minimum wage.
+                        </p>
+
+                        <div
+                            id="chart-uk-cost-en"
+                            class="plotly-chart"
+                            aria-label="Labour cost in the United Kingdom"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Effective levy rates</h3>
+
+                        <p class="chart-subtitle">
+                            Employee rate (National Insurance + pension), employer
+                            rate (National Insurance + pension), and effective
+                            income tax rate.
+                        </p>
+
+                        <div
+                            id="chart-uk-rates-en"
+                            class="plotly-chart"
+                            aria-label="Levy rates in the United Kingdom"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Employee levies, detail</h3>
+
+                        <p class="chart-subtitle">
+                            Monthly amount of employee National Insurance and the
+                            employee's workplace pension contribution.
+                        </p>
+
+                        <div
+                            id="chart-uk-employee-components-en"
+                            class="plotly-chart"
+                            aria-label="Breakdown of UK employee levies"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Employer contributions, detail</h3>
+
+                        <p class="chart-subtitle">
+                            Monthly amount of employer National Insurance and the
+                            employer's workplace pension contribution.
+                        </p>
+
+                        <div
+                            id="chart-uk-employer-components-en"
+                            class="plotly-chart"
+                            aria-label="Breakdown of UK employer contributions"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Social wedge and total socio-fiscal wedge</h3>
+
+                        <p class="chart-subtitle">
+                            Comparison of the social wedge before tax and the
+                            total socio-fiscal wedge after income tax.
+                        </p>
+
+                        <div
+                            id="chart-uk-wedge-en"
+                            class="plotly-chart"
+                            aria-label="Social and socio-fiscal wedge in the United Kingdom"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Marginal return on a gross-wage increase</h3>
+
+                        <p class="chart-subtitle">
+                            Share of an additional pound of gross wage kept before
+                            and after income tax.
+                        </p>
+
+                        <div
+                            id="chart-uk-fiscal-return-en"
+                            class="plotly-chart"
+                            aria-label="Socio-fiscal return on a gross-wage increase in the United Kingdom"
+                        ></div>
+
+                        <p class="method-note">
+                            The marginal effect moves in steps around the National
+                            Insurance thresholds (£12,570 and £50,270/year), the
+                            tapered Personal Allowance (£100,000-£125,140/year),
+                            and the income-tax bands.
+                        </p>
+                    </div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Key indicators</h2>
+
+                    <p>
+                        The indicators below are computed for the profile
+                        selected in the additional charts, at the UK minimum wage
+                        (multiple = 1).
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="uk-metrics-en">
+                    <article class="metric-card">
+                        <span class="metric-label">Reference gross wage</span>
+                        <strong id="metric-uk-reference-wage-en">—</strong>
+                        <span class="metric-note">NLW, monthly (37.5h/week)</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Effective income tax rate</span>
+                        <strong id="metric-uk-income-tax-rate-en">—</strong>
+                        <span class="metric-note">Income tax / gross</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Effective employer rate</span>
+                        <strong id="metric-uk-employer-rate-en">—</strong>
+                        <span class="metric-note">National Insurance + pension</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Cost / net ratio at 1 NLW</span>
+                        <strong id="metric-uk-cost-to-net-en">—</strong>
+                        <span class="metric-note">After tax</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-en-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Data</h3>
+
+                    <p class="chart-subtitle">
+                        The UK dataset can be downloaded as a CSV file. It
+                        contains every simulated wage point for the standard
+                        profile: gross wage, income tax, National Insurance,
+                        workplace pension, employer cost, and socio-fiscal wedge
+                        indicators.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/uk/uk_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Download the United Kingdom dataset
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/uk/uk_parameters_2026.json"
+                            download
+                        >
+                            Download the 2026 parameters
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/uk/uk_sources_2026.json"
+                            download
+                        >
+                            Download the 2026 sources
+                        </a>
+                    </div>
+
+                    <div class="profile-selector profile-selector-grid data-profile-selector">
+                        <div class="selector-field">
+                            <label for="uk-data-profile-select-en">
+                                United Kingdom profile
+                            </label>
+
+                            <select id="uk-data-profile-select-en">
+                                <option value="uk__standard_employee_ruk" selected>
+                                    Standard employee, outside Scotland
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Data for the selected profile</h3>
+
+                    <p
+                        class="chart-subtitle"
+                        id="uk-data-profile-caption-en"
+                    >
+                        Standard employee, outside Scotland
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Multiple</th>
+                                    <th>Gross wage (£)</th>
+                                    <th>Net before tax (£)</th>
+                                    <th>Income tax (£)</th>
+                                    <th>Net after tax (£)</th>
+                                    <th>Employer cost (£)</th>
+                                    <th>Employee contributions (£)</th>
+                                    <th>Employer contributions (£)</th>
+                                    <th>Social wedge (£)</th>
+                                    <th>Total socio-fiscal wedge (£)</th>
+                                    <th>Employer rate</th>
+                                    <th>Cost / net after tax</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="uk-data-table-body-en">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="chart-subtitle" style="margin-top: 10px;">
+                        Employee contributions = National Insurance + workplace
+                        pension (employee). Employer contributions = National
+                        Insurance + workplace pension (employer). See the
+                        Methodology tab.
+                    </p>
+                </div>
+            </section>
+
+            <section id="tab-en-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Methodology</h2>
+
+                    <p>
+                        The United Kingdom module relies on a regulatory
+                        simulation of labour cost for a standard full-time
+                        employee resident outside Scotland. The gross wage is
+                        computed as a multiple of the monthly National Living
+                        Wage (NLW), used as the minimum-wage reference in the
+                        module.
+                    </p>
+
+                    <h3>1. Income tax (PAYE)</h3>
+
+                    <p>
+                        Income tax uses the progressive rUK scale (England,
+                        Wales, Northern Ireland) for the 2026/27 tax year: a
+                        Personal Allowance of £12,570, tapered by £1 for every £2
+                        of income above £100,000 (reaching zero at £125,140),
+                        then 20% up to £50,270, 40% up to £125,140, and 45%
+                        above. Scotland applies distinct devolved rates, not
+                        modeled here.
+                    </p>
+
+                    <h3>2. National Insurance (Class 1)</h3>
+
+                    <p>
+                        The employee pays 8% National Insurance between the
+                        Primary Threshold (£12,570/year) and the Upper Earnings
+                        Limit (£50,270/year), then 2% above. The employer pays
+                        15% above the Secondary Threshold (£5,000/year), with no
+                        upper limit.
+                    </p>
+
+                    <h3>3. Mandatory workplace pension (automatic enrolment)</h3>
+
+                    <p>
+                        Under the Pensions Act 2008, every eligible employee is
+                        automatically enrolled in a workplace pension, funded by
+                        an employee contribution of at least 5% and an employer
+                        contribution of at least 3% of pay within the qualifying
+                        earnings band (£6,240 to £50,270/year). This module uses
+                        these statutory minimum rates, on a "net pay" basis: the
+                        employee contribution reduces taxable income for income
+                        tax purposes, but not the National Insurance base.
+                    </p>
+
+                    <h3>4. Indicators produced</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Net before tax:</strong>
+                            gross wage minus employee National Insurance and the
+                            employee's workplace pension contribution.
+                        </li>
+
+                        <li>
+                            <strong>Net after tax:</strong>
+                            net before tax minus monthly income tax.
+                        </li>
+
+                        <li>
+                            <strong>Employer cost:</strong>
+                            gross wage plus employer National Insurance and the
+                            employer's workplace pension contribution.
+                        </li>
+
+                        <li>
+                            <strong>Social wedge:</strong>
+                            difference between employer cost and net before tax.
+                        </li>
+
+                        <li>
+                            <strong>Total socio-fiscal wedge:</strong>
+                            difference between employer cost and net after tax.
+                        </li>
+
+                        <li>
+                            <strong>Marginal return:</strong>
+                            share of an additional pound of gross wage kept
+                            before and after income tax.
+                        </li>
+                    </ul>
+
+                    <h3>5. Limits of the scenario</h3>
+
+                    <p class="method-note">
+                        The module does not simulate the Scottish income-tax
+                        scale, the Apprenticeship Levy (0.5% of the pay bill,
+                        employers with an annual pay bill over £3 million),
+                        student loan repayments, the marriage allowance,
+                        benefits in kind, or workplace pension contributions
+                        above the statutory minimum. The profile uses a
+                        full-time employee with a standard tax code (1257L,
+                        cumulative) and no opt-out from the workplace pension.
+                        These limits are accepted in order to produce a stable
+                        central scenario, comparable with the Labor Cost Lab's
+                        other national modules.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

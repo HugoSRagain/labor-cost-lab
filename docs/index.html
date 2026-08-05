@@ -744,6 +744,7 @@
                             <button type="button" role="tab" aria-selected="false" onclick="setCountry('be', this)">Belgium</button>
     			    <button type="button" role="tab" aria-selected="false" onclick="setCountry('ch', this)">Switzerland</button>
                             <button type="button" role="tab" aria-selected="false" onclick="setCountry('nl', this)">Netherlands</button>
+                            <button type="button" role="tab" aria-selected="false" onclick="setCountry('uk', this)">United Kingdom</button>
                         </div>
                     </div>
 
@@ -936,6 +937,35 @@
                     </div>
                 </a>
 
+                <a class="mod" href="./countries/uk/index.html">
+                    <div>
+                        <div class="mod-name">United Kingdom</div>
+                        <div class="mod-tags">
+                            <span class="tag live" data-i18n="status.available">Disponible</span>
+                            <span class="tag" data-i18n="status.prototype">Prototype</span>
+                            <span class="tag">PAYE / NI</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="mod-desc" data-i18n="module.uk.text">
+                            Module socio-fiscal 2026 : impôt sur le revenu (PAYE) hors Écosse,
+                            National Insurance (Class 1) et pension d'entreprise obligatoire
+                            (auto-enrolment).
+                        </p>
+                        <div class="minibar" aria-hidden="true">
+                            <span class="m-emp" style="width:12%"></span>
+                            <span class="m-sal" style="width:7%"></span>
+                            <span class="m-tax" style="width:8%"></span>
+                            <span class="m-net" style="width:73%"></span>
+                        </div>
+                    </div>
+                    <div class="mod-net">
+                        <b>73</b>
+                        <span data-i18n="module.netshare">net / 100</span>
+                        <span class="mod-go" data-i18n="module.open">Ouvrir →</span>
+                    </div>
+                </a>
+
                 <a class="mod" href="./countries/comparison/index.html">
                     <div>
                         <div class="mod-name" data-i18n="module.comparison.name">Comparaison</div>
@@ -946,14 +976,14 @@
                     </div>
                     <div>
                         <p class="mod-desc" data-i18n="module.comparison.text">
-                            Met en regard les 5 modules nationaux sur une grille de
+                            Met en regard les 6 modules nationaux sur une grille de
                             salaires harmonisée en dollars internationaux (PPA), pour
                             comparer coût employeur, salaire net et prélèvements
                             obligatoires à niveau de vie équivalent.
                         </p>
                     </div>
                     <div class="mod-net">
-                        <b>5</b>
+                        <b>6</b>
                         <span data-i18n="module.comparison.count">pays comparés</span>
                         <span class="mod-go" data-i18n="module.open">Ouvrir →</span>
                     </div>
@@ -1137,8 +1167,9 @@
                 "module.belgium.text": "Module socio-fiscal 2026 : cotisations ONSS, réduction structurelle employeur et précompte professionnel.",
 		"module.switzerland.text": "Module socio-fiscal 2026 : AVS / AI / APG, assurance chômage, LPP standardisée, assurance accident et impôt à la source canton par canton.",
                 "module.netherlands.text": "Module socio-fiscal 2026 : loonheffing (Box 1, algemene heffingskorting, arbeidskorting), cotisations employeur WW/Aof/Zvw/Wko et coût employeur.",
+                "module.uk.text": "Module socio-fiscal 2026 : impôt sur le revenu (PAYE) hors Écosse, National Insurance (Class 1) et pension d'entreprise obligatoire (auto-enrolment).",
                 "module.comparison.name": "Comparaison",
-                "module.comparison.text": "Met en regard les 5 modules nationaux sur une grille de salaires harmonisée en dollars internationaux (PPA), pour comparer coût employeur, salaire net et prélèvements obligatoires à niveau de vie équivalent.",
+                "module.comparison.text": "Met en regard les 6 modules nationaux sur une grille de salaires harmonisée en dollars internationaux (PPA), pour comparer coût employeur, salaire net et prélèvements obligatoires à niveau de vie équivalent.",
                 "module.comparison.count": "pays comparés",
                 "module.open": "Ouvrir →",
                 "module.netshare": "net / 100",
@@ -1173,7 +1204,7 @@
                 "data.block4.title": "Code ouvert",
                 "data.block4.text": "Scripts de construction des jeux de données et interface web reproductible.",
                 "side.status.modules.label": "Modules accessibles",
-		"side.status.modules.value": "France · Allemagne · Belgique · Suisse · Pays-Bas",
+		"side.status.modules.value": "France · Allemagne · Belgique · Suisse · Pays-Bas · Royaume-Uni",
                 "side.status.year.label": "Année réglementaire",
                 "side.status.output.label": "Sorties principales",
                 "side.status.output.value": "coût employeur · net · coins socio-fiscaux",
@@ -1204,8 +1235,9 @@
                 "module.belgium.text": "2026 socio-fiscal module: ONSS contributions, the employer structural reduction, and professional withholding tax.",
 		"module.switzerland.text": "2026 socio-fiscal module: OASI / DI / EO, unemployment insurance, standardized occupational pension, accident insurance, and canton-level withholding tax.",
                 "module.netherlands.text": "2026 socio-fiscal module: loonheffing (Box 1, general tax credit, employment tax credit), employer contributions (WW, Aof, Zvw, Wko) and employer cost.",
+                "module.uk.text": "2026 socio-fiscal module: income tax (PAYE) outside Scotland, Class 1 National Insurance, and the statutory automatic-enrolment workplace pension.",
                 "module.comparison.name": "Comparison",
-                "module.comparison.text": "Compares the 5 national modules on a wage grid harmonised in international dollars (PPP), to compare employer cost, net wage, and statutory levies at an equivalent standard of living.",
+                "module.comparison.text": "Compares the 6 national modules on a wage grid harmonised in international dollars (PPP), to compare employer cost, net wage, and statutory levies at an equivalent standard of living.",
                 "module.comparison.count": "countries compared",
                 "module.open": "Open →",
                 "module.netshare": "net / 100",
@@ -1240,7 +1272,7 @@
                 "data.block4.title": "Open code",
                 "data.block4.text": "Dataset-building scripts and a reproducible hosted web interface.",
                 "side.status.modules.label": "Available modules",
-		"side.status.modules.value": "France · Germany · Belgium · Switzerland · Netherlands",
+		"side.status.modules.value": "France · Germany · Belgium · Switzerland · Netherlands · United Kingdom",
                 "side.status.year.label": "Regulatory year",
                 "side.status.output.label": "Main outputs",
                 "side.status.output.value": "employer cost · net · socio-fiscal wedges",
@@ -1289,6 +1321,12 @@
                 sal: { v: 0, fr: "Cotisation salarié (aucune ligne distincte)", en: "Employee contribution (no separate line)" },
                 tax: { v: 21, fr: "Loonheffing (impôt + assurance nationale)", en: "Loonheffing (income tax + national insurance)" },
                 net: { v: 64, fr: "Salaire net après loonheffing", en: "Net wage after loonheffing" }
+            },
+            uk: {
+                emp: { v: 12, fr: "Cotisations employeur (National Insurance, pension)", en: "Employer contributions (National Insurance, pension)" },
+                sal: { v: 7, fr: "Cotisations salarié (National Insurance, pension)", en: "Employee contributions (National Insurance, pension)" },
+                tax: { v: 8, fr: "Impôt sur le revenu (PAYE)", en: "Income tax (PAYE)" },
+                net: { v: 73, fr: "Salaire net après impôt", en: "Net wage after tax" }
             }
         };
 

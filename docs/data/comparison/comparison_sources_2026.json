@@ -1,7 +1,7 @@
 {
     "module_name": "Cross-Country Labour Cost Comparison",
     "version": "2026-01",
-    "countries_covered": ["France", "Germany", "Belgium", "Switzerland", "Netherlands"],
+    "countries_covered": ["France", "Germany", "Belgium", "Switzerland", "Netherlands", "United Kingdom"],
     "sources": [
         {
             "id": "worldbank_icp_private_consumption_ppp",
@@ -84,12 +84,53 @@
                 "Converting the harmonized wage grid into Dutch euros and back into international dollars for the Netherlands"
             ],
             "status": "official"
+        },
+        {
+            "id": "gov_uk_ni_rates_2026_27",
+            "institution": "GOV.UK (HM Revenue & Customs)",
+            "institution_fr": "GOV.UK (HM Revenue & Customs)",
+            "title": "Rates and allowances: National Insurance contributions, 2026/27",
+            "url": "https://www.gov.uk/government/publications/rates-and-allowances-national-insurance-contributions/rates-and-allowances-national-insurance-contributions",
+            "reference_year": 2026,
+            "retrieved": "2026-08-05",
+            "used_for": [
+                "United Kingdom's Class 1 National Insurance rates and thresholds (employee and employer)"
+            ],
+            "status": "official"
+        },
+        {
+            "id": "uk_pensions_ae_thresholds_2026_27",
+            "institution": "UK Parliament / The Pensions Regulator",
+            "institution_fr": "Parlement britannique / The Pensions Regulator",
+            "title": "Automatic enrolment earnings trigger and qualifying earnings band, 2026/27",
+            "url": "https://questions-statements.parliament.uk/written-statements/detail/2025-12-18/hcws1206",
+            "reference_year": 2026,
+            "retrieved": "2026-08-05",
+            "used_for": [
+                "United Kingdom's automatic-enrolment workplace pension qualifying-earnings band and statutory minimum contribution rates"
+            ],
+            "status": "official"
+        },
+        {
+            "id": "worldbank_icp_ppp_uk",
+            "institution": "World Bank, International Comparison Program (ICP)",
+            "institution_fr": "Banque mondiale, Programme de comparaison internationale (PCI)",
+            "title": "PPP conversion factor, private consumption (LCU per international $), United Kingdom",
+            "indicator_code": "PA.NUS.PRVT.PP",
+            "url": "https://api.worldbank.org/v2/country/GBR/indicator/PA.NUS.PRVT.PP",
+            "reference_year": 2024,
+            "retrieved": "2026-08-05",
+            "used_for": [
+                "Converting the harmonized wage grid into pounds sterling and back into international dollars for the United Kingdom"
+            ],
+            "status": "official"
         }
     ],
     "notes": [
-        "This module reuses each country's own reference dataset (France: Mon-entreprise/Publicodes engine; Germany: analysis/germany; Belgium: analysis/belgium; Switzerland: analysis/switzerland; Netherlands: analysis/netherlands) and does not redefine any country-level parameter.",
+        "This module reuses each country's own reference dataset (France: Mon-entreprise/Publicodes engine; Germany: analysis/germany; Belgium: analysis/belgium; Switzerland: analysis/switzerland; Netherlands: analysis/netherlands; United Kingdom: analysis/uk) and does not redefine any country-level parameter.",
         "See docs/data/comparison/comparison_parameters_2026.json for the harmonized wage grid, the exact PPP values used, the reference profile chosen per country, and the Swiss canton population figures.",
         "France's 'net after income tax' figure is the actual tax due by a single, childless reference taxpayer (1 part de quotient familial), computed via the true progressive income-tax barème (see docs/data/france/france_income_tax_2026.json), directly analogous to Germany, Belgium and Switzerland's actual mandatory tax liability for a single/childless reference profile. The non-personalized 'taux neutre' withholding schedule was evaluated as an initial proxy but rejected because it does not represent any specific taxpayer's actual tax burden; it remains documented for reference only.",
-        "The Netherlands has no separate employee social-security contribution: AOW/Anw/Wlz national-insurance premiums are bundled into the Box 1 wage-tax rate. See docs/data/netherlands/netherlands_sources_2026.json for the full loonheffing formulas, employer-levy rates and an independent cross-check against a secondary net-minimum-wage figure."
+        "The Netherlands has no separate employee social-security contribution: AOW/Anw/Wlz national-insurance premiums are bundled into the Box 1 wage-tax rate. See docs/data/netherlands/netherlands_sources_2026.json for the full loonheffing formulas, employer-levy rates and an independent cross-check against a secondary net-minimum-wage figure.",
+        "The United Kingdom's reference profile is outside Scotland (rUK income-tax bands only) and includes the statutory-minimum automatic-enrolment workplace pension (employee 5%, employer 3% of qualifying earnings) alongside Class 1 National Insurance in the employee/employer contribution figures. See docs/data/uk/uk_sources_2026.json for the full rate schedule and sources."
     ]
 }

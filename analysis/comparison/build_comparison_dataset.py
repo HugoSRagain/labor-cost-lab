@@ -1,6 +1,6 @@
 """
 Labor Cost Lab
-Cross-country comparison dataset builder (France, Germany, Belgium, Switzerland, Netherlands).
+Cross-country comparison dataset builder (France, Germany, Belgium, Switzerland, Netherlands, United Kingdom).
 
 Methodology
 -----------
@@ -20,6 +20,15 @@ local-currency wage:
                  population-weighted average (Switzerland has no single
                  national wage-tax schedule; withholding tax is cantonal).
     Netherlands: analysis/netherlands/build_netherlands_dataset.py (compute_row)
+    United Kingdom: analysis/uk/build_uk_dataset.py (compute_row)
+
+Important note on the United Kingdom: the reference profile uses rUK
+(England/Wales/Northern Ireland) income-tax bands only -- Scotland has its
+own devolved bands and is not modelled. "employee_contributions" and
+"employer_contributions" include both Class 1 National Insurance and the
+statutory-minimum automatic-enrolment workplace pension (employee 5%,
+employer 3% of qualifying earnings), since both are mandatory deductions
+distinct from income tax.
 
 Important note on the Netherlands (see comparison_parameters_2026.json
 "notes"):
@@ -85,6 +94,7 @@ sys.path.insert(0, str(ROOT_DIR / "analysis" / "germany"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "belgium"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "switzerland"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "netherlands"))
+sys.path.insert(0, str(ROOT_DIR / "analysis" / "uk"))
 
 import pandas as pd  # noqa: E402
 
@@ -122,6 +132,11 @@ from swiss_withholding_tax_2026 import (  # noqa: E402
 from build_netherlands_dataset import (  # noqa: E402
     compute_row as nl_compute_row,
     load_parameters as nl_load_parameters,
+)
+
+from build_uk_dataset import (  # noqa: E402
+    compute_row as uk_compute_row,
+    load_parameters as uk_load_parameters,
 )
 
 
@@ -619,6 +634,87 @@ def compute_netherlands_row(
     return row
 
 
+# ---------------------------------------------------------------------------
+# United Kingdom
+# ---------------------------------------------------------------------------
+
+def compute_uk_row(
+    wage_point_intl_usd: float,
+    ppp_factor: float,
+    profile: Dict[str, Any],
+    parameters: Dict[str, Any],
+) -> Dict[str, Any]:
+    gross_local = wage_point_intl_usd * ppp_factor
+    wage_reference = parameters["wage_reference"]["gross_monthly_gbp"]
+    smic_multiple = gross_local / wage_reference
+
+    result = uk_compute_row(profile, smic_multiple, parameters)
+
+    employer_cost = result["employer_cost_monthly_gbp"]
+    net_before_income_tax = result["net_before_income_tax_monthly_gbp"]
+    net_after_income_tax = result["net_after_income_tax_monthly_gbp"]
+    income_tax = result["income_tax_monthly_gbp"]
+
+    row = base_row(
+        country="United Kingdom",
+        country_code="UK",
+        currency_code="GBP",
+        reference_profile_id=profile["profile_id"],
+        reference_profile_description=(
+            "Standard employee, outside Scotland (rUK income-tax bands), "
+            "full-time, standard tax code, auto-enrolled in a workplace "
+            "pension at the statutory minimum rates."
+        ),
+        harmonized_wage_point_intl_usd=wage_point_intl_usd,
+        ppp_factor=ppp_factor,
+    )
+
+    cost_to_net_ratio = result["cost_to_net_ratio"]
+    cost_to_net_after_ratio = result["cost_to_net_after_income_tax_ratio"]
+
+    row.update(
+        {
+            "gross_monthly_local": round_money(result["gross_monthly_gbp"]),
+            "gross_monthly_intl_usd": round_money(result["gross_monthly_gbp"] / ppp_factor),
+            "employee_contributions_monthly_local": round_money(result["employee_contributions_monthly_gbp"]),
+            "employee_contributions_monthly_intl_usd": round_money(result["employee_contributions_monthly_gbp"] / ppp_factor),
+            "employer_contributions_monthly_local": round_money(result["employer_contributions_monthly_gbp"]),
+            "employer_contributions_monthly_intl_usd": round_money(result["employer_contributions_monthly_gbp"] / ppp_factor),
+            "net_before_income_tax_monthly_local": round_money(net_before_income_tax),
+            "net_before_income_tax_monthly_intl_usd": round_money(net_before_income_tax / ppp_factor),
+            "income_tax_or_withholding_tax_monthly_local": round_money(income_tax),
+            "income_tax_or_withholding_tax_monthly_intl_usd": round_money(income_tax / ppp_factor),
+            "net_after_income_tax_monthly_local": round_money(net_after_income_tax),
+            "net_after_income_tax_monthly_intl_usd": round_money(net_after_income_tax / ppp_factor),
+            "employer_cost_monthly_local": round_money(employer_cost),
+            "employer_cost_monthly_intl_usd": round_money(employer_cost / ppp_factor),
+            "social_wedge_before_income_tax_rate": round(
+                (employer_cost - net_before_income_tax) / employer_cost, 6
+            ) if employer_cost else None,
+            "total_wedge_after_income_tax_rate": round(
+                (employer_cost - net_after_income_tax) / employer_cost, 6
+            ) if employer_cost else None,
+            "cost_to_net_before_income_tax_ratio": round(cost_to_net_ratio, 6)
+            if cost_to_net_ratio == cost_to_net_ratio else None,
+            "cost_to_net_after_income_tax_ratio": round(cost_to_net_after_ratio, 6)
+            if cost_to_net_after_ratio == cost_to_net_after_ratio else None,
+            "income_tax_modeled": True,
+            "aggregation_method": "single_reference_profile",
+            "below_minimum_wage": bool(gross_local < wage_reference),
+            "national_minimum_wage_monthly_local": round_money(wage_reference),
+            "note": (
+                "Employee/employer contributions include Class 1 National "
+                "Insurance and the statutory-minimum automatic-enrolment "
+                "workplace pension (employee 5%, employer 3% of qualifying "
+                "earnings), not income tax alone. rUK income-tax bands only; "
+                "Scotland's devolved bands are not modelled."
+            ),
+        }
+    )
+
+    return row
+
+
 def build_dataset() -> pd.DataFrame:
     parameters = load_json(PARAMETERS_PATH)
     ppp_values = parameters["ppp_conversion_factors"]["values"]
@@ -682,6 +778,14 @@ def build_dataset() -> pd.DataFrame:
         if profile["profile_id"] == nl_profile_id
     )
 
+    # --- United Kingdom setup ---
+    uk_parameters = uk_load_parameters()
+    uk_profile_id = parameters["reference_profiles"]["UK"]["profile_id"]
+    uk_profile = next(
+        profile for profile in uk_parameters["profiles"]
+        if profile["profile_id"] == uk_profile_id
+    )
+
     rows: List[Dict[str, Any]] = []
 
     for wage_point in wage_grid:
@@ -733,6 +837,15 @@ def build_dataset() -> pd.DataFrame:
                 ppp_values["NL"],
                 nl_profile,
                 nl_parameters,
+            )
+        )
+
+        rows.append(
+            compute_uk_row(
+                wage_point,
+                ppp_values["UK"],
+                uk_profile,
+                uk_parameters,
             )
         )
 

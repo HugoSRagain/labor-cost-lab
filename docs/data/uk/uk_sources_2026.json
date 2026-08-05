@@ -1,0 +1,79 @@
+{
+    "country": "United Kingdom",
+    "country_code": "UK",
+    "version": "2026",
+    "status": "source_audit",
+    "sources": {
+        "personal_allowance_and_income_tax_bands_2026_27": {
+            "label": "Personal Allowance and rUK Income Tax bands, 2026/27",
+            "value": "Personal Allowance 12570 GBP (tapered above 100000 GBP, 1 GBP per 2 GBP, reaching 0 at 125140 GBP); 20% to 50270 GBP; 40% to 125140 GBP; 45% above",
+            "source_name": "House of Commons Library / GOV.UK aggregated guidance",
+            "source_type": "official_aggregated",
+            "url": "https://commonslibrary.parliament.uk/research-briefings/cbp-10618/",
+            "confidence": "high"
+        },
+        "national_insurance_class1_2026_27": {
+            "label": "Class 1 National Insurance rates and thresholds, 2026/27",
+            "value": "Employee: 8% between Primary Threshold (12570 GBP/year) and Upper Earnings Limit (50270 GBP/year), 2% above. Employer: 15% above Secondary Threshold (5000 GBP/year), no upper limit.",
+            "source_name": "GOV.UK, Rates and allowances: National Insurance contributions",
+            "source_type": "official",
+            "url": "https://www.gov.uk/government/publications/rates-and-allowances-national-insurance-contributions/rates-and-allowances-national-insurance-contributions",
+            "retrieved": "2026-08-05",
+            "confidence": "high"
+        },
+        "national_living_wage_2026": {
+            "label": "National Living Wage (age 21+) from 1 April 2026",
+            "value": "12.71 GBP/hour",
+            "source_name": "GOV.UK / National Minimum Wage (Amendment) Regulations 2026",
+            "source_type": "official",
+            "url": "https://www.legislation.gov.uk/ukdsi/2026/9780348279030/pdfs/ukdsi_9780348279030_en.pdf",
+            "confidence": "high"
+        },
+        "full_time_hours_convention": {
+            "label": "37.5 hours/week as the most commonly cited UK full-time benchmark",
+            "source_name": "Multiple secondary sources (HR/payroll guidance), cross-checked",
+            "source_type": "secondary_multi_source",
+            "confidence": "medium",
+            "note": "The UK has no single statutory full-time weekly-hours figure; 37.5h/week is the most frequently cited standard (9-to-5 with an unpaid lunch break)."
+        },
+        "auto_enrolment_qualifying_earnings_2026_27": {
+            "label": "Automatic enrolment qualifying earnings band and earnings trigger, 2026/27",
+            "value": "Lower limit 6240 GBP/year, upper limit 50270 GBP/year, earnings trigger 10000 GBP/year (unchanged from 2025/26)",
+            "source_name": "UK Parliament written statement (Pensions Minister, 18 December 2025) / CIPP",
+            "source_type": "official",
+            "url": "https://questions-statements.parliament.uk/written-statements/detail/2025-12-18/hcws1206",
+            "confidence": "high"
+        },
+        "auto_enrolment_minimum_contribution_rates": {
+            "label": "Automatic enrolment statutory minimum contribution rates",
+            "value": "8% of qualifying earnings total, at least 3% employer (Pensions Act 2008 and subsequent phasing regulations, unchanged since April 2019)",
+            "source_name": "The Pensions Regulator",
+            "source_type": "official",
+            "confidence": "high"
+        },
+        "ppp_conversion_factor": {
+            "label": "PPP conversion factor, households and NPISHs final consumption expenditure (LCU per international $), United Kingdom, 2024",
+            "value": 0.682739,
+            "source_name": "World Bank, International Comparison Program (ICP)",
+            "source_type": "official",
+            "url": "https://api.worldbank.org/v2/country/GBR/indicator/PA.NUS.PRVT.PP",
+            "confidence": "high"
+        }
+    },
+    "audit_decision": {
+        "v0_scope": [
+            "rUK income tax (Personal Allowance with taper, 4 marginal bands)",
+            "Class 1 National Insurance, employee and employer",
+            "automatic-enrolment workplace pension at statutory minimum rates (net pay arrangement)"
+        ],
+        "not_yet_included": [
+            "Scottish income tax bands",
+            "Apprenticeship Levy (large employers only)",
+            "student loan repayments",
+            "marriage allowance",
+            "benefits in kind / salary sacrifice",
+            "pension contributions above the statutory minimum",
+            "opt-out from automatic enrolment"
+        ]
+    }
+}

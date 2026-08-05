@@ -1,0 +1,65 @@
+{
+    "country": "United Kingdom",
+    "country_code": "UK",
+    "version": "2026-04",
+    "effective_from": "2026-04-06",
+    "status": "prototype_v1",
+    "currency": "GBP",
+    "wage_reference": {
+        "name": "National Living Wage (NLW), 21 ans et plus",
+        "gross_monthly_gbp": 2065.38,
+        "hourly_rate_gbp": 12.71,
+        "weekly_hours": 37.5,
+        "source": "GOV.UK, National Living Wage à partir du 1er avril 2026",
+        "note": "Le Royaume-Uni n'a pas de durée hebdomadaire de travail à temps plein fixée par la loi. Ce module retient 37,5 heures/semaine, le repère le plus couramment cité pour un emploi à temps plein au Royaume-Uni (semaine type 9h-17h avec pause déjeuner non rémunérée), soit 12,71 x 37,5 x 52/12 = 2 065,38 GBP/mois."
+    },
+    "grid": {
+        "min_multiple": 0.80,
+        "max_multiple": 6.00,
+        "step": 0.01
+    },
+    "social_security": {
+        "income_tax_note": "Barème rUK (Angleterre/Pays de Galles/Irlande du Nord) : l'Écosse applique des taux dévolus distincts, non modélisés ici. Voir analysis/uk/paye_ni_2026.py pour le détail du calcul (abattement personnel dégressif, tranches d'impôt, National Insurance, pension d'entreprise obligatoire).",
+        "personal_allowance": {
+            "standard_gbp": 12570,
+            "taper_threshold_gbp": 100000,
+            "taper_rate": 0.5,
+            "reaches_zero_at_gbp": 125140
+        },
+        "income_tax_bands_ruk": [
+            {"lower_bound_gbp": 0, "upper_bound_gbp": 12570, "rate": 0.00},
+            {"lower_bound_gbp": 12570, "upper_bound_gbp": 50270, "rate": 0.20},
+            {"lower_bound_gbp": 50270, "upper_bound_gbp": 125140, "rate": 0.40},
+            {"lower_bound_gbp": 125140, "upper_bound_gbp": null, "rate": 0.45}
+        ],
+        "national_insurance_class1": {
+            "employee_primary_threshold_gbp": 12570,
+            "employee_upper_earnings_limit_gbp": 50270,
+            "employee_rate_below_uel": 0.08,
+            "employee_rate_above_uel": 0.02,
+            "employer_secondary_threshold_gbp": 5000,
+            "employer_rate": 0.15
+        },
+        "auto_enrolment_pension": {
+            "qualifying_earnings_lower_gbp": 6240,
+            "qualifying_earnings_upper_gbp": 50270,
+            "employee_rate": 0.05,
+            "employer_rate": 0.03,
+            "note": "Taux minimaux légaux de l'auto-enrolment (Pensions Act 2008). Hypothèse retenue : arrangement 'net pay' (la cotisation salarié réduit le revenu imposable avant impôt sur le revenu, mais pas l'assiette des National Insurance), sans opt-out."
+        }
+    },
+    "profiles": [
+        {
+            "profile_id": "uk__standard_employee_ruk",
+            "label_fr": "Royaume-Uni · salarié standard, hors Écosse",
+            "label_en": "United Kingdom · standard employee, outside Scotland"
+        }
+    ],
+    "limits": [
+        "Seul le barème d'impôt sur le revenu rUK (Angleterre/Pays de Galles/Irlande du Nord) est modélisé ; les taux écossais, distincts, ne le sont pas.",
+        "L'Apprenticeship Levy (0,5 % de la masse salariale, applicable aux employeurs dont la masse salariale annuelle dépasse 3 millions GBP) n'est pas modélisé : il ne concerne que les très grands employeurs.",
+        "Le remboursement de prêt étudiant (student loan), le marriage allowance et les avantages en nature ne sont pas modélisés.",
+        "La pension d'entreprise est modélisée aux taux minimaux légaux uniquement ; de nombreux employeurs cotisent au-delà de ce minimum.",
+        "Seul le cas d'un salarié à temps plein avec un code fiscal standard (1257L, cumulatif) est simulé."
+    ]
+}

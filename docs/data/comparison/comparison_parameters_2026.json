@@ -1,7 +1,7 @@
 {
     "module_name": "Cross-Country Labour Cost Comparison",
     "version": "2026-01",
-    "countries": ["France", "Germany", "Belgium", "Switzerland", "Netherlands"],
+    "countries": ["France", "Germany", "Belgium", "Switzerland", "Netherlands", "United Kingdom"],
     "methodology": [
         "Comparison axis: absolute wage levels converted via purchasing power parity (PPP), not wages re-indexed to each country's own minimum wage.",
         "PPP is applied individually to all 4 countries (including Switzerland), following the same logic as the OECD 'Taxing Wages' cross-country comparisons.",
@@ -22,7 +22,8 @@
         "CH": {"value_local": 3000, "currency": "CHF", "value_intl_usd": 2709.5, "source": "gross_monthly_min_chf, docs/data/switzerland/switzerland_parameters_2026.json"},
         "BE": {"value_local": 2189.81, "currency": "EUR", "value_intl_usd": 2911.4, "source": "GGMMI / RMMMG, docs/data/belgium/belgium_parameters_2026.json"},
         "DE": {"value_local": 2409.33, "currency": "EUR", "value_intl_usd": 3434.3, "source": "Statutory minimum wage x monthly hours convention, analysis/germany parameters"},
-        "NL": {"value_local": 2338.44, "currency": "EUR", "value_intl_usd": 3151.7, "source": "Wettelijk minimumloon (WML), 14.99 EUR/h x 36h/week (CBS full-time convention), docs/data/netherlands/netherlands_parameters_2026.json"}
+        "NL": {"value_local": 2338.44, "currency": "EUR", "value_intl_usd": 3151.7, "source": "Wettelijk minimumloon (WML), 14.99 EUR/h x 36h/week (CBS full-time convention), docs/data/netherlands/netherlands_parameters_2026.json"},
+        "UK": {"value_local": 2065.38, "currency": "GBP", "value_intl_usd": 3025.1, "source": "National Living Wage (21+), 12.71 GBP/h x 37.5h/week (most commonly cited UK full-time benchmark), docs/data/uk/uk_parameters_2026.json"}
     },
     "ppp_conversion_factors": {
         "basis": "Household (private) final consumption expenditure PPP conversion factor, LCU per international dollar",
@@ -35,7 +36,8 @@
             "DE": 0.701547,
             "BE": 0.752163,
             "CH": 1.107209,
-            "NL": 0.74195
+            "NL": 0.74195,
+            "UK": 0.682739
         }
     },
     "reference_profiles": {
@@ -63,6 +65,11 @@
             "profile_id": "netherlands__standard_permanent_contract",
             "description": "Permanent contract (WW low rate), large employer (Aof high rate), single, childless, below AOW age. No separate employee social-security contribution: AOW/Anw/Wlz national insurance is bundled into the Box 1 wage-tax rate (loonheffing).",
             "compute_source": "analysis/netherlands/build_netherlands_dataset.py and analysis/netherlands/loonheffing_2026.py"
+        },
+        "UK": {
+            "profile_id": "uk__standard_employee_ruk",
+            "description": "Standard employee, outside Scotland (rUK income-tax bands only), full-time, standard tax code, auto-enrolled in a workplace pension at the statutory minimum rates (employee 5%, employer 3% of qualifying earnings).",
+            "compute_source": "analysis/uk/build_uk_dataset.py and analysis/uk/paye_ni_2026.py"
         }
     },
     "switzerland_canton_population_weights": {
@@ -107,6 +114,7 @@
         "France's 'net after income tax' figure is the actual income tax due by a single, childless reference taxpayer (1 part de quotient familial), computed via the true progressive income-tax bar\u00e8me (marginal brackets), applied to the Mon-entreprise engine's 'net imposable' tax base (annualized, less the standard 10% deduction for professional expenses). This is directly analogous to the other three countries' actual mandatory tax liabilities for a single/childless reference profile. Note that most French employees are withheld at a personalized 'pr\u00e9l\u00e8vement \u00e0 la source' rate set by the DGFiP from their full household's tax situation (which can differ from a single/childless taxpayer's liability); the withheld amount is only an advance on the definitively-due tax computed here.",
         "The non-personalized 'taux neutre' (grille des taux par d\u00e9faut, article 204 H CGI, BOFiP BOI-BAREME-000037) -- an earlier candidate proxy based on the monthly withholding mechanism rather than actual tax liability -- was evaluated and rejected as a comparison basis because it does not represent any specific taxpayer's real tax burden; it is kept in docs/data/france/france_income_tax_2026.json for reference only.",
         "See docs/data/france/france_income_tax_2026.json for the full progressive bar\u00e8me, standard-deduction parameters, methodology notes and sources.",
+        "The United Kingdom's 'employee_contributions' and 'employer_contributions' figures include both Class 1 National Insurance and the statutory-minimum automatic-enrolment workplace pension (employee 5%, employer 3% of qualifying earnings), not income tax alone -- income tax (PAYE) is reported separately, as for the other countries. Only rUK (England/Wales/Northern Ireland) income-tax bands are modeled; Scotland's devolved bands are not.",
         "All amounts are also cross-country comparable in international dollars (PPP) in addition to local currency."
     ]
 }
