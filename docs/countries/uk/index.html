@@ -10,7 +10,7 @@
 
     <link rel="stylesheet" href="../../assets/style.css?v=27">
     <script defer src="../../assets/i18n_common.js?v=3"></script>
-    <script defer src="./assets/uk_app.js?v=3"></script>
+    <script defer src="./assets/uk_app.js?v=4"></script>
 </head>
 
 <body>
@@ -163,6 +163,9 @@
                         <select id="uk-profile-select-fr">
                             <option value="uk__standard_employee_ruk" selected>
                                 Royaume-Uni · salarié standard, hors Écosse
+                            </option>
+                            <option value="uk__standard_employee_scotland">
+                                Royaume-Uni · salarié standard, Écosse
                             </option>
                         </select>
                     </div>
@@ -442,6 +445,9 @@
                                 <option value="uk__standard_employee_ruk" selected>
                                     Salarié standard, hors Écosse
                                 </option>
+                                <option value="uk__standard_employee_scotland">
+                                    Salarié standard, Écosse
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -512,8 +518,12 @@
                         de 12 570 £, dégressif d'1 £ pour chaque tranche de 2 £ de
                         revenu au-delà de 100 000 £ (nul à partir de 125 140 £),
                         puis 20 % jusqu'à 50 270 £, 40 % jusqu'à 125 140 £ et 45 %
-                        au-delà. L'Écosse applique des taux dévolus distincts, non
-                        modélisés ici.
+                        au-delà. Un second profil, salarié standard en Écosse, est
+                        disponible dans le sélecteur ci-dessus : l'Écosse applique
+                        son propre barème dévolu à 6 tranches (19 % / 20 % / 21 % /
+                        42 % / 45 % / 48 %), tandis que l'abattement personnel, le
+                        National Insurance et la pension d'entreprise restent
+                        communs aux deux régions.
                     </p>
 
                     <h3>2. National Insurance (classe 1)</h3>
@@ -593,11 +603,11 @@
                     <h3>6. Limites du scénario</h3>
 
                     <p class="method-note">
-                        Le module ne simule pas le barème écossais de l'impôt sur
-                        le revenu, l'Apprenticeship Levy (0,5 % de la masse
-                        salariale, employeurs de plus de 3 millions £ de masse
-                        salariale annuelle), le remboursement de prêt étudiant, le
-                        marriage allowance, les avantages en nature, ni les
+                        Le module ne simule pas l'Apprenticeship Levy (0,5 % de la
+                        masse salariale, employeurs de plus de 3 millions £ de
+                        masse salariale annuelle), le remboursement de prêt
+                        étudiant, le marriage allowance, les avantages en nature,
+                        ni les
                         cotisations de pension d'entreprise au-delà du minimum
                         légal. Le profil retient un salarié à temps plein avec un
                         code fiscal standard (1257L, cumulatif) et une affiliation
@@ -747,6 +757,9 @@
                         <select id="uk-profile-select-en">
                             <option value="uk__standard_employee_ruk" selected>
                                 United Kingdom · standard employee, outside Scotland
+                            </option>
+                            <option value="uk__standard_employee_scotland">
+                                United Kingdom · standard employee, Scotland
                             </option>
                         </select>
                     </div>
@@ -1026,6 +1039,9 @@
                                 <option value="uk__standard_employee_ruk" selected>
                                     Standard employee, outside Scotland
                                 </option>
+                                <option value="uk__standard_employee_scotland">
+                                    Standard employee, Scotland
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -1095,8 +1111,11 @@
                         Personal Allowance of £12,570, tapered by £1 for every £2
                         of income above £100,000 (reaching zero at £125,140),
                         then 20% up to £50,270, 40% up to £125,140, and 45%
-                        above. Scotland applies distinct devolved rates, not
-                        modeled here.
+                        above. A second profile, standard employee in Scotland, is
+                        available in the selector above: Scotland applies its own
+                        devolved 6-band schedule (19% / 20% / 21% / 42% / 45% /
+                        48%), while the Personal Allowance, National Insurance and
+                        the workplace pension remain common to both regions.
                     </p>
 
                     <h3>2. National Insurance (Class 1)</h3>
@@ -1172,11 +1191,11 @@
                     <h3>6. Limits of the scenario</h3>
 
                     <p class="method-note">
-                        The module does not simulate the Scottish income-tax
-                        scale, the Apprenticeship Levy (0.5% of the pay bill,
-                        employers with an annual pay bill over £3 million),
-                        student loan repayments, the marriage allowance,
-                        benefits in kind, or workplace pension contributions
+                        The module does not simulate the Apprenticeship Levy
+                        (0.5% of the pay bill, employers with an annual pay bill
+                        over £3 million), student loan repayments, the marriage
+                        allowance, benefits in kind, or workplace pension
+                        contributions
                         above the statutory minimum. The profile uses a
                         full-time employee with a standard tax code (1257L,
                         cumulative) and no opt-out from the workplace pension.

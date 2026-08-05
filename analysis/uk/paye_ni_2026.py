@@ -8,7 +8,9 @@ This module implements the central research scenario for the UK Labour
 Cost Lab module:
 
 - employee resident in England, Wales or Northern Ireland (rUK income-tax
-  bands; Scotland has its own devolved bands and is not modelled here);
+  bands), or, as an alternate selectable profile, Scotland (its own
+  devolved 6-band schedule; Personal Allowance, National Insurance and the
+  auto-enrolment pension are UK-wide and identical in both cases);
 - standard tax code (full personal allowance, no marriage allowance, no
   student loan deductions, no benefits in kind);
 - single job, standard cumulative PAYE tax code;
@@ -101,6 +103,61 @@ def compute_income_tax_2026(taxable_income_after_allowance_gbp: float) -> float:
     return round_pence(tax)
 
 
+def compute_scottish_income_tax_2026(taxable_income_after_allowance_gbp: float) -> float:
+    """
+    2026/27 Scottish income tax, 6-band schedule, applied to income already
+    net of the (tapered) Personal Allowance (which is UK-wide, unchanged).
+    Source: gov.scot, "Scottish Income Tax: rates and bands, 2026 to 2027".
+    """
+    x = max(0.0, taxable_income_after_allowance_gbp)
+
+    starter_band = 16537.00 - 12570.00
+    basic_band_upper = 29526.00 - 12570.00
+    intermediate_band_upper = 43662.00 - 12570.00
+    higher_band_upper = 75000.00 - 12570.00
+    advanced_band_upper = 125140.00 - 12570.00
+
+    if x <= starter_band:
+        tax = 0.19 * x
+    elif x <= basic_band_upper:
+        tax = (
+            0.19 * starter_band
+            + 0.20 * (x - starter_band)
+        )
+    elif x <= intermediate_band_upper:
+        tax = (
+            0.19 * starter_band
+            + 0.20 * (basic_band_upper - starter_band)
+            + 0.21 * (x - basic_band_upper)
+        )
+    elif x <= higher_band_upper:
+        tax = (
+            0.19 * starter_band
+            + 0.20 * (basic_band_upper - starter_band)
+            + 0.21 * (intermediate_band_upper - basic_band_upper)
+            + 0.42 * (x - intermediate_band_upper)
+        )
+    elif x <= advanced_band_upper:
+        tax = (
+            0.19 * starter_band
+            + 0.20 * (basic_band_upper - starter_band)
+            + 0.21 * (intermediate_band_upper - basic_band_upper)
+            + 0.42 * (higher_band_upper - intermediate_band_upper)
+            + 0.45 * (x - higher_band_upper)
+        )
+    else:
+        tax = (
+            0.19 * starter_band
+            + 0.20 * (basic_band_upper - starter_band)
+            + 0.21 * (intermediate_band_upper - basic_band_upper)
+            + 0.42 * (higher_band_upper - intermediate_band_upper)
+            + 0.45 * (advanced_band_upper - higher_band_upper)
+            + 0.48 * (x - advanced_band_upper)
+        )
+
+    return round_pence(tax)
+
+
 def compute_employee_ni_2026(annual_gross_gbp: float) -> float:
     """
     2026/27 employee (primary) Class 1 National Insurance: 8% between the
@@ -139,10 +196,18 @@ def compute_employer_ni_2026(annual_gross_gbp: float) -> float:
     return round_pence(0.15 * (x - secondary_threshold))
 
 
-def compute_uk_paye_ni_pension_2026(gross_monthly_gbp: float) -> dict:
+def compute_uk_paye_ni_pension_2026(
+    gross_monthly_gbp: float,
+    region: str = "ruk",
+) -> dict:
     """
     Compute the full monthly PAYE / NI / auto-enrolment pension picture for
     the standard reference employee.
+
+    `region` selects the income-tax band schedule: "ruk" (England, Wales,
+    Northern Ireland) or "scotland" (devolved 6-band schedule). The
+    Personal Allowance, National Insurance and auto-enrolment pension are
+    UK-wide and unaffected by `region`.
 
     Returns
     -------
@@ -178,7 +243,11 @@ def compute_uk_paye_ni_pension_2026(gross_monthly_gbp: float) -> dict:
         max(0.0, annual_taxable_gross - personal_allowance)
     )
 
-    annual_income_tax = compute_income_tax_2026(annual_taxable_income)
+    annual_income_tax = (
+        compute_scottish_income_tax_2026(annual_taxable_income)
+        if region == "scotland"
+        else compute_income_tax_2026(annual_taxable_income)
+    )
     annual_employee_ni = compute_employee_ni_2026(annual_gross_gbp)
     annual_employer_ni = compute_employer_ni_2026(annual_gross_gbp)
 

@@ -21,13 +21,33 @@
         	"monthly_threshold_eur": 603.00,
         	"annual_threshold_eur": 7236.00,
         	"source": "Minijob-Zentrale / Deutsche Rentenversicherung",
-        	"note": "Monthly earnings threshold for marginal employment in 2026."
+        	"note": "Monthly earnings threshold for marginal employment in 2026.",
+        	"employer_flat_rates": {
+        		"pension": 0.15,
+        		"health": 0.13,
+        		"flat_wage_tax": 0.02,
+        		"u1_sick_pay_levy": 0.008,
+        		"u2_maternity_levy": 0.0022,
+        		"insolvency_levy": 0.0015,
+        		"total": 0.3117,
+        		"source": "Minijob-Zentrale 2026 flat-rate schedule for commercial (gewerblich) minijobs, aggregated via 2026 payroll guidance (getminijob.de, minijobgenie.de)",
+        		"note": "Employer-only flat-rate contributions on gross pay for a commercial minijob. Employee side is modelled at 0%: minijob workers are subject by default to compulsory pension insurance with a 3.6% top-up unless they file for exemption (Befreiung von der Rentenversicherungspflicht); the large majority exercise this exemption in practice, so the reference scenario models the opt-out case as an explicit, adjustable assumption."
+        	}
     	},
     	"midijob": {
         	"lower_monthly_threshold_eur": 603.01,
         	"upper_monthly_threshold_eur": 2000.00,
         	"source": "BMAS",
-        	"note": "German transitional employment range, also known as Übergangsbereich."
+        	"note": "German transitional employment range, also known as Übergangsbereich.",
+        	"gleitzone_2026": {
+        		"faktor_f": 0.6619,
+        		"total_base_coefficient": 1.145937223,
+        		"total_base_constant": -291.8744452,
+        		"employee_base_coefficient": 1.431639227,
+        		"employee_base_constant": -863.2784538,
+        		"source": "Cross-checked 2026 payroll guidance (lohndialog.de, betanet.de); coefficients agree to 9 decimal places, indicating both quote the same GKV-Spitzenverband/Minijob-Zentrale published Faktor F.",
+        		"note": "beitragspflichtige_Einnahme_total = total_base_coefficient x gross + total_base_constant (base for the combined employer+employee contribution, at each branch's total rate); beitragspflichtige_Einnahme_employee = employee_base_coefficient x gross + employee_base_constant (base for the employee's own-rate contribution, at each branch's employee rate). The employer's contribution is the residual: total contribution minus the employee's contribution, which concentrates the Übergangsbereich relief on the employee side."
+        	}
     	},
     	"standard_job": {
         	"lower_monthly_threshold_eur": 2000.01,
@@ -115,7 +135,7 @@
     "methodological_limits": [
         "Income tax is excluded from V1.",
         "Net wage is computed before personal income tax.",
-        "Mini-jobs and midi-jobs are excluded from V1.",
+        "Mini-jobs are modelled with the 2026 employer flat-rate schedule and 0% employee contribution (opt-out from the pension top-up assumed); midi-jobs are modelled with the 2026 Übergangsbereich Gleitzone formula (Faktor F).",
         "Private health insurance is excluded from V1.",
         "Individual sickness-fund additional contribution rates are not modelled in V1.",
         "The health additional contribution is modelled with a reference average rate.",

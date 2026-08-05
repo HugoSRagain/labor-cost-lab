@@ -966,10 +966,12 @@ function renderUkDataTable(lang) {
 
     const profileLabels = {
         fr: {
-            uk__standard_employee_ruk: "Salarié standard, hors Écosse"
+            uk__standard_employee_ruk: "Salarié standard, hors Écosse",
+            uk__standard_employee_scotland: "Salarié standard, Écosse"
         },
         en: {
-            uk__standard_employee_ruk: "Standard employee, outside Scotland"
+            uk__standard_employee_ruk: "Standard employee, outside Scotland",
+            uk__standard_employee_scotland: "Standard employee, Scotland"
         }
     };
 

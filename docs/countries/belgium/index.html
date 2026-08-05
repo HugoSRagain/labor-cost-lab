@@ -10,7 +10,7 @@
 
     <link rel="stylesheet" href="../../assets/style.css?v=26">
     <script defer src="../../assets/i18n_common.js?v=3"></script>
-    <script defer src="./assets/belgium_app.js?v=11"></script>
+    <script defer src="./assets/belgium_app.js?v=12"></script>
 </head>
 
 <body>
@@ -159,6 +159,9 @@
                         <select id="belgium-profile-select-fr">
                             <option value="belgium__standard_private_sector" selected>
                                 Belgique · secteur privé standard
+                            </option>
+                            <option value="belgium__non_profit_sector">
+                                Belgique · secteur non-marchand (Maribel social)
                             </option>
                         </select>
                     </div>
@@ -436,6 +439,9 @@
                                 <option value="belgium__standard_private_sector" selected>
                                     Secteur privé standard
                                 </option>
+                                <option value="belgium__non_profit_sector">
+                                    Secteur non-marchand (Maribel social)
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -512,6 +518,21 @@
                         le salaire de référence trimestriel étant approximé par trois
                         salaires mensuels. Cette convention permet d'intégrer le mécanisme
                         dans une grille mensuelle comparable aux modules France et Allemagne.
+                    </p>
+
+                    <p>
+                        Un second profil, secteur non-marchand (Maribel social,
+                        catégorie 2), est disponible dans le sélecteur ci-dessus. Sa
+                        réduction structurelle suit une formule différente : un montant
+                        de base de 79 € par trimestre, des coefficients bas salaire plus
+                        élevés (23 % et 16 %, contre 14 % et 16 % en catégorie 1) et une
+                        composante haut salaire qui augmente la réduction au-delà de
+                        16 803,98 € de salaire trimestriel. Cette dernière composante
+                        dépend, dans le texte officiel, de la masse salariale
+                        trimestrielle totale de l'employeur — une donnée d'entreprise
+                        que ce module, qui simule un salarié isolé, approxime par le
+                        salaire trimestriel de ce même salarié. Les résultats de la
+                        catégorie 2 doivent donc être lus comme indicatifs.
                     </p>
 
                     <h3>3. Précompte professionnel</h3>
@@ -739,6 +760,9 @@
                         <select id="belgium-profile-select-en">
                             <option value="belgium__standard_private_sector" selected>
                                 Belgium · standard private sector
+                            </option>
+                            <option value="belgium__non_profit_sector">
+                                Belgium · non-profit sector (Maribel social)
                             </option>
                         </select>
                     </div>
@@ -1017,6 +1041,9 @@
                                 <option value="belgium__standard_private_sector" selected>
                                     Standard private sector
                                 </option>
+                                <option value="belgium__non_profit_sector">
+                                    Non-profit sector (Maribel social)
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -1093,6 +1120,20 @@
                         wages. This convention allows the mechanism to be integrated
                         into a monthly grid comparable to the France and Germany
                         modules.
+                    </p>
+
+                    <p>
+                        A second profile, non-profit sector (Maribel social,
+                        category 2), is available in the selector above. Its structural
+                        reduction follows a different formula: a fixed base of €79 per
+                        quarter, higher low-wage coefficients (23% and 16%, versus 14%
+                        and 16% in category 1), and a high-wage component that
+                        increases the reduction above €16,803.98 of quarterly wage.
+                        This last component depends, in the official text, on the
+                        employer's total quarterly payroll mass — a firm-level figure
+                        that this module, which simulates a single employee, approximates
+                        with that same employee's own quarterly wage. Category 2 results
+                        should therefore be read as indicative.
                     </p>
 
                     <h3>3. Withholding tax (précompte professionnel)</h3>

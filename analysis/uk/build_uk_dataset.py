@@ -47,7 +47,10 @@ def compute_row(
         * smic_multiple
     )
 
-    result = compute_uk_paye_ni_pension_2026(gross_monthly_gbp)
+    result = compute_uk_paye_ni_pension_2026(
+        gross_monthly_gbp,
+        region=profile.get("region", "ruk")
+    )
 
     employee_ni = result["employee_ni_monthly_gbp"]
     employer_ni = result["employer_ni_monthly_gbp"]

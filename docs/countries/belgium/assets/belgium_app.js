@@ -903,10 +903,12 @@ function renderBelgiumDataTable(lang) {
 
     const profileLabels = {
         fr: {
-            belgium__standard_private_sector: "Secteur privé standard"
+            belgium__standard_private_sector: "Secteur privé standard",
+            belgium__non_profit_sector: "Secteur non-marchand (Maribel social)"
         },
         en: {
-            belgium__standard_private_sector: "Standard private sector"
+            belgium__standard_private_sector: "Standard private sector",
+            belgium__non_profit_sector: "Non-profit sector (Maribel social)"
         }
     };
 

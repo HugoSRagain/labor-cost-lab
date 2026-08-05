@@ -101,22 +101,11 @@ def get_germany_tax_scenario(profile_id: str) -> dict:
         "church_tax": False,
     }
 
-def compute_row(
-    smic_multiple: float,
+def compute_standard_contributions(
+    gross: float,
     profile: dict,
     parameters: dict
 ) -> dict:
-    minimum_wage_hourly = parameters["minimum_wage"]["hourly_eur"]
-    monthly_hours = parameters["working_time_convention"]["monthly_hours"]
-
-    monthly_minimum_wage = minimum_wage_hourly * monthly_hours
-    gross = monthly_minimum_wage * smic_multiple
-
-    employment_regime = classify_employment_regime(
-        gross_monthly_eur=gross,
-        parameters=parameters
-    )
-
     ceilings = parameters["contribution_ceilings"]
     rates = parameters["rates"]
 
@@ -169,6 +158,138 @@ def compute_row(
         health_care_base
         * profile["care_employer_rate"]
     )
+
+    return {
+        "employee_pension": employee_pension,
+        "employer_pension": employer_pension,
+        "employee_unemployment": employee_unemployment,
+        "employer_unemployment": employer_unemployment,
+        "employee_health": employee_health,
+        "employer_health": employer_health,
+        "employee_care": employee_care,
+        "employer_care": employer_care,
+        "health_care_base": health_care_base,
+        "pension_unemployment_base": pension_unemployment_base,
+    }
+
+
+def compute_minijob_contributions(gross: float, parameters: dict) -> dict:
+    employer_flat_rates = parameters["employment_regimes"]["minijob"]["employer_flat_rates"]
+
+    employer_pension = gross * employer_flat_rates["pension"]
+    employer_health = gross * employer_flat_rates["health"]
+
+    # Pauschsteuer + U1/U2/Insolvenzgeldumlage have no dedicated column in
+    # this dataset's branch breakdown; bundled into employer_health since
+    # they are, like it, flat-rate employer-only levies with no employee
+    # counterpart (does not affect employer_contributions/employer_cost
+    # totals, only the per-branch breakdown chart, which is never rendered
+    # inside the minijob wage range).
+    employer_other = gross * (
+        employer_flat_rates["flat_wage_tax"]
+        + employer_flat_rates["u1_sick_pay_levy"]
+        + employer_flat_rates["u2_maternity_levy"]
+        + employer_flat_rates["insolvency_levy"]
+    )
+
+    return {
+        "employee_pension": 0.0,
+        "employer_pension": employer_pension,
+        "employee_unemployment": 0.0,
+        "employer_unemployment": 0.0,
+        "employee_health": 0.0,
+        "employer_health": employer_health + employer_other,
+        "employee_care": 0.0,
+        "employer_care": 0.0,
+        "health_care_base": gross,
+        "pension_unemployment_base": gross,
+    }
+
+
+def compute_midijob_contributions(
+    gross: float,
+    profile: dict,
+    parameters: dict
+) -> dict:
+    gleitzone = parameters["employment_regimes"]["midijob"]["gleitzone_2026"]
+    rates = parameters["rates"]
+
+    total_base = max(
+        0.0,
+        gleitzone["total_base_coefficient"] * gross
+        + gleitzone["total_base_constant"]
+    )
+
+    employee_base = max(
+        0.0,
+        gleitzone["employee_base_coefficient"] * gross
+        + gleitzone["employee_base_constant"]
+    )
+
+    branch_rates = [
+        ("pension", rates["pension_total"], rates["pension_employee"]),
+        ("unemployment", rates["unemployment_total"], rates["unemployment_employee"]),
+        (
+            "health",
+            rates["health_general_total"] + rates["health_additional_total_reference"],
+            rates["health_general_employee"] + rates["health_additional_employee_reference"]
+        ),
+        (
+            "care",
+            profile["care_employee_rate"] + profile["care_employer_rate"],
+            profile["care_employee_rate"]
+        ),
+    ]
+
+    result = {
+        "health_care_base": gross,
+        "pension_unemployment_base": gross,
+    }
+
+    for name, total_rate, employee_rate in branch_rates:
+        total_contribution = total_base * total_rate
+        employee_contribution = employee_base * employee_rate
+        employer_contribution = max(0.0, total_contribution - employee_contribution)
+
+        result[f"employee_{name}"] = employee_contribution
+        result[f"employer_{name}"] = employer_contribution
+
+    return result
+
+
+def compute_row(
+    smic_multiple: float,
+    profile: dict,
+    parameters: dict
+) -> dict:
+    minimum_wage_hourly = parameters["minimum_wage"]["hourly_eur"]
+    monthly_hours = parameters["working_time_convention"]["monthly_hours"]
+
+    monthly_minimum_wage = minimum_wage_hourly * monthly_hours
+    gross = monthly_minimum_wage * smic_multiple
+
+    employment_regime = classify_employment_regime(
+        gross_monthly_eur=gross,
+        parameters=parameters
+    )
+
+    if employment_regime["is_minijob"]:
+        contributions = compute_minijob_contributions(gross, parameters)
+    elif employment_regime["is_midijob"]:
+        contributions = compute_midijob_contributions(gross, profile, parameters)
+    else:
+        contributions = compute_standard_contributions(gross, profile, parameters)
+
+    employee_pension = contributions["employee_pension"]
+    employer_pension = contributions["employer_pension"]
+    employee_unemployment = contributions["employee_unemployment"]
+    employer_unemployment = contributions["employer_unemployment"]
+    employee_health = contributions["employee_health"]
+    employer_health = contributions["employer_health"]
+    employee_care = contributions["employee_care"]
+    employer_care = contributions["employer_care"]
+    health_care_base = contributions["health_care_base"]
+    pension_unemployment_base = contributions["pension_unemployment_base"]
 
     employee_contributions = (
         employee_pension
@@ -566,8 +687,9 @@ Current limits:
 - private health insurance is not simulated;
 - accident insurance is not simulated;
 - household taxation and spouse effects are not simulated;
-- Mini-jobs and Midi-jobs are identified in the dataset, but their specific
-  contribution rules are not yet applied.
+- Mini-jobs are modelled with the 2026 employer flat-rate schedule (31.17%
+  of gross, employee 0%, opt-out from the pension top-up assumed); Midi-jobs
+  are modelled with the 2026 Uebergangsbereich Gleitzone formula (Faktor F).
 """
 
     VALIDATION_SUMMARY_PATH.write_text(

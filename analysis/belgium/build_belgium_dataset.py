@@ -37,9 +37,16 @@ def round_money(value: float) -> float:
 
 def compute_structural_reduction(
     gross_monthly_eur: float,
+    profile: dict,
     parameters: dict
 ) -> dict:
-    structural_reduction = parameters["social_security"]["structural_reduction"]
+    category = profile.get("structural_reduction_category", 1)
+
+    structural_reduction = (
+        parameters["social_security"]["structural_reduction"]
+        if category == 1
+        else parameters["social_security"]["structural_reduction_category_2"]
+    )
 
     reference_wage_quarterly = (
         gross_monthly_eur
@@ -55,7 +62,8 @@ def compute_structural_reduction(
             "structural_reduction_reference_wage_quarterly_eur": reference_wage_quarterly
         }
 
-    low_wage_component = (
+    low_wage_component = max(
+        0.0,
         structural_reduction["low_wage_component_rate"]
         * (
             structural_reduction["low_wage_threshold_quarterly_eur"]
@@ -63,7 +71,8 @@ def compute_structural_reduction(
         )
     )
 
-    very_low_wage_component = (
+    very_low_wage_component = max(
+        0.0,
         structural_reduction["very_low_wage_component_rate"]
         * (
             structural_reduction["very_low_wage_threshold_quarterly_eur"]
@@ -71,20 +80,27 @@ def compute_structural_reduction(
         )
     )
 
-    low_wage_component = max(
-        low_wage_component,
-        0.0
-    )
-
-    very_low_wage_component = max(
-        very_low_wage_component,
-        0.0
-    )
-
     structural_reduction_quarterly = (
-        low_wage_component
+        structural_reduction.get("base_amount_quarterly_eur", 0.0)
+        + low_wage_component
         + very_low_wage_component
     )
+
+    if "high_wage_component_rate" in structural_reduction:
+        # Category 2 only: official formula uses the employer's total
+        # quarterly payroll mass (W), a firm-level aggregate. This
+        # single-employee simulation approximates W with this employee's
+        # own quarterly wage -- see the JSON source note.
+        high_wage_component = max(
+            0.0,
+            structural_reduction["high_wage_component_rate"]
+            * (
+                reference_wage_quarterly
+                - structural_reduction["high_wage_threshold_quarterly_eur"]
+            )
+        )
+
+        structural_reduction_quarterly += high_wage_component
 
     structural_reduction_quarterly = (
         structural_reduction_quarterly
@@ -133,6 +149,7 @@ def compute_row(
 
     structural_reduction = compute_structural_reduction(
         gross_monthly_eur=gross_monthly_eur,
+        profile=profile,
         parameters=parameters
     )
 

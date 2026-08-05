@@ -10,7 +10,7 @@
 
     <link rel="stylesheet" href="../../assets/style.css?v=19">
     <script defer src="../../assets/i18n_common.js?v=3"></script>
-    <script defer src="./assets/germany_app.js?v=21"></script>
+    <script defer src="./assets/germany_app.js?v=22"></script>
 </head>
 
 <body>
@@ -138,9 +138,10 @@
                     <div class="method-box" style="margin-top: 14px; margin-bottom: 18px;">
                         <strong>Lecture des zones.</strong>
                         Les zones Minijob, Midijob et Emploi standard peuvent être affichées
-                        ou masquées séparément. Elles sont affichées à titre institutionnel :
-                        les régimes Minijob et Midijob sont identifiés dans la grille, mais leurs
-                        règles spécifiques de cotisation ne sont pas encore appliquées dans cette version.
+                        ou masquées séparément. Les cotisations y sont désormais calculées
+                        selon les règles propres à chaque régime (taux forfaitaires employeur
+                        en Minijob, formule de la zone de transition « Übergangsbereich » en
+                        Midijob) et non plus avec la formule de l'emploi standard.
                     </div>
 
                     <div class="profile-selector profile-selector-grid" style="margin-bottom: 18px;">
@@ -528,9 +529,14 @@
 
                         <li>
                             <strong>Minijob et midijob.</strong>
-                            Les zones Minijob et Midijob / Übergangsbereich sont identifiées
-                            dans le jeu de données. Leurs règles spécifiques de cotisation ne sont
-                            pas encore appliquées dans cette version.
+                            En Minijob (≤ 603 €/mois), l'employeur verse des cotisations
+                            forfaitaires (retraite 15 %, maladie 13 %, impôt forfaitaire 2 %,
+                            cotisations U1/U2/insolvabilité 1,17 %, soit 31,17 % au total) et
+                            le salarié ne cotise pas (hypothèse d'exonération de la
+                            retraite, majoritaire en pratique). En Midijob / Übergangsbereich
+                            (603,01–2 000 €/mois), les cotisations sont calculées via la
+                            formule de la zone de transition 2026 (facteur F = 0,6619), qui
+                            concentre l'allègement sur la part salariale.
                         </li>
 
                         <li>
@@ -571,8 +577,8 @@
                         <li>
                             <strong>Limites.</strong>
                             L'assurance maladie privée, l'assurance accident, les conventions
-                            collectives, les effets de ménage, les revenus exceptionnels et les
-                            règles spécifiques Minijob / Midijob ne sont pas encore simulés.
+                            collectives, les effets de ménage et les revenus exceptionnels ne
+                            sont pas encore simulés.
                         </li>
                     </ul>
                 </section>
@@ -698,9 +704,10 @@
                     <div class="method-box" style="margin-top: 14px; margin-bottom: 18px;">
                         <strong>Reading the zones.</strong>
                         The Minijob, Midijob, and Standard employment zones can be shown or
-                        hidden independently. They are shown for institutional context: the
-                        Minijob and Midijob regimes are identified in the grid, but their
-                        specific contribution rules are not yet applied in this version.
+                        hidden independently. Contributions are now computed using each
+                        regime's own rules (flat employer rates for Minijob, the
+                        Übergangsbereich transition-zone formula for Midijob) rather than
+                        the standard-employment formula.
                     </div>
 
                     <div class="profile-selector profile-selector-grid" style="margin-bottom: 18px;">
@@ -1086,9 +1093,14 @@
 
                         <li>
                             <strong>Minijob and Midijob.</strong>
-                            The Minijob and Midijob / Übergangsbereich zones are identified in
-                            the dataset. Their specific contribution rules are not yet applied
-                            in this version.
+                            For Minijob (≤ €603/month), the employer pays flat-rate
+                            contributions (pension 15%, health 13%, flat wage tax 2%,
+                            U1/U2/insolvency levies 1.17%, 31.17% in total) and the employee
+                            contributes 0% (assumes the pension-insurance exemption, which
+                            most minijob workers exercise in practice). For Midijob /
+                            Übergangsbereich (€603.01–2,000/month), contributions are
+                            computed via the 2026 transition-zone formula (Faktor F =
+                            0.6619), which concentrates the relief on the employee's share.
                         </li>
 
                         <li>
@@ -1129,8 +1141,8 @@
                         <li>
                             <strong>Limits.</strong>
                             Private health insurance, accident insurance, collective
-                            agreements, household effects, exceptional income, and specific
-                            Minijob / Midijob rules are not yet simulated.
+                            agreements, household effects, and exceptional income are not yet
+                            simulated.
                         </li>
                     </ul>
                 </section>

@@ -32,6 +32,16 @@
             {"lower_bound_gbp": 50270, "upper_bound_gbp": 125140, "rate": 0.40},
             {"lower_bound_gbp": 125140, "upper_bound_gbp": null, "rate": 0.45}
         ],
+        "income_tax_bands_scotland": [
+            {"lower_bound_gbp": 0, "upper_bound_gbp": 12570, "rate": 0.00, "name_fr": "Aucune tranche", "name_en": "No band"},
+            {"lower_bound_gbp": 12570, "upper_bound_gbp": 16537, "rate": 0.19, "name_fr": "Starter", "name_en": "Starter"},
+            {"lower_bound_gbp": 16537, "upper_bound_gbp": 29526, "rate": 0.20, "name_fr": "Basic", "name_en": "Basic"},
+            {"lower_bound_gbp": 29526, "upper_bound_gbp": 43662, "rate": 0.21, "name_fr": "Intermediate", "name_en": "Intermediate"},
+            {"lower_bound_gbp": 43662, "upper_bound_gbp": 75000, "rate": 0.42, "name_fr": "Higher", "name_en": "Higher"},
+            {"lower_bound_gbp": 75000, "upper_bound_gbp": 125140, "rate": 0.45, "name_fr": "Advanced", "name_en": "Advanced"},
+            {"lower_bound_gbp": 125140, "upper_bound_gbp": null, "rate": 0.48, "name_fr": "Top", "name_en": "Top"}
+        ],
+        "income_tax_bands_scotland_source": "gov.scot, \"Scottish Income Tax: rates and bands, 2026 to 2027\" (https://www.gov.scot/publications/scottish-income-tax-rates-and-bands/pages/2026-to-2027/), fetched verbatim. The UK-wide Personal Allowance (including its £100k-£125,140 taper) applies identically to Scottish taxpayers; only the bands and rates above the allowance differ from rUK.",
         "national_insurance_class1": {
             "employee_primary_threshold_gbp": 12570,
             "employee_upper_earnings_limit_gbp": 50270,
@@ -52,11 +62,18 @@
         {
             "profile_id": "uk__standard_employee_ruk",
             "label_fr": "Royaume-Uni · salarié standard, hors Écosse",
-            "label_en": "United Kingdom · standard employee, outside Scotland"
+            "label_en": "United Kingdom · standard employee, outside Scotland",
+            "region": "ruk"
+        },
+        {
+            "profile_id": "uk__standard_employee_scotland",
+            "label_fr": "Royaume-Uni · salarié standard, Écosse",
+            "label_en": "United Kingdom · standard employee, Scotland",
+            "region": "scotland"
         }
     ],
     "limits": [
-        "Seul le barème d'impôt sur le revenu rUK (Angleterre/Pays de Galles/Irlande du Nord) est modélisé ; les taux écossais, distincts, ne le sont pas.",
+        "Les barèmes d'impôt sur le revenu rUK (Angleterre/Pays de Galles/Irlande du Nord) et écossais sont tous deux modélisés, au choix via le sélecteur de profil ; le Personal Allowance, le National Insurance et la pension d'entreprise sont communs aux deux et ne dépendent pas de la région.",
         "L'Apprenticeship Levy (0,5 % de la masse salariale, applicable aux employeurs dont la masse salariale annuelle dépasse 3 millions GBP) n'est pas modélisé : il ne concerne que les très grands employeurs.",
         "Le remboursement de prêt étudiant (student loan), le marriage allowance et les avantages en nature ne sont pas modélisés.",
         "La pension d'entreprise est modélisée aux taux minimaux légaux uniquement ; de nombreux employeurs cotisent au-delà de ce minimum.",
