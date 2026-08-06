@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Spain Labour Cost Lab</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+    <link rel="stylesheet" href="../../assets/style.css?v=27">
+    <script defer src="../../assets/i18n_common.js?v=3"></script>
+    <script defer src="./assets/spain_app.js?v=1"></script>
+</head>
+
+<body>
+    <div class="global-project-banner">
+        <a href="../../index.html">
+            ← Labor Cost Lab
+        </a>
+
+        <span>
+            Spain module · Available socio-fiscal version
+        </span>
+    </div>
+
+    <div class="language-section active" id="section-fr">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · Module Espagne
+                </p>
+
+                <h1>Spain Labour Cost Lab</h1>
+
+                <p>
+                    Module de simulation du coût du travail en Espagne. Cette
+                    version calcule le salaire brut, l'IRPF (barème étatique +
+                    barème régional de la communauté autonome sélectionnée,
+                    16 communautés modélisées), les cotisations de Seguridad
+                    Social salarié et employeur, le coût employeur et les
+                    principaux indicateurs de coin social et socio-fiscal.
+                </p>
+
+                <p class="author-line">
+                    Par Hugo Spring-Ragain, Économiste, CEDS Paris
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchSpainLanguage()">
+                    English
+                </button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>Espagne · module socio-fiscal 2026</h2>
+
+                <p>
+                    Le Spain Labour Cost Lab simule le coût du travail en
+                    Espagne à partir d'un profil salarié standard, célibataire
+                    sans enfant, dans la communauté autonome sélectionnée (16
+                    communautés modélisées, Madrid par défaut). Il combine le
+                    Salario Mínimo Interprofesional (SMI) comme référence
+                    salariale, l'IRPF (barème étatique et barème régional,
+                    minimo personal et réduction pour revenus du travail) et
+                    les cotisations de Seguridad Social du Régime général
+                    (salarié et employeur).
+                </p>
+
+                <p>
+                    L'objectif est de mesurer, sur une échelle allant de 1 à 6
+                    fois le SMI, la façon dont un euro de salaire brut se
+                    transforme en revenu net pour le salarié, en coût total
+                    pour l'employeur et en prélèvements sociaux et fiscaux.
+                </p>
+            </section>
+
+            <nav class="tabs" aria-label="Navigation Espagne">
+                <button class="tab-button active" data-tab="simulation" onclick="showSpainTab('fr', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showSpainTab('fr', 'flcl-index')">
+                    Indice du Lab
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showSpainTab('fr', 'data')">
+                    Données
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showSpainTab('fr', 'methodology')">
+                    Méthodologie
+                </button>
+            </nav>
+
+            <section id="tab-fr-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="spain-waterfall-title-fr">
+                        Du salaire net au coût employeur
+                    </h3>
+
+                    <p class="chart-subtitle" id="spain-waterfall-subtitle-fr">
+                        Décomposition du passage du salaire net après impôt au coût
+                        employeur total, en distinguant l'IRPF et les cotisations
+                        de Seguridad Social, côté salarié et côté employeur.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="spain-region-select-fr">
+                                Communauté autonome de référence
+                            </label>
+
+                            <select id="spain-region-select-fr">
+                            </select>
+                        </div>
+
+                        <div class="selector-field">
+                            <label for="spain-waterfall-multiple-fr">
+                                Point de salaire sélectionné
+                            </label>
+
+                            <select id="spain-waterfall-multiple-fr">
+                                <option value="1.00">1,00 salaire minimum</option>
+                                <option value="1.25">1,25 salaire minimum</option>
+                                <option value="1.50">1,50 salaire minimum</option>
+                                <option value="2.00" selected>2,00 salaires minimums</option>
+                                <option value="2.50">2,50 salaires minimums</option>
+                                <option value="3.00">3,00 salaires minimums</option>
+                                <option value="4.00">4,00 salaires minimums</option>
+                                <option value="5.00">5,00 salaires minimums</option>
+                                <option value="6.00">6,00 salaires minimums</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-spain-waterfall-fr"
+                        class="plotly-chart"
+                        aria-label="Décomposition du coût du travail en Espagne"
+                    ></div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Graphiques complémentaires</h2>
+
+                    <p>
+                        Les graphiques suivants détaillent les salaires, les taux
+                        effectifs, le coin socio-fiscal et le rendement marginal
+                        du salaire brut.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Coût employeur, salaire brut et salaires nets</h3>
+
+                        <p class="chart-subtitle">
+                            Comparaison du salaire brut, du salaire net avant
+                            impôt, du salaire net après impôt et du coût employeur
+                            selon le multiple du SMI espagnol.
+                        </p>
+
+                        <div
+                            id="chart-spain-cost-fr"
+                            class="plotly-chart"
+                            aria-label="Coût du travail en Espagne"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Taux effectifs de prélèvement</h3>
+
+                        <p class="chart-subtitle">
+                            Taux salarié et employeur (Seguridad Social) et taux
+                            d'IRPF effectif.
+                        </p>
+
+                        <div
+                            id="chart-spain-rates-fr"
+                            class="plotly-chart"
+                            aria-label="Taux de prélèvement en Espagne"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Coin social et coin socio-fiscal</h3>
+
+                        <p class="chart-subtitle">
+                            Comparaison du coin social avant impôt et du coin
+                            socio-fiscal après IRPF.
+                        </p>
+
+                        <div
+                            id="chart-spain-wedge-fr"
+                            class="plotly-chart"
+                            aria-label="Coin social et socio-fiscal espagnol"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Rendement marginal d'une hausse de salaire brut</h3>
+
+                        <p class="chart-subtitle">
+                            Part d'un euro supplémentaire de salaire brut
+                            conservée avant et après IRPF.
+                        </p>
+
+                        <div
+                            id="chart-spain-fiscal-return-fr"
+                            class="plotly-chart"
+                            aria-label="Rendement socio-fiscal d'une hausse de salaire brut en Espagne"
+                        ></div>
+
+                        <p class="method-note">
+                            L'effet marginal évolue par paliers autour des seuils
+                            de la réduction pour revenus du travail (article 20
+                            LIRPF, entre 14 852 € et 19 747,50 € de revenu net du
+                            travail) et des tranches de l'IRPF. Le plafond de la
+                            base de cotisation de Seguridad Social (5 101,20 €/mois)
+                            crée également un effet de seuil, au-delà duquel les
+                            cotisations n'augmentent plus avec le salaire.
+                        </p>
+                    </div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Indicateurs clés</h2>
+
+                    <p>
+                        Les indicateurs ci-dessous sont calculés au SMI espagnol
+                        (multiple = 1).
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="spain-metrics-fr">
+                    <article class="metric-card">
+                        <span class="metric-label">Salaire brut de référence</span>
+                        <strong id="metric-spain-reference-wage-fr">—</strong>
+                        <span class="metric-note">SMI mensuel (moyenne sur 14 pagas)</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Taux d'IRPF effectif</span>
+                        <strong id="metric-spain-irpf-rate-fr">—</strong>
+                        <span class="metric-note">IRPF / brut</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Taux employeur effectif</span>
+                        <strong id="metric-spain-employer-rate-fr">—</strong>
+                        <span class="metric-note">Seguridad Social employeur</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Ratio coût / net à 1 SMI</span>
+                        <strong id="metric-spain-cost-to-net-fr">—</strong>
+                        <span class="metric-note">Après IRPF</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-fr-flcl-index" class="tab-content">
+                <section class="chart-card">
+                    <h2>Indice du Lab</h2>
+                    <p class="chart-subtitle">
+                        Indicateurs d'efficacité salariale du coût du travail.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="spain-flcl-region-select-fr">
+                                Communauté autonome
+                            </label>
+
+                            <select id="spain-flcl-region-select-fr">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-E</span>
+                            <strong id="spain-flcl-e-value-fr">—</strong>
+                            <span class="metric-note" id="spain-flcl-e-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-B</span>
+                            <strong id="spain-flcl-b-value-fr">—</strong>
+                            <span class="metric-note" id="spain-flcl-b-caption-fr"></span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Transmission marginale</span>
+                            <strong id="spain-flcl-transmission-value-fr">—</strong>
+                            <span class="metric-note" id="spain-flcl-transmission-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Captation marginale</span>
+                            <strong id="spain-flcl-capture-value-fr">—</strong>
+                            <span class="metric-note" id="spain-flcl-capture-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Progressivité implicite</span>
+                            <strong id="spain-flcl-progressivity-value-fr">—</strong>
+                            <span class="metric-note" id="spain-flcl-progressivity-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Soutien bas salaires</span>
+                            <strong id="spain-flcl-support-value-fr">—</strong>
+                            <span class="metric-note" id="spain-flcl-support-caption-fr"></span>
+                        </div>
+                    </div>
+
+                    <p class="method-note" style="margin-top: 16px;">
+                        Aucun allègement employeur ciblé et dégressif n'est modélisé pour
+                        l'Espagne : l'indicateur Lab-R ne s'applique donc pas ici.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Indice du Lab</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × salaire net avant impôt / coût employeur.
+                        </p>
+                        <div id="chart-spain-flcl-e-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Transmission marginale</h3>
+                        <p class="chart-subtitle">
+                            Part d'un euro supplémentaire de coût employeur allant au salarié net.
+                        </p>
+                        <div id="chart-spain-flcl-marginal-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Progressivité implicite</h3>
+                        <p class="chart-subtitle">
+                            Variation de Lab-E lorsque le niveau de salaire augmente.
+                        </p>
+                        <div id="chart-spain-flcl-progressivity-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Destination marginale d'un euro supplémentaire de coût employeur</h3>
+                        <p class="chart-subtitle">
+                            Répartition marginale entre salaire net, cotisations salarié et cotisations employeur.
+                        </p>
+                        <div id="chart-spain-flcl-destination-fr" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-fr-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Données</h3>
+
+                    <p class="chart-subtitle">
+                        Le jeu de données espagnol peut être téléchargé au
+                        format CSV. Il contient l'ensemble des points de salaire
+                        simulés pour le profil standard : salaire brut, IRPF,
+                        cotisations de Seguridad Social, coût employeur et
+                        indicateurs de coin socio-fiscal.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/spain/spain_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Télécharger le jeu de données Espagne
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/spain/spain_parameters_2026.json"
+                            download
+                        >
+                            Télécharger les paramètres 2026
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/spain/spain_sources_2026.json"
+                            download
+                        >
+                            Télécharger les sources 2026
+                        </a>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Données du profil standard</h3>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="spain-data-region-select-fr">
+                                Communauté autonome
+                            </label>
+
+                            <select id="spain-data-region-select-fr">
+                            </select>
+                        </div>
+                    </div>
+
+                    <p
+                        class="chart-subtitle"
+                        id="spain-data-caption-fr"
+                    >
+                        Salarié standard (Madrid)
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Multiple</th>
+                                    <th>Salaire brut (€)</th>
+                                    <th>Net avant impôt (€)</th>
+                                    <th>IRPF (€)</th>
+                                    <th>Net après impôt (€)</th>
+                                    <th>Coût employeur (€)</th>
+                                    <th>Cotisations salarié (€)</th>
+                                    <th>Cotisations employeur (€)</th>
+                                    <th>Coin social (€)</th>
+                                    <th>Coin socio-fiscal (€)</th>
+                                    <th>Taux employeur</th>
+                                    <th>Coût / net après impôt</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="spain-data-table-body-fr">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="chart-subtitle" style="margin-top: 10px;">
+                        Cotisations salarié = Seguridad Social salarié.
+                        Cotisations employeur = Seguridad Social employeur. Voir
+                        l'onglet Méthodologie.
+                    </p>
+                </div>
+            </section>
+
+            <section id="tab-fr-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Méthodologie</h2>
+
+                    <p>
+                        Le module Espagne repose sur une simulation
+                        réglementaire du coût du travail pour un salarié
+                        standard, célibataire sans enfant, à temps plein, dans
+                        la communauté autonome sélectionnée (16 communautés
+                        modélisées, Madrid par défaut). Le salaire brut est
+                        calculé comme multiple du Salario Mínimo Interprofesional
+                        (SMI) mensuel, utilisé comme référence de salaire
+                        minimum dans le module.
+                    </p>
+
+                    <h3>1. IRPF (impôt sur le revenu)</h3>
+
+                    <p>
+                        L'IRPF combine un barème étatique national (9,5 %
+                        jusqu'à 12 450 €, 12 % jusqu'à 20 200 €, 15 % jusqu'à
+                        35 200 €, 18,5 % jusqu'à 60 000 €, 22,5 % jusqu'à
+                        300 000 €, 24,5 % au-delà) et le barème régional
+                        (« autonomico ») propre à la communauté autonome
+                        sélectionnée dans le menu déroulant (par exemple, à
+                        Madrid : 8,5 % jusqu'à 13 362,22 €, 10,7 % jusqu'à
+                        19 004,63 €, 12,8 % jusqu'à 35 425,68 €, 17,4 % jusqu'à
+                        57 320,40 €, 20,5 % au-delà — voir l'onglet Données
+                        pour télécharger le détail des 16 barèmes régionaux
+                        modélisés). Le revenu net du travail est d'abord
+                        diminué d'un abattement forfaitaire de frais
+                        professionnels (2 000 €/an), puis de la réduction pour
+                        revenus du travail (article 20 LIRPF, dégressive de
+                        7 302 € à 0 € entre 14 852 € et 19 747,50 € de revenu
+                        net du travail) — ces deux mécanismes sont nationaux et
+                        ne varient pas selon la région. Le minimo personal est
+                        ensuite appliqué comme une tranche taxée à taux zéro,
+                        séparément pour chaque barème avant sommation : le
+                        minimo étatique (5 550 €/an) pour la part étatique, et
+                        le minimo propre à la région sélectionnée pour sa part
+                        régionale — ce second montant peut différer du minimo
+                        étatique (par exemple, Madrid fixe le sien à
+                        5 956,65 €/an).
+                    </p>
+
+                    <h3>2. Seguridad Social (Régime général)</h3>
+
+                    <p>
+                        Les cotisations de Seguridad Social sont assises sur
+                        une base de cotisation mensuelle égale au salaire brut,
+                        plafonnée entre une base minima (1 424,40 €/mois) et une
+                        base maxima (5 101,20 €/mois). Le taux salarié est de
+                        6,50 % (contingencias comunes, désemploi, MEI, formation
+                        professionnelle) et le taux employeur de 31,65 %
+                        (contingencias comunes, désemploi, MEI, formation
+                        professionnelle, FOGASA, AT/EP).
+                    </p>
+
+                    <h3>3. Indicateurs produits</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Net avant impôt :</strong>
+                            salaire brut diminué des cotisations salarié.
+                        </li>
+
+                        <li>
+                            <strong>Net après impôt :</strong>
+                            net avant impôt diminué de l'IRPF mensuel.
+                        </li>
+
+                        <li>
+                            <strong>Coût employeur :</strong>
+                            salaire brut augmenté des cotisations employeur.
+                        </li>
+
+                        <li>
+                            <strong>Coin social :</strong>
+                            différence entre le coût employeur et le net avant
+                            impôt.
+                        </li>
+
+                        <li>
+                            <strong>Coin socio-fiscal :</strong>
+                            différence entre le coût employeur et le net après
+                            impôt.
+                        </li>
+
+                        <li>
+                            <strong>Rendement marginal :</strong>
+                            part d'un euro supplémentaire de salaire brut
+                            conservée avant et après IRPF.
+                        </li>
+                    </ul>
+
+                    <h3>4. Indice du Lab</h3>
+
+                    <p>
+                        L'Indice du Lab mesure l'efficacité salariale du coût du
+                        travail, indépendamment de l'IRPF. Lab-E = 100 ×
+                        salaire net avant impôt / coût employeur, Lab-B = 100 −
+                        Lab-E. Aucun allègement employeur ciblé et dégressif
+                        n'est modélisé pour l'Espagne : l'indicateur Lab-R ne
+                        s'applique donc pas ici.
+                    </p>
+
+                    <h3>5. Limites du scénario</h3>
+
+                    <p class="method-note">
+                        La Navarre et le Pays basque ne sont pas modélisés :
+                        ces deux communautés appliquent un régime fiscal
+                        « foral » distinct (Concierto/Convenio économique),
+                        avec leur propre administration fiscale, et non un
+                        simple barème régional différent. Les 16 autres
+                        communautés autonomes (plus Ceuta et Melilla) sont
+                        toutes modélisées et sélectionnables via le menu
+                        déroulant de région. Seul le minimo personal standard
+                        (célibataire, sans enfant à charge) est modélisé. Le
+                        taux AT/EP est modélisé à un taux standard bas risque
+                        unique (1,00 %), alors que le tarif officiel varie
+                        selon le code CNAE de l'activité. La loi prévoit une
+                        exonération spécifique de l'IRPF au niveau du SMI
+                        (article 28 du Real Decreto-ley 5/2026) : ce module ne
+                        modélise pas ce mécanisme explicite mais obtient un
+                        résultat proche de zéro à ce niveau, dans toutes les
+                        régions, via le minimo personal et la réduction pour
+                        revenus du travail. Seul le Régime général de la
+                        Seguridad Social est modélisé. Ces limites sont
+                        assumées afin de produire un scénario central stable et
+                        comparable aux autres modules nationaux du Labor Cost
+                        Lab.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="language-section" id="section-en">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · Spain module
+                </p>
+
+                <h1>Spain Labour Cost Lab</h1>
+
+                <p>
+                    Simulation module for Spanish labour costs. This version
+                    computes the gross wage, IRPF income tax (state scale +
+                    the selected comunidad autonoma's own regional scale, 16
+                    regions modeled), employee and employer Seguridad Social
+                    contributions, the employer cost, and the main social and
+                    socio-fiscal wedge indicators.
+                </p>
+
+                <p class="author-line">
+                    By Hugo Spring-Ragain, Economist, CEDS Paris
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchSpainLanguage()">
+                    Français
+                </button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>Spain · 2026 socio-fiscal module</h2>
+
+                <p>
+                    The Spain Labour Cost Lab simulates Spanish labour costs
+                    for a standard, single, childless employee in the
+                    selected comunidad autonoma (16 regions modeled, Madrid
+                    by default). It combines the Salario Mínimo
+                    Interprofesional (SMI) as the wage reference, IRPF income
+                    tax (state scale and the selected region's own scale,
+                    personal minimum and work-income reduction), and Régimen
+                    General Seguridad Social contributions (employee and
+                    employer).
+                </p>
+
+                <p>
+                    The goal is to measure, over a range from 1 to 6 times the
+                    Spanish SMI, how a euro of gross wage turns into net
+                    income for the employee, into total cost for the employer,
+                    and into social and fiscal levies.
+                </p>
+            </section>
+
+            <nav class="tabs" aria-label="Spain navigation">
+                <button class="tab-button active" data-tab="simulation" onclick="showSpainTab('en', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showSpainTab('en', 'flcl-index')">
+                    Lab Index
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showSpainTab('en', 'data')">
+                    Data
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showSpainTab('en', 'methodology')">
+                    Methodology
+                </button>
+            </nav>
+
+            <section id="tab-en-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="spain-waterfall-title-en">
+                        From net wage to employer cost
+                    </h3>
+
+                    <p class="chart-subtitle" id="spain-waterfall-subtitle-en">
+                        Breakdown of the path from net wage after tax to total
+                        employer cost, distinguishing IRPF and Seguridad Social
+                        contributions, on both the employee and employer sides.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="spain-region-select-en">
+                                Reference comunidad autonoma
+                            </label>
+
+                            <select id="spain-region-select-en">
+                            </select>
+                        </div>
+
+                        <div class="selector-field">
+                            <label for="spain-waterfall-multiple-en">
+                                Selected wage point
+                            </label>
+
+                            <select id="spain-waterfall-multiple-en">
+                                <option value="1.00">1.00 minimum wage</option>
+                                <option value="1.25">1.25 minimum wages</option>
+                                <option value="1.50">1.50 minimum wages</option>
+                                <option value="2.00" selected>2.00 minimum wages</option>
+                                <option value="2.50">2.50 minimum wages</option>
+                                <option value="3.00">3.00 minimum wages</option>
+                                <option value="4.00">4.00 minimum wages</option>
+                                <option value="5.00">5.00 minimum wages</option>
+                                <option value="6.00">6.00 minimum wages</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-spain-waterfall-en"
+                        class="plotly-chart"
+                        aria-label="Breakdown of labour cost in Spain"
+                    ></div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Additional charts</h2>
+
+                    <p>
+                        The charts below detail wages, effective rates, the
+                        socio-fiscal wedge, and the marginal return on a
+                        gross-wage increase.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Employer cost, gross wage and net wages</h3>
+
+                        <p class="chart-subtitle">
+                            Comparison of the gross wage, net wage before tax,
+                            net wage after tax, and employer cost across the
+                            multiple of the Spanish SMI.
+                        </p>
+
+                        <div
+                            id="chart-spain-cost-en"
+                            class="plotly-chart"
+                            aria-label="Labour cost in Spain"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Effective levy rates</h3>
+
+                        <p class="chart-subtitle">
+                            Employee and employer rate (Seguridad Social) and
+                            effective IRPF rate.
+                        </p>
+
+                        <div
+                            id="chart-spain-rates-en"
+                            class="plotly-chart"
+                            aria-label="Levy rates in Spain"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Social wedge and total socio-fiscal wedge</h3>
+
+                        <p class="chart-subtitle">
+                            Comparison of the social wedge before tax and the
+                            total socio-fiscal wedge after IRPF.
+                        </p>
+
+                        <div
+                            id="chart-spain-wedge-en"
+                            class="plotly-chart"
+                            aria-label="Social and socio-fiscal wedge in Spain"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Marginal return on a gross-wage increase</h3>
+
+                        <p class="chart-subtitle">
+                            Share of an additional euro of gross wage kept
+                            before and after IRPF.
+                        </p>
+
+                        <div
+                            id="chart-spain-fiscal-return-en"
+                            class="plotly-chart"
+                            aria-label="Socio-fiscal return on a gross-wage increase in Spain"
+                        ></div>
+
+                        <p class="method-note">
+                            The marginal effect moves in steps around the
+                            work-income reduction thresholds (Art. 20 LIRPF,
+                            between EUR 14,852 and EUR 19,747.50 of net work
+                            income) and the IRPF brackets. The Seguridad Social
+                            contribution base ceiling (EUR 5,101.20/month) also
+                            creates a step effect, above which contributions no
+                            longer rise with the wage.
+                        </p>
+                    </div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Key indicators</h2>
+
+                    <p>
+                        The indicators below are computed at the Spanish SMI
+                        (multiple = 1).
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="spain-metrics-en">
+                    <article class="metric-card">
+                        <span class="metric-label">Reference gross wage</span>
+                        <strong id="metric-spain-reference-wage-en">—</strong>
+                        <span class="metric-note">Monthly SMI (14-pagas average)</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Effective IRPF rate</span>
+                        <strong id="metric-spain-irpf-rate-en">—</strong>
+                        <span class="metric-note">IRPF / gross</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Effective employer rate</span>
+                        <strong id="metric-spain-employer-rate-en">—</strong>
+                        <span class="metric-note">Employer Seguridad Social</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Cost / net ratio at 1 SMI</span>
+                        <strong id="metric-spain-cost-to-net-en">—</strong>
+                        <span class="metric-note">After IRPF</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-en-flcl-index" class="tab-content">
+                <section class="chart-card">
+                    <h2>Lab Index</h2>
+                    <p class="chart-subtitle">
+                        Labour cost efficiency indicators.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="spain-flcl-region-select-en">
+                                Comunidad autonoma
+                            </label>
+
+                            <select id="spain-flcl-region-select-en">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-E</span>
+                            <strong id="spain-flcl-e-value-en">—</strong>
+                            <span class="metric-note" id="spain-flcl-e-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-B</span>
+                            <strong id="spain-flcl-b-value-en">—</strong>
+                            <span class="metric-note" id="spain-flcl-b-caption-en"></span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Marginal transmission</span>
+                            <strong id="spain-flcl-transmission-value-en">—</strong>
+                            <span class="metric-note" id="spain-flcl-transmission-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Marginal capture</span>
+                            <strong id="spain-flcl-capture-value-en">—</strong>
+                            <span class="metric-note" id="spain-flcl-capture-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Implicit progressivity</span>
+                            <strong id="spain-flcl-progressivity-value-en">—</strong>
+                            <span class="metric-note" id="spain-flcl-progressivity-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Low-wage support</span>
+                            <strong id="spain-flcl-support-value-en">—</strong>
+                            <span class="metric-note" id="spain-flcl-support-caption-en"></span>
+                        </div>
+                    </div>
+
+                    <p class="method-note" style="margin-top: 16px;">
+                        No targeted, degressive employer relief is modeled for
+                        Spain: the Lab-R indicator does not apply here.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Lab Index</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × net wage before income tax / employer cost.
+                        </p>
+                        <div id="chart-spain-flcl-e-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal transmission</h3>
+                        <p class="chart-subtitle">
+                            Share of one additional euro of employer cost reaching net wage.
+                        </p>
+                        <div id="chart-spain-flcl-marginal-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Implicit progressivity</h3>
+                        <p class="chart-subtitle">
+                            Change in Lab-E when the wage level increases.
+                        </p>
+                        <div id="chart-spain-flcl-progressivity-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal destination of one additional euro of employer cost</h3>
+                        <p class="chart-subtitle">
+                            Marginal split between net wage, employee contributions and employer contributions.
+                        </p>
+                        <div id="chart-spain-flcl-destination-en" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-en-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Data</h3>
+
+                    <p class="chart-subtitle">
+                        The Spanish dataset can be downloaded as a CSV file. It
+                        contains every simulated wage point for the standard
+                        profile: gross wage, IRPF, Seguridad Social
+                        contributions, employer cost, and socio-fiscal wedge
+                        indicators.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/spain/spain_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Download the Spain dataset
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/spain/spain_parameters_2026.json"
+                            download
+                        >
+                            Download the 2026 parameters
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/spain/spain_sources_2026.json"
+                            download
+                        >
+                            Download the 2026 sources
+                        </a>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Data for the standard profile</h3>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="spain-data-region-select-en">
+                                Comunidad autonoma
+                            </label>
+
+                            <select id="spain-data-region-select-en">
+                            </select>
+                        </div>
+                    </div>
+
+                    <p
+                        class="chart-subtitle"
+                        id="spain-data-caption-en"
+                    >
+                        Standard employee (Madrid)
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Multiple</th>
+                                    <th>Gross wage (€)</th>
+                                    <th>Net before tax (€)</th>
+                                    <th>IRPF (€)</th>
+                                    <th>Net after tax (€)</th>
+                                    <th>Employer cost (€)</th>
+                                    <th>Employee contributions (€)</th>
+                                    <th>Employer contributions (€)</th>
+                                    <th>Social wedge (€)</th>
+                                    <th>Total socio-fiscal wedge (€)</th>
+                                    <th>Employer rate</th>
+                                    <th>Cost / net after tax</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="spain-data-table-body-en">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="chart-subtitle" style="margin-top: 10px;">
+                        Employee contributions = employee Seguridad Social.
+                        Employer contributions = employer Seguridad Social. See
+                        the Methodology tab.
+                    </p>
+                </div>
+            </section>
+
+            <section id="tab-en-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Methodology</h2>
+
+                    <p>
+                        The Spain module relies on a regulatory simulation of
+                        labour cost for a standard, single, childless
+                        full-time employee in the selected comunidad autonoma
+                        (16 regions modeled, Madrid by default). The gross
+                        wage is computed as a multiple of the monthly Salario
+                        Mínimo Interprofesional (SMI), used as the
+                        minimum-wage reference in the module.
+                    </p>
+
+                    <h3>1. IRPF (income tax)</h3>
+
+                    <p>
+                        IRPF combines a national state scale (9.5% up to
+                        EUR 12,450, 12% up to EUR 20,200, 15% up to
+                        EUR 35,200, 18.5% up to EUR 60,000, 22.5% up to
+                        EUR 300,000, 24.5% above) and the regional
+                        ("autonomica") scale of the comunidad autonoma
+                        selected in the dropdown (for example, Madrid: 8.5%
+                        up to EUR 13,362.22, 10.7% up to EUR 19,004.63, 12.8%
+                        up to EUR 35,425.68, 17.4% up to EUR 57,320.40, 20.5%
+                        above — see the Data tab to download the full detail
+                        of all 16 modeled regional scales). Net work income
+                        is first reduced by a flat professional-expense
+                        allowance (EUR 2,000/year), then by the work-income
+                        reduction (Art. 20 LIRPF, tapering from EUR 7,302 to
+                        EUR 0 between EUR 14,852 and EUR 19,747.50 of net work
+                        income) — both are national and do not vary by
+                        region. The personal minimum is then applied as a
+                        zero-rate slice, separately for each scale, before
+                        summing: the state minimum (EUR 5,550/year) for the
+                        state share, and the selected region's own minimum
+                        for its regional share — this second figure can
+                        differ from the state minimum (for example, Madrid
+                        sets its own at EUR 5,956.65/year).
+                    </p>
+
+                    <h3>2. Seguridad Social (Régimen General)</h3>
+
+                    <p>
+                        Seguridad Social contributions are charged on a
+                        monthly contribution base equal to the gross wage,
+                        floored at a base minima (EUR 1,424.40/month) and
+                        capped at a base maxima (EUR 5,101.20/month). The
+                        employee rate is 6.50% (contingencias comunes,
+                        desempleo, MEI, formación profesional) and the
+                        employer rate is 31.65% (contingencias comunes,
+                        desempleo, MEI, formación profesional, FOGASA, AT/EP).
+                    </p>
+
+                    <h3>3. Indicators produced</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Net before tax:</strong>
+                            gross wage minus employee contributions.
+                        </li>
+
+                        <li>
+                            <strong>Net after tax:</strong>
+                            net before tax minus monthly IRPF.
+                        </li>
+
+                        <li>
+                            <strong>Employer cost:</strong>
+                            gross wage plus employer contributions.
+                        </li>
+
+                        <li>
+                            <strong>Social wedge:</strong>
+                            difference between employer cost and net before tax.
+                        </li>
+
+                        <li>
+                            <strong>Total socio-fiscal wedge:</strong>
+                            difference between employer cost and net after tax.
+                        </li>
+
+                        <li>
+                            <strong>Marginal return:</strong>
+                            share of an additional euro of gross wage kept
+                            before and after IRPF.
+                        </li>
+                    </ul>
+
+                    <h3>4. Lab Index</h3>
+
+                    <p>
+                        The Lab Index measures the wage efficiency of labour
+                        cost, independently of IRPF. Lab-E = 100 × net wage
+                        before income tax / employer cost, Lab-B = 100 −
+                        Lab-E. No targeted, degressive employer relief is
+                        modeled for Spain: the Lab-R indicator therefore does
+                        not apply here.
+                    </p>
+
+                    <h3>5. Limits of the scenario</h3>
+
+                    <p class="method-note">
+                        Navarra and Pais Vasco are not modeled: both operate a
+                        separate "foral" tax system (Concierto/Convenio
+                        economico) with their own tax administration, not
+                        just a different regional scale. The other 16
+                        comunidades autonomas (plus Ceuta and Melilla) are all
+                        modeled and selectable via the region dropdown. Only
+                        the standard personal minimum (single, no dependent
+                        children) is modeled. The AT/EP rate is modeled at a
+                        single standard low-risk rate (1.00%), while the
+                        official tariff varies by the company's CNAE activity
+                        code. Spanish law provides a specific IRPF exemption
+                        at the SMI level (Art. 28 of Real Decreto-ley
+                        5/2026); this module does not model that explicit
+                        mechanism but obtains a near-zero result at that
+                        level, in every region, via the personal minimum and
+                        the work-income reduction. Only the Régimen General of
+                        Seguridad Social is modeled. These limits are accepted
+                        in order to produce a stable central scenario,
+                        comparable with the Labor Cost Lab's other national
+                        modules.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

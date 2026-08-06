@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ireland Labour Cost Lab</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+    <link rel="stylesheet" href="../../assets/style.css?v=27">
+    <script defer src="../../assets/i18n_common.js?v=3"></script>
+    <script defer src="./assets/ireland_app.js?v=1"></script>
+</head>
+
+<body>
+    <div class="global-project-banner">
+        <a href="../../index.html">
+            ← Labor Cost Lab
+        </a>
+
+        <span>
+            Ireland module · Available socio-fiscal version
+        </span>
+    </div>
+
+    <div class="language-section active" id="section-fr">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · Module Irlande
+                </p>
+
+                <h1>Ireland Labour Cost Lab</h1>
+
+                <p>
+                    Module de simulation du coût du travail en Irlande. Cette
+                    version calcule le salaire brut, l'impôt sur le revenu (PAYE),
+                    l'Universal Social Charge (USC), le PRSI salarié et employeur,
+                    le coût employeur et les principaux indicateurs de coin social
+                    et socio-fiscal.
+                </p>
+
+                <p class="author-line">
+                    Par Hugo Spring-Ragain, Économiste, CEDS Paris
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchIrelandLanguage()">
+                    English
+                </button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>Irlande · module socio-fiscal 2026</h2>
+
+                <p>
+                    L'Ireland Labour Cost Lab simule le coût du travail en
+                    Irlande à partir d'un profil salarié standard, célibataire
+                    sans enfant. Il combine le National Minimum Wage comme
+                    référence salariale, l'impôt sur le revenu PAYE (barème à 2
+                    tranches, crédits d'impôt personnel et salarié), l'Universal
+                    Social Charge (USC, barème à 4 tranches) et le PRSI de classe A
+                    (salarié et employeur).
+                </p>
+
+                <p>
+                    L'objectif est de mesurer, sur une échelle allant de 1 à 6
+                    fois le salaire minimum irlandais, la façon dont un euro de
+                    salaire brut se transforme en revenu net pour le salarié, en
+                    coût total pour l'employeur et en prélèvements sociaux et
+                    fiscaux.
+                </p>
+            </section>
+
+            <nav class="tabs" aria-label="Navigation Irlande">
+                <button class="tab-button active" data-tab="simulation" onclick="showIrelandTab('fr', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showIrelandTab('fr', 'flcl-index')">
+                    Indice du Lab
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showIrelandTab('fr', 'data')">
+                    Données
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showIrelandTab('fr', 'methodology')">
+                    Méthodologie
+                </button>
+            </nav>
+
+            <section id="tab-fr-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="ireland-waterfall-title-fr">
+                        Du salaire net au coût employeur
+                    </h3>
+
+                    <p class="chart-subtitle" id="ireland-waterfall-subtitle-fr">
+                        Décomposition du passage du salaire net après impôt au coût
+                        employeur total, en distinguant l'impôt sur le revenu,
+                        l'USC et le PRSI, côté salarié et côté employeur.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="ireland-waterfall-multiple-fr">
+                                Point de salaire sélectionné
+                            </label>
+
+                            <select id="ireland-waterfall-multiple-fr">
+                                <option value="1.00">1,00 salaire minimum</option>
+                                <option value="1.25">1,25 salaire minimum</option>
+                                <option value="1.50">1,50 salaire minimum</option>
+                                <option value="2.00" selected>2,00 salaires minimums</option>
+                                <option value="2.50">2,50 salaires minimums</option>
+                                <option value="3.00">3,00 salaires minimums</option>
+                                <option value="4.00">4,00 salaires minimums</option>
+                                <option value="5.00">5,00 salaires minimums</option>
+                                <option value="6.00">6,00 salaires minimums</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-ireland-waterfall-fr"
+                        class="plotly-chart"
+                        aria-label="Décomposition du coût du travail en Irlande"
+                    ></div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Graphiques complémentaires</h2>
+
+                    <p>
+                        Les graphiques suivants détaillent les salaires, les taux
+                        effectifs, la répartition entre impôt sur le revenu et
+                        USC, le coin socio-fiscal et le rendement marginal du
+                        salaire brut.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Coût employeur, salaire brut et salaires nets</h3>
+
+                        <p class="chart-subtitle">
+                            Comparaison du salaire brut, du salaire net avant
+                            impôt, du salaire net après impôt et du coût employeur
+                            selon le multiple du salaire minimum irlandais.
+                        </p>
+
+                        <div
+                            id="chart-ireland-cost-fr"
+                            class="plotly-chart"
+                            aria-label="Coût du travail en Irlande"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Taux effectifs de prélèvement</h3>
+
+                        <p class="chart-subtitle">
+                            Taux salarié et employeur (PRSI), taux d'imposition
+                            effectif et taux d'USC effectif.
+                        </p>
+
+                        <div
+                            id="chart-ireland-rates-fr"
+                            class="plotly-chart"
+                            aria-label="Taux de prélèvement en Irlande"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Impôt sur le revenu et USC</h3>
+
+                        <p class="chart-subtitle">
+                            Montant mensuel de l'impôt sur le revenu (PAYE), de
+                            l'Universal Social Charge (USC) et de leur total.
+                        </p>
+
+                        <div
+                            id="chart-ireland-tax-usc-fr"
+                            class="plotly-chart"
+                            aria-label="Impôt sur le revenu et USC en Irlande"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Coin social et coin socio-fiscal</h3>
+
+                        <p class="chart-subtitle">
+                            Comparaison du coin social avant impôt et du coin
+                            socio-fiscal après impôt sur le revenu et USC.
+                        </p>
+
+                        <div
+                            id="chart-ireland-wedge-fr"
+                            class="plotly-chart"
+                            aria-label="Coin social et socio-fiscal irlandais"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Rendement marginal d'une hausse de salaire brut</h3>
+
+                        <p class="chart-subtitle">
+                            Part d'un euro supplémentaire de salaire brut
+                            conservée avant et après impôt sur le revenu et USC.
+                        </p>
+
+                        <div
+                            id="chart-ireland-fiscal-return-fr"
+                            class="plotly-chart"
+                            aria-label="Rendement socio-fiscal d'une hausse de salaire brut en Irlande"
+                        ></div>
+
+                        <p class="method-note">
+                            L'effet marginal évolue par paliers autour du seuil
+                            d'exonération de l'USC (13 000 €/an), des tranches de
+                            l'USC et du seuil de 44 000 € de l'impôt sur le revenu.
+                            Le PRSI salarié, prélevé sur la rémunération totale une
+                            fois le seuil de 352 €/semaine dépassé, crée également
+                            un effet de seuil local.
+                        </p>
+                    </div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Indicateurs clés</h2>
+
+                    <p>
+                        Les indicateurs ci-dessous sont calculés au salaire
+                        minimum irlandais (multiple = 1).
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="ireland-metrics-fr">
+                    <article class="metric-card">
+                        <span class="metric-label">Salaire brut de référence</span>
+                        <strong id="metric-ireland-reference-wage-fr">—</strong>
+                        <span class="metric-note">Salaire minimum mensuel (39h/semaine)</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Taux d'imposition effectif</span>
+                        <strong id="metric-ireland-income-tax-rate-fr">—</strong>
+                        <span class="metric-note">Impôt sur le revenu / brut</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Taux employeur effectif</span>
+                        <strong id="metric-ireland-employer-rate-fr">—</strong>
+                        <span class="metric-note">PRSI employeur</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Ratio coût / net à 1 salaire minimum</span>
+                        <strong id="metric-ireland-cost-to-net-fr">—</strong>
+                        <span class="metric-note">Après impôt et USC</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-fr-flcl-index" class="tab-content">
+                <section class="chart-card">
+                    <h2>Indice du Lab</h2>
+                    <p class="chart-subtitle">
+                        Indicateurs d'efficacité salariale du coût du travail.
+                    </p>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-E</span>
+                            <strong id="ireland-flcl-e-value-fr">—</strong>
+                            <span class="metric-note" id="ireland-flcl-e-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-B</span>
+                            <strong id="ireland-flcl-b-value-fr">—</strong>
+                            <span class="metric-note" id="ireland-flcl-b-caption-fr"></span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Transmission marginale</span>
+                            <strong id="ireland-flcl-transmission-value-fr">—</strong>
+                            <span class="metric-note" id="ireland-flcl-transmission-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Captation marginale</span>
+                            <strong id="ireland-flcl-capture-value-fr">—</strong>
+                            <span class="metric-note" id="ireland-flcl-capture-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Progressivité implicite</span>
+                            <strong id="ireland-flcl-progressivity-value-fr">—</strong>
+                            <span class="metric-note" id="ireland-flcl-progressivity-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Soutien bas salaires</span>
+                            <strong id="ireland-flcl-support-value-fr">—</strong>
+                            <span class="metric-note" id="ireland-flcl-support-caption-fr"></span>
+                        </div>
+                    </div>
+
+                    <p class="method-note" style="margin-top: 16px;">
+                        Aucun allègement employeur ciblé et dégressif n'est modélisé pour
+                        l'Irlande : l'indicateur Lab-R ne s'applique donc pas ici.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Indice du Lab</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × salaire net avant impôt / coût employeur.
+                        </p>
+                        <div id="chart-ireland-flcl-e-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Transmission marginale</h3>
+                        <p class="chart-subtitle">
+                            Part d'un euro supplémentaire de coût employeur allant au salarié net.
+                        </p>
+                        <div id="chart-ireland-flcl-marginal-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Progressivité implicite</h3>
+                        <p class="chart-subtitle">
+                            Variation de Lab-E lorsque le niveau de salaire augmente.
+                        </p>
+                        <div id="chart-ireland-flcl-progressivity-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Destination marginale d'un euro supplémentaire de coût employeur</h3>
+                        <p class="chart-subtitle">
+                            Répartition marginale entre salaire net, cotisations salarié et cotisations employeur.
+                        </p>
+                        <div id="chart-ireland-flcl-destination-fr" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-fr-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Données</h3>
+
+                    <p class="chart-subtitle">
+                        Le jeu de données irlandais peut être téléchargé au
+                        format CSV. Il contient l'ensemble des points de salaire
+                        simulés pour le profil standard : salaire brut, impôt sur
+                        le revenu, USC, PRSI, coût employeur et indicateurs de
+                        coin socio-fiscal.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/ireland/ireland_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Télécharger le jeu de données Irlande
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/ireland/ireland_parameters_2026.json"
+                            download
+                        >
+                            Télécharger les paramètres 2026
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/ireland/ireland_sources_2026.json"
+                            download
+                        >
+                            Télécharger les sources 2026
+                        </a>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Données du profil standard</h3>
+
+                    <p
+                        class="chart-subtitle"
+                        id="ireland-data-caption-fr"
+                    >
+                        Salarié standard
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Multiple</th>
+                                    <th>Salaire brut (€)</th>
+                                    <th>Net avant impôt (€)</th>
+                                    <th>Impôt sur le revenu (€)</th>
+                                    <th>USC (€)</th>
+                                    <th>Net après impôt (€)</th>
+                                    <th>Coût employeur (€)</th>
+                                    <th>Cotisations salarié (€)</th>
+                                    <th>Cotisations employeur (€)</th>
+                                    <th>Coin social (€)</th>
+                                    <th>Coin socio-fiscal (€)</th>
+                                    <th>Taux employeur</th>
+                                    <th>Coût / net après impôt</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="ireland-data-table-body-fr">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="chart-subtitle" style="margin-top: 10px;">
+                        Cotisations salarié = PRSI salarié. Cotisations employeur
+                        = PRSI employeur. Voir l'onglet Méthodologie.
+                    </p>
+                </div>
+            </section>
+
+            <section id="tab-fr-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Méthodologie</h2>
+
+                    <p>
+                        Le module Irlande repose sur une simulation
+                        réglementaire du coût du travail pour un salarié
+                        standard, célibataire sans enfant, à temps plein. Le
+                        salaire brut est calculé comme multiple du National
+                        Minimum Wage mensuel, utilisé comme référence de salaire
+                        minimum dans le module.
+                    </p>
+
+                    <h3>1. Impôt sur le revenu (PAYE)</h3>
+
+                    <p>
+                        L'impôt sur le revenu utilise le barème 2026 pour un
+                        salarié célibataire : 20 % jusqu'au seuil de 44 000 €
+                        (standard rate cut-off point), 40 % au-delà, diminué du
+                        crédit d'impôt personnel (2 000 €) et du crédit d'impôt
+                        salarié PAYE (2 000 €), soit 4 000 € de crédits combinés,
+                        plancher à zéro.
+                    </p>
+
+                    <h3>2. Universal Social Charge (USC)</h3>
+
+                    <p>
+                        L'USC est une contribution distincte de l'impôt sur le
+                        revenu, calculée sur le revenu brut total : exonération
+                        totale si le revenu annuel est inférieur ou égal à
+                        13 000 € (effet de seuil : au premier euro dépassant ce
+                        montant, le barème s'applique dès le premier euro de
+                        revenu), puis 0,5 % jusqu'à 12 012 €, 2 % jusqu'à
+                        28 700 €, 3 % jusqu'à 70 044 € et 8 % au-delà.
+                    </p>
+
+                    <h3>3. PRSI (classe A)</h3>
+
+                    <p>
+                        Le PRSI est une cotisation de « classe », assise sur la
+                        rémunération totale une fois un seuil hebdomadaire
+                        franchi (et non sur la seule tranche excédentaire, à la
+                        différence de l'impôt sur le revenu). Côté salarié :
+                        aucun PRSI en dessous de 352 €/semaine ; un crédit
+                        dégressif (jusqu'à 12 €/semaine) lisse le passage au
+                        taux plein de 4,2 % entre 352,01 € et 424 €/semaine ;
+                        au-delà, 4,2 % de la rémunération totale. Côté employeur :
+                        9,0 % de la rémunération totale jusqu'à 496 €/semaine,
+                        11,25 % au-delà. Taux applicables de janvier à septembre
+                        2026 ; une nouvelle hausse est prévue au 1er octobre 2026
+                        (voir la section Limites).
+                    </p>
+
+                    <h3>4. Indicateurs produits</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Net avant impôt :</strong>
+                            salaire brut diminué du PRSI salarié.
+                        </li>
+
+                        <li>
+                            <strong>Net après impôt :</strong>
+                            net avant impôt diminué de l'impôt sur le revenu et
+                            de l'USC mensuels.
+                        </li>
+
+                        <li>
+                            <strong>Coût employeur :</strong>
+                            salaire brut augmenté du PRSI employeur.
+                        </li>
+
+                        <li>
+                            <strong>Coin social :</strong>
+                            différence entre le coût employeur et le net avant
+                            impôt.
+                        </li>
+
+                        <li>
+                            <strong>Coin socio-fiscal :</strong>
+                            différence entre le coût employeur et le net après
+                            impôt.
+                        </li>
+
+                        <li>
+                            <strong>Rendement marginal :</strong>
+                            part d'un euro supplémentaire de salaire brut
+                            conservée avant et après impôt sur le revenu et USC.
+                        </li>
+                    </ul>
+
+                    <h3>5. Indice du Lab</h3>
+
+                    <p>
+                        L'Indice du Lab mesure l'efficacité salariale du coût du
+                        travail, indépendamment de l'impôt sur le revenu et de
+                        l'USC. Lab-E = 100 × salaire net avant impôt / coût
+                        employeur, Lab-B = 100 − Lab-E. Aucun allègement employeur
+                        ciblé et dégressif n'est modélisé pour l'Irlande :
+                        l'indicateur Lab-R ne s'applique donc pas ici.
+                    </p>
+
+                    <h3>6. Limites du scénario</h3>
+
+                    <p class="method-note">
+                        Seules les cotisations PRSI de classe A sont modélisées ;
+                        les autres classes (par exemple la classe S des
+                        indépendants) ne le sont pas. Seuls les crédits d'impôt
+                        personnel et salarié sont pris en compte ; les autres
+                        crédits (marié·e, personne à charge, etc.), les
+                        cotisations de retraite privée et les taux réduits d'USC
+                        (carte médicale, plus de 70 ans) ne sont pas modélisés.
+                        La hausse des taux PRSI prévue au 1er octobre 2026
+                        n'est pas modélisée : ce module retient les taux de
+                        janvier à septembre 2026 comme référence annuelle
+                        unique. Ces limites sont assumées afin de produire un
+                        scénario central stable et comparable aux autres
+                        modules nationaux du Labor Cost Lab.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="language-section" id="section-en">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · Ireland module
+                </p>
+
+                <h1>Ireland Labour Cost Lab</h1>
+
+                <p>
+                    Simulation module for Irish labour costs. This version
+                    computes the gross wage, PAYE income tax, the Universal
+                    Social Charge (USC), employee and employer PRSI, the
+                    employer cost, and the main social and socio-fiscal wedge
+                    indicators.
+                </p>
+
+                <p class="author-line">
+                    By Hugo Spring-Ragain, Economist, CEDS Paris
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchIrelandLanguage()">
+                    Français
+                </button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>Ireland · 2026 socio-fiscal module</h2>
+
+                <p>
+                    The Ireland Labour Cost Lab simulates Irish labour costs
+                    for a standard, single, childless employee. It combines the
+                    National Minimum Wage as the wage reference, PAYE income tax
+                    (2-band scale, personal and employee tax credits), the
+                    Universal Social Charge (USC, 4-band scale), and PRSI Class A
+                    (employee and employer).
+                </p>
+
+                <p>
+                    The goal is to measure, over a range from 1 to 6 times the
+                    Irish minimum wage, how a euro of gross wage turns into net
+                    income for the employee, into total cost for the employer,
+                    and into social and fiscal levies.
+                </p>
+            </section>
+
+            <nav class="tabs" aria-label="Ireland navigation">
+                <button class="tab-button active" data-tab="simulation" onclick="showIrelandTab('en', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showIrelandTab('en', 'flcl-index')">
+                    Lab Index
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showIrelandTab('en', 'data')">
+                    Data
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showIrelandTab('en', 'methodology')">
+                    Methodology
+                </button>
+            </nav>
+
+            <section id="tab-en-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="ireland-waterfall-title-en">
+                        From net wage to employer cost
+                    </h3>
+
+                    <p class="chart-subtitle" id="ireland-waterfall-subtitle-en">
+                        Breakdown of the path from net wage after tax to total
+                        employer cost, distinguishing income tax, USC and PRSI,
+                        on both the employee and employer sides.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="ireland-waterfall-multiple-en">
+                                Selected wage point
+                            </label>
+
+                            <select id="ireland-waterfall-multiple-en">
+                                <option value="1.00">1.00 minimum wage</option>
+                                <option value="1.25">1.25 minimum wages</option>
+                                <option value="1.50">1.50 minimum wages</option>
+                                <option value="2.00" selected>2.00 minimum wages</option>
+                                <option value="2.50">2.50 minimum wages</option>
+                                <option value="3.00">3.00 minimum wages</option>
+                                <option value="4.00">4.00 minimum wages</option>
+                                <option value="5.00">5.00 minimum wages</option>
+                                <option value="6.00">6.00 minimum wages</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-ireland-waterfall-en"
+                        class="plotly-chart"
+                        aria-label="Breakdown of labour cost in Ireland"
+                    ></div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Additional charts</h2>
+
+                    <p>
+                        The charts below detail wages, effective rates, the
+                        split between income tax and USC, the socio-fiscal
+                        wedge, and the marginal return on a gross-wage increase.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Employer cost, gross wage and net wages</h3>
+
+                        <p class="chart-subtitle">
+                            Comparison of the gross wage, net wage before tax,
+                            net wage after tax, and employer cost across the
+                            multiple of the Irish minimum wage.
+                        </p>
+
+                        <div
+                            id="chart-ireland-cost-en"
+                            class="plotly-chart"
+                            aria-label="Labour cost in Ireland"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Effective levy rates</h3>
+
+                        <p class="chart-subtitle">
+                            Employee and employer rate (PRSI), effective income
+                            tax rate, and effective USC rate.
+                        </p>
+
+                        <div
+                            id="chart-ireland-rates-en"
+                            class="plotly-chart"
+                            aria-label="Levy rates in Ireland"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Income tax and USC</h3>
+
+                        <p class="chart-subtitle">
+                            Monthly amount of income tax (PAYE), the Universal
+                            Social Charge (USC), and their total.
+                        </p>
+
+                        <div
+                            id="chart-ireland-tax-usc-en"
+                            class="plotly-chart"
+                            aria-label="Income tax and USC in Ireland"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Social wedge and total socio-fiscal wedge</h3>
+
+                        <p class="chart-subtitle">
+                            Comparison of the social wedge before tax and the
+                            total socio-fiscal wedge after income tax and USC.
+                        </p>
+
+                        <div
+                            id="chart-ireland-wedge-en"
+                            class="plotly-chart"
+                            aria-label="Social and socio-fiscal wedge in Ireland"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Marginal return on a gross-wage increase</h3>
+
+                        <p class="chart-subtitle">
+                            Share of an additional euro of gross wage kept
+                            before and after income tax and USC.
+                        </p>
+
+                        <div
+                            id="chart-ireland-fiscal-return-en"
+                            class="plotly-chart"
+                            aria-label="Socio-fiscal return on a gross-wage increase in Ireland"
+                        ></div>
+
+                        <p class="method-note">
+                            The marginal effect moves in steps around the USC
+                            exemption threshold (EUR 13,000/year), the USC
+                            bands, and the EUR 44,000 income-tax threshold.
+                            Employee PRSI, charged on total pay once the
+                            EUR 352/week threshold is crossed, also creates a
+                            local step effect.
+                        </p>
+                    </div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Key indicators</h2>
+
+                    <p>
+                        The indicators below are computed at the Irish minimum
+                        wage (multiple = 1).
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="ireland-metrics-en">
+                    <article class="metric-card">
+                        <span class="metric-label">Reference gross wage</span>
+                        <strong id="metric-ireland-reference-wage-en">—</strong>
+                        <span class="metric-note">Minimum wage, monthly (39h/week)</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Effective income tax rate</span>
+                        <strong id="metric-ireland-income-tax-rate-en">—</strong>
+                        <span class="metric-note">Income tax / gross</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Effective employer rate</span>
+                        <strong id="metric-ireland-employer-rate-en">—</strong>
+                        <span class="metric-note">Employer PRSI</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Cost / net ratio at 1 minimum wage</span>
+                        <strong id="metric-ireland-cost-to-net-en">—</strong>
+                        <span class="metric-note">After tax and USC</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-en-flcl-index" class="tab-content">
+                <section class="chart-card">
+                    <h2>Lab Index</h2>
+                    <p class="chart-subtitle">
+                        Labour cost efficiency indicators.
+                    </p>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-E</span>
+                            <strong id="ireland-flcl-e-value-en">—</strong>
+                            <span class="metric-note" id="ireland-flcl-e-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-B</span>
+                            <strong id="ireland-flcl-b-value-en">—</strong>
+                            <span class="metric-note" id="ireland-flcl-b-caption-en"></span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Marginal transmission</span>
+                            <strong id="ireland-flcl-transmission-value-en">—</strong>
+                            <span class="metric-note" id="ireland-flcl-transmission-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Marginal capture</span>
+                            <strong id="ireland-flcl-capture-value-en">—</strong>
+                            <span class="metric-note" id="ireland-flcl-capture-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Implicit progressivity</span>
+                            <strong id="ireland-flcl-progressivity-value-en">—</strong>
+                            <span class="metric-note" id="ireland-flcl-progressivity-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Low-wage support</span>
+                            <strong id="ireland-flcl-support-value-en">—</strong>
+                            <span class="metric-note" id="ireland-flcl-support-caption-en"></span>
+                        </div>
+                    </div>
+
+                    <p class="method-note" style="margin-top: 16px;">
+                        No targeted, degressive employer relief is modeled for
+                        Ireland: the Lab-R indicator does not apply here.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Lab Index</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × net wage before income tax / employer cost.
+                        </p>
+                        <div id="chart-ireland-flcl-e-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal transmission</h3>
+                        <p class="chart-subtitle">
+                            Share of one additional euro of employer cost reaching net wage.
+                        </p>
+                        <div id="chart-ireland-flcl-marginal-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Implicit progressivity</h3>
+                        <p class="chart-subtitle">
+                            Change in Lab-E when the wage level increases.
+                        </p>
+                        <div id="chart-ireland-flcl-progressivity-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal destination of one additional euro of employer cost</h3>
+                        <p class="chart-subtitle">
+                            Marginal split between net wage, employee contributions and employer contributions.
+                        </p>
+                        <div id="chart-ireland-flcl-destination-en" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-en-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Data</h3>
+
+                    <p class="chart-subtitle">
+                        The Irish dataset can be downloaded as a CSV file. It
+                        contains every simulated wage point for the standard
+                        profile: gross wage, income tax, USC, PRSI, employer
+                        cost, and socio-fiscal wedge indicators.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/ireland/ireland_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Download the Ireland dataset
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/ireland/ireland_parameters_2026.json"
+                            download
+                        >
+                            Download the 2026 parameters
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/ireland/ireland_sources_2026.json"
+                            download
+                        >
+                            Download the 2026 sources
+                        </a>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Data for the standard profile</h3>
+
+                    <p
+                        class="chart-subtitle"
+                        id="ireland-data-caption-en"
+                    >
+                        Standard employee
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Multiple</th>
+                                    <th>Gross wage (€)</th>
+                                    <th>Net before tax (€)</th>
+                                    <th>Income tax (€)</th>
+                                    <th>USC (€)</th>
+                                    <th>Net after tax (€)</th>
+                                    <th>Employer cost (€)</th>
+                                    <th>Employee contributions (€)</th>
+                                    <th>Employer contributions (€)</th>
+                                    <th>Social wedge (€)</th>
+                                    <th>Total socio-fiscal wedge (€)</th>
+                                    <th>Employer rate</th>
+                                    <th>Cost / net after tax</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="ireland-data-table-body-en">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="chart-subtitle" style="margin-top: 10px;">
+                        Employee contributions = employee PRSI. Employer
+                        contributions = employer PRSI. See the Methodology tab.
+                    </p>
+                </div>
+            </section>
+
+            <section id="tab-en-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Methodology</h2>
+
+                    <p>
+                        The Ireland module relies on a regulatory simulation of
+                        labour cost for a standard, single, childless full-time
+                        employee. The gross wage is computed as a multiple of
+                        the monthly National Minimum Wage, used as the
+                        minimum-wage reference in the module.
+                    </p>
+
+                    <h3>1. Income tax (PAYE)</h3>
+
+                    <p>
+                        Income tax uses the 2026 scale for a single person: 20%
+                        up to the EUR 44,000 standard rate cut-off point, 40%
+                        above, less the Personal Tax Credit (EUR 2,000) and the
+                        Employee (PAYE) Tax Credit (EUR 2,000) -- EUR 4,000 of
+                        combined credits in total, floored at zero.
+                    </p>
+
+                    <h3>2. Universal Social Charge (USC)</h3>
+
+                    <p>
+                        USC is a separate charge from income tax, computed on
+                        total gross income: full exemption if annual income is
+                        EUR 13,000 or below (a cliff-edge effect: once this
+                        amount is exceeded by even one euro, the scale applies
+                        from the first euro of income), then 0.5% up to
+                        EUR 12,012, 2% up to EUR 28,700, 3% up to EUR 70,044,
+                        and 8% above.
+                    </p>
+
+                    <h3>3. PRSI (Class A)</h3>
+
+                    <p>
+                        PRSI is a "class" contribution, charged on total pay
+                        once a weekly threshold is crossed (rather than only on
+                        the excess above it, unlike income tax). Employee side:
+                        no PRSI below EUR 352/week; a tapering credit (up to
+                        EUR 12/week) smooths the transition to the full 4.2%
+                        rate between EUR 352.01 and EUR 424/week; above that,
+                        4.2% of total pay. Employer side: 9.0% of total pay up
+                        to EUR 496/week, 11.25% above. Rates in effect from
+                        January to September 2026; a further increase is
+                        scheduled from 1 October 2026 (see Limits).
+                    </p>
+
+                    <h3>4. Indicators produced</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Net before tax:</strong>
+                            gross wage minus employee PRSI.
+                        </li>
+
+                        <li>
+                            <strong>Net after tax:</strong>
+                            net before tax minus monthly income tax and USC.
+                        </li>
+
+                        <li>
+                            <strong>Employer cost:</strong>
+                            gross wage plus employer PRSI.
+                        </li>
+
+                        <li>
+                            <strong>Social wedge:</strong>
+                            difference between employer cost and net before tax.
+                        </li>
+
+                        <li>
+                            <strong>Total socio-fiscal wedge:</strong>
+                            difference between employer cost and net after tax.
+                        </li>
+
+                        <li>
+                            <strong>Marginal return:</strong>
+                            share of an additional euro of gross wage kept
+                            before and after income tax and USC.
+                        </li>
+                    </ul>
+
+                    <h3>5. Lab Index</h3>
+
+                    <p>
+                        The Lab Index measures the wage efficiency of labour
+                        cost, independently of income tax and USC. Lab-E = 100 ×
+                        net wage before income tax / employer cost, Lab-B = 100
+                        − Lab-E. No targeted, degressive employer relief is
+                        modeled for Ireland: the Lab-R indicator therefore does
+                        not apply here.
+                    </p>
+
+                    <h3>6. Limits of the scenario</h3>
+
+                    <p class="method-note">
+                        Only PRSI Class A contributions are modeled; other
+                        classes (for example Class S for the self-employed) are
+                        not. Only the Personal and Employee tax credits are
+                        taken into account; other credits (married, dependent,
+                        etc.), private pension contributions, and the reduced
+                        USC rates (medical card holders, over-70s) are not
+                        modeled. The PRSI rate increase scheduled for 1 October
+                        2026 is not modeled: this module uses the January-
+                        September 2026 rates as the single annual reference.
+                        These limits are accepted in order to produce a stable
+                        central scenario, comparable with the Labor Cost Lab's
+                        other national modules.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

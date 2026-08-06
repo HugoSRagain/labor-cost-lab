@@ -1,7 +1,7 @@
 {
     "module_name": "Cross-Country Labour Cost Comparison",
     "version": "2026-01",
-    "countries": ["France", "Germany", "Belgium", "Switzerland", "Netherlands", "United Kingdom"],
+    "countries": ["France", "Germany", "Belgium", "Switzerland", "Netherlands", "United Kingdom", "Ireland", "Spain"],
     "methodology": [
         "Comparison axis: absolute wage levels converted via purchasing power parity (PPP), not wages re-indexed to each country's own minimum wage.",
         "PPP is applied individually to all 4 countries (including Switzerland), following the same logic as the OECD 'Taxing Wages' cross-country comparisons.",
@@ -23,7 +23,9 @@
         "BE": {"value_local": 2189.81, "currency": "EUR", "value_intl_usd": 2911.4, "source": "GGMMI / RMMMG, docs/data/belgium/belgium_parameters_2026.json"},
         "DE": {"value_local": 2409.33, "currency": "EUR", "value_intl_usd": 3434.3, "source": "Statutory minimum wage x monthly hours convention, analysis/germany parameters"},
         "NL": {"value_local": 2338.44, "currency": "EUR", "value_intl_usd": 3151.7, "source": "Wettelijk minimumloon (WML), 14.99 EUR/h x 36h/week (CBS full-time convention), docs/data/netherlands/netherlands_parameters_2026.json"},
-        "UK": {"value_local": 2065.38, "currency": "GBP", "value_intl_usd": 3025.1, "source": "National Living Wage (21+), 12.71 GBP/h x 37.5h/week (most commonly cited UK full-time benchmark), docs/data/uk/uk_parameters_2026.json"}
+        "UK": {"value_local": 2065.38, "currency": "GBP", "value_intl_usd": 3025.1, "source": "National Living Wage (21+), 12.71 GBP/h x 37.5h/week (most commonly cited UK full-time benchmark), docs/data/uk/uk_parameters_2026.json"},
+        "IE": {"value_local": 2391.35, "currency": "EUR", "value_intl_usd": 2711.4, "source": "National Minimum Wage (20+), 14.15 EUR/h x 39h/week (most commonly cited Irish full-time benchmark), docs/data/ireland/ireland_parameters_2026.json"},
+        "ES": {"value_local": 1424.50, "currency": "EUR", "value_intl_usd": 2421.0, "source": "Salario Minimo Interprofesional (SMI) 2026, 1,221 EUR/month x 14 payments, prorated over 12 months, docs/data/spain/spain_parameters_2026.json"}
     },
     "ppp_conversion_factors": {
         "basis": "Household (private) final consumption expenditure PPP conversion factor, LCU per international dollar",
@@ -37,7 +39,9 @@
             "BE": 0.752163,
             "CH": 1.107209,
             "NL": 0.74195,
-            "UK": 0.682739
+            "UK": 0.682739,
+            "IE": 0.88195,
+            "ES": 0.588481
         }
     },
     "reference_profiles": {
@@ -67,9 +71,19 @@
             "compute_source": "analysis/netherlands/build_netherlands_dataset.py and analysis/netherlands/loonheffing_2026.py"
         },
         "UK": {
-            "profile_id": "uk__standard_employee_ruk",
-            "description": "Standard employee, outside Scotland (rUK income-tax bands only), full-time, standard tax code, auto-enrolled in a workplace pension at the statutory minimum rates (employee 5%, employer 3% of qualifying earnings).",
-            "compute_source": "analysis/uk/build_uk_dataset.py and analysis/uk/paye_ni_2026.py"
+            "profile_id": "uk__population_weighted_average_ruk_scotland",
+            "description": "Population-weighted average of rUK (England/Wales/Northern Ireland) and Scotland income-tax regimes, standard employee, full-time, standard tax code, auto-enrolled in a workplace pension at the statutory minimum rates (employee 5%, employer 3% of qualifying earnings). National Insurance and the workplace pension are not devolved and are identical in both regions.",
+            "compute_source": "analysis/uk/build_uk_dataset.py and analysis/uk/paye_ni_2026.py, aggregated across rUK and Scotland"
+        },
+        "IE": {
+            "profile_id": "ireland__standard_employee",
+            "description": "Standard, single, childless employee, full-time, PRSI Class A, January-September 2026 rates.",
+            "compute_source": "analysis/ireland/build_ireland_dataset.py and analysis/ireland/paye_usc_prsi_2026.py"
+        },
+        "ES": {
+            "profile_id": "spain__population_weighted_average_16_regions",
+            "description": "Population-weighted average across 16 comunidades autonomas (Madrid, Andalucia, Aragon, Asturias, Baleares, Canarias, Cantabria, Castilla-La Mancha, Castilla y Leon, Cataluna, Extremadura, Galicia, Murcia, La Rioja, Comunidad Valenciana, Ceuta/Melilla), standard single childless employee, full-time, Seguridad Social Regimen General. Navarra and Pais Vasco excluded (foral tax systems).",
+            "compute_source": "analysis/spain/build_spain_dataset.py and analysis/spain/irpf_seguridad_social_2026.py, aggregated across 16 regions"
         }
     },
     "switzerland_canton_population_weights": {
@@ -108,13 +122,57 @@
             {"code": "JU", "population": 74840}
         ]
     },
+    "uk_region_population_weights": {
+        "source": "Office for National Statistics (UK total, mid-2024) and National Records of Scotland (Scotland, mid-2024)",
+        "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/bulletins/annualmidyearpopulationestimates/mid2024",
+        "reference_year": 2024,
+        "retrieved": "2026-08-06",
+        "total_population": 69281400,
+        "regions": [
+            {"code": "scotland", "population": 5546900},
+            {"code": "ruk", "population": 63734500}
+        ],
+        "note": "rUK (England, Wales and Northern Ireland combined) population is derived as UK total minus Scotland, since only the rUK/Scotland split matters for income-tax devolution -- England, Wales and Northern Ireland all share the same rUK income-tax bands."
+    },
+    "es_region_population_weights": {
+        "source": "INE (Instituto Nacional de Estadistica), Cifras oficiales de poblacion, 1 January 2025",
+        "url": "https://ine.es/jaxiT3/Datos.htm?t=67988",
+        "reference_year": 2025,
+        "retrieved": "2026-08-06",
+        "total_population": 46202100,
+        "regions": [
+            {"code": "madrid", "population": 7113886},
+            {"code": "andalucia", "population": 8676713},
+            {"code": "aragon", "population": 1364621},
+            {"code": "asturias", "population": 1015128},
+            {"code": "baleares", "population": 1249844},
+            {"code": "canarias", "population": 2258866},
+            {"code": "cantabria", "population": 593623},
+            {"code": "castilla_la_mancha", "population": 2126378},
+            {"code": "castilla_y_leon", "population": 2401221},
+            {"code": "cataluna", "population": 8124126},
+            {"code": "extremadura", "population": 1053345},
+            {"code": "galicia", "population": 2714741},
+            {"code": "murcia", "population": 1586989},
+            {"code": "la_rioja", "population": 326803},
+            {"code": "comunidad_valenciana", "population": 5425182},
+            {"code": "ceuta_melilla", "population": 170634}
+        ],
+        "excluded_regions_population": {
+            "navarra": 683854,
+            "pais_vasco": 2242343
+        },
+        "note": "Navarra and Pais Vasco are excluded from the weighting base (separate foral tax systems, out of scope); the 16 modeled regions' populations sum to the total_population figure above. See docs/data/spain/spain_parameters_2026.json for the full per-region source citations."
+    },
     "notes": [
         "Germany, Belgium, Switzerland and the Netherlands' 'net after income tax' figures include a mandatory wage withholding tax computed directly from the wage (Lohnsteuer, pr\u00e9compte professionnel, impot a la source, loonheffing), which does not require household-specific information beyond the modeled reference profile.",
         "The Netherlands has no separate employee social-security contribution line: AOW/Anw/Wlz national-insurance premiums are bundled into the Box 1 wage-tax rate. Its 'employee_contributions_monthly' figure is therefore 0 by construction, and the full payroll deduction (income tax + national insurance combined, 'loonheffing') appears under the income-tax figure -- this does not mean Dutch employees pay no social insurance.",
         "France's 'net after income tax' figure is the actual income tax due by a single, childless reference taxpayer (1 part de quotient familial), computed via the true progressive income-tax bar\u00e8me (marginal brackets), applied to the Mon-entreprise engine's 'net imposable' tax base (annualized, less the standard 10% deduction for professional expenses). This is directly analogous to the other three countries' actual mandatory tax liabilities for a single/childless reference profile. Note that most French employees are withheld at a personalized 'pr\u00e9l\u00e8vement \u00e0 la source' rate set by the DGFiP from their full household's tax situation (which can differ from a single/childless taxpayer's liability); the withheld amount is only an advance on the definitively-due tax computed here.",
         "The non-personalized 'taux neutre' (grille des taux par d\u00e9faut, article 204 H CGI, BOFiP BOI-BAREME-000037) -- an earlier candidate proxy based on the monthly withholding mechanism rather than actual tax liability -- was evaluated and rejected as a comparison basis because it does not represent any specific taxpayer's real tax burden; it is kept in docs/data/france/france_income_tax_2026.json for reference only.",
         "See docs/data/france/france_income_tax_2026.json for the full progressive bar\u00e8me, standard-deduction parameters, methodology notes and sources.",
-        "The United Kingdom's 'employee_contributions' and 'employer_contributions' figures include both Class 1 National Insurance and the statutory-minimum automatic-enrolment workplace pension (employee 5%, employer 3% of qualifying earnings), not income tax alone -- income tax (PAYE) is reported separately, as for the other countries. Only rUK (England/Wales/Northern Ireland) income-tax bands are modeled; Scotland's devolved bands are not.",
+        "The United Kingdom's 'employee_contributions' and 'employer_contributions' figures include both Class 1 National Insurance and the statutory-minimum automatic-enrolment workplace pension (employee 5%, employer 3% of qualifying earnings), not income tax alone -- income tax (PAYE) is reported separately, as for the other countries. Income tax is a population-weighted average of the rUK (England/Wales/Northern Ireland) and Scotland devolved bands (see 'uk_region_population_weights'), mirroring how Switzerland's cantons are aggregated; National Insurance and the workplace pension are not devolved and are identical in both regions.",
+        "Ireland's 'income_tax_or_withholding_tax' figure bundles PAYE income tax and the Universal Social Charge (USC), since USC is a separate tax on income rather than a social contribution; 'employee_contributions' and 'employer_contributions' are PRSI Class A only, using the January-September 2026 rates (a further rate increase scheduled for 1 October 2026 is not modeled).",
+        "Spain's income tax (IRPF) is a population-weighted average across 16 comunidades autonomas (see 'es_region_population_weights'), mirroring how Switzerland's cantons are aggregated; Navarra and Pais Vasco are excluded (separate foral tax systems). 'employee_contributions' and 'employer_contributions' are Seguridad Social Regimen General only, national and identical across all regions.",
         "All amounts are also cross-country comparable in international dollars (PPP) in addition to local currency."
     ]
 }

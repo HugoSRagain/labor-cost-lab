@@ -1,6 +1,6 @@
 """
 Labor Cost Lab
-Cross-country comparison dataset builder (France, Germany, Belgium, Switzerland, Netherlands, United Kingdom).
+Cross-country comparison dataset builder (France, Germany, Belgium, Switzerland, Netherlands, United Kingdom, Ireland, Spain).
 
 Methodology
 -----------
@@ -20,15 +20,42 @@ local-currency wage:
                  population-weighted average (Switzerland has no single
                  national wage-tax schedule; withholding tax is cantonal).
     Netherlands: analysis/netherlands/build_netherlands_dataset.py (compute_row)
-    United Kingdom: analysis/uk/build_uk_dataset.py (compute_row)
+    United Kingdom: analysis/uk/build_uk_dataset.py (compute_row), computed for
+                 both rUK and Scotland and aggregated with a population-weighted
+                 average (income tax is devolved; National Insurance and the
+                 workplace pension are not).
+    Ireland:     analysis/ireland/build_ireland_dataset.py (compute_row)
+    Spain:       analysis/spain/build_spain_dataset.py (compute_row), computed for
+                 16 comunidades autonomas and aggregated with a population-weighted
+                 average (IRPF has a regional component; Seguridad Social is
+                 national). Navarra and Pais Vasco are excluded (foral systems).
 
-Important note on the United Kingdom: the reference profile uses rUK
-(England/Wales/Northern Ireland) income-tax bands only -- Scotland has its
-own devolved bands and is not modelled. "employee_contributions" and
+Important note on the United Kingdom: income tax is a population-weighted
+average of the rUK (England/Wales/Northern Ireland) and Scotland devolved
+bands, weighted by ONS/NRS mid-2024 population estimates (see
+comparison_parameters_2026.json "uk_region_population_weights") -- this
+mirrors how Switzerland's cantons are aggregated. National Insurance and the
+statutory-minimum automatic-enrolment workplace pension are not devolved and
+are identical in both regions. "employee_contributions" and
 "employer_contributions" include both Class 1 National Insurance and the
-statutory-minimum automatic-enrolment workplace pension (employee 5%,
-employer 3% of qualifying earnings), since both are mandatory deductions
-distinct from income tax.
+workplace pension (employee 5%, employer 3% of qualifying earnings), since
+both are mandatory deductions distinct from income tax.
+
+Important note on Ireland: "income_tax_or_withholding_tax" bundles PAYE
+income tax and the Universal Social Charge (USC), since USC is a separate
+tax on income rather than a social contribution; "employee_contributions"
+and "employer_contributions" are PRSI Class A only (January-September 2026
+rates -- a further rate increase scheduled for 1 October 2026 is not
+modelled).
+
+Important note on Spain: income tax (IRPF) is a population-weighted average
+across 16 comunidades autonomas (INE 1 January 2025 population), mirroring
+how Switzerland's cantons are aggregated -- each region's own regional
+("autonomica") IRPF scale and personal minimum are combined with the
+national state scale. Navarra and Pais Vasco are excluded: separate "foral"
+tax systems, out of scope. "employee_contributions" and
+"employer_contributions" are Seguridad Social Regimen General
+contributions only, national and identical across all regions.
 
 Important note on the Netherlands (see comparison_parameters_2026.json
 "notes"):
@@ -110,6 +137,8 @@ sys.path.insert(0, str(ROOT_DIR / "analysis" / "belgium"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "switzerland"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "netherlands"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "uk"))
+sys.path.insert(0, str(ROOT_DIR / "analysis" / "ireland"))
+sys.path.insert(0, str(ROOT_DIR / "analysis" / "spain"))
 
 import pandas as pd  # noqa: E402
 
@@ -152,6 +181,16 @@ from build_netherlands_dataset import (  # noqa: E402
 from build_uk_dataset import (  # noqa: E402
     compute_row as uk_compute_row,
     load_parameters as uk_load_parameters,
+)
+
+from build_ireland_dataset import (  # noqa: E402
+    compute_row as ie_compute_row,
+    load_parameters as ie_load_parameters,
+)
+
+from build_spain_dataset import (  # noqa: E402
+    compute_row as es_compute_row,
+    load_parameters as es_load_parameters,
 )
 
 
@@ -650,35 +689,131 @@ def compute_netherlands_row(
 
 
 # ---------------------------------------------------------------------------
-# United Kingdom
+# United Kingdom (population-weighted average across rUK and Scotland)
 # ---------------------------------------------------------------------------
 
 def compute_uk_row(
     wage_point_intl_usd: float,
     ppp_factor: float,
-    profile: Dict[str, Any],
+    uk_profiles_by_region: Dict[str, Dict[str, Any]],
+    region_weights: Dict[str, float],
     parameters: Dict[str, Any],
 ) -> Dict[str, Any]:
     gross_local = wage_point_intl_usd * ppp_factor
     wage_reference = parameters["wage_reference"]["gross_monthly_gbp"]
     smic_multiple = gross_local / wage_reference
 
-    result = uk_compute_row(profile, smic_multiple, parameters)
+    weighted_sums = {
+        "employee_contrib": 0.0,
+        "employer_contrib": 0.0,
+        "net_before_tax": 0.0,
+        "income_tax": 0.0,
+        "net_after_tax": 0.0,
+        "employer_cost": 0.0,
+    }
 
-    employer_cost = result["employer_cost_monthly_gbp"]
-    net_before_income_tax = result["net_before_income_tax_monthly_gbp"]
-    net_after_income_tax = result["net_after_income_tax_monthly_gbp"]
-    income_tax = result["income_tax_monthly_gbp"]
+    for region, weight in region_weights.items():
+        result = uk_compute_row(uk_profiles_by_region[region], smic_multiple, parameters)
+
+        weighted_sums["employee_contrib"] += weight * result["employee_contributions_monthly_gbp"]
+        weighted_sums["employer_contrib"] += weight * result["employer_contributions_monthly_gbp"]
+        weighted_sums["net_before_tax"] += weight * result["net_before_income_tax_monthly_gbp"]
+        weighted_sums["income_tax"] += weight * result["income_tax_monthly_gbp"]
+        weighted_sums["net_after_tax"] += weight * result["net_after_income_tax_monthly_gbp"]
+        weighted_sums["employer_cost"] += weight * result["employer_cost_monthly_gbp"]
+
+    employer_cost = weighted_sums["employer_cost"]
+    net_before_income_tax = weighted_sums["net_before_tax"]
+    net_after_income_tax = weighted_sums["net_after_tax"]
+    income_tax = weighted_sums["income_tax"]
 
     row = base_row(
         country="United Kingdom",
         country_code="UK",
         currency_code="GBP",
-        reference_profile_id=profile["profile_id"],
+        reference_profile_id="uk__population_weighted_average_ruk_scotland",
         reference_profile_description=(
-            "Standard employee, outside Scotland (rUK income-tax bands), "
+            "Population-weighted average of rUK (England, Wales, Northern "
+            "Ireland) and Scotland income-tax regimes, standard employee, "
             "full-time, standard tax code, auto-enrolled in a workplace "
             "pension at the statutory minimum rates."
+        ),
+        harmonized_wage_point_intl_usd=wage_point_intl_usd,
+        ppp_factor=ppp_factor,
+    )
+
+    row.update(
+        {
+            "gross_monthly_local": round_money(gross_local),
+            "gross_monthly_intl_usd": round_money(gross_local / ppp_factor),
+            "employee_contributions_monthly_local": round_money(weighted_sums["employee_contrib"]),
+            "employee_contributions_monthly_intl_usd": round_money(weighted_sums["employee_contrib"] / ppp_factor),
+            "employer_contributions_monthly_local": round_money(weighted_sums["employer_contrib"]),
+            "employer_contributions_monthly_intl_usd": round_money(weighted_sums["employer_contrib"] / ppp_factor),
+            "net_before_income_tax_monthly_local": round_money(net_before_income_tax),
+            "net_before_income_tax_monthly_intl_usd": round_money(net_before_income_tax / ppp_factor),
+            "income_tax_or_withholding_tax_monthly_local": round_money(income_tax),
+            "income_tax_or_withholding_tax_monthly_intl_usd": round_money(income_tax / ppp_factor),
+            "net_after_income_tax_monthly_local": round_money(net_after_income_tax),
+            "net_after_income_tax_monthly_intl_usd": round_money(net_after_income_tax / ppp_factor),
+            "employer_cost_monthly_local": round_money(employer_cost),
+            "employer_cost_monthly_intl_usd": round_money(employer_cost / ppp_factor),
+            "social_wedge_before_income_tax_rate": round(
+                (employer_cost - net_before_income_tax) / employer_cost, 6
+            ) if employer_cost else None,
+            "total_wedge_after_income_tax_rate": round(
+                (employer_cost - net_after_income_tax) / employer_cost, 6
+            ) if employer_cost else None,
+            "cost_to_net_before_income_tax_ratio": round(employer_cost / net_before_income_tax, 6)
+            if net_before_income_tax else None,
+            "cost_to_net_after_income_tax_ratio": round(employer_cost / net_after_income_tax, 6)
+            if net_after_income_tax else None,
+            "income_tax_modeled": True,
+            "aggregation_method": "population_weighted_average_ruk_scotland",
+            "below_minimum_wage": bool(gross_local < wage_reference),
+            "national_minimum_wage_monthly_local": round_money(wage_reference),
+            "note": (
+                "Employee/employer contributions include Class 1 National "
+                "Insurance and the statutory-minimum automatic-enrolment "
+                "workplace pension (employee 5%, employer 3% of qualifying "
+                "earnings), not income tax alone. Income tax is a "
+                "population-weighted average of rUK and Scottish devolved "
+                "bands (ONS/NRS mid-2024 population estimates)."
+            ),
+        }
+    )
+
+    return row
+
+
+def compute_ireland_row(
+    wage_point_intl_usd: float,
+    ppp_factor: float,
+    profile: Dict[str, Any],
+    parameters: Dict[str, Any],
+) -> Dict[str, Any]:
+    gross_local = wage_point_intl_usd * ppp_factor
+    wage_reference = parameters["wage_reference"]["gross_monthly_eur"]
+    smic_multiple = gross_local / wage_reference
+
+    result = ie_compute_row(profile, smic_multiple, parameters)
+
+    employer_cost = result["employer_cost_monthly_eur"]
+    net_before_income_tax = result["net_before_income_tax_monthly_eur"]
+    net_after_income_tax = result["net_after_income_tax_monthly_eur"]
+    income_tax_and_usc = (
+        result["income_tax_monthly_eur"]
+        + result["usc_monthly_eur"]
+    )
+
+    row = base_row(
+        country="Ireland",
+        country_code="IE",
+        currency_code="EUR",
+        reference_profile_id=profile["profile_id"],
+        reference_profile_description=(
+            "Standard, single, childless employee, full-time, PRSI Class A, "
+            "January-September 2026 rates."
         ),
         harmonized_wage_point_intl_usd=wage_point_intl_usd,
         ppp_factor=ppp_factor,
@@ -689,16 +824,16 @@ def compute_uk_row(
 
     row.update(
         {
-            "gross_monthly_local": round_money(result["gross_monthly_gbp"]),
-            "gross_monthly_intl_usd": round_money(result["gross_monthly_gbp"] / ppp_factor),
-            "employee_contributions_monthly_local": round_money(result["employee_contributions_monthly_gbp"]),
-            "employee_contributions_monthly_intl_usd": round_money(result["employee_contributions_monthly_gbp"] / ppp_factor),
-            "employer_contributions_monthly_local": round_money(result["employer_contributions_monthly_gbp"]),
-            "employer_contributions_monthly_intl_usd": round_money(result["employer_contributions_monthly_gbp"] / ppp_factor),
+            "gross_monthly_local": round_money(result["gross_monthly_eur"]),
+            "gross_monthly_intl_usd": round_money(result["gross_monthly_eur"] / ppp_factor),
+            "employee_contributions_monthly_local": round_money(result["employee_contributions_monthly_eur"]),
+            "employee_contributions_monthly_intl_usd": round_money(result["employee_contributions_monthly_eur"] / ppp_factor),
+            "employer_contributions_monthly_local": round_money(result["employer_contributions_monthly_eur"]),
+            "employer_contributions_monthly_intl_usd": round_money(result["employer_contributions_monthly_eur"] / ppp_factor),
             "net_before_income_tax_monthly_local": round_money(net_before_income_tax),
             "net_before_income_tax_monthly_intl_usd": round_money(net_before_income_tax / ppp_factor),
-            "income_tax_or_withholding_tax_monthly_local": round_money(income_tax),
-            "income_tax_or_withholding_tax_monthly_intl_usd": round_money(income_tax / ppp_factor),
+            "income_tax_or_withholding_tax_monthly_local": round_money(income_tax_and_usc),
+            "income_tax_or_withholding_tax_monthly_intl_usd": round_money(income_tax_and_usc / ppp_factor),
             "net_after_income_tax_monthly_local": round_money(net_after_income_tax),
             "net_after_income_tax_monthly_intl_usd": round_money(net_after_income_tax / ppp_factor),
             "employer_cost_monthly_local": round_money(employer_cost),
@@ -718,11 +853,108 @@ def compute_uk_row(
             "below_minimum_wage": bool(gross_local < wage_reference),
             "national_minimum_wage_monthly_local": round_money(wage_reference),
             "note": (
-                "Employee/employer contributions include Class 1 National "
-                "Insurance and the statutory-minimum automatic-enrolment "
-                "workplace pension (employee 5%, employer 3% of qualifying "
-                "earnings), not income tax alone. rUK income-tax bands only; "
-                "Scotland's devolved bands are not modelled."
+                "The income-tax figure shown bundles PAYE income tax and the "
+                "Universal Social Charge (USC), since USC is a separate tax "
+                "on income rather than a social contribution; "
+                "employee/employer contributions are PRSI Class A only "
+                "(January-September 2026 rates)."
+            ),
+        }
+    )
+
+    return row
+
+
+def compute_spain_row(
+    wage_point_intl_usd: float,
+    ppp_factor: float,
+    es_profiles_by_region: Dict[str, Dict[str, Any]],
+    region_weights: Dict[str, float],
+    parameters: Dict[str, Any],
+) -> Dict[str, Any]:
+    gross_local = wage_point_intl_usd * ppp_factor
+    wage_reference = parameters["wage_reference"]["gross_monthly_eur"]
+    smic_multiple = gross_local / wage_reference
+
+    weighted_sums = {
+        "employee_contrib": 0.0,
+        "employer_contrib": 0.0,
+        "net_before_tax": 0.0,
+        "irpf": 0.0,
+        "net_after_tax": 0.0,
+        "employer_cost": 0.0,
+    }
+
+    for region, weight in region_weights.items():
+        result = es_compute_row(es_profiles_by_region[region], smic_multiple, parameters)
+
+        weighted_sums["employee_contrib"] += weight * result["employee_contributions_monthly_eur"]
+        weighted_sums["employer_contrib"] += weight * result["employer_contributions_monthly_eur"]
+        weighted_sums["net_before_tax"] += weight * result["net_before_income_tax_monthly_eur"]
+        weighted_sums["irpf"] += weight * result["irpf_monthly_eur"]
+        weighted_sums["net_after_tax"] += weight * result["net_after_income_tax_monthly_eur"]
+        weighted_sums["employer_cost"] += weight * result["employer_cost_monthly_eur"]
+
+    employer_cost = weighted_sums["employer_cost"]
+    net_before_income_tax = weighted_sums["net_before_tax"]
+    net_after_income_tax = weighted_sums["net_after_tax"]
+    income_tax = weighted_sums["irpf"]
+
+    row = base_row(
+        country="Spain",
+        country_code="ES",
+        currency_code="EUR",
+        reference_profile_id="spain__population_weighted_average_16_regions",
+        reference_profile_description=(
+            "Population-weighted average across 16 comunidades autonomas "
+            "(Madrid, Andalucia, Aragon, Asturias, Baleares, Canarias, "
+            "Cantabria, Castilla-La Mancha, Castilla y Leon, Cataluna, "
+            "Extremadura, Galicia, Murcia, La Rioja, Comunidad Valenciana, "
+            "Ceuta/Melilla), standard single childless employee, Seguridad "
+            "Social Regimen General."
+        ),
+        harmonized_wage_point_intl_usd=wage_point_intl_usd,
+        ppp_factor=ppp_factor,
+    )
+
+    row.update(
+        {
+            "gross_monthly_local": round_money(gross_local),
+            "gross_monthly_intl_usd": round_money(gross_local / ppp_factor),
+            "employee_contributions_monthly_local": round_money(weighted_sums["employee_contrib"]),
+            "employee_contributions_monthly_intl_usd": round_money(weighted_sums["employee_contrib"] / ppp_factor),
+            "employer_contributions_monthly_local": round_money(weighted_sums["employer_contrib"]),
+            "employer_contributions_monthly_intl_usd": round_money(weighted_sums["employer_contrib"] / ppp_factor),
+            "net_before_income_tax_monthly_local": round_money(net_before_income_tax),
+            "net_before_income_tax_monthly_intl_usd": round_money(net_before_income_tax / ppp_factor),
+            "income_tax_or_withholding_tax_monthly_local": round_money(income_tax),
+            "income_tax_or_withholding_tax_monthly_intl_usd": round_money(income_tax / ppp_factor),
+            "net_after_income_tax_monthly_local": round_money(net_after_income_tax),
+            "net_after_income_tax_monthly_intl_usd": round_money(net_after_income_tax / ppp_factor),
+            "employer_cost_monthly_local": round_money(employer_cost),
+            "employer_cost_monthly_intl_usd": round_money(employer_cost / ppp_factor),
+            "social_wedge_before_income_tax_rate": round(
+                (employer_cost - net_before_income_tax) / employer_cost, 6
+            ) if employer_cost else None,
+            "total_wedge_after_income_tax_rate": round(
+                (employer_cost - net_after_income_tax) / employer_cost, 6
+            ) if employer_cost else None,
+            "cost_to_net_before_income_tax_ratio": round(employer_cost / net_before_income_tax, 6)
+            if net_before_income_tax else None,
+            "cost_to_net_after_income_tax_ratio": round(employer_cost / net_after_income_tax, 6)
+            if net_after_income_tax else None,
+            "income_tax_modeled": True,
+            "aggregation_method": "population_weighted_average_16_regions",
+            "below_minimum_wage": bool(gross_local < wage_reference),
+            "national_minimum_wage_monthly_local": round_money(wage_reference),
+            "note": (
+                "Income tax (IRPF) is a population-weighted average across "
+                "16 comunidades autonomas (INE 1 January 2025 population), "
+                "mirroring how Switzerland's cantons are aggregated. Navarra "
+                "and Pais Vasco are excluded: separate 'foral' tax systems, "
+                "out of scope. Employee/employer contributions are "
+                "Seguridad Social Regimen General only, national and "
+                "identical across all regions."
             ),
         }
     )
@@ -795,11 +1027,45 @@ def build_dataset() -> pd.DataFrame:
 
     # --- United Kingdom setup ---
     uk_parameters = uk_load_parameters()
-    uk_profile_id = parameters["reference_profiles"]["UK"]["profile_id"]
-    uk_profile = next(
-        profile for profile in uk_parameters["profiles"]
-        if profile["profile_id"] == uk_profile_id
+    uk_profiles_by_region = {
+        profile["region"]: profile
+        for profile in uk_parameters["profiles"]
+    }
+
+    uk_region_population = {
+        region["code"]: region["population"]
+        for region in parameters["uk_region_population_weights"]["regions"]
+    }
+    uk_total_population = sum(uk_region_population.values())
+    uk_region_weights = {
+        code: population / uk_total_population
+        for code, population in uk_region_population.items()
+    }
+
+    # --- Ireland setup ---
+    ie_parameters = ie_load_parameters()
+    ie_profile_id = parameters["reference_profiles"]["IE"]["profile_id"]
+    ie_profile = next(
+        profile for profile in ie_parameters["profiles"]
+        if profile["profile_id"] == ie_profile_id
     )
+
+    # --- Spain setup ---
+    es_parameters = es_load_parameters()
+    es_profiles_by_region = {
+        profile["region_code"]: profile
+        for profile in es_parameters["profiles"]
+    }
+
+    es_region_population = {
+        region["region_code"]: region["population"]
+        for region in es_parameters["regions"]["list"]
+    }
+    es_total_population = sum(es_region_population.values())
+    es_region_weights = {
+        code: population / es_total_population
+        for code, population in es_region_population.items()
+    }
 
     rows: List[Dict[str, Any]] = []
 
@@ -859,8 +1125,28 @@ def build_dataset() -> pd.DataFrame:
             compute_uk_row(
                 wage_point,
                 ppp_values["UK"],
-                uk_profile,
+                uk_profiles_by_region,
+                uk_region_weights,
                 uk_parameters,
+            )
+        )
+
+        rows.append(
+            compute_ireland_row(
+                wage_point,
+                ppp_values["IE"],
+                ie_profile,
+                ie_parameters,
+            )
+        )
+
+        rows.append(
+            compute_spain_row(
+                wage_point,
+                ppp_values["ES"],
+                es_profiles_by_region,
+                es_region_weights,
+                es_parameters,
             )
         )
 

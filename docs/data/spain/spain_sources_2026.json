@@ -1,0 +1,83 @@
+{
+    "country": "Spain",
+    "country_code": "ES",
+    "version": "2026",
+    "status": "source_audit",
+    "sources": {
+        "smi_2026": {
+            "label": "Salario Minimo Interprofesional (SMI) 2026",
+            "value": "1,221 EUR/month in 14 payments (17,094 EUR/year); daily rate 40.70 EUR",
+            "source_name": "Real Decreto 126/2026, de 18 de febrero, por el que se fija el salario minimo interprofesional para 2026 (BOE-A-2026-3815)",
+            "source_type": "official",
+            "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2026-3815",
+            "confidence": "high"
+        },
+        "irpf_state_scale_2026": {
+            "label": "IRPF escala general estatal, 2026",
+            "value": "9.5% up to EUR 12,450; 12% to EUR 20,200; 15% to EUR 35,200; 18.5% to EUR 60,000; 22.5% to EUR 300,000; 24.5% above",
+            "source_name": "Agencia Tributaria (confirmed unchanged from 2025 scale; no Ley de Presupuestos 2026 amendment to the state scale identified)",
+            "source_type": "official",
+            "url": "https://sede.agenciatributaria.gob.es/",
+            "confidence": "high"
+        },
+        "irpf_regional_scales_2025_16_regions": {
+            "label": "IRPF escalas autonomicas, 16 comunidades (2025 scales, current through the 2026 filing campaign)",
+            "value": "Full bracket tables and each region's own minimo del contribuyente (which can differ from the EUR 5,550 state figure, e.g. Madrid EUR 5,956.65) for Madrid, Andalucia, Aragon, Asturias, Baleares, Canarias, Cantabria, Castilla-La Mancha, Castilla y Leon, Cataluna, Extremadura, Galicia, Murcia, La Rioja, Comunidad Valenciana, and the Ceuta/Melilla special scale (Art. 65 LIRPF) -- see docs/data/spain/spain_parameters_2026.json 'regions' for the full per-region data and per-region source citations (each individually verified against the official AEAT per-region page)",
+            "source_name": "Agencia Tributaria (AEAT), Manual Practico de Renta 2025, per-region 'gravamen autonomico' pages",
+            "source_type": "official",
+            "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/gravamen-base-liquidable-general/gravamen-autonomico.html",
+            "confidence": "high",
+            "note": "No comunidad autonoma has yet legislated a scale specifically for tax-year-2026 income at the time of writing; the 2025 scale (filed in the 2026 campaign) is the current, effective figure for every region, mirroring how the existing Madrid bracket set (legislated in 2023) remains current. Navarra and Pais Vasco are excluded: separate 'foral' tax systems (Concierto/Convenio economico), out of scope for this module."
+        },
+        "irpf_personal_minimum_and_work_income_reduction_2026": {
+            "label": "Minimo del contribuyente estatal (soltero, sin hijos) and reduccion por obtencion de rendimientos del trabajo (Art. 20 LIRPF), 2026",
+            "value": "State personal minimum EUR 5,550/year (applies to the state portion of the tax in every region); work-income reduction EUR 7,302 if net work income <= EUR 14,852, tapering linearly to EUR 2,364.34 at EUR 17,673.52, then to EUR 0 at EUR 19,747.50 and above",
+            "source_name": "Ley 35/2006 del IRPF, articulos 20 y 57 (unchanged figures carried into 2026), cross-checked against Agencia Tributaria practical guidance",
+            "source_type": "official",
+            "url": "https://sede.agenciatributaria.gob.es/",
+            "confidence": "high",
+            "note": "Each region additionally sets its OWN minimo del contribuyente for the regional portion of the tax only (see 'irpf_regional_scales_2025_16_regions'); this state figure applies only to the state portion, in every region."
+        },
+        "seguridad_social_regimen_general_2026": {
+            "label": "Cotizaciones a la Seguridad Social, Regimen General, contrato indefinido, 2026",
+            "value": "Employee 6.50% (contingencias comunes 4.70%, desempleo 1.55%, MEI 0.15%, formacion profesional 0.10%); employer 31.65% (contingencias comunes 23.60%, desempleo 5.50%, MEI 0.75%, formacion profesional 0.60%, FOGASA 0.20%, AT/EP 1.00% assumed standard low-risk rate); base minima EUR 1,424.40/month, base maxima EUR 5,101.20/month",
+            "source_name": "Tesoreria General de la Seguridad Social (TGSS), bases y tipos de cotizacion 2026",
+            "source_type": "official",
+            "url": "https://www.seg-social.es/wps/portal/wss/internet/Trabajadores/CotizacionRecaudacionTrabajadores/36537",
+            "confidence": "medium",
+            "note": "The AT/EP (accidentes de trabajo y enfermedades profesionales) rate varies by CNAE activity code under the official tariff (Real Decreto 2930/1979 as updated); this module assumes a flat 1.00% standard low-risk rate, as no single verbatim 2026 rate applies economy-wide. All other Seguridad Social rates and the contribution base floor/ceiling are high confidence."
+        },
+        "ppp_conversion_factor": {
+            "label": "PPP conversion factor, households and NPISHs final consumption expenditure (LCU per international $), Spain, 2024",
+            "value": 0.588481,
+            "source_name": "World Bank, International Comparison Program (ICP)",
+            "source_type": "official",
+            "url": "https://api.worldbank.org/v2/country/ESP/indicator/PA.NUS.PRVT.PP",
+            "confidence": "high"
+        },
+        "ine_ccaa_population_2025": {
+            "label": "Population by comunidad autonoma, 1 January 2025",
+            "value": "All 17 comunidades autonomas plus Ceuta and Melilla; 16 regions modeled here total 46,202,100 (Navarra 683,854 and Pais Vasco 2,242,343 excluded from the modeled total, foral regime)",
+            "source_name": "INE (Instituto Nacional de Estadistica), Cifras oficiales de poblacion",
+            "source_type": "official",
+            "url": "https://ine.es/jaxiT3/Datos.htm?t=67988",
+            "confidence": "high"
+        }
+    },
+    "audit_decision": {
+        "v0_scope": [
+            "IRPF (state scale + 16 regional scales: Madrid, Andalucia, Aragon, Asturias, Baleares, Canarias, Cantabria, Castilla-La Mancha, Castilla y Leon, Cataluna, Extremadura, Galicia, Murcia, La Rioja, Comunidad Valenciana, Ceuta/Melilla; single/childless reference taxpayer, selectable by region)",
+            "Personal minimum (minimo del contribuyente, state figure for the state portion, each region's own figure for its regional portion) and work-income reduction (Art. 20 LIRPF)",
+            "Seguridad Social Regimen General, contrato indefinido (employee and employer, contribution base floor/ceiling, national, identical across all regions)",
+            "Population-weighted national average across the 16 modeled regions, mirroring the Switzerland canton-weighting approach"
+        ],
+        "not_yet_included": [
+            "Navarra and Pais Vasco: separate 'foral' tax systems (Concierto/Convenio economico), out of scope",
+            "Family minimums (children, ascendants, disability)",
+            "The explicit SMI income-tax exemption mechanism (Art. 28 RDL 5/2026); this module instead relies on the general minimo personal + Art. 20 reduction mechanism, which independently produces a near-zero result at the SMI level in every region",
+            "CNAE-specific AT/EP contribution rates",
+            "Special Seguridad Social regimes (autonomos, agrario, empleados de hogar, etc.)",
+            "Private pension contributions and their tax/Seguridad Social relief"
+        ]
+    }
+}

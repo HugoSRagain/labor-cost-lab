@@ -1,0 +1,66 @@
+{
+    "country": "Ireland",
+    "country_code": "IE",
+    "version": "2026-01",
+    "effective_from": "2026-01-01",
+    "status": "prototype_v1",
+    "currency": "EUR",
+    "wage_reference": {
+        "name": "National Minimum Wage, 20 ans et plus",
+        "gross_monthly_eur": 2391.35,
+        "hourly_rate_eur": 14.15,
+        "weekly_hours": 39,
+        "source": "Gouvernement irlandais / Low Pay Commission, Budget 2026",
+        "note": "L'Irlande n'a pas de durée hebdomadaire de travail à temps plein fixée par la loi (la loi de 1997 sur l'organisation du temps de travail ne fixe qu'un plafond moyen de 48 heures). Ce module retient 39 heures/semaine, le repère le plus couramment cité pour un emploi à temps plein en Irlande, soit 14,15 x 39 x 52/12 = 2 391,35 EUR/mois."
+    },
+    "grid": {
+        "min_multiple": 0.80,
+        "max_multiple": 6.00,
+        "step": 0.01
+    },
+    "social_security": {
+        "income_tax_note": "Barème 2026 pour un salarié célibataire sans enfant : 20 % jusqu'au seuil de 44 000 EUR (standard rate cut-off point), 40 % au-delà, diminué du crédit d'impôt personnel et du crédit d'impôt salarié (PAYE), 2 000 EUR chacun. Voir analysis/ireland/paye_usc_prsi_2026.py pour le détail du calcul.",
+        "income_tax_single_person": {
+            "standard_rate_cutoff_eur": 44000,
+            "standard_rate": 0.20,
+            "higher_rate": 0.40,
+            "personal_tax_credit_eur": 2000,
+            "employee_paye_tax_credit_eur": 2000
+        },
+        "usc": {
+            "exemption_threshold_annual_eur": 13000,
+            "bands": [
+                {"lower_bound_eur": 0, "upper_bound_eur": 12012, "rate": 0.005},
+                {"lower_bound_eur": 12012, "upper_bound_eur": 28700, "rate": 0.02},
+                {"lower_bound_eur": 28700, "upper_bound_eur": 70044, "rate": 0.03},
+                {"lower_bound_eur": 70044, "upper_bound_eur": null, "rate": 0.08}
+            ],
+            "note": "Exonération totale si le revenu annuel total est inférieur ou égal à 13 000 EUR ; au-delà, le barème s'applique dès le premier euro (effet de seuil)."
+        },
+        "prsi_class_a": {
+            "period": "2026-01 to 2026-09",
+            "employee_exempt_threshold_weekly_eur": 352,
+            "employee_credit_taper_upper_weekly_eur": 424,
+            "employee_max_credit_weekly_eur": 12,
+            "employee_rate": 0.042,
+            "employer_reduced_rate_threshold_weekly_eur": 496,
+            "employer_reduced_rate": 0.09,
+            "employer_standard_rate": 0.1125,
+            "note": "PRSI est une cotisation de « classe » assise sur la rémunération totale (et non marginale) une fois le seuil franchi. Un crédit dégressif (jusqu'à 12 EUR/semaine) lisse le passage du salarié au taux plein entre 352,01 et 424 EUR/semaine. Taux applicables de janvier à septembre 2026 ; une nouvelle hausse (salarié 4,35 %, employeur 9,15 %/11,40 %, seuil relevé à 552 EUR/semaine) est prévue à partir du 1er octobre 2026 et n'est pas modélisée ici."
+        }
+    },
+    "profiles": [
+        {
+            "profile_id": "ireland__standard_employee",
+            "label_fr": "Irlande · salarié standard",
+            "label_en": "Ireland · standard employee"
+        }
+    ],
+    "limits": [
+        "Seules les cotisations PRSI de classe A (salariés du secteur privé standard) sont modélisées ; les autres classes (par exemple la classe S des indépendants) ne le sont pas.",
+        "Seuls les crédits d'impôt personnel et salarié (PAYE) sont pris en compte ; les autres crédits (marié·e, personne à charge, etc.) ne sont pas modélisés.",
+        "Les cotisations de retraite privée et leurs effets sur l'impôt, l'USC et le PRSI ne sont pas modélisés.",
+        "Les taux réduits d'USC pour les détenteurs de carte médicale et les plus de 70 ans ne sont pas modélisés.",
+        "La hausse des taux PRSI prévue au 1er octobre 2026 n'est pas modélisée : ce module retient les taux de janvier à septembre 2026 comme référence annuelle unique."
+    ]
+}

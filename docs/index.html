@@ -745,6 +745,8 @@
     			    <button type="button" role="tab" aria-selected="false" onclick="setCountry('ch', this)">Switzerland</button>
                             <button type="button" role="tab" aria-selected="false" onclick="setCountry('nl', this)">Netherlands</button>
                             <button type="button" role="tab" aria-selected="false" onclick="setCountry('uk', this)">United Kingdom</button>
+                            <button type="button" role="tab" aria-selected="false" onclick="setCountry('ie', this)">Ireland</button>
+                            <button type="button" role="tab" aria-selected="false" onclick="setCountry('es', this)">Spain</button>
                         </div>
                     </div>
 
@@ -966,6 +968,64 @@
                     </div>
                 </a>
 
+                <a class="mod" href="./countries/ireland/index.html">
+                    <div>
+                        <div class="mod-name">Ireland</div>
+                        <div class="mod-tags">
+                            <span class="tag live" data-i18n="status.available">Disponible</span>
+                            <span class="tag" data-i18n="status.prototype">Prototype</span>
+                            <span class="tag">PAYE / USC / PRSI</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="mod-desc" data-i18n="module.ireland.text">
+                            Module socio-fiscal 2026 : impôt sur le revenu (PAYE),
+                            Universal Social Charge (USC) et PRSI de classe A, salarié et
+                            employeur.
+                        </p>
+                        <div class="minibar" aria-hidden="true">
+                            <span class="m-emp" style="width:10%"></span>
+                            <span class="m-sal" style="width:4%"></span>
+                            <span class="m-tax" style="width:7%"></span>
+                            <span class="m-net" style="width:79%"></span>
+                        </div>
+                    </div>
+                    <div class="mod-net">
+                        <b>79</b>
+                        <span data-i18n="module.netshare">net / 100</span>
+                        <span class="mod-go" data-i18n="module.open">Ouvrir →</span>
+                    </div>
+                </a>
+
+                <a class="mod" href="./countries/spain/index.html">
+                    <div>
+                        <div class="mod-name">Spain</div>
+                        <div class="mod-tags">
+                            <span class="tag live" data-i18n="status.available">Disponible</span>
+                            <span class="tag" data-i18n="status.prototype">Prototype</span>
+                            <span class="tag">IRPF / Seguridad Social</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="mod-desc" data-i18n="module.spain.text">
+                            Module socio-fiscal 2026 : IRPF (barème étatique et régional de
+                            Madrid), cotisations de Seguridad Social du Régime général,
+                            salarié et employeur.
+                        </p>
+                        <div class="minibar" aria-hidden="true">
+                            <span class="m-emp" style="width:24%"></span>
+                            <span class="m-sal" style="width:5%"></span>
+                            <span class="m-tax" style="width:1%"></span>
+                            <span class="m-net" style="width:70%"></span>
+                        </div>
+                    </div>
+                    <div class="mod-net">
+                        <b>70</b>
+                        <span data-i18n="module.netshare">net / 100</span>
+                        <span class="mod-go" data-i18n="module.open">Ouvrir →</span>
+                    </div>
+                </a>
+
                 <a class="mod" href="./countries/comparison/index.html">
                     <div>
                         <div class="mod-name" data-i18n="module.comparison.name">Comparaison</div>
@@ -976,14 +1036,14 @@
                     </div>
                     <div>
                         <p class="mod-desc" data-i18n="module.comparison.text">
-                            Met en regard les 6 modules nationaux sur une grille de
+                            Met en regard les 8 modules nationaux sur une grille de
                             salaires harmonisée en dollars internationaux (PPA), pour
                             comparer coût employeur, salaire net et prélèvements
                             obligatoires à niveau de vie équivalent.
                         </p>
                     </div>
                     <div class="mod-net">
-                        <b>6</b>
+                        <b>8</b>
                         <span data-i18n="module.comparison.count">pays comparés</span>
                         <span class="mod-go" data-i18n="module.open">Ouvrir →</span>
                     </div>
@@ -1168,8 +1228,10 @@
 		"module.switzerland.text": "Module socio-fiscal 2026 : AVS / AI / APG, assurance chômage, LPP standardisée, assurance accident et impôt à la source canton par canton.",
                 "module.netherlands.text": "Module socio-fiscal 2026 : loonheffing (Box 1, algemene heffingskorting, arbeidskorting), cotisations employeur WW/Aof/Zvw/Wko et coût employeur.",
                 "module.uk.text": "Module socio-fiscal 2026 : impôt sur le revenu (PAYE) hors Écosse, National Insurance (Class 1) et pension d'entreprise obligatoire (auto-enrolment).",
+                "module.ireland.text": "Module socio-fiscal 2026 : impôt sur le revenu (PAYE), Universal Social Charge (USC) et PRSI de classe A, salarié et employeur.",
+                "module.spain.text": "Module socio-fiscal 2026 : IRPF (barème étatique et régional de Madrid), cotisations de Seguridad Social du Régime général, salarié et employeur.",
                 "module.comparison.name": "Comparaison",
-                "module.comparison.text": "Met en regard les 6 modules nationaux sur une grille de salaires harmonisée en dollars internationaux (PPA), pour comparer coût employeur, salaire net et prélèvements obligatoires à niveau de vie équivalent.",
+                "module.comparison.text": "Met en regard les 8 modules nationaux sur une grille de salaires harmonisée en dollars internationaux (PPA), pour comparer coût employeur, salaire net et prélèvements obligatoires à niveau de vie équivalent.",
                 "module.comparison.count": "pays comparés",
                 "module.open": "Ouvrir →",
                 "module.netshare": "net / 100",
@@ -1204,7 +1266,7 @@
                 "data.block4.title": "Code ouvert",
                 "data.block4.text": "Scripts de construction des jeux de données et interface web reproductible.",
                 "side.status.modules.label": "Modules accessibles",
-		"side.status.modules.value": "France · Allemagne · Belgique · Suisse · Pays-Bas · Royaume-Uni",
+		"side.status.modules.value": "France · Allemagne · Belgique · Suisse · Pays-Bas · Royaume-Uni · Irlande · Espagne",
                 "side.status.year.label": "Année réglementaire",
                 "side.status.output.label": "Sorties principales",
                 "side.status.output.value": "coût employeur · net · coins socio-fiscaux",
@@ -1236,8 +1298,10 @@
 		"module.switzerland.text": "2026 socio-fiscal module: OASI / DI / EO, unemployment insurance, standardized occupational pension, accident insurance, and canton-level withholding tax.",
                 "module.netherlands.text": "2026 socio-fiscal module: loonheffing (Box 1, general tax credit, employment tax credit), employer contributions (WW, Aof, Zvw, Wko) and employer cost.",
                 "module.uk.text": "2026 socio-fiscal module: income tax (PAYE) outside Scotland, Class 1 National Insurance, and the statutory automatic-enrolment workplace pension.",
+                "module.ireland.text": "2026 socio-fiscal module: income tax (PAYE), the Universal Social Charge (USC), and PRSI Class A, employee and employer.",
+                "module.spain.text": "2026 socio-fiscal module: IRPF income tax (state scale and Madrid regional scale), Seguridad Social Regimen General contributions, employee and employer.",
                 "module.comparison.name": "Comparison",
-                "module.comparison.text": "Compares the 6 national modules on a wage grid harmonised in international dollars (PPP), to compare employer cost, net wage, and statutory levies at an equivalent standard of living.",
+                "module.comparison.text": "Compares the 8 national modules on a wage grid harmonised in international dollars (PPP), to compare employer cost, net wage, and statutory levies at an equivalent standard of living.",
                 "module.comparison.count": "countries compared",
                 "module.open": "Open →",
                 "module.netshare": "net / 100",
@@ -1272,7 +1336,7 @@
                 "data.block4.title": "Open code",
                 "data.block4.text": "Dataset-building scripts and a reproducible hosted web interface.",
                 "side.status.modules.label": "Available modules",
-		"side.status.modules.value": "France · Germany · Belgium · Switzerland · Netherlands · United Kingdom",
+		"side.status.modules.value": "France · Germany · Belgium · Switzerland · Netherlands · United Kingdom · Ireland · Spain",
                 "side.status.year.label": "Regulatory year",
                 "side.status.output.label": "Main outputs",
                 "side.status.output.value": "employer cost · net · socio-fiscal wedges",
@@ -1327,6 +1391,18 @@
                 sal: { v: 7, fr: "Cotisations salarié (National Insurance, pension)", en: "Employee contributions (National Insurance, pension)" },
                 tax: { v: 8, fr: "Impôt sur le revenu (PAYE)", en: "Income tax (PAYE)" },
                 net: { v: 73, fr: "Salaire net après impôt", en: "Net wage after tax" }
+            },
+            ie: {
+                emp: { v: 10, fr: "Cotisations employeur (PRSI)", en: "Employer contributions (PRSI)" },
+                sal: { v: 4, fr: "Cotisations salarié (PRSI)", en: "Employee contributions (PRSI)" },
+                tax: { v: 7, fr: "Impôt sur le revenu (PAYE) et USC", en: "Income tax (PAYE) and USC" },
+                net: { v: 79, fr: "Salaire net après impôt", en: "Net wage after tax" }
+            },
+            es: {
+                emp: { v: 24, fr: "Cotisations employeur (Seguridad Social)", en: "Employer contributions (Seguridad Social)" },
+                sal: { v: 5, fr: "Cotisations salarié (Seguridad Social)", en: "Employee contributions (Seguridad Social)" },
+                tax: { v: 1, fr: "Impôt sur le revenu (IRPF)", en: "Income tax (IRPF)" },
+                net: { v: 70, fr: "Salaire net après impôt", en: "Net wage after tax" }
             }
         };
 

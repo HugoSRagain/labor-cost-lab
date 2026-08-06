@@ -141,7 +141,7 @@
     </style>
 
     <script defer src="../../assets/i18n_common.js?v=3"></script>
-    <script defer src="./assets/comparison_app.js?v=6"></script>
+    <script defer src="./assets/comparison_app.js?v=8"></script>
 </head>
 
 <body>
@@ -165,9 +165,10 @@
                 <h1>Comparaison internationale du coût du travail</h1>
 
                 <p>
-                    Ce module met en regard les six modules nationaux (France,
-                    Allemagne, Belgique, Suisse, Pays-Bas, Royaume-Uni) sur une
-                    grille de salaires harmonisée, exprimée en dollars internationaux
+                    Ce module met en regard les huit modules nationaux (France,
+                    Allemagne, Belgique, Suisse, Pays-Bas, Royaume-Uni, Irlande,
+                    Espagne) sur
+                    une grille de salaires harmonisée, exprimée en dollars internationaux
                     (parité de pouvoir d'achat), afin de comparer des niveaux de
                     vie équivalents plutôt que des salaires nominaux.
                 </p>
@@ -218,7 +219,7 @@
                         class="chart-subtitle"
                         id="comparison-metrics-subtitle-fr"
                     >
-                        Valeurs des 6 pays au point de salaire harmonisé
+                        Valeurs des 8 pays au point de salaire harmonisé
                         sélectionné, exprimées en dollars internationaux (PPA).
                     </p>
 
@@ -269,6 +270,18 @@
                             <strong id="metric-comparison-uk-net-fr">—</strong>
                             <span class="metric-note">Net avant impôt, intl $</span>
                         </article>
+
+                        <article class="metric-card">
+                            <span class="metric-label">Irlande</span>
+                            <strong id="metric-comparison-ie-net-fr">—</strong>
+                            <span class="metric-note">Net avant impôt, intl $</span>
+                        </article>
+
+                        <article class="metric-card">
+                            <span class="metric-label">Espagne</span>
+                            <strong id="metric-comparison-es-net-fr">—</strong>
+                            <span class="metric-note">Net avant impôt, intl $</span>
+                        </article>
                     </section>
                 </div>
 
@@ -276,7 +289,7 @@
                     <h2>Graphiques comparatifs</h2>
 
                     <p>
-                        Les graphiques suivants comparent les 6 pays sur toute la
+                        Les graphiques suivants comparent les 8 pays sur toute la
                         grille de salaires harmonisée, en dollars internationaux
                         (PPA). Chaque courbe est calculée directement par le
                         moteur du module national correspondant.
@@ -289,7 +302,7 @@
 
                         <p class="chart-subtitle">
                             Salaire net de cotisations sociales, comparable entre
-                            les 6 pays.
+                            les 8 pays.
                         </p>
 
                         <div
@@ -485,6 +498,8 @@
                                     <th>Suisse</th>
                                     <th>Pays-Bas</th>
                                     <th>Royaume-Uni</th>
+                                    <th>Irlande</th>
+                                    <th>Espagne</th>
                                 </tr>
                             </thead>
 
@@ -522,18 +537,19 @@
                         21 points de salaire, de 2 000 à 12 000 dollars
                         internationaux mensuels par pas de 500. La borne basse est
                         volontairement fixée sous le plancher de salaire minimum
-                        (ou de référence) des 6 pays, une fois converti en dollars
+                        (ou de référence) des 8 pays, une fois converti en dollars
                         internationaux, afin que les grilles de salaire les plus
                         basses restent visibles. Les points de salaire inférieurs
                         au minimum légal d'un pays sont signalés par un
                         astérisque (*) dans l'onglet Données : ils représentent
                         un salaire hypothétique pour ce pays à ce point de la
                         grille. Les seuils 2024/2026 convertis en dollars
-                        internationaux sont : France (SMIC) environ 2 604,
-                        Suisse environ 2 710, Belgique (RMMMG) environ 2 911,
-                        Royaume-Uni (National Living Wage) environ 3 025,
-                        Pays-Bas (WML, salaire minimum légal) environ 3 152,
-                        Allemagne environ 3 434.
+                        internationaux sont : Espagne (SMI) environ 2 421,
+                        France (SMIC) environ 2 604, Suisse environ 2 710,
+                        Irlande (National Minimum Wage) environ 2 711, Belgique
+                        (RMMMG) environ 2 911, Royaume-Uni (National Living
+                        Wage) environ 3 025, Pays-Bas (WML, salaire minimum
+                        légal) environ 3 152, Allemagne environ 3 434.
                     </p>
 
                     <h3>2. Conversion par parité de pouvoir d'achat</h3>
@@ -545,7 +561,7 @@
                         ménages (Banque mondiale, Programme de comparaison
                         internationale, indicateur PA.NUS.PRVT.PP, année de
                         référence 2024). Ce facteur est appliqué individuellement
-                        aux 6 pays, y compris la Suisse, selon la même logique que
+                        aux 8 pays, y compris la Suisse, selon la même logique que
                         les comparaisons « Taxing Wages » de l'OCDE.
                     </p>
 
@@ -572,10 +588,17 @@
                         durée indéterminée (WW, taux bas – assurance chômage),
                         grand employeur (Aof, taux élevé – fonds invalidité),
                         célibataire sans enfant, hors âge de l'AOW (vieillesse).
-                        Royaume-Uni : salarié standard hors Écosse (barème de
-                        l'impôt sur le revenu rUK), temps plein, code fiscal
-                        standard, affilié à la pension d'entreprise au taux
-                        minimum légal (auto-enrolment).
+                        Royaume-Uni : salarié standard, impôt sur le revenu
+                        moyenné par population entre le barème rUK et le
+                        barème écossais, temps plein, code fiscal standard,
+                        affilié à la pension d'entreprise au taux minimum
+                        légal (auto-enrolment). Irlande : salarié
+                        célibataire sans enfant, temps plein, cotisations PRSI
+                        de classe A (taux de janvier à septembre 2026). Espagne :
+                        salarié célibataire sans enfant, temps plein, impôt sur
+                        le revenu moyenné par population entre 16 communautés
+                        autonomes, cotisations de Seguridad Social du Régime
+                        général.
                     </p>
 
                     <h3>5. Agrégation cantonale suisse</h3>
@@ -686,19 +709,59 @@
                         obligatoire (auto-enrolment) au taux minimum légal (5 %
                         salarié, 3 % employeur des revenus compris entre 6 240 £ et
                         50 270 £/an) — et non les seules cotisations sociales,
-                        contrairement aux autres pays. L'impôt sur le revenu
-                        (PAYE) est calculé séparément via le barème progressif hors
-                        Écosse (0 % jusqu'à l'abattement personnel de 12 570 £,
-                        réduit de 1 £ tous les 2 £ de revenu au-delà de 100 000 £
-                        jusqu'à extinction à 125 140 £ ; puis 20 % / 40 % / 45 %).
-                        Seules les bandes applicables à l'Angleterre, au Pays de
-                        Galles et à l'Irlande du Nord sont modélisées ; les
-                        bandes écossaises, distinctes, ne le sont pas. Voir
-                        l'onglet Méthodologie du module Royaume-Uni pour le détail
-                        complet.
+                        contrairement aux autres pays. Ces cotisations ne sont
+                        pas dévolues et sont identiques dans les deux régions.
+                        L'impôt sur le revenu (PAYE), lui, est dévolu : la valeur
+                        retenue est une moyenne pondérée par la population entre
+                        le barème rUK (Angleterre, Pays de Galles, Irlande du
+                        Nord — 0 % jusqu'à l'abattement personnel de 12 570 £,
+                        réduit de 1 £ tous les 2 £ de revenu au-delà de
+                        100 000 £ jusqu'à extinction à 125 140 £, puis
+                        20 % / 40 % / 45 %) et le barème écossais à 6 tranches
+                        (19 % à 48 %), selon la même logique que l'agrégation
+                        cantonale suisse (poids : Écosse 8,0 %, reste du
+                        Royaume-Uni 92,0 %, estimations de population
+                        mi-2024 ONS/NRS). Voir l'onglet Méthodologie du module
+                        Royaume-Uni pour le détail complet des deux barèmes.
                     </p>
 
-                    <h3>9. Lab-E</h3>
+                    <h3>9. Cotisations et impôt sur le revenu en Irlande</h3>
+
+                    <p>
+                        Les indicateurs « cotisations salarié » et « cotisations
+                        employeur » de l'Irlande correspondent uniquement au PRSI
+                        de classe A (taux de janvier à septembre 2026 ; la hausse
+                        prévue au 1er octobre 2026 n'est pas modélisée). L'Universal
+                        Social Charge (USC), qui est un impôt sur le revenu distinct
+                        et non une cotisation sociale, est regroupée avec l'impôt
+                        sur le revenu (PAYE) dans l'indicateur « impôt sur le
+                        revenu ». Voir l'onglet Méthodologie du module Irlande pour
+                        le détail complet.
+                    </p>
+
+                    <h3>10. Cotisations et impôt sur le revenu en Espagne</h3>
+
+                    <p>
+                        Les indicateurs « cotisations salarié » et « cotisations
+                        employeur » de l'Espagne correspondent uniquement aux
+                        cotisations de Seguridad Social du Régime général,
+                        nationales et identiques dans toutes les régions.
+                        L'impôt sur le revenu (IRPF), lui, comporte une part
+                        régionale : la valeur retenue est une moyenne pondérée
+                        par la population entre 16 communautés autonomes
+                        (Madrid, Andalousie, Aragon, Asturies, Baléares,
+                        Canaries, Cantabrie, Castille-La Manche,
+                        Castille-et-León, Catalogne, Estrémadure, Galice,
+                        Murcie, La Rioja, Communauté valencienne, Ceuta et
+                        Melilla — estimations de population INE au 1er janvier
+                        2025), selon la même logique que l'agrégation
+                        cantonale suisse. La Navarre et le Pays basque sont
+                        exclus : régime fiscal « foral » distinct. Voir
+                        l'onglet Méthodologie du module Espagne pour le détail
+                        complet des 16 barèmes régionaux.
+                    </p>
+
+                    <h3>11. Lab-E</h3>
 
                     <p>
                         L'indicateur Lab-E (100 × net avant impôt / coût employeur)
@@ -714,13 +777,13 @@
 
                     <p class="method-note">
                         Le Lab-E néerlandais est structurellement surestimé par rapport
-                        aux 5 autres pays : le loonheffing fusionne l'assurance nationale
+                        aux 7 autres pays : le loonheffing fusionne l'assurance nationale
                         et l'impôt sur le revenu, si bien que le « net avant impôt »
                         utilisé ici est proche du salaire brut pour les Pays-Bas (voir la
                         note sur les Pays-Bas plus haut).
                     </p>
 
-                    <h3>10. Limites</h3>
+                    <h3>12. Limites</h3>
 
                     <p class="method-note">
                         Le calcul de l'impôt sur le revenu suppose un salarié
@@ -753,9 +816,9 @@
                 <h1>Cross-country comparison of labour costs</h1>
 
                 <p>
-                    This module compares the six national modules (France,
-                    Germany, Belgium, Switzerland, Netherlands, United Kingdom)
-                    on a harmonized
+                    This module compares the eight national modules (France,
+                    Germany, Belgium, Switzerland, Netherlands, United Kingdom,
+                    Ireland, Spain) on a harmonized
                     wage grid, expressed in international dollars (purchasing
                     power parity), to compare equivalent standards of living
                     rather than nominal wages.
@@ -807,7 +870,7 @@
                         class="chart-subtitle"
                         id="comparison-metrics-subtitle-en"
                     >
-                        Values for the 6 countries at the selected harmonized
+                        Values for the 8 countries at the selected harmonized
                         wage point, expressed in international dollars (PPP).
                     </p>
 
@@ -858,6 +921,18 @@
                             <strong id="metric-comparison-uk-net-en">—</strong>
                             <span class="metric-note">Net before tax, intl $</span>
                         </article>
+
+                        <article class="metric-card">
+                            <span class="metric-label">Ireland</span>
+                            <strong id="metric-comparison-ie-net-en">—</strong>
+                            <span class="metric-note">Net before tax, intl $</span>
+                        </article>
+
+                        <article class="metric-card">
+                            <span class="metric-label">Spain</span>
+                            <strong id="metric-comparison-es-net-en">—</strong>
+                            <span class="metric-note">Net before tax, intl $</span>
+                        </article>
                     </section>
                 </div>
 
@@ -865,7 +940,7 @@
                     <h2>Comparative charts</h2>
 
                     <p>
-                        The charts below compare the 6 countries across the
+                        The charts below compare the 8 countries across the
                         whole harmonized wage grid, in international dollars
                         (PPP). Each curve is computed directly by the matching
                         national module's engine.
@@ -878,7 +953,7 @@
 
                         <p class="chart-subtitle">
                             Wage net of social contributions, comparable
-                            across the 6 countries.
+                            across the 8 countries.
                         </p>
 
                         <div
@@ -1076,6 +1151,8 @@
                                     <th>Switzerland</th>
                                     <th>Netherlands</th>
                                     <th>United Kingdom</th>
+                                    <th>Ireland</th>
+                                    <th>Spain</th>
                                 </tr>
                             </thead>
 
@@ -1104,7 +1181,8 @@
                         This module does not redefine any national parameter:
                         it directly reuses the calculation engines of the
                         France, Germany, Belgium, Switzerland, Netherlands,
-                        and United Kingdom modules, at common wage points.
+                        United Kingdom, Ireland and Spain modules, at common
+                        wage points.
                     </p>
 
                     <h3>1. Harmonized wage grid</h3>
@@ -1113,17 +1191,19 @@
                         21 wage points, from 2,000 to 12,000 international
                         dollars per month in steps of 500. The lower bound is
                         deliberately set below the minimum (or reference) wage
-                        floor of the 6 countries, once converted to
+                        floor of the 8 countries, once converted to
                         international dollars, so that the lowest wage ranges
                         remain visible. Wage points below a country's legal
                         minimum are flagged with an asterisk (*) in the Data
                         tab: they represent a hypothetical wage for that
                         country at this point of the grid. The 2024/2026
                         thresholds converted to international dollars are:
-                        France (SMIC) about 2,604, Switzerland about 2,710,
-                        Belgium (RMMMG) about 2,911, United Kingdom (National
-                        Living Wage) about 3,025, Netherlands (WML, statutory
-                        minimum wage) about 3,152, Germany about 3,434.
+                        Spain (SMI) about 2,421, France (SMIC) about 2,604,
+                        Switzerland about 2,710, Ireland (National Minimum
+                        Wage) about 2,711, Belgium (RMMMG) about 2,911, United
+                        Kingdom (National Living Wage) about 3,025, Netherlands
+                        (WML, statutory minimum wage) about 3,152, Germany
+                        about 3,434.
                     </p>
 
                     <h3>2. Conversion by purchasing power parity</h3>
@@ -1134,7 +1214,7 @@
                         private-consumption purchasing-power-parity conversion
                         factor (World Bank, International Comparison Program,
                         indicator PA.NUS.PRVT.PP, 2024 reference year). This
-                        factor is applied individually to the 6 countries,
+                        factor is applied individually to the 8 countries,
                         including Switzerland, following the same logic as the
                         OECD's "Taxing Wages" comparisons.
                     </p>
@@ -1163,10 +1243,16 @@
                         contract (WW, low rate – unemployment insurance),
                         large employer (Aof, high rate – disability fund),
                         single, no children, below AOW (state pension) age.
-                        United Kingdom: standard employee outside Scotland
-                        (rUK income-tax bands), full-time, standard tax code,
-                        auto-enrolled in a workplace pension at the statutory
-                        minimum rate.
+                        United Kingdom: standard employee, income tax
+                        population-weighted between the rUK and Scottish
+                        scales, full-time, standard tax code, auto-enrolled in
+                        a workplace pension at the statutory minimum rate.
+                        Ireland: single, childless employee,
+                        full-time, PRSI Class A contributions (January-
+                        September 2026 rates). Spain: single, childless
+                        employee, full-time, income tax population-weighted
+                        across 16 comunidades autonomas, Seguridad Social
+                        Regimen General contributions.
                     </p>
 
                     <h3>5. Swiss cantonal aggregation</h3>
@@ -1276,17 +1362,56 @@
                         workplace pension (5% employee, 3% employer of
                         qualifying earnings between £6,240 and £50,270/year)
                         — not social contributions alone, unlike the other
-                        countries. Income tax (PAYE) is computed separately
-                        via the progressive rUK scale (0% up to the £12,570
-                        Personal Allowance, tapered £1 for every £2 of income
-                        above £100,000 until it reaches zero at £125,140; then
-                        20% / 40% / 45%). Only the bands applicable to
-                        England, Wales and Northern Ireland are modeled; the
-                        separate Scottish bands are not. See the United
-                        Kingdom module's Methodology tab for full detail.
+                        countries. These contributions are not devolved and
+                        are identical in both regions. Income tax (PAYE),
+                        however, is devolved: the figure shown is a
+                        population-weighted average between the rUK scale
+                        (England, Wales, Northern Ireland — 0% up to the
+                        £12,570 Personal Allowance, tapered £1 for every £2 of
+                        income above £100,000 until it reaches zero at
+                        £125,140, then 20% / 40% / 45%) and the Scottish
+                        6-band scale (19% to 48%), following the same logic as
+                        the Swiss cantonal aggregation (weights: Scotland 8.0%,
+                        rest of the UK 92.0%, ONS/NRS mid-2024 population
+                        estimates). See the United Kingdom module's Methodology
+                        tab for full detail on both scales.
                     </p>
 
-                    <h3>9. Lab-E</h3>
+                    <h3>9. Contributions and income tax in Ireland</h3>
+
+                    <p>
+                        Ireland's "employee contributions" and "employer
+                        contributions" indicators are PRSI Class A only
+                        (January-September 2026 rates; the increase scheduled
+                        for 1 October 2026 is not modeled). The Universal
+                        Social Charge (USC), a separate tax on income rather
+                        than a social contribution, is bundled with PAYE
+                        income tax into the "income tax" indicator. See the
+                        Ireland module's Methodology tab for full detail.
+                    </p>
+
+                    <h3>10. Contributions and income tax in Spain</h3>
+
+                    <p>
+                        Spain's "employee contributions" and "employer
+                        contributions" indicators are Seguridad Social Regimen
+                        General contributions only, national and identical in
+                        every region. Income tax (IRPF), however, has a
+                        regional component: the figure shown is a
+                        population-weighted average across 16 comunidades
+                        autonomas (Madrid, Andalucia, Aragon, Asturias,
+                        Baleares, Canarias, Cantabria, Castilla-La Mancha,
+                        Castilla y Leon, Cataluna, Extremadura, Galicia,
+                        Murcia, La Rioja, Comunidad Valenciana, Ceuta and
+                        Melilla — INE population estimates, 1 January 2025),
+                        following the same logic as the Swiss cantonal
+                        aggregation. Navarra and Pais Vasco are excluded:
+                        separate "foral" tax systems. See the Spain module's
+                        Methodology tab for full detail on all 16 regional
+                        scales.
+                    </p>
+
+                    <h3>11. Lab-E</h3>
 
                     <p>
                         The Lab-E indicator (100 × net before tax / employer cost)
@@ -1301,12 +1426,12 @@
 
                     <p class="method-note">
                         The Dutch Lab-E is structurally overstated relative to the other
-                        5 countries: loonheffing bundles national insurance with income
+                        7 countries: loonheffing bundles national insurance with income
                         tax, so the "net before tax" used here is close to the gross wage
                         for the Netherlands (see the Netherlands note above).
                     </p>
 
-                    <h3>10. Limits</h3>
+                    <h3>12. Limits</h3>
 
                     <p class="method-note">
                         The income-tax calculation assumes a single, childless

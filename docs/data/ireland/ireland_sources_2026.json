@@ -1,0 +1,71 @@
+{
+    "country": "Ireland",
+    "country_code": "IE",
+    "version": "2026",
+    "status": "source_audit",
+    "sources": {
+        "income_tax_rates_credits_2026": {
+            "label": "Income tax standard rate cut-off point and PAYE/Personal credits, single person, 2026",
+            "value": "20% up to EUR 44,000 standard rate cut-off point, 40% above; Personal Tax Credit EUR 2,000 and Employee (PAYE) Tax Credit EUR 2,000, both held at 2025 levels in Budget 2026",
+            "source_name": "KPMG Ireland, Budget 2026 tax rates and credits tables (aggregating Revenue Commissioners / Budget 2026 figures)",
+            "source_type": "official_aggregated",
+            "url": "https://kpmg.com/ie/en/insights/tax/budget-2026/tables.html",
+            "confidence": "high"
+        },
+        "usc_rates_bands_2026": {
+            "label": "Universal Social Charge (USC) rates and bands, 2026",
+            "value": "Full exemption if total income <= EUR 13,000; otherwise 0.5% to EUR 12,012, 2% to EUR 28,700 (widened from EUR 27,382 in Budget 2026), 3% to EUR 70,044, 8% above",
+            "source_name": "KPMG Ireland, Budget 2026 tax rates and credits tables",
+            "source_type": "official_aggregated",
+            "url": "https://kpmg.com/ie/en/insights/tax/budget-2026/tables.html",
+            "confidence": "high"
+        },
+        "prsi_class_a_2026": {
+            "label": "PRSI Class A rates and thresholds, January-September 2026",
+            "value": "Employee: exempt at or below EUR 352/week; tapering PRSI credit up to EUR 12/week phased out linearly between EUR 352.01 and EUR 424/week; 4.2% of full weekly earnings above the taper zone. Employer: 9.0% of full weekly earnings at or below EUR 496/week, 11.25% above.",
+            "source_name": "KPMG Ireland, Budget 2026 tax rates and credits tables, cross-checked against income.ie PRSI guidance",
+            "source_type": "official_aggregated",
+            "url": "https://kpmg.com/ie/en/insights/tax/budget-2026/tables.html",
+            "confidence": "high",
+            "note": "A further increase (employee 4.35%, employer reduced/standard 9.15%/11.40%, reduced-rate threshold raised to EUR 552/week) is scheduled from 1 October 2026 as part of a multi-year phased increase agreed in prior budgets. This module uses the January-September 2026 rates as the single annual reference, consistent with how other modules in this project pick one effective-date snapshot per year."
+        },
+        "national_minimum_wage_2026": {
+            "label": "National Minimum Wage (age 20 and over) from 1 January 2026",
+            "value": "14.15 EUR/hour",
+            "source_name": "Government of Ireland / Low Pay Commission, Budget 2026",
+            "source_type": "official",
+            "url": "https://www.gov.ie/en/department-of-enterprise-tourism-and-employment/publications/national-minimum-wage-increase-on-1-january-2025/",
+            "confidence": "high"
+        },
+        "full_time_hours_convention": {
+            "label": "39 hours/week as the most commonly cited Irish full-time benchmark",
+            "source_name": "Multiple secondary sources (HR/payroll guidance), cross-checked",
+            "source_type": "secondary_multi_source",
+            "confidence": "medium",
+            "note": "Ireland has no single statutory full-time weekly-hours figure (the Organisation of Working Time Act 1997 sets only a 48-hour maximum average); 39h/week is the most frequently cited standard full-time convention."
+        },
+        "ppp_conversion_factor": {
+            "label": "PPP conversion factor, households and NPISHs final consumption expenditure (LCU per international $), Ireland, 2024",
+            "value": 0.88195,
+            "source_name": "World Bank, International Comparison Program (ICP)",
+            "source_type": "official",
+            "url": "https://api.worldbank.org/v2/country/IRL/indicator/PA.NUS.PRVT.PP",
+            "confidence": "high"
+        }
+    },
+    "audit_decision": {
+        "v0_scope": [
+            "PAYE income tax (single person, standard rate band and credits)",
+            "Universal Social Charge (USC), 4-band schedule with total-income exemption",
+            "PRSI Class A, employee and employer (January-September 2026 rates)"
+        ],
+        "not_yet_included": [
+            "PRSI/USC/income-tax changes effective 1 October 2026",
+            "married/civil partner and other household tax credits",
+            "pension contributions and their tax/PRSI/USC relief",
+            "USC reduced rates for medical card holders and over-70s",
+            "PRSI classes other than Class A (e.g. Class S for the self-employed)",
+            "employer's PRSI-related levies (National Training Fund Levy, already bundled into the standard employer PRSI rate by Revenue and not separately modelled)"
+        ]
+    }
+}

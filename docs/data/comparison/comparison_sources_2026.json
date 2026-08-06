@@ -1,7 +1,7 @@
 {
     "module_name": "Cross-Country Labour Cost Comparison",
     "version": "2026-01",
-    "countries_covered": ["France", "Germany", "Belgium", "Switzerland", "Netherlands", "United Kingdom"],
+    "countries_covered": ["France", "Germany", "Belgium", "Switzerland", "Netherlands", "United Kingdom", "Ireland", "Spain"],
     "sources": [
         {
             "id": "worldbank_icp_private_consumption_ppp",
@@ -124,13 +124,82 @@
                 "Converting the harmonized wage grid into pounds sterling and back into international dollars for the United Kingdom"
             ],
             "status": "official"
+        },
+        {
+            "id": "kpmg_ireland_budget_2026_tax_tables",
+            "institution": "KPMG Ireland (aggregating Revenue Commissioners / Budget 2026 figures)",
+            "institution_fr": "KPMG Irlande (agrégeant les chiffres de Revenue Commissioners / Budget 2026)",
+            "title": "Budget 2026 tax rates and credits tables (income tax, USC, PRSI Class A)",
+            "url": "https://kpmg.com/ie/en/insights/tax/budget-2026/tables.html",
+            "reference_year": 2026,
+            "retrieved": "2026-08-06",
+            "used_for": [
+                "Ireland's PAYE income tax bands and credits, USC bands and exemption threshold, and PRSI Class A employee/employer rates and thresholds"
+            ],
+            "status": "official_aggregated"
+        },
+        {
+            "id": "worldbank_icp_ppp_ireland",
+            "institution": "World Bank, International Comparison Program (ICP)",
+            "institution_fr": "Banque mondiale, Programme de comparaison internationale (PCI)",
+            "title": "PPP conversion factor, private consumption (LCU per international $), Ireland",
+            "indicator_code": "PA.NUS.PRVT.PP",
+            "url": "https://api.worldbank.org/v2/country/IRL/indicator/PA.NUS.PRVT.PP",
+            "reference_year": 2024,
+            "retrieved": "2026-08-06",
+            "used_for": [
+                "Converting the harmonized wage grid into euros and back into international dollars for Ireland"
+            ],
+            "status": "official"
+        },
+        {
+            "id": "ons_nrs_uk_mid2024_population_estimates",
+            "institution": "Office for National Statistics (ONS) and National Records of Scotland (NRS)",
+            "institution_fr": "Office for National Statistics (ONS) et National Records of Scotland (NRS)",
+            "title": "Mid-2024 population estimates for the UK and for Scotland",
+            "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/bulletins/annualmidyearpopulationestimates/mid2024",
+            "reference_year": 2024,
+            "retrieved": "2026-08-06",
+            "used_for": [
+                "Population weights (Scotland vs rUK) for the population-weighted average of the two UK devolved income-tax regimes in the comparison module, mirroring the Swiss canton population-weighting approach"
+            ],
+            "status": "official"
+        },
+        {
+            "id": "boe_real_decreto_126_2026_smi",
+            "institution": "Boletin Oficial del Estado (BOE), Gobierno de Espana",
+            "institution_fr": "Boletin Oficial del Estado (BOE), gouvernement espagnol",
+            "title": "Real Decreto 126/2026, de 18 de febrero, por el que se fija el salario minimo interprofesional para 2026 (BOE-A-2026-3815)",
+            "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2026-3815",
+            "reference_year": 2026,
+            "retrieved": "2026-08-06",
+            "used_for": [
+                "Spain's Salario Minimo Interprofesional (SMI), used as the wage-reference floor for the Spain module and comparison module"
+            ],
+            "status": "official"
+        },
+        {
+            "id": "worldbank_icp_ppp_spain",
+            "institution": "World Bank, International Comparison Program (ICP)",
+            "institution_fr": "Banque mondiale, Programme de comparaison internationale (PCI)",
+            "title": "PPP conversion factor, private consumption (LCU per international $), Spain",
+            "indicator_code": "PA.NUS.PRVT.PP",
+            "url": "https://api.worldbank.org/v2/country/ESP/indicator/PA.NUS.PRVT.PP",
+            "reference_year": 2024,
+            "retrieved": "2026-08-06",
+            "used_for": [
+                "Converting the harmonized wage grid into euros and back into international dollars for Spain"
+            ],
+            "status": "official"
         }
     ],
     "notes": [
-        "This module reuses each country's own reference dataset (France: Mon-entreprise/Publicodes engine; Germany: analysis/germany; Belgium: analysis/belgium; Switzerland: analysis/switzerland; Netherlands: analysis/netherlands; United Kingdom: analysis/uk) and does not redefine any country-level parameter.",
+        "This module reuses each country's own reference dataset (France: Mon-entreprise/Publicodes engine; Germany: analysis/germany; Belgium: analysis/belgium; Switzerland: analysis/switzerland; Netherlands: analysis/netherlands; United Kingdom: analysis/uk; Ireland: analysis/ireland) and does not redefine any country-level parameter.",
         "See docs/data/comparison/comparison_parameters_2026.json for the harmonized wage grid, the exact PPP values used, the reference profile chosen per country, and the Swiss canton population figures.",
         "France's 'net after income tax' figure is the actual tax due by a single, childless reference taxpayer (1 part de quotient familial), computed via the true progressive income-tax barème (see docs/data/france/france_income_tax_2026.json), directly analogous to Germany, Belgium and Switzerland's actual mandatory tax liability for a single/childless reference profile. The non-personalized 'taux neutre' withholding schedule was evaluated as an initial proxy but rejected because it does not represent any specific taxpayer's actual tax burden; it remains documented for reference only.",
         "The Netherlands has no separate employee social-security contribution: AOW/Anw/Wlz national-insurance premiums are bundled into the Box 1 wage-tax rate. See docs/data/netherlands/netherlands_sources_2026.json for the full loonheffing formulas, employer-levy rates and an independent cross-check against a secondary net-minimum-wage figure.",
-        "The United Kingdom's reference profile is outside Scotland (rUK income-tax bands only) and includes the statutory-minimum automatic-enrolment workplace pension (employee 5%, employer 3% of qualifying earnings) alongside Class 1 National Insurance in the employee/employer contribution figures. See docs/data/uk/uk_sources_2026.json for the full rate schedule and sources."
+        "The United Kingdom's reference profile is outside Scotland (rUK income-tax bands only) and includes the statutory-minimum automatic-enrolment workplace pension (employee 5%, employer 3% of qualifying earnings) alongside Class 1 National Insurance in the employee/employer contribution figures. See docs/data/uk/uk_sources_2026.json for the full rate schedule and sources.",
+        "Ireland's employee/employer contribution figures are PRSI Class A only (January-September 2026 rates); the Universal Social Charge (USC), a separate tax on income, is bundled into the income-tax figure alongside PAYE. See docs/data/ireland/ireland_sources_2026.json for the full rate schedule and sources.",
+        "Spain's reference profile uses the Comunidad de Madrid regional IRPF scale; the other 16 comunidades autonomas each set their own regional scale and are not modelled. Employee/employer contribution figures are Seguridad Social Regimen General only. See docs/data/spain/spain_sources_2026.json for the full rate schedule and sources."
     ]
 }

@@ -4,7 +4,7 @@ const COMPARISON_TAB_STORAGE_KEY = "comparison_tab";
 
 let COMPARISON_DATA = [];
 
-const COMPARISON_COUNTRY_ORDER = ["FR", "DE", "BE", "CH", "NL", "UK"];
+const COMPARISON_COUNTRY_ORDER = ["FR", "DE", "BE", "CH", "NL", "UK", "IE", "ES"];
 
 const COMPARISON_COUNTRY_LABELS = {
     fr: {
@@ -13,7 +13,9 @@ const COMPARISON_COUNTRY_LABELS = {
         BE: "Belgique",
         CH: "Suisse",
         NL: "Pays-Bas",
-        UK: "Royaume-Uni"
+        UK: "Royaume-Uni",
+        IE: "Irlande",
+        ES: "Espagne"
     },
     en: {
         FR: "France",
@@ -21,7 +23,9 @@ const COMPARISON_COUNTRY_LABELS = {
         BE: "Belgium",
         CH: "Switzerland",
         NL: "Netherlands",
-        UK: "United Kingdom"
+        UK: "United Kingdom",
+        IE: "Ireland",
+        ES: "Spain"
     }
 };
 
@@ -31,7 +35,9 @@ const COMPARISON_COLORS = {
     BE: "#f59e0b",
     CH: "#16a34a",
     NL: "#f97316",
-    UK: "#8b5cf6"
+    UK: "#8b5cf6",
+    IE: "#059669",
+    ES: "#e11d48"
 };
 
 
@@ -357,7 +363,7 @@ function renderComparisonMetrics(lang) {
 
     setTextContent(
         "comparison-metrics-subtitle-" + lang,
-        (lang === "en" ? "Values for the 6 countries at " : "Valeurs des 6 pays à ")
+        (lang === "en" ? "Values for the 8 countries at " : "Valeurs des 8 pays à ")
         + usd(wage, lang)
         + (lang === "en"
             ? " international monthly, expressed in international dollars (PPP)."
@@ -370,7 +376,9 @@ function renderComparisonMetrics(lang) {
         BE: "metric-comparison-be-net-" + lang,
         CH: "metric-comparison-ch-net-" + lang,
         NL: "metric-comparison-nl-net-" + lang,
-        UK: "metric-comparison-uk-net-" + lang
+        UK: "metric-comparison-uk-net-" + lang,
+        IE: "metric-comparison-ie-net-" + lang,
+        ES: "metric-comparison-es-net-" + lang
     };
 
     COMPARISON_COUNTRY_ORDER.forEach(countryCode => {

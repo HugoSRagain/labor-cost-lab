@@ -1,0 +1,483 @@
+{
+    "country": "Spain",
+    "country_code": "ES",
+    "version": "2026-01",
+    "effective_from": "2026-01-01",
+    "status": "prototype_v1",
+    "currency": "EUR",
+    "wage_reference": {
+        "name": "Salario Minimo Interprofesional (SMI) 2026",
+        "gross_monthly_eur": 1424.50,
+        "annual_gross_eur": 17094.00,
+        "monthly_payments_count": 14,
+        "monthly_payment_eur": 1221.00,
+        "source": "Real Decreto 126/2026, de 18 de febrero (BOE-A-2026-3815)",
+        "note": "Le SMI espagnol est verse en 14 mensualites (12 mensualites ordinaires + 2 pagas extraordinarias) de 1 221 EUR chacune, soit 17 094 EUR/an. Ce module retient la moyenne mensuelle proratisee sur 12 mois (1 221 x 14 / 12 = 1 424,50 EUR/mois) comme repere de salaire de reference, la convention deja utilisee pour les autres pays de ce projet ou le salaire minimum est verse sur plus de 12 mensualites."
+    },
+    "grid": {
+        "min_multiple": 0.80,
+        "max_multiple": 6.00,
+        "step": 0.01
+    },
+    "social_security": {
+        "irpf_note": "IRPF 2026 pour un salarie celibataire sans enfant : bareme etatique national (9,5 % a 24,5 %, minimo del contribuyente etatique de 5 550 EUR/an) combine au bareme regional (« autonomico ») de la communaute autonome selectionnee, chacune fixant son propre minimo del contribuyente pour sa seule part regionale. Les deux parts sont combinees via le mecanisme du minimo personal (tranche taxee a taux zero, appliquee separement a chaque bareme), apres application de l'abattement forfaitaire de frais professionnels (2 000 EUR/an) et de la reduction pour revenus du travail (article 20 LIRPF, degressive de 7 302 EUR a 0 EUR entre 14 852 et 19 747,50 EUR de revenu net du travail). Voir analysis/spain/irpf_seguridad_social_2026.py pour le detail du calcul et REGIONAL_SCALES_2026 pour les 16 baremes regionaux modelises.",
+        "irpf_state_brackets": [
+            {"upper_bound_eur": 12450.00, "rate": 0.095},
+            {"upper_bound_eur": 20200.00, "rate": 0.12},
+            {"upper_bound_eur": 35200.00, "rate": 0.15},
+            {"upper_bound_eur": 60000.00, "rate": 0.185},
+            {"upper_bound_eur": 300000.00, "rate": 0.225},
+            {"upper_bound_eur": null, "rate": 0.245}
+        ],
+        "irpf_state_personal_minimum_eur": 5550.00,
+        "irpf_work_income_flat_expense_eur": 2000.00,
+        "irpf_work_income_reduction": {
+            "max_reduction_eur": 7302.00,
+            "max_reduction_upper_bound_eur": 14852.00,
+            "taper_1_upper_bound_eur": 17673.52,
+            "taper_1_value_at_upper_bound_eur": 2364.34,
+            "taper_2_upper_bound_eur": 19747.50,
+            "note": "Reduction 'por obtencion de rendimientos del trabajo' (article 20 LIRPF) pour un contribuable dont les revenus hors travail n'excedent pas 6 500 EUR/an (hypothese retenue pour ce profil de reference a revenu unique). Nationale, ne varie pas selon la region."
+        },
+        "seguridad_social_regimen_general": {
+            "employee_rates": {
+                "contingencias_comunes": 0.047,
+                "desempleo": 0.0155,
+                "mei": 0.0015,
+                "formacion_profesional": 0.0010
+            },
+            "employer_rates": {
+                "contingencias_comunes": 0.236,
+                "desempleo": 0.055,
+                "mei": 0.0075,
+                "formacion_profesional": 0.006,
+                "fogasa": 0.002,
+                "at_ep": 0.010
+            },
+            "base_minima_monthly_eur": 1424.40,
+            "base_maxima_monthly_eur": 5101.20,
+            "note": "Regime general, contrat a duree indeterminee. Nationale, ne varie pas selon la region. Le taux AT/EP (accidents du travail et maladies professionnelles) varie selon le code CNAE de l'activite ; ce module retient un taux standard bas risque de 1,00 % (confiance moyenne). La base de cotisation est le salaire brut mensuel, plafonnee entre la base minima et la base maxima."
+        }
+    },
+    "regions": {
+        "note": "16 des 17 communautes autonomes (plus Ceuta/Melilla, villes autonomes sans pouvoir fiscal propre qui appliquent un bareme special fixe par la loi nationale, article 65 LIRPF). Navarre et Pays basque sont exclus : regime fiscal « foral » distinct (administration fiscale propre), hors perimetre de ce module. Source des baremes : AEAT, Manuel pratique du Revenu 2025 (baremes 2025, en vigueur pour la campagne de declaration 2026 ; aucune communaute n'a legifere de bareme distinct pour les revenus 2026 a ce jour). Source des populations : INE, recensement annuel de population au 1er janvier 2025.",
+        "population_source": "INE (Instituto Nacional de Estadistica), Cifras oficiales de poblacion, 1 enero 2025",
+        "population_source_url": "https://ine.es/jaxiT3/Datos.htm?t=67988",
+        "population_retrieved": "2026-08-06",
+        "excluded_regions_population": {
+            "navarra": 683854,
+            "pais_vasco": 2242343,
+            "note": "Populations indiquees pour memoire uniquement ; ces deux communautes ne sont pas modelisees et sont exclues du calcul de moyenne ponderee par population."
+        },
+        "list": [
+            {
+                "region_code": "madrid",
+                "label_fr": "Madrid",
+                "label_en": "Madrid",
+                "population": 7113886,
+                "irpf_regional_brackets": [
+                    {"upper_bound_eur": 13362.22, "rate": 0.085},
+                    {"upper_bound_eur": 19004.63, "rate": 0.107},
+                    {"upper_bound_eur": 35425.68, "rate": 0.128},
+                    {"upper_bound_eur": 57320.40, "rate": 0.174},
+                    {"upper_bound_eur": null, "rate": 0.205}
+                ],
+                "irpf_regional_personal_minimum_eur": 5956.65,
+                "source": "AEAT Manual Practico de Renta 2025; Decreto Legislativo 1/2010 (Comunidad de Madrid), minimo autonomico en vigueur depuis 2023"
+            },
+            {
+                "region_code": "andalucia",
+                "label_fr": "Andalousie",
+                "label_en": "Andalusia",
+                "population": 8676713,
+                "irpf_regional_brackets": [
+                    {"upper_bound_eur": 13000.00, "rate": 0.095},
+                    {"upper_bound_eur": 21100.00, "rate": 0.12},
+                    {"upper_bound_eur": 35200.00, "rate": 0.15},
+                    {"upper_bound_eur": 60000.00, "rate": 0.185},
+                    {"upper_bound_eur": null, "rate": 0.225}
+                ],
+                "irpf_regional_personal_minimum_eur": 5790.00,
+                "source": "AEAT Manual Practico de Renta 2025; Ley 5/2021 art. 23 (modifiee par Decreto-ley 7/2022)"
+            },
+            {
+                "region_code": "aragon",
+                "label_fr": "Aragon",
+                "label_en": "Aragon",
+                "population": 1364621,
+                "irpf_regional_brackets": [
+                    {"upper_bound_eur": 13072.50, "rate": 0.095},
+                    {"upper_bound_eur": 21210.00, "rate": 0.12},
+                    {"upper_bound_eur": 36960.00, "rate": 0.15},
+                    {"upper_bound_eur": 52500.00, "rate": 0.185},
+                    {"upper_bound_eur": 60000.00, "rate": 0.205},
+                    {"upper_bound_eur": 80000.00, "rate": 0.23},
+                    {"upper_bound_eur": 90000.00, "rate": 0.24},
+                    {"upper_bound_eur": 130000.00, "rate": 0.25},
+                    {"upper_bound_eur": null, "rate": 0.255}
+                ],
+                "irpf_regional_personal_minimum_eur": 5550.00,
+                "source": "AEAT Manual Practico de Renta 2025; Decreto Legislativo 1/2005 art. 110-1 (modifie par Ley 12/2023 et Ley 4/2024)"
+            },
+            {
+                "region_code": "asturias",
+                "label_fr": "Asturies",
+                "label_en": "Asturias",
+                "population": 1015128,
+                "irpf_regional_brackets": [
+                    {"upper_bound_eur": 12450.00, "rate": 0.09},
+                    {"upper_bound_eur": 17707.20, "rate": 0.12},
+                    {"upper_bound_eur": 33007.20, "rate": 0.14},
+                    {"upper_bound_eur": 53407.20, "rate": 0.192},
+                    {"upper_bound_eur": 70000.00, "rate": 0.215},
+                    {"upper_bound_eur": 90000.00, "rate": 0.225},
+                    {"upper_bound_eur": 175000.00, "rate": 0.25},
+                    {"upper_bound_eur": null, "rate": 0.26}
+                ],
+                "irpf_regional_personal_minimum_eur": 6105.00,
+                "source": "AEAT Manual Practico de Renta 2025; Ley 3/2025, de 19 de noviembre (BOPA, en vigueur depuis le 3 decembre 2025)"
+            },
+            {
+                "region_code": "baleares",
+                "label_fr": "Baleares",
+                "label_en": "Balearic Islands",
+                "population": 1249844,
+                "irpf_regional_brackets": [
+                    {"upper_bound_eur": 10000.00, "rate": 0.09},
+                    {"upper_bound_eur": 18000.00, "rate": 0.1125},
+                    {"upper_bound_eur": 30000.00, "rate": 0.1425},
+                    {"upper_bound_eur": 48000.00, "rate": 0.175},
+                    {"upper_bound_eur": 70000.00, "rate": 0.19},
+                    {"upper_bound_eur": 90000.00, "rate": 0.2175},
+                    {"upper_bound_eur": 120000.00, "rate": 0.2275},
+                    {"upper_bound_eur": 175000.00, "rate": 0.2375},
+                    {"upper_bound_eur": null, "rate": 0.2475}
+                ],
+                "irpf_regional_personal_minimum_eur": 6105.00,
+                "source": "AEAT Manual Practico de Renta 2025; Decreto Legislativo 1/2014 art. 1/2 (Illes Balears)"
+            },
+            {
+                "region_code": "canarias",
+                "label_fr": "Canaries",
+                "label_en": "Canary Islands",
+                "population": 2258866,
+                "irpf_regional_brackets": [
+                    {"upper_bound_eur": 13748.00, "rate": 0.09},
+                    {"upper_bound_eur": 19422.00, "rate": 0.115},
+                    {"upper_bound_eur": 35924.00, "rate": 0.14},
+                    {"upper_bound_eur": 57566.00, "rate": 0.185},
+                    {"upper_bound_eur": 93268.00, "rate": 0.235},
+                    {"upper_bound_eur": 123745.00, "rate": 0.25},
+                    {"upper_bound_eur": null, "rate": 0.26}
+                ],
+                "irpf_regional_personal_minimum_eur": 5606.00,
+                "source": "AEAT Manual Practico de Renta 2025; Ley 9/2025 (Presupuestos), Decreto Legislativo 1/2009 art. 18 bis/quater"
+            },
+            {
+                "region_code": "cantabria",
+                "label_fr": "Cantabrie",
+                "label_en": "Cantabria",
+                "population": 593623,
+                "irpf_regional_brackets": [
+                    {"upper_bound_eur": 13000.00, "rate": 0.085},
+                    {"upper_bound_eur": 21000.00, "rate": 0.11},
+                    {"upper_bound_eur": 35200.00, "rate": 0.145},
+                    {"upper_bound_eur": 60000.00, "rate": 0.18},
+                    {"upper_bound_eur": 90000.00, "rate": 0.225},
+                    {"upper_bound_eur": null, "rate": 0.245}
+                ],
+                "irpf_regional_personal_minimum_eur": 5550.00,
+                "source": "AEAT Manual Practico de Renta 2025; Decreto Legislativo 62/2008 (modifie par Ley 3/2023)"
+            },
+            {
+                "region_code": "castilla_la_mancha",
+                "label_fr": "Castille-La Manche",
+                "label_en": "Castilla-La Mancha",
+                "population": 2126378,
+                "irpf_regional_brackets": [
+                    {"upper_bound_eur": 12450.00, "rate": 0.095},
+                    {"upper_bound_eur": 20200.00, "rate": 0.12},
+                    {"upper_bound_eur": 35200.00, "rate": 0.15},
+                    {"upper_bound_eur": 60000.00, "rate": 0.185},
+                    {"upper_bound_eur": null, "rate": 0.225}
+                ],
+                "irpf_regional_personal_minimum_eur": 5550.00,
+                "source": "AEAT Manual Practico de Renta 2025; Ley 8/2013 art. 13 bis (modifiee par Ley 3/2024, DOCM)"
+            },
+            {
+                "region_code": "castilla_y_leon",
+                "label_fr": "Castille-et-Leon",
+                "label_en": "Castilla y Leon",
+                "population": 2401221,
+                "irpf_regional_brackets": [
+                    {"upper_bound_eur": 12450.00, "rate": 0.09},
+                    {"upper_bound_eur": 20200.00, "rate": 0.12},
+                    {"upper_bound_eur": 35200.00, "rate": 0.14},
+                    {"upper_bound_eur": 53407.20, "rate": 0.185},
+                    {"upper_bound_eur": null, "rate": 0.215}
+                ],
+                "irpf_regional_personal_minimum_eur": 5550.00,
+                "source": "AEAT Manual Practico de Renta 2025; Decreto Legislativo 1/2013 (modifie par Ley 2/2024, BOCyL); minimo regional egal au minimo etatique"
+            },
+            {
+                "region_code": "cataluna",
+                "label_fr": "Catalogne",
+                "label_en": "Catalonia",
+                "population": 8124126,
+                "irpf_regional_brackets": [
+                    {"upper_bound_eur": 12500.00, "rate": 0.095},
+                    {"upper_bound_eur": 22000.00, "rate": 0.125},
+                    {"upper_bound_eur": 33000.00, "rate": 0.16},
+                    {"upper_bound_eur": 53000.00, "rate": 0.19},
+                    {"upper_bound_eur": 90000.00, "rate": 0.215},
+                    {"upper_bound_eur": 120000.00, "rate": 0.235},
+                    {"upper_bound_eur": 175000.00, "rate": 0.245},
+                    {"upper_bound_eur": null, "rate": 0.255}
+                ],
+                "irpf_regional_personal_minimum_eur": 5550.00,
+                "source": "AEAT Manual Practico de Renta 2025; Decret Legislatiu 1/2024 art. 611-1 (Codi tributari de Catalunya), Decret-llei 5/2025; minimo regional egal au minimo etatique"
+            },
+            {
+                "region_code": "extremadura",
+                "label_fr": "Estremadure",
+                "label_en": "Extremadura",
+                "population": 1053345,
+                "irpf_regional_brackets": [
+                    {"upper_bound_eur": 12450.00, "rate": 0.08},
+                    {"upper_bound_eur": 20200.00, "rate": 0.10},
+                    {"upper_bound_eur": 24200.00, "rate": 0.16},
+                    {"upper_bound_eur": 35200.00, "rate": 0.175},
+                    {"upper_bound_eur": 60000.00, "rate": 0.21},
+                    {"upper_bound_eur": 80200.00, "rate": 0.235},
+                    {"upper_bound_eur": 99200.00, "rate": 0.24},
+                    {"upper_bound_eur": 120200.00, "rate": 0.245},
+                    {"upper_bound_eur": null, "rate": 0.25}
+                ],
+                "irpf_regional_personal_minimum_eur": 5550.00,
+                "source": "AEAT Manual Practico de Renta 2025; Decreto-Ley 4/2023 (DOE)"
+            },
+            {
+                "region_code": "galicia",
+                "label_fr": "Galice",
+                "label_en": "Galicia",
+                "population": 2714741,
+                "irpf_regional_brackets": [
+                    {"upper_bound_eur": 12985.35, "rate": 0.09},
+                    {"upper_bound_eur": 21068.60, "rate": 0.1165},
+                    {"upper_bound_eur": 35200.00, "rate": 0.149},
+                    {"upper_bound_eur": 60000.00, "rate": 0.184},
+                    {"upper_bound_eur": null, "rate": 0.225}
+                ],
+                "irpf_regional_personal_minimum_eur": 5789.00,
+                "source": "AEAT Manual Practico de Renta 2025; Decreto Legislativo 1/2011 art. 4/4bis (minimo propre introduit par Ley 7/2022)"
+            },
+            {
+                "region_code": "murcia",
+                "label_fr": "Murcie",
+                "label_en": "Region of Murcia",
+                "population": 1586989,
+                "irpf_regional_brackets": [
+                    {"upper_bound_eur": 12450.00, "rate": 0.095},
+                    {"upper_bound_eur": 20200.00, "rate": 0.112},
+                    {"upper_bound_eur": 34000.00, "rate": 0.133},
+                    {"upper_bound_eur": 60000.00, "rate": 0.179},
+                    {"upper_bound_eur": null, "rate": 0.225}
+                ],
+                "irpf_regional_personal_minimum_eur": 5550.00,
+                "source": "AEAT Manual Practico de Renta 2025; Decreto Legislativo 1/2010 (modifie par Ley 11/2023, BORM)"
+            },
+            {
+                "region_code": "la_rioja",
+                "label_fr": "La Rioja",
+                "label_en": "La Rioja",
+                "population": 326803,
+                "irpf_regional_brackets": [
+                    {"upper_bound_eur": 12450.00, "rate": 0.08},
+                    {"upper_bound_eur": 20200.00, "rate": 0.106},
+                    {"upper_bound_eur": 35200.00, "rate": 0.136},
+                    {"upper_bound_eur": 40000.00, "rate": 0.178},
+                    {"upper_bound_eur": 50000.00, "rate": 0.183},
+                    {"upper_bound_eur": 60000.00, "rate": 0.19},
+                    {"upper_bound_eur": 120000.00, "rate": 0.245},
+                    {"upper_bound_eur": null, "rate": 0.27}
+                ],
+                "irpf_regional_personal_minimum_eur": 5550.00,
+                "source": "AEAT Manual Practico de Renta 2025; Ley 13/2023 (BOR); seul le minimum lie au handicap des descendants est majore regionalement, pas le minimo general"
+            },
+            {
+                "region_code": "comunidad_valenciana",
+                "label_fr": "Communaute valencienne",
+                "label_en": "Valencian Community",
+                "population": 5425182,
+                "irpf_regional_brackets": [
+                    {"upper_bound_eur": 12000.00, "rate": 0.09},
+                    {"upper_bound_eur": 22000.00, "rate": 0.12},
+                    {"upper_bound_eur": 32000.00, "rate": 0.15},
+                    {"upper_bound_eur": 42000.00, "rate": 0.175},
+                    {"upper_bound_eur": 52000.00, "rate": 0.20},
+                    {"upper_bound_eur": 62000.00, "rate": 0.225},
+                    {"upper_bound_eur": 72000.00, "rate": 0.25},
+                    {"upper_bound_eur": 100000.00, "rate": 0.265},
+                    {"upper_bound_eur": 150000.00, "rate": 0.275},
+                    {"upper_bound_eur": 200000.00, "rate": 0.285},
+                    {"upper_bound_eur": null, "rate": 0.295}
+                ],
+                "irpf_regional_personal_minimum_eur": 6105.00,
+                "source": "AEAT Manual Practico de Renta 2025; Ley 13/1997 art. 2/2bis (modifiee par Ley 9/2022)"
+            },
+            {
+                "region_code": "ceuta_melilla",
+                "label_fr": "Ceuta et Melilla",
+                "label_en": "Ceuta and Melilla",
+                "population": 170634,
+                "irpf_regional_brackets": [
+                    {"upper_bound_eur": 12450.00, "rate": 0.095},
+                    {"upper_bound_eur": 20200.00, "rate": 0.12},
+                    {"upper_bound_eur": 35200.00, "rate": 0.15},
+                    {"upper_bound_eur": 60000.00, "rate": 0.185},
+                    {"upper_bound_eur": null, "rate": 0.225}
+                ],
+                "irpf_regional_personal_minimum_eur": 5550.00,
+                "source": "AEAT Manual Practico de Renta 2025, article 65 LIRPF ; villes autonomes sans pouvoir de devolution fiscale, bareme special fixe directement par la loi nationale (regroupe Ceuta 83 567 hab. et Melilla 87 067 hab.)"
+            }
+        ]
+    },
+    "profiles": [
+        {
+            "profile_id": "spain__standard_employee_madrid",
+            "label_fr": "Espagne · salarie standard (Madrid)",
+            "label_en": "Spain · standard employee (Madrid)",
+            "region_code": "madrid",
+            "region_label_fr": "Madrid",
+            "region_label_en": "Madrid"
+        },
+        {
+            "profile_id": "spain__standard_employee_andalucia",
+            "label_fr": "Espagne · salarie standard (Andalousie)",
+            "label_en": "Spain · standard employee (Andalusia)",
+            "region_code": "andalucia",
+            "region_label_fr": "Andalousie",
+            "region_label_en": "Andalusia"
+        },
+        {
+            "profile_id": "spain__standard_employee_aragon",
+            "label_fr": "Espagne · salarie standard (Aragon)",
+            "label_en": "Spain · standard employee (Aragon)",
+            "region_code": "aragon",
+            "region_label_fr": "Aragon",
+            "region_label_en": "Aragon"
+        },
+        {
+            "profile_id": "spain__standard_employee_asturias",
+            "label_fr": "Espagne · salarie standard (Asturies)",
+            "label_en": "Spain · standard employee (Asturias)",
+            "region_code": "asturias",
+            "region_label_fr": "Asturies",
+            "region_label_en": "Asturias"
+        },
+        {
+            "profile_id": "spain__standard_employee_baleares",
+            "label_fr": "Espagne · salarie standard (Baleares)",
+            "label_en": "Spain · standard employee (Balearic Islands)",
+            "region_code": "baleares",
+            "region_label_fr": "Baleares",
+            "region_label_en": "Balearic Islands"
+        },
+        {
+            "profile_id": "spain__standard_employee_canarias",
+            "label_fr": "Espagne · salarie standard (Canaries)",
+            "label_en": "Spain · standard employee (Canary Islands)",
+            "region_code": "canarias",
+            "region_label_fr": "Canaries",
+            "region_label_en": "Canary Islands"
+        },
+        {
+            "profile_id": "spain__standard_employee_cantabria",
+            "label_fr": "Espagne · salarie standard (Cantabrie)",
+            "label_en": "Spain · standard employee (Cantabria)",
+            "region_code": "cantabria",
+            "region_label_fr": "Cantabrie",
+            "region_label_en": "Cantabria"
+        },
+        {
+            "profile_id": "spain__standard_employee_castilla_la_mancha",
+            "label_fr": "Espagne · salarie standard (Castille-La Manche)",
+            "label_en": "Spain · standard employee (Castilla-La Mancha)",
+            "region_code": "castilla_la_mancha",
+            "region_label_fr": "Castille-La Manche",
+            "region_label_en": "Castilla-La Mancha"
+        },
+        {
+            "profile_id": "spain__standard_employee_castilla_y_leon",
+            "label_fr": "Espagne · salarie standard (Castille-et-Leon)",
+            "label_en": "Spain · standard employee (Castilla y Leon)",
+            "region_code": "castilla_y_leon",
+            "region_label_fr": "Castille-et-Leon",
+            "region_label_en": "Castilla y Leon"
+        },
+        {
+            "profile_id": "spain__standard_employee_cataluna",
+            "label_fr": "Espagne · salarie standard (Catalogne)",
+            "label_en": "Spain · standard employee (Catalonia)",
+            "region_code": "cataluna",
+            "region_label_fr": "Catalogne",
+            "region_label_en": "Catalonia"
+        },
+        {
+            "profile_id": "spain__standard_employee_extremadura",
+            "label_fr": "Espagne · salarie standard (Estremadure)",
+            "label_en": "Spain · standard employee (Extremadura)",
+            "region_code": "extremadura",
+            "region_label_fr": "Estremadure",
+            "region_label_en": "Extremadura"
+        },
+        {
+            "profile_id": "spain__standard_employee_galicia",
+            "label_fr": "Espagne · salarie standard (Galice)",
+            "label_en": "Spain · standard employee (Galicia)",
+            "region_code": "galicia",
+            "region_label_fr": "Galice",
+            "region_label_en": "Galicia"
+        },
+        {
+            "profile_id": "spain__standard_employee_murcia",
+            "label_fr": "Espagne · salarie standard (Murcie)",
+            "label_en": "Spain · standard employee (Region of Murcia)",
+            "region_code": "murcia",
+            "region_label_fr": "Murcie",
+            "region_label_en": "Region of Murcia"
+        },
+        {
+            "profile_id": "spain__standard_employee_la_rioja",
+            "label_fr": "Espagne · salarie standard (La Rioja)",
+            "label_en": "Spain · standard employee (La Rioja)",
+            "region_code": "la_rioja",
+            "region_label_fr": "La Rioja",
+            "region_label_en": "La Rioja"
+        },
+        {
+            "profile_id": "spain__standard_employee_comunidad_valenciana",
+            "label_fr": "Espagne · salarie standard (Communaute valencienne)",
+            "label_en": "Spain · standard employee (Valencian Community)",
+            "region_code": "comunidad_valenciana",
+            "region_label_fr": "Communaute valencienne",
+            "region_label_en": "Valencian Community"
+        },
+        {
+            "profile_id": "spain__standard_employee_ceuta_melilla",
+            "label_fr": "Espagne · salarie standard (Ceuta et Melilla)",
+            "label_en": "Spain · standard employee (Ceuta and Melilla)",
+            "region_code": "ceuta_melilla",
+            "region_label_fr": "Ceuta et Melilla",
+            "region_label_en": "Ceuta and Melilla"
+        }
+    ],
+    "limits": [
+        "La Navarre et le Pays basque ne sont pas modelises : ces deux communautes appliquent un regime fiscal « foral » distinct (Concierto/Convenio economique), avec leur propre administration fiscale, et non un simple bareme regional different ; elles sont hors perimetre de ce module.",
+        "Seul le minimo personal standard (celibataire, sans enfant a charge) est modelise ; les minimums familiaux (enfants, ascendants, handicap) ne sont pas pris en compte.",
+        "Le taux AT/EP (accidents du travail et maladies professionnelles) est modelise a un taux standard bas risque unique (1,00 %) ; le tarif officiel varie en realite selon le code CNAE de l'activite de l'entreprise.",
+        "La loi prevoit une exoneration specifique de l'IRPF pour les revenus au niveau du SMI (article 28 du Real Decreto-ley 5/2026) ; ce module ne modelise pas ce mecanisme d'exoneration explicite mais obtient un resultat proche de zero au niveau du SMI via le minimo personal et la reduction pour revenus du travail (article 20 LIRPF).",
+        "Les cotisations de retraite privee, les tickets restaurant et autres avantages en nature, et leurs effets fiscaux, ne sont pas modelises.",
+        "Seul le Regime general (Regimen General) de la Seguridad Social est modelise ; les regimes speciaux (autonomes, agraire, etc.) ne le sont pas."
+    ]
+}
