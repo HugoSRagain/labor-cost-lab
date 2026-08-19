@@ -1,5 +1,5 @@
 :root {
-    --bg-main: #f6f7f9;
+    --bg-main: #ffffff;
     --bg-card: #ffffff;
 
     --text-main: #111827;
@@ -13,10 +13,10 @@
     --border: #d9dee7;
     --border-soft: #e5e7eb;
 
-    --shadow-card: 0 4px 14px rgba(17, 24, 39, 0.05);
+    --shadow-card: none;
 
-    --radius-lg: 12px;
-    --radius-md: 10px;
+    --radius-lg: 3px;
+    --radius-md: 2px;
 }
 
 /* Dark mode variables */
@@ -36,7 +36,7 @@ body.dark-mode {
     --border: #374151;
     --border-soft: #1f2937;
 
-    --shadow-card: 0 4px 14px rgba(0, 0, 0, 0.25);
+    --shadow-card: none;
 }
 
 /* Base */
@@ -162,7 +162,7 @@ header p {
     border: 1px solid #8da4bc;
     background: transparent;
     color: white;
-    border-radius: 6px;
+    border-radius: 2px;
     padding: 9px 14px;
     cursor: pointer;
     font-weight: 600;
@@ -251,7 +251,7 @@ p {
     background: var(--blue-soft);
     color: var(--blue-dark);
     padding: 6px 10px;
-    border-radius: 5px;
+    border-radius: 2px;
     font-size: 13px;
     font-weight: 700;
     margin-bottom: 16px;
@@ -268,7 +268,7 @@ body.dark-mode .badge {
     background: #f8fafc;
     border: 1px solid var(--border);
     border-left: 4px solid var(--blue);
-    border-radius: 8px;
+    border-radius: 3px;
     padding: 16px 18px;
     color: var(--text-muted);
     font-size: 14px;
@@ -290,7 +290,7 @@ body.dark-mode .method-box {
     padding: 6px;
     background: #ffffff;
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 3px;
     box-shadow: var(--shadow-card);
     width: fit-content;
     max-width: 100%;
@@ -302,7 +302,7 @@ button.tab-button {
     border: none;
     background: transparent;
     color: var(--text-muted);
-    border-radius: 7px;
+    border-radius: 2px;
     padding: 10px 16px;
     cursor: pointer;
     font-size: 14px;
@@ -325,7 +325,6 @@ button.tab-button.active {
 body.dark-mode .tabs {
     background: #111827;
     border-color: #374151;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
 }
 
 body.dark-mode button.tab-button {
@@ -349,7 +348,7 @@ body.dark-mode button.tab-button.active {
     background: #f9fafb;
     border: 1px solid var(--border);
     padding: 12px;
-    border-radius: 8px;
+    border-radius: 3px;
     max-width: 100%;
 }
 
@@ -383,7 +382,7 @@ body.dark-mode .profile-selector {
     width: 100%;
     min-width: 0;
     border: 1px solid #c7ced8;
-    border-radius: 6px;
+    border-radius: 2px;
     padding: 9px 11px;
     background: white;
     color: var(--text-main);
@@ -430,7 +429,7 @@ body.dark-mode .profile-selector select {
     background: #ffffff;
     border: 1px solid var(--border);
     border-top: 4px solid var(--blue);
-    border-radius: 10px;
+    border-radius: 3px;
     padding: 17px 16px;
 }
 
@@ -456,7 +455,7 @@ body.dark-mode .profile-selector select {
     overflow-x: auto;
     padding-bottom: 6px;
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 3px;
     background: white;
 }
 
@@ -541,7 +540,7 @@ body.dark-mode .data-table tbody tr:hover {
 
 .chart-card {
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 3px;
     padding: 20px 20px 10px 20px;
     background: #ffffff;
     min-width: 0;
@@ -610,7 +609,7 @@ a.download-link:visited {
     align-items: center !important;
     gap: 8px !important;
     padding: 10px 14px !important;
-    border-radius: 6px !important;
+    border-radius: 2px !important;
     border: 1px solid var(--blue) !important;
     background: #ffffff !important;
     color: var(--blue-dark) !important;
@@ -701,9 +700,8 @@ body.dark-mode a.download-link:hover {
 .working-paper-card {
     width: 100%;
     border: 1px solid #d7dee8;
-    border-radius: 16px;
+    border-radius: 3px;
     background: #ffffff;
-    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
     overflow: hidden;
 }
 
@@ -724,7 +722,6 @@ body.dark-mode a.download-link:hover {
 body.dark-mode .working-paper-card {
     background: #111827;
     border-color: #374151;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
 }
 
 body.dark-mode .pdf-viewer-wrapper {
@@ -756,7 +753,7 @@ body.dark-mode .pdf-viewer-wrapper {
     width: 100%;
     padding: 12px 14px;
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 3px;
     background: #ffffff;
     color: var(--text-main);
     font-family: inherit;
@@ -781,7 +778,7 @@ body.dark-mode .pdf-viewer-wrapper {
     margin-top: 8px;
     padding: 11px 18px;
     border: 1px solid var(--blue);
-    border-radius: 8px;
+    border-radius: 3px;
     background: var(--blue);
     color: #ffffff;
     font-family: inherit;
@@ -828,7 +825,7 @@ body.dark-mode .contact-form button:hover {
 
 .consistency-card {
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 3px;
     padding: 16px;
     background: #ffffff;
 }
@@ -1000,7 +997,7 @@ footer {
 .methodology-versioning-card {
     margin-top: 14px;
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 3px;
     padding: 18px;
     background: #f8fafc;
 }
@@ -1024,7 +1021,7 @@ body.dark-mode .methodology-versioning-card {
     color: #475569;
     font-size: 0.95rem;
     line-height: 1.5;
-    border-radius: 10px;
+    border-radius: 3px;
 }
 
 .chart-note strong {
@@ -1134,7 +1131,7 @@ body.dark-mode .global-project-banner span {
 .data-table-panel {
     margin-top: 12px;
     border: 1px solid #cbd5e1;
-    border-radius: 12px;
+    border-radius: 3px;
     background: #ffffff;
     overflow: auto;
 }
@@ -1167,11 +1164,11 @@ body.dark-mode .global-project-banner span {
 }
 
 .data-table thead th:first-child {
-    border-top-left-radius: 10px;
+    border-top-left-radius: 3px;
 }
 
 .data-table thead th:last-child {
-    border-top-right-radius: 10px;
+    border-top-right-radius: 3px;
 }
 
 .data-table tbody td {
