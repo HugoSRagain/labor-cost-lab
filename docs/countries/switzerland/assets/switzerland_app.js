@@ -205,6 +205,65 @@ function getSelectedFlclCanton(lang) {
 }
 
 
+function getSelectedTaxRegime(lang) {
+    const select = getI18nElement("switzerland-regime-select", lang);
+
+    if (!select) {
+        return "withholding";
+    }
+
+    return select.value;
+}
+
+
+function getSelectedDataTaxRegime(lang) {
+    const select = getI18nElement("switzerland-data-regime-select", lang);
+
+    if (!select) {
+        return getSelectedTaxRegime(lang);
+    }
+
+    return select.value;
+}
+
+
+function getRegimeTaxMonthly(row, regime) {
+    return regime === "ordinary"
+        ? chNum(row.ordinary_tax_monthly_chf)
+        : chNum(row.withholding_tax_monthly_chf);
+}
+
+
+function getRegimeNetAfterTaxMonthly(row, regime) {
+    return regime === "ordinary"
+        ? chNum(row.net_after_ordinary_tax_monthly_chf)
+        : chNum(row.net_after_tax_monthly_chf);
+}
+
+
+function getRegimeTotalWedgeAfterTaxMonthly(row, regime) {
+    return regime === "ordinary"
+        ? chNum(row.total_wedge_after_ordinary_tax_monthly_chf)
+        : chNum(row.total_wedge_after_tax_monthly_chf);
+}
+
+
+function getRegimeCostToNetAfterTaxRatio(row, regime) {
+    return regime === "ordinary"
+        ? chNum(row.cost_to_net_after_ordinary_tax_ratio)
+        : chNum(row.cost_to_net_after_tax_ratio);
+}
+
+
+function getRegimeLabel(regime, lang) {
+    if (regime === "ordinary") {
+        return lang === "en" ? "ordinary assessment" : "imposition ordinaire";
+    }
+
+    return lang === "en" ? "withholding tax" : "impôt à la source";
+}
+
+
 function populateCantonSelects() {
     ["fr", "en"].forEach(function(lang) {
         const selects = [
@@ -358,6 +417,7 @@ function switzerlandPlot(elementId, traces, layout) {
 
 function renderSwitzerlandMetrics(lang) {
     const cantonCode = getSelectedCanton(lang);
+    const regime = getSelectedTaxRegime(lang);
     const data = getSwitzerlandCantonData(cantonCode);
     const referenceRow = data.find(row => chNum(row.gross_monthly_chf) === 5000);
 
@@ -377,17 +437,22 @@ function renderSwitzerlandMetrics(lang) {
 
     setTextContent(
         "metric-switzerland-net-after-tax-" + lang,
-        chf(referenceRow.net_after_tax_monthly_chf, lang) + " CHF"
+        chf(getRegimeNetAfterTaxMonthly(referenceRow, regime), lang) + " CHF"
     );
+
+    const taxMonthly = getRegimeTaxMonthly(referenceRow, regime);
+    const gross = chNum(referenceRow.gross_monthly_chf);
 
     setTextContent(
         "metric-switzerland-withholding-tax-" + lang,
-        chf(referenceRow.withholding_tax_monthly_chf, lang) + " CHF"
+        chf(taxMonthly, lang) + " CHF"
     );
 
     setTextContent(
         "metric-switzerland-withholding-tax-rate-" + lang,
-        pctDirect(referenceRow.withholding_tax_rate_percent, lang)
+        regime === "ordinary"
+            ? pct(gross > 0 ? taxMonthly / gross : 0, lang)
+            : pctDirect(referenceRow.withholding_tax_rate_percent, lang)
     );
 
     setTextContent(
@@ -397,13 +462,23 @@ function renderSwitzerlandMetrics(lang) {
 
     setTextContent(
         "metric-switzerland-cost-to-net-" + lang,
-        chRatio(referenceRow.cost_to_net_after_tax_ratio, lang)
+        chRatio(getRegimeCostToNetAfterTaxRatio(referenceRow, regime), lang)
+    );
+
+    const regimeLabel = getRegimeLabel(regime, lang);
+
+    setTextContent(
+        "switzerland-regime-note-" + lang,
+        lang === "en"
+            ? "Tax figures below use the " + regimeLabel + " regime."
+            : "Les montants d'impôt ci-dessous utilisent le régime " + regimeLabel + "."
     );
 }
 
 
 function renderSwitzerlandWaterfallChart(lang) {
     const cantonCode = getSelectedCanton(lang);
+    const regime = getSelectedTaxRegime(lang);
     const data = getSwitzerlandCantonData(cantonCode);
 
     if (!data.length) {
@@ -418,10 +493,11 @@ function renderSwitzerlandWaterfallChart(lang) {
     }
 
     const gross = chNum(row.gross_monthly_chf);
-    const netAfterTax = chNum(row.net_after_tax_monthly_chf);
+    const netAfterTax = getRegimeNetAfterTaxMonthly(row, regime);
     const netBeforeTax = chNum(row.net_before_tax_monthly_chf);
-    const withholdingTax = chNum(row.withholding_tax_monthly_chf);
-    const withholdingTaxRate = chNum(row.withholding_tax_rate_percent);
+    const withholdingTax = getRegimeTaxMonthly(row, regime);
+    const withholdingTaxRate = gross > 0 ? (withholdingTax / gross) * 100 : 0;
+    const regimeLabel = getRegimeLabel(regime, lang);
 
     const employeeAhv = chNum(row.employee_ahv_iv_eo_monthly_chf);
     const employeeUnemployment = chNum(row.employee_unemployment_monthly_chf);
@@ -445,14 +521,14 @@ function renderSwitzerlandWaterfallChart(lang) {
     setTextContent(
         "switzerland-waterfall-subtitle-" + lang,
         lang === "en"
-            ? "Canton " + cantonCode + " · A0 withholding-tax tariff. "
+            ? "Canton " + cantonCode + " · " + regimeLabel + ". "
                 + "Net wage after tax is CHF " + chf(netAfterTax, lang)
-                + ", including CHF " + chf(withholdingTax, lang) + " of withholding tax "
+                + ", including CHF " + chf(withholdingTax, lang) + " of tax "
                 + "(" + pctDirect(withholdingTaxRate, lang) + "), for an employer cost of "
                 + chf(employerCost, lang) + " CHF."
-            : "Canton " + cantonCode + " · tarif d'impôt à la source A0. "
+            : "Canton " + cantonCode + " · régime : " + regimeLabel + ". "
                 + "Le salaire net après impôt est de " + chf(netAfterTax, lang)
-                + " CHF, dont " + chf(withholdingTax, lang) + " CHF d'impôt à la source "
+                + " CHF, dont " + chf(withholdingTax, lang) + " CHF d'impôt "
                 + "(" + pctDirect(withholdingTaxRate, lang) + "), pour un coût employeur de "
                 + chf(employerCost, lang) + " CHF."
     );
@@ -460,7 +536,7 @@ function renderSwitzerlandWaterfallChart(lang) {
     const labels = lang === "en"
         ? [
             "Net after tax",
-            "Withholding tax",
+            regime === "ordinary" ? "Ordinary tax (federal+cantonal+communal)" : "Withholding tax",
             "Net before tax",
             "OASI / DI / EO employee",
             "Unemployment employee",
@@ -475,7 +551,7 @@ function renderSwitzerlandWaterfallChart(lang) {
         ]
         : [
             "Net après impôt",
-            "Impôt à la source",
+            regime === "ordinary" ? "Impôt ordinaire (fédéral+cantonal+communal)" : "Impôt à la source",
             "Net avant impôt",
             "AVS / AI / APG salarié",
             "Chômage salarié",
@@ -909,6 +985,7 @@ function renderSwitzerlandEmployerComponentsChart(lang) {
 
 function renderSwitzerlandWedgeChart(lang) {
     const cantonCode = getSelectedCanton(lang);
+    const regime = getSelectedTaxRegime(lang);
     const data = getSwitzerlandCantonData(cantonCode);
 
     const x = data.map(row => chNum(row.gross_monthly_chf));
@@ -931,7 +1008,7 @@ function renderSwitzerlandWedgeChart(lang) {
         },
         {
             x: x,
-            y: data.map(row => chNum(row.total_wedge_after_tax_monthly_chf)),
+            y: data.map(row => getRegimeTotalWedgeAfterTaxMonthly(row, regime)),
             type: "scatter",
             mode: "lines",
             name: lang === "en" ? "Total wedge after tax" : "Coin total après impôt",
@@ -945,7 +1022,7 @@ function renderSwitzerlandWedgeChart(lang) {
         },
         {
             x: x,
-            y: data.map(row => chNum(row.cost_to_net_after_tax_ratio)),
+            y: data.map(row => getRegimeCostToNetAfterTaxRatio(row, regime)),
             type: "scatter",
             mode: "lines",
             name: lang === "en" ? "Cost / net after tax" : "Coût / net après impôt",
@@ -993,6 +1070,7 @@ function renderSwitzerlandDataTable(lang) {
     }
 
     const cantonCode = getSelectedDataCanton(lang);
+    const regime = getSelectedDataTaxRegime(lang);
     const data = getSwitzerlandCantonData(cantonCode);
 
     const firstRow = data[0];
@@ -1005,7 +1083,7 @@ function renderSwitzerlandDataTable(lang) {
             + (lang === "en" ? firstRow.canton_name_en : firstRow.canton_name_fr)
             + " · "
             + firstRow.reference_municipality
-            + " · tariff A0"
+            + " · " + getRegimeLabel(regime, lang)
         );
     }
 
@@ -1014,16 +1092,25 @@ function renderSwitzerlandDataTable(lang) {
     data.forEach(row => {
         const tableRow = document.createElement("tr");
 
+        const taxMonthly = getRegimeTaxMonthly(row, regime);
+        const netAfterTax = getRegimeNetAfterTaxMonthly(row, regime);
+        const totalWedgeAfterTax = getRegimeTotalWedgeAfterTaxMonthly(row, regime);
+        const costToNetAfterTax = getRegimeCostToNetAfterTaxRatio(row, regime);
+
         const cells = [
             chf(row.gross_monthly_chf, lang) + " CHF",
             chf(row.net_before_tax_monthly_chf, lang) + " CHF",
+            chf(taxMonthly, lang) + " CHF",
+            chf(netAfterTax, lang) + " CHF",
             chf(row.employer_cost_monthly_chf, lang) + " CHF",
             chf(row.employee_total_contrib_monthly_chf, lang) + " CHF",
             chf(row.employer_total_contrib_monthly_chf, lang) + " CHF",
             chf(row.social_wedge_monthly_chf, lang) + " CHF",
+            chf(totalWedgeAfterTax, lang) + " CHF",
             pct(row.employee_contribution_rate, lang),
             pct(row.employer_contribution_rate, lang),
-            chRatio(row.cost_to_net_ratio, lang)
+            chRatio(row.cost_to_net_before_tax_ratio, lang),
+            chRatio(costToNetAfterTax, lang)
         ];
 
         cells.forEach(cell => {
@@ -1417,6 +1504,8 @@ function setupSwitzerlandEvents() {
         const dataCantonSelect = getI18nElement("switzerland-data-canton-select", lang);
         const flclCantonSelect = getI18nElement("switzerland-flcl-canton-select", lang);
         const waterfallWageSelect = getI18nElement("switzerland-waterfall-wage-select", lang);
+        const regimeSelect = getI18nElement("switzerland-regime-select", lang);
+        const dataRegimeSelect = getI18nElement("switzerland-data-regime-select", lang);
 
         if (cantonSelect) {
             cantonSelect.addEventListener("change", function() {
@@ -1439,6 +1528,18 @@ function setupSwitzerlandEvents() {
         if (waterfallWageSelect) {
             waterfallWageSelect.addEventListener("change", function() {
                 renderSwitzerlandWaterfallChart(lang);
+            });
+        }
+
+        if (regimeSelect) {
+            regimeSelect.addEventListener("change", function() {
+                renderSwitzerland(lang);
+            });
+        }
+
+        if (dataRegimeSelect) {
+            dataRegimeSelect.addEventListener("change", function() {
+                renderSwitzerlandDataTable(lang);
             });
         }
     });

@@ -207,7 +207,8 @@
                         <p class="chart-subtitle">
                             Montant mensuel de chaque cotisation employeur : WW
                             (chômage), Aof (invalidité), Zvw-werkgeversheffing
-                            (assurance maladie) et Wko (garde d'enfants).
+                            (assurance maladie), Wko (garde d'enfants) et Whk
+                            (fonds de reprise du travail).
                         </p>
 
                         <div
@@ -219,8 +220,9 @@
                         <p class="method-note">
                             Toutes les cotisations employeur sont plafonnées au
                             maximum premieloon (79 409 €/an en 2026). Le Whk
-                            (Werkhervattingskas), spécifique à chaque employeur,
-                            n'est pas modélisé.
+                            (Werkhervattingskas) est modélisé au taux moyen
+                            national 2026 publié par l'UWV (1,52 %), et non au
+                            taux réel propre à chaque employeur et secteur.
                         </p>
                     </div>
 
@@ -614,19 +616,24 @@
                     <h3>6. Limites du scénario</h3>
 
                     <p class="method-note">
-                        Le module ne simule pas le Whk (gedifferentieerde premie
-                        Werkhervattingskas, littéralement « fonds de reprise du
-                        travail » : cotisation spécifique à chaque employeur et
-                        secteur, sans taux national unique), les cotisations de
+                        Le Whk (gedifferentieerde premie Werkhervattingskas,
+                        littéralement « fonds de reprise du travail », couvrant
+                        WGA et Ziektewet) est modélisé au taux moyen national
+                        2026 publié par l'UWV (0,96 % + 0,56 % = 1,52 %), et non
+                        au taux réel propre à chaque employeur et secteur (prime
+                        individuelle pour les grands employeurs, taux sectoriel
+                        pour les petits, sans taux national unique par
+                        construction) : confiance moyenne. Les cotisations de
                         pension complémentaire (non fixées par la loi mais par
                         fonds de pension/CAO), les crédits d'impôt dépendant
-                        d'un partenaire (IACK, etc.), ni les situations de foyer
-                        autres que célibataire sans enfant. Le profil retient
-                        l'Aof taux élevé (grand employeur) et le WW taux bas
-                        (contrat à durée indéterminée) : ce sont des choix
-                        explicites, ajustables. Ces limites sont assumées afin
-                        de produire un scénario central stable et comparable aux
-                        autres modules nationaux du Labor Cost Lab.
+                        d'un partenaire (IACK, etc.), et les situations de foyer
+                        autres que célibataire sans enfant ne sont pas
+                        modélisées. Le profil retient l'Aof taux élevé (grand
+                        employeur) et le WW taux bas (contrat à durée
+                        indéterminée) : ce sont des choix explicites,
+                        ajustables. Ces limites sont assumées afin de produire
+                        un scénario central stable et comparable aux autres
+                        modules nationaux du Labor Cost Lab.
                     </p>
                 </div>
             </section>
@@ -817,8 +824,8 @@
                         <p class="chart-subtitle">
                             Monthly amount of each employer contribution: WW
                             (unemployment), Aof (disability),
-                            Zvw-werkgeversheffing (health insurance) and Wko
-                            (childcare).
+                            Zvw-werkgeversheffing (health insurance), Wko
+                            (childcare) and Whk (return-to-work fund).
                         </p>
 
                         <div
@@ -830,8 +837,9 @@
                         <p class="method-note">
                             All employer contributions are capped at the
                             maximum premieloon (€79,409/year in 2026). The Whk
-                            (Werkhervattingskas), specific to each employer, is
-                            not modeled.
+                            (Werkhervattingskas) is modeled at the 2026
+                            national average rate published by UWV (1.52%),
+                            not the actual employer- or sector-specific rate.
                         </p>
                     </div>
 
@@ -1221,19 +1229,25 @@
                     <h3>6. Limits of the scenario</h3>
 
                     <p class="method-note">
-                        The module does not simulate the Whk (gedifferentieerde
-                        premie Werkhervattingskas, literally "return-to-work
-                        fund": a levy specific to each employer and sector,
-                        with no single national rate), occupational pension
-                        contributions (not set by law but by pension
-                        fund/collective agreement), partner-dependent tax
-                        credits (IACK, etc.), or household situations other
-                        than single with no children. The profile uses the
-                        high Aof rate (large employer) and the low WW rate
-                        (permanent contract): these are explicit, adjustable
-                        choices. These limits are accepted in order to produce
-                        a stable central scenario, comparable with the Labor
-                        Cost Lab's other national modules.
+                        The Whk (gedifferentieerde premie Werkhervattingskas,
+                        literally "return-to-work fund", covering WGA and
+                        Ziektewet) is modeled at the 2026 national average
+                        rate published by UWV (0.96% + 0.56% = 1.52%), not the
+                        actual employer- or sector-specific rate (an
+                        individually experience-rated premium for large
+                        employers, a sector-based rate for small employers,
+                        with no single national rate by construction):
+                        medium confidence. Occupational pension contributions
+                        (not set by law but by pension fund/collective
+                        agreement), partner-dependent tax credits (IACK,
+                        etc.), and household situations other than single
+                        with no children are not modeled. The profile uses
+                        the high Aof rate (large employer) and the low WW
+                        rate (permanent contract): these are explicit,
+                        adjustable choices. These limits are accepted in
+                        order to produce a stable central scenario,
+                        comparable with the Labor Cost Lab's other national
+                        modules.
                     </p>
                 </div>
             </section>

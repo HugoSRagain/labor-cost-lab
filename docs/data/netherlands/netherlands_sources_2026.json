@@ -42,6 +42,15 @@
             "confidence": "medium_to_verify_before_production",
             "implementation_status": "implemented_pending_official_confirmation"
         },
+        "whk_gemiddelde_premie_2026": {
+            "label": "Gemiddelde gedifferentieerde premie Werkhervattingskas (Whk) 2026",
+            "value": "WGA gemiddeld 0,96% ; Ziektewet (ZW) gemiddeld 0,56% ; totaal gemiddeld 1,52%",
+            "source_name": "UWV, Gedifferentieerde premies WGA en Ziektewet 2026",
+            "source_type": "official",
+            "url": "https://www.uwv.nl/nl/publicaties/kennis/2025/gedifferentieerde-premies-wga-en-ziektewet-2026",
+            "confidence": "high",
+            "note": "This is the national average rate, not an employer- or sector-specific rate: large and medium employers receive an individually experience-rated premium (gedifferentieerde premie) based on their own claims history; small employers (loonsom <= EUR 1,082,500 in 2024) receive a sector-based rate derived from the same national averages. No single rate applies economy-wide by construction, so the national average is used here as the standard reference, consistent with the AT/EP convention used in the Spain module."
+        },
         "zvw_employee_not_withheld": {
             "label": "Confirmation that Zvw employer levy is not withheld from a standard employee's net pay",
             "source_name": "Randstad Werkpocket / search aggregation",
@@ -77,10 +86,10 @@
             "Box 1 wage tax (progressive brackets), below AOW age",
             "algemene heffingskorting",
             "arbeidskorting",
-            "employer levies: WW (laag), Aof (hoog), Zvw-werkgeversheffing, Wko-heffing, all capped at max premieloon"
+            "employer levies: WW (laag), Aof (hoog), Zvw-werkgeversheffing, Wko-heffing, Whk (national average rate), all capped at max premieloon"
         ],
         "not_yet_included": [
-            "Whk (gedifferentieerde premie Werkhervattingskas)",
+            "Whk at the actual employer- or sector-specific rate (only the national average is modeled)",
             "occupational pension contributions",
             "partner-income-dependent tax credits (IACK, etc.)",
             "AOW-age / pensioner tax regime",

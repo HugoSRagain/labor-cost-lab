@@ -86,6 +86,55 @@
         "source_note": "Canton-level withholding-tax tables are published by the Swiss Federal Tax Administration. They will be integrated in a second step."
     },
 
+    "ordinary_tax": {
+        "status": "implemented_2026",
+        "year": 2026,
+        "profile": {
+            "marital_status": "single",
+            "children": 0,
+            "church_tax": false,
+            "residence": "reference_municipality (cantonal capital)"
+        },
+        "note": "Ordinary assessment (taxation ordinaire / imposition ordinaire / ordentliche Veranlagung), the annual tax-return regime applying to Swiss citizens and C-permit holders, as opposed to withholding tax at source (foreign workers without a C permit). Combines federal (impot federal direct, single national scale), cantonal (each canton's own base scale and mechanism) and communal (the reference municipality's own multiplier) income tax. Full computation engine: analysis/switzerland/swiss_ordinary_tax_2026.py -- that file's docstring documents the exact mechanism used for each canton (marginal brackets, flat rate, marginal-with-cliff, whole-income interpolated rate, or Basel-Landschaft's continuous logarithmic formula) and Geneva's bespoke multi-stage centimes-additionnels calculation. See switzerland_sources_2026.json for exact source URLs and legal article citations per canton.",
+        "federal_scale": {
+            "source": "ESTV, Form 58c, 2026, single taxpayer (Alleinstehende)",
+            "maximum_average_rate": 0.115,
+            "exemption_threshold_annual_chf": 18500
+        },
+        "cantonal_and_communal_multipliers_2026": {
+            "source": "ESTV/SSK, \"Taux et coefficients d'impots\" / \"Steuersatz und Steuerfuss\", section 3.4.1, etat de la legislation au 1er janvier 2026 -- cantonal capitals only",
+            "note": "Where a canton's own Kantonsblatt cited a different numeric multiplier than this consolidated table (found for OW and ZG), the canton-specific Kantonsblatt figure was used instead, as a more directly-cited primary source -- see switzerland_sources_2026.json.",
+            "values": {
+                "ZH": {"cantonal": 0.95, "communal": 1.19},
+                "BE": {"cantonal": 2.975, "communal": 1.54},
+                "LU": {"cantonal": 1.45, "communal": 1.45},
+                "UR": {"cantonal": 1.00, "communal": 0.95},
+                "SZ": {"cantonal": 1.10, "communal": 1.75},
+                "OW": {"cantonal": 3.15, "communal": 3.86},
+                "NW": {"cantonal": 2.66, "communal": 2.35},
+                "GL": {"cantonal": 0.597, "communal": 0.61},
+                "ZG": {"cantonal": 0.82, "communal": 0.5211},
+                "FR": {"cantonal": 0.96, "communal": 0.80},
+                "SO": {"cantonal": 1.04, "communal": 1.07},
+                "BS": {"cantonal": 1.00, "communal": 0.0, "note": "no separate communal tax at the cantonal capital"},
+                "BL": {"cantonal": 1.00, "communal": 0.65},
+                "SH": {"cantonal": 0.76, "communal": 0.83},
+                "AR": {"cantonal": 3.30, "communal": 4.10},
+                "AI": {"cantonal": 0.96, "communal": 0.56},
+                "SG": {"cantonal": 1.05, "communal": 1.38},
+                "GR": {"cantonal": 0.92, "communal": 0.88},
+                "AG": {"cantonal": 1.03, "communal": 0.96},
+                "TG": {"cantonal": 1.09, "communal": 1.42},
+                "TI": {"cantonal": 1.00, "communal": 0.93},
+                "VD": {"cantonal": 1.55, "communal": 0.785},
+                "VS": {"cantonal": 1.00, "communal": 1.10, "note": "no cantonal-level multiplier by law; the barreme gives the cantonal tax directly"},
+                "NE": {"cantonal": 1.24, "communal": 0.65},
+                "GE": {"cantonal_centimes": 0.485, "cantonal_statutory_reduction": 0.12, "communal": 0.4549, "note": "bespoke multi-stage mechanism, see engine docstring"},
+                "JU": {"cantonal": 2.85, "communal": 1.90}
+            }
+        }
+    },
+
     "cantons": [
         { "code": "ZH", "name_fr": "Zurich", "name_en": "Zurich", "reference_municipality": "Zürich" },
         { "code": "BE", "name_fr": "Berne", "name_en": "Bern", "reference_municipality": "Bern" },
@@ -119,7 +168,12 @@
         "The module is not an individual Swiss payslip calculator.",
         "Occupational pension contributions are standardized and do not reproduce firm-level pension plans.",
         "Accident insurance rates are benchmark assumptions and do not reflect sector-specific risk classes.",
-        "Withholding-tax tables are prepared for integration but are not yet implemented in this initial parameter file.",
-        "The selected canton is represented by a reference municipality for comparability."
+        "The selected canton is represented by a reference municipality for comparability (the cantonal capital in every case).",
+        "Ordinary assessment: family quotient / income-splitting mechanisms (relevant for married or single-parent households, e.g. Vaud's quotient familial) are not modeled, consistent with this module's single/childless reference profile.",
+        "Ordinary assessment: aggregate income+wealth tax caps ('bouclier fiscal' / 'Hoechstbelastung' / 'freno all'imposta', in effect in Bern, Lucerne, Basel-Stadt, Aargau, Vaud, Valais, Ticino, Geneva and others) are not modeled, since this module does not compute wealth tax.",
+        "Ordinary assessment: church tax is not modeled, consistent with the withholding-tax module's existing convention.",
+        "Ordinary assessment: capital pension payments and liquidation gains, taxed separately at reduced rates by nearly every canton, are not modeled (irrelevant for this module's standard-employment reference profile).",
+        "Ordinary assessment, Basel-Landschaft (BL): the continuous logarithmic formula uses the base (2005) legislative parameters; the annual cold-progression re-indexation to the current tax year is not reproduced -- medium confidence.",
+        "Ordinary assessment, Fribourg (FR) and Valais (VS): both cantons' own law states that a single average tax rate applies to the whole income and interpolates continuously within each income class; this module approximates that continuous interpolation using the discrete class boundaries actually sourced, rather than the full official schedule (published at CHF 100 increments)."
     ]
 }

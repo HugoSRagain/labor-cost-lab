@@ -41,11 +41,52 @@
                 "Net after withholding tax by canton, tariff A0"
             ],
             "status": "official"
+        },
+        {
+            "id": "estv_ifd_tarif_58c_2026",
+            "institution": "Federal Tax Administration",
+            "institution_fr": "Administration fédérale des contributions",
+            "title": "Impôt fédéral direct, barème pour les personnes seules (Form. 58c), 2026",
+            "url": "https://www.estv.admin.ch/dam/fr/sd-web/gnde9CmEsalK/dbst-tairfe-58c-2026-dfi.pdf",
+            "used_for": [
+                "Federal (IFD) ordinary income tax scale, single taxpayer -- identical in every canton"
+            ],
+            "confidence": "high",
+            "note": "Full bracket table transcribed and arithmetically cross-validated (every consecutive threshold pair checked against the printed marginal rate) against analysis/switzerland/swiss_ordinary_tax_2026.py. Statutory cap on the average rate: 11.5% (Art. 128 al. 1 let. a Cst.). Sub-CHF-100 income fractions are dropped (footnote 1); the final annual tax is floored to the next-lower 5 centimes, not rounded to nearest (footnote 2).",
+            "status": "official"
+        },
+        {
+            "id": "estv_ssk_taux_coefficients_impots_2026",
+            "institution": "Federal Tax Administration / Swiss Tax Conference",
+            "institution_fr": "Administration fédérale des contributions / Conférence suisse des impôts",
+            "title": "Taux et coefficients d'impôts (Steuersatz und Steuerfuss), section 3.4.1: Multiples annuels dans les chefs-lieux cantonaux en 2026",
+            "url": "https://www.estv2.admin.ch/stp/ds/e-steuersatz-steuerfuss-fr.pdf",
+            "used_for": [
+                "Cantonal and communal income-tax multipliers for every cantonal capital (used as the reference municipality for each canton, consistent with the existing withholding-tax convention)"
+            ],
+            "confidence": "high",
+            "note": "Etat de la legislation au 1er janvier 2026. Where a canton's own Kantonsblatt (see estv_kantonsblatt_ordinary_tax_2026 below) cited a different, more specific numeric cantonal multiplier -- found for Obwalden (Kantonsblatt: 315% via Art. 2 Abs. 3 StG, vs this table's 325%) and Zug (Kantonsblatt: 82% via par. 2 Abs. 2 StG, vs this table's 78%) -- the Kantonsblatt's directly-cited statutory figure was used instead, as a more specific primary-law citation. Geneva's cantonal figure in this table (48.5%) reflects a bespoke mechanism (47.5% + 1% centimes additionnels cantonaux, then a 12% statutory reduction on the cantonal share only per Art. 1 LDIRPP, not on the communal centimes additionnels) -- reproduced exactly in analysis/switzerland/swiss_ordinary_tax_2026.py.",
+            "status": "official"
+        },
+        {
+            "id": "estv_kantonsblatt_ordinary_tax_2026",
+            "institution": "Federal Tax Administration",
+            "institution_fr": "Administration fédérale des contributions",
+            "title": "Kantonsblatt / Feuille cantonale / Foglio cantonale -- Besteuerung der natuerlichen Personen / Imposition des personnes physiques, per canton, 2026",
+            "url": "https://www.estv2.admin.ch/stp/kb/{canton_code}-{de|fr|it}.pdf",
+            "used_for": [
+                "Each of the 26 cantons' own base income-tax bracket table (or flat rate, or interpolated-rate class table, or continuous formula) and its own legislated mechanism, for a single/childless taxpayer, 2026"
+            ],
+            "confidence": "high",
+            "note": "All 26 official per-canton PDFs fetched individually, dated Stand/Etat/Stato: Februar/fevrier/febbraio 2026. Legal article citations and per-canton mechanism are documented in the analysis/switzerland/swiss_ordinary_tax_2026.py module docstring. Basel-Landschaft (BL) is a partial exception: its continuous logarithmic-formula parameters as printed are the base (2005) legislative values; the document references an annual cold-progression re-indexation via a separate 'Tarife 2026' resource not captured here -- flagged medium confidence for BL specifically. Fribourg (FR) and Valais (VS) state that their tax rate is a whole-income average rate that interpolates continuously within each income class (not a marginal bracket system); this module approximates that interpolation using the discrete class boundaries sourced from each Kantonsblatt, verified arithmetically against the printed 'produit de l'impot' figures at each class boundary.",
+            "status": "official"
         }
     ],
     "notes": [
         "The first Swiss prototype separates national social contributions from canton-level fiscal parameters.",
         "Withholding-tax integration is implemented using the official cantonal tariff files (tariff A0, 2026 edition). The tax rate is read directly from the fixed-width tariff records; see analysis/switzerland/swiss_withholding_tax_2026.py for the field layout.",
+        "Ordinary-assessment (taxation ordinaire) integration combines the federal, cantonal and communal layers for all 26 cantons -- see analysis/switzerland/swiss_ordinary_tax_2026.py for the full engine, including the four distinct mechanisms found across cantons (standard marginal brackets, flat rate, marginal-with-cliff, and whole-income interpolated rate) plus Basel-Landschaft's continuous formula and Geneva's bespoke multi-stage centimes-additionnels calculation.",
+        "Suggested follow-up QA (not yet performed for every canton): spot-check computed ordinary-tax figures against the ESTV's own dynamic tax calculator (https://swisstaxcalculator.estv.admin.ch/) at a few income levels per canton, as an independent human cross-check on the implementation (the calculator itself was not used as a primary data source, since it exposes no downloadable bracket data and its reuse terms are more restrictive than the source PDFs).",
         "The module uses benchmark assumptions for occupational pension and accident insurance because actual employer schemes vary."
     ]
 }

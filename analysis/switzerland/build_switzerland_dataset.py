@@ -35,6 +35,8 @@ from swiss_withholding_tax_2026 import (
     load_withholding_tax_brackets,
 )
 
+from swiss_ordinary_tax_2026 import compute_ordinary_tax_2026
+
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
 
@@ -151,6 +153,30 @@ def build_dataset() -> List[Dict[str, Any]]:
                 else 0.0
             )
 
+            ordinary_tax = compute_ordinary_tax_2026(
+                gross_monthly_chf * 12.0,
+                canton["code"],
+            )
+
+            ordinary_tax_monthly_chf = ordinary_tax["total_ordinary_tax_monthly_chf"]
+
+            net_after_ordinary_tax_monthly_chf = (
+                social["net_before_tax_monthly_chf"]
+                - ordinary_tax_monthly_chf
+            )
+
+            total_wedge_after_ordinary_tax_monthly_chf = (
+                social["employer_cost_monthly_chf"]
+                - net_after_ordinary_tax_monthly_chf
+            )
+
+            cost_to_net_after_ordinary_tax_ratio = (
+                social["employer_cost_monthly_chf"]
+                / net_after_ordinary_tax_monthly_chf
+                if net_after_ordinary_tax_monthly_chf > 0
+                else 0.0
+            )
+
             row = {
                 "country": parameters["country"],
                 "country_code": parameters["country_code"],
@@ -185,11 +211,28 @@ def build_dataset() -> List[Dict[str, Any]]:
                 ),
                 "net_after_tax_monthly_chf": round(net_after_tax_monthly_chf, 2),
 
+                "ordinary_federal_tax_monthly_chf": round(
+                    ordinary_tax["federal_tax_annual_chf"] / 12.0, 2
+                ),
+                "ordinary_cantonal_tax_monthly_chf": round(
+                    ordinary_tax["cantonal_tax_annual_chf"] / 12.0, 2
+                ),
+                "ordinary_communal_tax_monthly_chf": round(
+                    ordinary_tax["communal_tax_annual_chf"] / 12.0, 2
+                ),
+                "ordinary_tax_monthly_chf": round(ordinary_tax_monthly_chf, 2),
+                "net_after_ordinary_tax_monthly_chf": round(
+                    net_after_ordinary_tax_monthly_chf, 2
+                ),
+
                 "employer_cost_monthly_chf": social["employer_cost_monthly_chf"],
                 "social_wedge_monthly_chf": social["social_wedge_monthly_chf"],
                 "total_wedge_after_tax_monthly_chf": round(
                     total_wedge_after_tax_monthly_chf,
                     2,
+                ),
+                "total_wedge_after_ordinary_tax_monthly_chf": round(
+                    total_wedge_after_ordinary_tax_monthly_chf, 2
                 ),
 
                 "employee_contribution_rate": social["employee_contribution_rate"],
@@ -200,8 +243,12 @@ def build_dataset() -> List[Dict[str, Any]]:
                     cost_to_net_after_tax_ratio,
                     8,
                 ),
+                "cost_to_net_after_ordinary_tax_ratio": round(
+                    cost_to_net_after_ordinary_tax_ratio, 8
+                ),
 
                 "withholding_tax_status": "official_2026_tariff_A0",
+                "ordinary_tax_status": "official_2026_federal_cantonal_communal",
                 "profile_id": (
                     "switzerland__"
                     + canton["code"].lower()
@@ -235,6 +282,9 @@ def run_quality_checks(rows: List[Dict[str, Any]]) -> None:
     max_employer_cost_identity_error = 0.0
     max_social_wedge_identity_error = 0.0
     max_total_wedge_after_tax_identity_error = 0.0
+    max_ordinary_tax_breakdown_error = 0.0
+    max_net_after_ordinary_tax_identity_error = 0.0
+    max_total_wedge_after_ordinary_tax_identity_error = 0.0
 
     for row in rows:
         gross = float(row["gross_monthly_chf"])
@@ -271,6 +321,32 @@ def run_quality_checks(rows: List[Dict[str, Any]]) -> None:
             abs(total_wedge_after_tax - (employer_cost - net_after_tax)),
         )
 
+        ordinary_tax = float(row["ordinary_tax_monthly_chf"])
+        ordinary_tax_breakdown_sum = (
+            float(row["ordinary_federal_tax_monthly_chf"])
+            + float(row["ordinary_cantonal_tax_monthly_chf"])
+            + float(row["ordinary_communal_tax_monthly_chf"])
+        )
+        net_after_ordinary_tax = float(row["net_after_ordinary_tax_monthly_chf"])
+        total_wedge_after_ordinary_tax = float(
+            row["total_wedge_after_ordinary_tax_monthly_chf"]
+        )
+
+        max_ordinary_tax_breakdown_error = max(
+            max_ordinary_tax_breakdown_error,
+            abs(ordinary_tax - ordinary_tax_breakdown_sum),
+        )
+
+        max_net_after_ordinary_tax_identity_error = max(
+            max_net_after_ordinary_tax_identity_error,
+            abs(net_after_ordinary_tax - (net_before_tax - ordinary_tax)),
+        )
+
+        max_total_wedge_after_ordinary_tax_identity_error = max(
+            max_total_wedge_after_ordinary_tax_identity_error,
+            abs(total_wedge_after_ordinary_tax - (employer_cost - net_after_ordinary_tax)),
+        )
+
     cantons = sorted({row["canton_code"] for row in rows})
     gross_wages = sorted({row["gross_monthly_chf"] for row in rows})
 
@@ -291,6 +367,18 @@ def run_quality_checks(rows: List[Dict[str, Any]]) -> None:
     print(
         "Max total wedge after tax identity error: "
         f"{max_total_wedge_after_tax_identity_error:.10f}"
+    )
+    print(
+        "Max ordinary tax breakdown error: "
+        f"{max_ordinary_tax_breakdown_error:.10f}"
+    )
+    print(
+        "Max net after ordinary tax identity error: "
+        f"{max_net_after_ordinary_tax_identity_error:.10f}"
+    )
+    print(
+        "Max total wedge after ordinary tax identity error: "
+        f"{max_total_wedge_after_ordinary_tax_identity_error:.10f}"
     )
 
     print()

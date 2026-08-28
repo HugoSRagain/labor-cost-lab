@@ -10,7 +10,7 @@
 
     <link rel="stylesheet" href="../../assets/style.css?v=28">
     <script defer src="../../assets/i18n_common.js?v=3"></script>
-    <script defer src="./assets/switzerland_app.js?v=4"></script>
+    <script defer src="./assets/switzerland_app.js?v=5"></script>
 </head>
 
 <body>
@@ -136,7 +136,20 @@
                                 <option value="20000">20 000 CHF</option>
                             </select>
                         </div>
+
+                        <div class="selector-field">
+                            <label for="switzerland-regime-select-fr">
+                                Régime fiscal
+                            </label>
+
+                            <select id="switzerland-regime-select-fr">
+                                <option value="withholding" selected>Impôt à la source</option>
+                                <option value="ordinary">Imposition ordinaire</option>
+                            </select>
+                        </div>
                     </div>
+
+                    <p class="chart-subtitle" id="switzerland-regime-note-fr"></p>
 
                     <div
                         id="chart-switzerland-waterfall-fr"
@@ -441,6 +454,19 @@
                 <div class="chart-card">
                     <h3>Données du canton sélectionné</h3>
 
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="switzerland-data-regime-select-fr">
+                                Régime fiscal
+                            </label>
+
+                            <select id="switzerland-data-regime-select-fr">
+                                <option value="withholding" selected>Impôt à la source</option>
+                                <option value="ordinary">Imposition ordinaire</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <p
                         class="chart-subtitle"
                         id="switzerland-data-canton-caption-fr"
@@ -454,13 +480,17 @@
                                 <tr>
                                     <th>Salaire brut</th>
                                     <th>Net avant impôt</th>
+                                    <th>Impôt</th>
+                                    <th>Net après impôt</th>
                                     <th>Coût employeur</th>
                                     <th>Cotisations salarié</th>
                                     <th>Cotisations employeur</th>
                                     <th>Coin social</th>
+                                    <th>Coin socio-fiscal</th>
                                     <th>Taux salarié</th>
                                     <th>Taux employeur</th>
                                     <th>Coût / net</th>
+                                    <th>Coût / net après impôt</th>
                                 </tr>
                             </thead>
 
@@ -511,14 +541,35 @@
                     <h3>4. Dimension cantonale</h3>
 
                     <p>
-                        Le dataset contient les 26 cantons suisses. L'impôt à la source
-                        (tarif A0, personne seule sans enfant) est calculé séparément pour
-                        chaque canton à partir de son propre barème ; les cotisations
-                        sociales nationales, elles, restent identiques d'un canton à
-                        l'autre.
+                        Le dataset contient les 26 cantons suisses. Les cotisations
+                        sociales nationales restent identiques d'un canton à l'autre ;
+                        l'impôt sur le revenu est calculé séparément pour chaque canton,
+                        selon l'un des deux régimes sélectionnables (voir section 5).
                     </p>
 
-                    <h3>5. Indice du Lab</h3>
+                    <h3>5. Impôt à la source et imposition ordinaire</h3>
+
+                    <p>
+                        Deux régimes fiscaux distincts sont modélisés, sélectionnables via
+                        le menu déroulant « Régime fiscal ». L'<strong>impôt à la source</strong>
+                        (tarif A0, personne seule sans enfant) s'applique aux salariés
+                        étrangers sans permis C ; il est lu directement dans les barèmes
+                        cantonaux officiels 2026 par canton. L'<strong>imposition
+                        ordinaire</strong> (déclaration annuelle) s'applique aux
+                        ressortissants suisses et aux titulaires d'un permis C ; elle
+                        combine trois niveaux : l'impôt fédéral direct (barème national
+                        unique), l'impôt cantonal (barème et mécanisme propres à chaque
+                        canton — brackets marginaux avec coefficient annuel dans la
+                        majorité des cantons, taux fixe pour Uri et Obwald, taux moyen
+                        interpolé sur le revenu total pour Fribourg et le Valais, formule
+                        logarithmique continue pour Bâle-Campagne, mécanisme propre à
+                        Genève combinant centimes additionnels et réduction statutaire de
+                        12 %) et l'impôt communal de la commune de référence (le chef-lieu
+                        cantonal dans chaque cas). Voir docs/data/switzerland pour le
+                        détail complet des sources et des mécanismes par canton.
+                    </p>
+
+                    <h3>6. Indice du Lab</h3>
 
                     <p>
                         L'Indice du Lab mesure l'efficacité salariale du coût du travail,
@@ -531,14 +582,25 @@
                         compare les valeurs à 3 000 et 9 000 CHF bruts.
                     </p>
 
-                    <h3>6. Limites</h3>
+                    <h3>7. Limites</h3>
 
                     <p class="method-note">
-                        Cette version ne simule pas encore l'impôt ordinaire cantonal et
-                        communal (déclaration annuelle, hors prélèvement à la source),
-                        les situations familiales complexes, les déductions fiscales
-                        individuelles, les régimes LPP spécifiques aux entreprises ni les
-                        primes d'assurance maladie.
+                        L'imposition ordinaire ne modélise pas le quotient familial /
+                        splitting (situations familiales autres que célibataire sans
+                        enfant), les plafonds globaux d'imposition revenu + fortune
+                        (« bouclier fiscal », en vigueur notamment à Berne, Lucerne,
+                        Bâle-Ville, Argovie, Vaud, Valais, Tessin et Genève), l'impôt
+                        ecclésiastique, ni les paiements en capital de prévoyance et
+                        gains de liquidation, imposés séparément par la quasi-totalité
+                        des cantons. Pour Bâle-Campagne, la formule logarithmique
+                        continue utilise les paramètres légaux de base (2005) sans la
+                        réindexation annuelle exacte : confiance moyenne. Pour Fribourg
+                        et le Valais, l'interpolation continue du taux moyen prévue par
+                        la loi est approximée par les paliers de classe effectivement
+                        sourcés. Cette version ne modélise pas non plus les situations
+                        familiales complexes hors imposition ordinaire, les déductions
+                        fiscales individuelles, les régimes LPP spécifiques aux
+                        entreprises ni les primes d'assurance maladie.
                     </p>
                 </div>
             </section>
@@ -657,7 +719,20 @@
                                 <option value="20000">CHF 20,000</option>
                             </select>
                         </div>
+
+                        <div class="selector-field">
+                            <label for="switzerland-regime-select-en">
+                                Tax regime
+                            </label>
+
+                            <select id="switzerland-regime-select-en">
+                                <option value="withholding" selected>Withholding tax</option>
+                                <option value="ordinary">Ordinary assessment</option>
+                            </select>
+                        </div>
                     </div>
+
+                    <p class="chart-subtitle" id="switzerland-regime-note-en"></p>
 
                     <div
                         id="chart-switzerland-waterfall-en"
@@ -960,6 +1035,19 @@
                 <div class="chart-card">
                     <h3>Data for the selected canton</h3>
 
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="switzerland-data-regime-select-en">
+                                Tax regime
+                            </label>
+
+                            <select id="switzerland-data-regime-select-en">
+                                <option value="withholding" selected>Withholding tax</option>
+                                <option value="ordinary">Ordinary assessment</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <p
                         class="chart-subtitle"
                         id="switzerland-data-canton-caption-en"
@@ -973,13 +1061,17 @@
                                 <tr>
                                     <th>Gross wage</th>
                                     <th>Net before tax</th>
+                                    <th>Tax</th>
+                                    <th>Net after tax</th>
                                     <th>Employer cost</th>
                                     <th>Employee contributions</th>
                                     <th>Employer contributions</th>
                                     <th>Social wedge</th>
+                                    <th>Total socio-fiscal wedge</th>
                                     <th>Employee rate</th>
                                     <th>Employer rate</th>
                                     <th>Cost / net</th>
+                                    <th>Cost / net after tax</th>
                                 </tr>
                             </thead>
 
@@ -1029,13 +1121,34 @@
                     <h3>4. Cantonal dimension</h3>
 
                     <p>
-                        The dataset contains all 26 Swiss cantons. Withholding tax (A0
-                        tariff, single, no children) is computed separately for each
-                        canton from its own tax scale; national social contributions,
-                        by contrast, remain identical from one canton to another.
+                        The dataset contains all 26 Swiss cantons. National social
+                        contributions remain identical from one canton to another;
+                        income tax is computed separately for each canton, under
+                        either of two selectable regimes (see section 5).
                     </p>
 
-                    <h3>5. Lab Index</h3>
+                    <h3>5. Withholding tax and ordinary assessment</h3>
+
+                    <p>
+                        Two distinct tax regimes are modeled, selectable via the "Tax
+                        regime" dropdown. <strong>Withholding tax</strong> (A0 tariff,
+                        single, no children) applies to foreign workers without a C
+                        permit; it is read directly from the official 2026 cantonal
+                        tariff tables. <strong>Ordinary assessment</strong> (annual tax
+                        return) applies to Swiss citizens and C-permit holders; it
+                        combines three layers: federal direct tax (a single national
+                        scale), cantonal tax (each canton's own scale and mechanism --
+                        standard marginal brackets with an annual coefficient in most
+                        cantons, a flat rate for Uri and Obwalden, a whole-income
+                        interpolated average rate for Fribourg and Valais, a continuous
+                        logarithmic formula for Basel-Landschaft, and Geneva's own
+                        mechanism combining centimes additionnels with a 12% statutory
+                        reduction) and communal tax at the reference municipality (the
+                        cantonal capital in every case). See docs/data/switzerland for
+                        the full detail of sources and per-canton mechanisms.
+                    </p>
+
+                    <h3>6. Lab Index</h3>
 
                     <p>
                         The Lab Index measures the wage efficiency of labour cost, canton
@@ -1048,13 +1161,24 @@
                         at 3,000 and 9,000 CHF gross.
                     </p>
 
-                    <h3>6. Limits</h3>
+                    <h3>7. Limits</h3>
 
                     <p class="method-note">
-                        This version does not yet simulate ordinary cantonal and
-                        communal tax (annual tax return, as opposed to withholding
-                        tax), complex family situations, individual tax deductions,
-                        company-specific LPP plans, or health-insurance premiums.
+                        Ordinary assessment does not model the family quotient /
+                        income-splitting mechanism (household situations other than
+                        single with no children), aggregate income+wealth tax caps
+                        (in effect in Bern, Lucerne, Basel-Stadt, Aargau, Vaud,
+                        Valais, Ticino, Geneva and others), church tax, or capital
+                        pension payments and liquidation gains, taxed separately by
+                        nearly every canton. For Basel-Landschaft, the continuous
+                        logarithmic formula uses the base (2005) legislative
+                        parameters without the exact annual re-indexation: medium
+                        confidence. For Fribourg and Valais, the continuous
+                        rate-interpolation required by law is approximated using the
+                        discrete class boundaries actually sourced. This version also
+                        does not model complex family situations outside ordinary
+                        assessment, individual tax deductions, company-specific LPP
+                        plans, or health-insurance premiums.
                     </p>
                 </div>
             </section>

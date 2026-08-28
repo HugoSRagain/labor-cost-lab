@@ -51,12 +51,14 @@ def compute_employer_levies(
     aof_monthly = contribution_base * profile["aof_rate"]
     zvw_monthly = contribution_base * profile["zvw_rate"]
     wko_monthly = contribution_base * profile["wko_rate"]
+    whk_monthly = contribution_base * profile["whk_rate"]
 
     employer_contributions_monthly = (
         ww_monthly
         + aof_monthly
         + zvw_monthly
         + wko_monthly
+        + whk_monthly
     )
 
     return {
@@ -65,6 +67,7 @@ def compute_employer_levies(
         "aof_monthly_eur": aof_monthly,
         "zvw_monthly_eur": zvw_monthly,
         "wko_monthly_eur": wko_monthly,
+        "whk_monthly_eur": whk_monthly,
         "employer_contributions_monthly_eur": employer_contributions_monthly
     }
 
@@ -139,6 +142,7 @@ def compute_row(
         "aof_rate": profile["aof_rate"],
         "zvw_rate": profile["zvw_rate"],
         "wko_rate": profile["wko_rate"],
+        "whk_rate": profile["whk_rate"],
 
         "contribution_base_monthly_eur": round_money(
             levies["contribution_base_monthly_eur"]
@@ -147,6 +151,7 @@ def compute_row(
         "aof_monthly_eur": round_money(levies["aof_monthly_eur"]),
         "zvw_monthly_eur": round_money(levies["zvw_monthly_eur"]),
         "wko_monthly_eur": round_money(levies["wko_monthly_eur"]),
+        "whk_monthly_eur": round_money(levies["whk_monthly_eur"]),
 
         "employer_contributions_monthly_eur": round_money(
             employer_contributions

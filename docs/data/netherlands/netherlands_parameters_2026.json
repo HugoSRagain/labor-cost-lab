@@ -29,7 +29,8 @@
             "aof_hoog_rate": 0.0763,
             "zvw_werkgeversheffing_rate": 0.0610,
             "wko_rate": 0.0050,
-            "note": "Toutes ces cotisations employeur sont plafonnées au 'maximum premieloon' annuel. Le profil de référence retient : WW taux bas (contrat à durée indéterminée), Aof taux élevé (grand employeur), Zvw-werkgeversheffing et Wko-heffing. Le Whk (Werkhervattingskas, WGA/ZW-flex), spécifique à chaque employeur/secteur, n'est pas modélisé (voir 'limits')."
+            "whk_gemiddelde_premie_2026": 0.0152,
+            "note": "Toutes ces cotisations employeur sont plafonnées au 'maximum premieloon' annuel. Le profil de référence retient : WW taux bas (contrat à durée indéterminée), Aof taux élevé (grand employeur), Zvw-werkgeversheffing, Wko-heffing et le Whk (Werkhervattingskas, WGA + ZW combinés) au taux moyen national 2026 publié par l'UWV (0,96 % + 0,56 % = 1,52 %), puisque le taux réel est propre à chaque employeur et secteur (voir 'limits')."
         }
     },
     "profiles": [
@@ -40,11 +41,12 @@
             "ww_rate": 0.0274,
             "aof_rate": 0.0763,
             "zvw_rate": 0.0610,
-            "wko_rate": 0.0050
+            "wko_rate": 0.0050,
+            "whk_rate": 0.0152
         }
     ],
     "limits": [
-        "Le Whk (gedifferentieerde premie Werkhervattingskas, couvrant WGA/ZW-flex) n'est pas simulé : il est spécifique à chaque employeur et secteur, sans taux national unique.",
+        "Le Whk (gedifferentieerde premie Werkhervattingskas, WGA + ZW) est modélisé au taux moyen national 2026 (1,52 %) publié par l'UWV, et non au taux réel propre à chaque employeur et secteur (gedifferentieerde premie individuelle pour les grands employeurs, taux sectoriel pour les petits) : confiance moyenne.",
         "Les cotisations de pension complémentaire (pensioenpremie) ne sont pas simulées : elles ne sont pas fixées par la loi mais par fonds de pension/CAO.",
         "Le profil retient l'Aof taux élevé (grand employeur) et le WW taux bas (contrat à durée indéterminée) ; ce sont des choix explicites, ajustables.",
         "Les crédits d'impôt dépendant d'un partenaire (IACK, etc.) et les situations de foyer autres que célibataire sans enfant ne sont pas simulées.",

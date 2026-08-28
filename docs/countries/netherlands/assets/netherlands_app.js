@@ -57,6 +57,7 @@ const NETHERLANDS_COLORS = {
     aof: "#ea580c",
     zvw: "#0d9488",
     wko: "#a16207",
+    whk: "#65a30d",
     wedge: "#f97316",
     total: "#0f172a"
 };
@@ -323,6 +324,7 @@ function renderNetherlandsWaterfallChart(lang) {
     const aof = deNum(row.aof_monthly_eur);
     const zvw = deNum(row.zvw_monthly_eur);
     const wko = deNum(row.wko_monthly_eur);
+    const whk = deNum(row.whk_monthly_eur);
     const employerCost = deNum(row.employer_cost_monthly_eur);
 
     const multipleLabel = lang === "en"
@@ -339,13 +341,14 @@ function renderNetherlandsWaterfallChart(lang) {
         lang === "en"
             ? "Detailed breakdown of the path from net wage after loonheffing "
                 + "to total employer cost (employer contributions detailed by "
-                + "WW: unemployment, Aof: disability, Zvw: health and Wko: "
-                + "childcare), for a gross wage of "
+                + "WW: unemployment, Aof: disability, Zvw: health, Wko: "
+                + "childcare and Whk: return-to-work fund), for a gross wage of "
                 + deEuro(gross, lang) + " €."
             : "Décomposition détaillée du passage du salaire net après loonheffing "
                 + "au coût employeur total (cotisations employeur détaillées par "
-                + "WW : chômage, Aof : invalidité, Zvw : maladie et Wko : garde "
-                + "d'enfants), pour un salaire brut de "
+                + "WW : chômage, Aof : invalidité, Zvw : maladie, Wko : garde "
+                + "d'enfants et Whk : fonds de reprise du travail), pour un "
+                + "salaire brut de "
                 + deEuro(gross, lang) + " €."
     );
 
@@ -358,6 +361,7 @@ function renderNetherlandsWaterfallChart(lang) {
             "Aof (disability)",
             "Zvw (health)",
             "Wko (childcare)",
+            "Whk (return-to-work fund)",
             "Employer cost"
         ]
         : [
@@ -368,6 +372,7 @@ function renderNetherlandsWaterfallChart(lang) {
             "Aof (invalidité)",
             "Zvw (maladie)",
             "Wko (garde d'enfants)",
+            "Whk (fonds de reprise du travail)",
             "Coût employeur"
         ];
 
@@ -383,6 +388,7 @@ function renderNetherlandsWaterfallChart(lang) {
                 "relative",
                 "relative",
                 "relative",
+                "relative",
                 "total"
             ],
             x: labels,
@@ -394,6 +400,7 @@ function renderNetherlandsWaterfallChart(lang) {
                 aof,
                 zvw,
                 wko,
+                whk,
                 employerCost
             ],
             text: [
@@ -404,6 +411,7 @@ function renderNetherlandsWaterfallChart(lang) {
                 "+" + deEuro(aof, lang) + " €",
                 "+" + deEuro(zvw, lang) + " €",
                 "+" + deEuro(wko, lang) + " €",
+                "+" + deEuro(whk, lang) + " €",
                 deEuro(employerCost, lang) + " €"
             ],
             textposition: "outside",
@@ -650,6 +658,20 @@ function renderNetherlandsEmployerLeviesChart(lang) {
             hovertemplate:
                 "%{x:.2f} × WML<br>" +
                 "Wko : %{y:,.0f} €<extra></extra>"
+        },
+        {
+            x: x,
+            y: data.map(row => deNum(row.whk_monthly_eur)),
+            type: "scatter",
+            mode: "lines",
+            name: lang === "en" ? "Whk (return-to-work fund)" : "Whk (fonds de reprise du travail)",
+            line: {
+                color: NETHERLANDS_COLORS.whk,
+                width: 2
+            },
+            hovertemplate:
+                "%{x:.2f} × WML<br>" +
+                "Whk : %{y:,.0f} €<extra></extra>"
         },
         {
             x: x,
