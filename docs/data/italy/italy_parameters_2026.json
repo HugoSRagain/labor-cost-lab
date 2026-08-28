@@ -1,0 +1,117 @@
+{
+    "country": "Italy",
+    "country_code": "IT",
+    "version": "2026-01",
+    "effective_from": "2026-01-01",
+    "status": "prototype_v1",
+    "currency": "EUR",
+    "wage_reference": {
+        "name": "CCNL Commercio, Terziario e Distribuzione e Servizi (Confcommercio), minimo tabellare Livello 3",
+        "gross_monthly_eur": 2314.5617,
+        "monthly_payments_count": 14,
+        "raw_monthly_payment_eur": 1983.91,
+        "source": "CCNL Commercio-Confcommercio, Testo Unico signe le 3 fevrier 2026, valeurs en vigueur au 1er novembre 2025",
+        "note": "L'Italie n'a pas de salaire minimum legal : c'est l'un des 5 pays de l'UE (avec l'Autriche, le Danemark, la Finlande et la Suede) qui s'appuient exclusivement sur la negociation collective de branche (CCNL), laquelle couvre plus de 80 % des salaries du prive. Le decret-loi n. 62/2026 (\"salario giusto\", en vigueur depuis le 1er mai 2026) introduit un mecanisme de remuneration minimale garantie pour les salaries non couverts par un CCNL, mais il ne fixe aucun montant unique : il renvoie au CCNL \"le plus representatif\" de chaque secteur, determine par le CNEL. En l'absence d'un chiffre national unique, ce module retient par convention le minimo tabellare du Niveau 3 du CCNL Commercio (le CCNL le plus cite et le plus large en couverture, environ 3 millions de salaries), soit 1 983,91 EUR verses en 14 mensualites (12 mois + tredicesima + quattordicesima), proratise sur 12 mois selon la convention deja utilisee pour le SMI espagnol (1 983,91 x 14 / 12 = 2 314,56 EUR/mois). Un chiffre alternatif tres proche (CCNL Metalmeccanici Industria, niveau C1, 2 022,12 EUR/mois a compter du 1er juin 2026, soit environ 2 % de plus) confirme que le choix du CCNL de reference ne fait pas fortement varier ce repere. Confiance : moyenne (choix methodologique documente, non un salaire minimum legal)."
+    },
+    "grid": {
+        "min_multiple": 0.80,
+        "max_multiple": 6.00,
+        "step": 0.01
+    },
+    "social_security": {
+        "reference_profile_note": "Salarie standard du secteur prive (operaio/impiegato), CDI, entreprise de plus de 50 salaries (soumise a la CIGS et au taux CIGO le plus eleve), integralement dans le systeme contributif (carriere de cotisation commencee apres le 31/12/1995 -- le cas de la quasi-totalite de la population active actuelle), residence a Rome (Latium), sans charge de famille, sans autre revenu.",
+        "inps_2026": {
+            "source": "INPS, Circolare n. 6 del 30 gennaio 2026 (valori contributivi e retributivi 2026)",
+            "ivs_fplr": {
+                "employer_rate": 0.2381,
+                "employee_rate": 0.0919,
+                "note": "IVS (invalidita, vecchiaia, superstiti), Fondo Pensioni Lavoratori Dipendenti. Taux plafonnes au massimale contributivo annuel."
+            },
+            "aggiuntivo_1_percent": {
+                "employee_rate": 0.01,
+                "threshold_annual_eur": 56224.00,
+                "note": "Cotisation salariale additionnelle de 1 % (art. 3-ter, L. 438/1992) sur la part de la remuneration pensionnable annuelle depassant la « prima fascia » (56 224 EUR en 2026), elle-meme plafonnee au massimale contributivo."
+            },
+            "massimale_contributivo_annual_eur": 122295.00,
+            "massimale_note": "Plafond annuel de la base de cotisation IVS (art. 2, comma 18, L. 335/1995), applicable aux salaries integralement dans le systeme contributif -- hypothese retenue par ce module.",
+            "naspi_employer_rate": 0.0161,
+            "cigo_employer_rate": 0.0200,
+            "cigo_note": "Taux pour une entreprise de plus de 50 salaries (art. 13, D.Lgs. 148/2015) ; 1,70 % pour les entreprises de 50 salaries ou moins.",
+            "cigs": {
+                "employer_rate": 0.0060,
+                "employee_rate": 0.0030,
+                "note": "Cassa integrazione guadagni straordinaria (art. 23, D.Lgs. 148/2015), entreprises de plus de 15 salaries."
+            },
+            "maternita_employer_rate": 0.0046,
+            "fondo_garanzia_tfr_employer_rate": 0.0020,
+            "cuaf_employer_rate": 0.0068,
+            "cuaf_note": "Ex-CUAF (assegni familiari) : cotisation maintenue a la charge de l'employeur meme apres la reforme de l'Assegno Unico Universale (2022), qui a supprime les versements ANF sans supprimer la cotisation.",
+            "inail_employer_rate_illustrative": 0.0050,
+            "inail_note": "L'INAIL ne publie pas de taux moyen unique : les taux varient d'environ 0,3 % a 11,0 % (plafond legal) selon la classe de risque du poste. Ce module retient 0,50 % a titre illustratif, coherent avec un profil de bureau/commerce a faible risque -- ce n'est pas un taux moyen publie par l'INAIL."
+        },
+        "tfr": {
+            "divisor": 13.5,
+            "base_reduction_rate": 0.005,
+            "effective_rate_approx": 0.069074,
+            "source": "Art. 2120 Code civil italien ; loi n. 297 du 29 mai 1982",
+            "note": "Le TFR (trattamento di fine rapporto) est une indemnite de depart differee obligatoire, accumulee chaque annee a hauteur de la remuneration annuelle divisee par 13,5, diminuee de 0,5 % de la meme base (soit environ 6,91 % du brut annuel), puis revalorisee chaque 31 decembre. Conformement a la pratique comptable italienne standard (« costo azienda », poste B9 du compte de resultat), le TFR est inclus dans le cout employeur total comme une ligne distincte de remuneration differee : il augmente le cout du travail mais n'est PAS disponible immediatement pour le salarie (il est verse a la rupture du contrat, ou par avance partielle dans des cas specifiques)."
+        }
+    },
+    "income_tax": {
+        "irpef_2026": {
+            "source": "Legge di Bilancio 2026 (L. 199/2025)",
+            "brackets": [
+                {"upper_bound_eur": 28000, "rate": 0.23},
+                {"upper_bound_eur": 50000, "rate": 0.33},
+                {"upper_bound_eur": null, "rate": 0.43}
+            ],
+            "note": "Bareme marginal national. La baisse de la 2e tranche (35 % -> 33 %) est neutralisee pour les revenus superieurs a 200 000 EUR (non pertinent pour la grille de ce module)."
+        },
+        "detrazione_lavoro_dipendente": {
+            "source": "Art. 13 TUIR (DPR 917/1986)",
+            "note": "Credit d'impot pour revenu d'emploi, degressif en 3 segments entre 15 000 et 50 000 EUR de revenu complessivo (base = revenu brut annuel diminue des cotisations salariales INPS), plus 65 EUR supplementaires pour un revenu strictement compris entre 25 000 et 35 000 EUR (comma 1.1). Voir analysis/italy/italian_payroll_2026.py pour la formule complete."
+        },
+        "ulteriore_detrazione_2024_reform": {
+            "source": "Legge di Bilancio 2025 (L. 207/2024), art. 1, commi 2-3, stabilisee pour 2026 par la L. 199/2025",
+            "amount_eur": 1000,
+            "note": "1 000 EUR forfaitaires pour un revenu compris entre 20 000 EUR (exclu) et 32 000 EUR (inclus), degressif lineairement jusqu'a 0 EUR a 40 000 EUR."
+        },
+        "trattamento_integrativo": {
+            "source": "Decret-loi n. 3 du 5 fevrier 2020 (conv. L. 21/2020), stabilise pour 2026",
+            "amount_eur": 1200,
+            "note": "1 200 EUR/an inconditionnels si le revenu complessivo est inferieur ou egal a 15 000 EUR ; entre 15 000 et 28 000 EUR, un mecanisme de « verification » verse la difference positive entre la detrazione lavoro dipendente et l'IRPEF brute, plafonnee a 1 200 EUR (peut rendre l'impot national final negatif, c'est-a-dire un versement net au salarie). A ce module retient : non actif sur toute la grille de salaire retenue (le salaire de reference est deja trop eleve pour declencher ce mecanisme), modelise neanmoins pour la completude et l'exactitude du moteur."
+        },
+        "addizionale_regionale_lazio_2026": {
+            "source": "Region du Latium, Legge Regionale n. 20 du 31 decembre 2025",
+            "threshold_eur": 28000,
+            "rate_below": 0.0173,
+            "rate_above": 0.0333,
+            "smoothing_credit_eur": 60,
+            "smoothing_upper_bound_eur": 30000,
+            "note": "Contrairement a l'IRPEF national, l'addizionale regionale n'est PAS marginale : le taux applicable s'applique a la totalite du revenu imposable des qu'un seuil est franchi (mecanisme « par palier », avec un credit de lissage de 60 EUR pour attenuer l'effet de seuil entre 28 000 et 30 000 EUR). Fourchette nationale : de 1,23 % (taux plancher) a 3,33 % (plafond) selon la region."
+        },
+        "addizionale_comunale_roma_2026": {
+            "source": "Rome Capitale, Deliberazione dell'Assemblea Capitolina n. 186 del 19 dicembre 2024",
+            "exemption_threshold_eur": 14000,
+            "rate": 0.0090,
+            "note": "Taux unique de 0,90 %, applique a la totalite du revenu imposable des que celui-ci depasse 14 000 EUR (effet de seuil, pas une tranche exoneree). Fourchette nationale : de 0 % a 0,8 % pour la plupart des communes, jusqu'a 0,9 % pour les communes chefs-lieux de province (dont Rome)."
+        }
+    },
+    "profiles": [
+        {
+            "profile_id": "italy__standard_employee_roma_lazio",
+            "label_fr": "Italie · salarie standard (Rome, Latium)",
+            "label_en": "Italy · standard employee (Rome, Lazio)"
+        }
+    ],
+    "limits": [
+        "L'Italie n'a pas de salaire minimum legal : le salaire de reference 1,0x de ce module est un choix methodologique (minimo tabellare du CCNL Commercio, niveau 3), pas un plancher legal ni le resultat unique et incontestable d'une negociation collective -- un autre CCNL de reference (par exemple Metalmeccanici) donnerait un chiffre proche mais different.",
+        "Une seule region (Latium) et une seule commune (Rome) sont modelisees pour l'addizionale regionale et l'addizionale comunale ; l'addizionale regionale varie de 1,23 % a 3,33 % et l'addizionale comunale de 0 % a 0,9 % selon la localisation en Italie.",
+        "Le taux INAIL (assurance accidents du travail) est illustratif (0,50 %, profil bureau/commerce a faible risque) : l'INAIL ne publie pas de taux moyen national, les taux reels varient d'environ 0,3 % a 11,0 % selon la classe de risque du poste.",
+        "Le CIGO est modelise au taux applicable aux entreprises de plus de 50 salaries (2,00 %) ; les entreprises plus petites beneficient d'un taux reduit (1,70 %).",
+        "Le plafond de cotisation IVS (massimale contributivo, 122 295 EUR/an en 2026) suppose que le salarie a integralement commence sa carriere de cotisation apres le 31 decembre 1995 (systeme contributif) ; les salaries dont la carriere a debute avant cette date (systeme retributivo ou mixte) ne sont pas soumis a ce plafond.",
+        "Le mecanisme du trattamento integrativo (ex-bonus Renzi) est modelise mais ne se declenche a aucun point de la grille de salaire retenue, le salaire de reference etant deja superieur au niveau ou ce mecanisme s'active.",
+        "Les dispositifs fiscaux exceptionnels 2026 (imposition substitutive a 5 % sur les augmentations salariales issues du renouvellement des CCNL, a 15 % sur les indemnites de nuit/travail poste/astreinte, seuils d'exoneration des avantages en nature) ne sont pas modelises, le profil de reference ne comportant que le salaire de base.",
+        "Le TFR est integre au cout employeur comme une ligne de remuneration differee distincte : il n'est pas disponible immediatement pour le salarie (verse a la rupture du contrat), a la difference du salaire net."
+    ]
+}

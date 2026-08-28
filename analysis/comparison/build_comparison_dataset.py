@@ -1,6 +1,6 @@
 """
 Labor Cost Lab
-Cross-country comparison dataset builder (France, Germany, Belgium, Switzerland, Netherlands, United Kingdom, Ireland, Spain, Sweden).
+Cross-country comparison dataset builder (France, Germany, Belgium, Switzerland, Netherlands, United Kingdom, Ireland, Spain, Sweden, Italy).
 
 Methodology
 -----------
@@ -31,6 +31,9 @@ local-currency wage:
                  national). Navarra and Pais Vasco are excluded (foral systems).
     Sweden:      analysis/sweden/build_sweden_dataset.py (compute_row), single
                  reference profile (Stockholm kommun).
+    Italy:       analysis/italy/build_italy_dataset.py (compute_row), single
+                 reference profile (Roma/Lazio), employer_cost includes the
+                 TFR deferred severance accrual.
 
 Important note on the United Kingdom: income tax is a population-weighted
 average of the rUK (England/Wales/Northern Ireland) and Scotland devolved
@@ -142,6 +145,7 @@ sys.path.insert(0, str(ROOT_DIR / "analysis" / "uk"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "ireland"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "spain"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "sweden"))
+sys.path.insert(0, str(ROOT_DIR / "analysis" / "italy"))
 
 import pandas as pd  # noqa: E402
 
@@ -199,6 +203,11 @@ from build_spain_dataset import (  # noqa: E402
 from build_sweden_dataset import (  # noqa: E402
     compute_row as se_compute_row,
     load_parameters as se_load_parameters,
+)
+
+from build_italy_dataset import (  # noqa: E402
+    compute_row as it_compute_row,
+    load_parameters as it_load_parameters,
 )
 
 
@@ -954,6 +963,89 @@ def compute_sweden_row(
     return row
 
 
+def compute_italy_row(
+    wage_point_intl_usd: float,
+    ppp_factor: float,
+    profile: Dict[str, Any],
+    parameters: Dict[str, Any],
+) -> Dict[str, Any]:
+    gross_local = wage_point_intl_usd * ppp_factor
+    wage_reference = parameters["wage_reference"]["gross_monthly_eur"]
+    smic_multiple = gross_local / wage_reference
+
+    result = it_compute_row(profile, smic_multiple, parameters)
+
+    employer_cost = result["employer_cost_monthly_eur"]
+    net_before_income_tax = result["net_before_income_tax_monthly_eur"]
+    net_after_income_tax = result["net_after_income_tax_monthly_eur"]
+    income_tax = result["income_tax_monthly_eur"]
+
+    row = base_row(
+        country="Italy",
+        country_code="IT",
+        currency_code="EUR",
+        reference_profile_id=profile["profile_id"],
+        reference_profile_description=(
+            "Standard, single, childless private-sector employee, open-ended "
+            "contract, firm with more than 50 employees, Roma/Lazio as the "
+            "reference region and municipality."
+        ),
+        harmonized_wage_point_intl_usd=wage_point_intl_usd,
+        ppp_factor=ppp_factor,
+    )
+
+    cost_to_net_ratio = result["cost_to_net_ratio"]
+    cost_to_net_after_ratio = result["cost_to_net_after_income_tax_ratio"]
+
+    row.update(
+        {
+            "gross_monthly_local": round_money(result["gross_monthly_eur"]),
+            "gross_monthly_intl_usd": round_money(result["gross_monthly_eur"] / ppp_factor),
+            "employee_contributions_monthly_local": round_money(result["employee_contributions_monthly_eur"]),
+            "employee_contributions_monthly_intl_usd": round_money(result["employee_contributions_monthly_eur"] / ppp_factor),
+            "employer_contributions_monthly_local": round_money(result["employer_contributions_monthly_eur"]),
+            "employer_contributions_monthly_intl_usd": round_money(result["employer_contributions_monthly_eur"] / ppp_factor),
+            "net_before_income_tax_monthly_local": round_money(net_before_income_tax),
+            "net_before_income_tax_monthly_intl_usd": round_money(net_before_income_tax / ppp_factor),
+            "income_tax_or_withholding_tax_monthly_local": round_money(income_tax),
+            "income_tax_or_withholding_tax_monthly_intl_usd": round_money(income_tax / ppp_factor),
+            "net_after_income_tax_monthly_local": round_money(net_after_income_tax),
+            "net_after_income_tax_monthly_intl_usd": round_money(net_after_income_tax / ppp_factor),
+            "employer_cost_monthly_local": round_money(employer_cost),
+            "employer_cost_monthly_intl_usd": round_money(employer_cost / ppp_factor),
+            "social_wedge_before_income_tax_rate": round(
+                (employer_cost - net_before_income_tax) / employer_cost, 6
+            ) if employer_cost else None,
+            "total_wedge_after_income_tax_rate": round(
+                (employer_cost - net_after_income_tax) / employer_cost, 6
+            ) if employer_cost else None,
+            "cost_to_net_before_income_tax_ratio": round(cost_to_net_ratio, 6)
+            if cost_to_net_ratio == cost_to_net_ratio else None,
+            "cost_to_net_after_income_tax_ratio": round(cost_to_net_after_ratio, 6)
+            if cost_to_net_after_ratio == cost_to_net_after_ratio else None,
+            "income_tax_modeled": True,
+            "aggregation_method": "single_reference_profile",
+            "below_minimum_wage": bool(gross_local < wage_reference),
+            "national_minimum_wage_monthly_local": round_money(wage_reference),
+            "note": (
+                "Italy has no statutory minimum wage; the reference wage is "
+                "the CCNL Commercio Livello 3 minimo tabellare, a "
+                "methodological choice, not a legal minimum. employer_cost "
+                "includes the TFR (trattamento di fine rapporto) deferred "
+                "severance accrual (~6.91% of gross annual pay), following "
+                "standard Italian payroll cost accounting; TFR is a "
+                "personnel cost but is not available to the employee as "
+                "current net pay. Income tax bundles national IRPEF plus "
+                "the Lazio addizionale regionale and Roma addizionale "
+                "comunale (both tiered-flat surcharges on the whole taxable "
+                "income, not marginal brackets)."
+            ),
+        }
+    )
+
+    return row
+
+
 def compute_spain_row(
     wage_point_intl_usd: float,
     ppp_factor: float,
@@ -1164,6 +1256,14 @@ def build_dataset() -> pd.DataFrame:
         if profile["profile_id"] == se_profile_id
     )
 
+    # --- Italy setup ---
+    it_parameters = it_load_parameters()
+    it_profile_id = parameters["reference_profiles"]["IT"]["profile_id"]
+    it_profile = next(
+        profile for profile in it_parameters["profiles"]
+        if profile["profile_id"] == it_profile_id
+    )
+
     rows: List[Dict[str, Any]] = []
 
     for wage_point in wage_grid:
@@ -1253,6 +1353,15 @@ def build_dataset() -> pd.DataFrame:
                 ppp_values["SE"],
                 se_profile,
                 se_parameters,
+            )
+        )
+
+        rows.append(
+            compute_italy_row(
+                wage_point,
+                ppp_values["IT"],
+                it_profile,
+                it_parameters,
             )
         )
 

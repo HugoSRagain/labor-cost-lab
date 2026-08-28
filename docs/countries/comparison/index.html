@@ -141,7 +141,7 @@
     </style>
 
     <script defer src="../../assets/i18n_common.js?v=3"></script>
-    <script defer src="./assets/comparison_app.js?v=8"></script>
+    <script defer src="./assets/comparison_app.js?v=9"></script>
 </head>
 
 <body>
@@ -165,9 +165,9 @@
                 <h1>Comparaison internationale du coût du travail</h1>
 
                 <p>
-                    Ce module met en regard les neuf modules nationaux (France,
+                    Ce module met en regard les dix modules nationaux (France,
                     Allemagne, Belgique, Suisse, Pays-Bas, Royaume-Uni, Irlande,
-                    Espagne, Suède) sur
+                    Espagne, Suède, Italie) sur
                     une grille de salaires harmonisée, exprimée en dollars internationaux
                     (parité de pouvoir d'achat), afin de comparer des niveaux de
                     vie équivalents plutôt que des salaires nominaux.
@@ -219,7 +219,7 @@
                         class="chart-subtitle"
                         id="comparison-metrics-subtitle-fr"
                     >
-                        Valeurs des 9 pays au point de salaire harmonisé
+                        Valeurs des 10 pays au point de salaire harmonisé
                         sélectionné, exprimées en dollars internationaux (PPA).
                     </p>
 
@@ -288,6 +288,12 @@
                             <strong id="metric-comparison-se-net-fr">—</strong>
                             <span class="metric-note">Net avant impôt, intl $</span>
                         </article>
+
+                        <article class="metric-card">
+                            <span class="metric-label">Italie</span>
+                            <strong id="metric-comparison-it-net-fr">—</strong>
+                            <span class="metric-note">Net avant impôt, intl $</span>
+                        </article>
                     </section>
                 </div>
 
@@ -295,7 +301,7 @@
                     <h2>Graphiques comparatifs</h2>
 
                     <p>
-                        Les graphiques suivants comparent les 9 pays sur toute la
+                        Les graphiques suivants comparent les 10 pays sur toute la
                         grille de salaires harmonisée, en dollars internationaux
                         (PPA). Chaque courbe est calculée directement par le
                         moteur du module national correspondant.
@@ -308,7 +314,7 @@
 
                         <p class="chart-subtitle">
                             Salaire net de cotisations sociales, comparable entre
-                            les 9 pays.
+                            les 10 pays.
                         </p>
 
                         <div
@@ -507,6 +513,7 @@
                                     <th>Irlande</th>
                                     <th>Espagne</th>
                                     <th>Suède</th>
+                                    <th>Italie</th>
                                 </tr>
                             </thead>
 
@@ -535,8 +542,8 @@
                         Ce module ne redéfinit aucun paramètre national : il
                         réutilise directement les moteurs de calcul des modules
                         France, Allemagne, Belgique, Suisse, Pays-Bas,
-                        Royaume-Uni, Irlande, Espagne et Suède, à des points de
-                        salaire communs.
+                        Royaume-Uni, Irlande, Espagne, Suède et Italie, à des
+                        points de salaire communs.
                     </p>
 
                     <h3>1. Grille de salaires harmonisée</h3>
@@ -545,7 +552,7 @@
                         21 points de salaire, de 2 000 à 12 000 dollars
                         internationaux mensuels par pas de 500. La borne basse est
                         volontairement fixée sous le plancher de salaire minimum
-                        (ou de référence) des 9 pays, une fois converti en dollars
+                        (ou de référence) des 10 pays, une fois converti en dollars
                         internationaux, afin que les grilles de salaire les plus
                         basses restent visibles. Les points de salaire inférieurs
                         au minimum légal d'un pays sont signalés par un
@@ -559,7 +566,9 @@
                         Wage) environ 3 025, Pays-Bas (WML, salaire minimum
                         légal) environ 3 152, Allemagne environ 3 434, Suède
                         (seuil Migrationsverket, non un salaire minimum légal,
-                        voir la section 11) environ 4 020.
+                        voir la section 11) environ 4 020, Italie (CCNL
+                        Commercio, non un salaire minimum légal, voir la
+                        section 12) environ 3 702.
                     </p>
 
                     <h3>2. Conversion par parité de pouvoir d'achat</h3>
@@ -571,7 +580,7 @@
                         ménages (Banque mondiale, Programme de comparaison
                         internationale, indicateur PA.NUS.PRVT.PP, année de
                         référence 2024). Ce facteur est appliqué individuellement
-                        aux 9 pays, y compris la Suisse, selon la même logique que
+                        aux 10 pays, y compris la Suisse, selon la même logique que
                         les comparaisons « Taxing Wages » de l'OCDE.
                     </p>
 
@@ -614,7 +623,12 @@
                         de 31,42 %, sans plafond), aucune cotisation salariale
                         visible (l'allman pensionsavgift de 7 % est
                         intégralement compensée par un crédit d'impôt
-                        équivalent).
+                        équivalent). Italie : salarié célibataire sans enfant,
+                        Rome et le Latium comme région et commune de référence
+                        (IRPEF national, addizionale regionale et addizionale
+                        comunale), cotisations INPS salarié et employeur, coût
+                        employeur incluant le TFR (indemnité de départ
+                        différée, environ 6,91 % du brut annuel).
                     </p>
 
                     <h3>5. Agrégation cantonale suisse</h3>
@@ -814,7 +828,42 @@
                         Méthodologie du module Suède pour le détail complet.
                     </p>
 
-                    <h3>12. Lab-E</h3>
+                    <h3>12. Salaire de référence, cotisations et impôt sur le revenu en Italie</h3>
+
+                    <p>
+                        L'Italie n'a pas de salaire minimum légal non plus :
+                        c'est l'un des 5 pays de l'Union européenne (avec
+                        l'Autriche, le Danemark, la Finlande et la Suède) qui
+                        s'appuient exclusivement sur la négociation collective
+                        de branche (CCNL), laquelle couvre plus de 80 % des
+                        salariés du privé. Ce module retient comme salaire de
+                        référence le minimo tabellare de niveau 3 du CCNL
+                        Commercio (Confcommercio), soit 1 983,91 EUR/mois versés
+                        en 14 mensualités, proratisé sur 12 mois à 2 314,56
+                        EUR/mois — un choix méthodologique, pas un salaire
+                        minimum légal.
+                    </p>
+
+                    <p>
+                        Les indicateurs « cotisations salarié » et « cotisations
+                        employeur » de l'Italie correspondent aux cotisations
+                        INPS uniquement. Le « coût employeur » italien inclut en
+                        outre le TFR (trattamento di fine rapporto), une
+                        indemnité de départ différée obligatoire (environ 6,91 %
+                        du brut annuel) qui est une charge de personnel réelle
+                        au sens de la comptabilité italienne standard, mais qui
+                        n'est pas disponible pour le salarié comme net immédiat
+                        — à la différence de tous les autres pays de cette
+                        comparaison. L'impôt sur le revenu regroupe l'IRPEF
+                        national avec l'addizionale regionale du Latium et
+                        l'addizionale comunale de Rome, deux mécanismes « par
+                        palier » (taux unique appliqué à la totalité du revenu
+                        imposable une fois un seuil franchi), et non des
+                        tranches marginales progressives. Voir l'onglet
+                        Méthodologie du module Italie pour le détail complet.
+                    </p>
+
+                    <h3>13. Lab-E</h3>
 
                     <p>
                         L'indicateur Lab-E (100 × net avant impôt / coût employeur)
@@ -830,7 +879,7 @@
 
                     <p class="method-note">
                         Le Lab-E néerlandais est structurellement surestimé par rapport
-                        aux 8 autres pays : le loonheffing fusionne l'assurance nationale
+                        aux autres pays : le loonheffing fusionne l'assurance nationale
                         et l'impôt sur le revenu, si bien que le « net avant impôt »
                         utilisé ici est proche du salaire brut pour les Pays-Bas (voir la
                         note sur les Pays-Bas plus haut). Le Lab-E suédois, en revanche,
@@ -839,10 +888,16 @@
                         salariale de pension est réellement neutralisée par un crédit
                         d'impôt équivalent, et non parce qu'une cotisation non nulle
                         serait fusionnée dans l'impôt affiché (voir la section 11
-                        ci-dessus et l'onglet Méthodologie du module Suède).
+                        ci-dessus et l'onglet Méthodologie du module Suède). Le Lab-E
+                        italien, lui, est structurellement le plus bas de la comparaison
+                        — mais pour une troisième raison distincte : le coût employeur
+                        italien inclut réellement le TFR, une charge de personnel
+                        effective qui reviendra au salarié plus tard (à la rupture du
+                        contrat) mais n'est pas disponible comme net immédiat (voir la
+                        section 12 ci-dessus et l'onglet Méthodologie du module Italie).
                     </p>
 
-                    <h3>13. Limites</h3>
+                    <h3>14. Limites</h3>
 
                     <p class="method-note">
                         Le calcul de l'impôt sur le revenu suppose un salarié
@@ -875,9 +930,9 @@
                 <h1>Cross-country comparison of labour costs</h1>
 
                 <p>
-                    This module compares the nine national modules (France,
+                    This module compares the ten national modules (France,
                     Germany, Belgium, Switzerland, Netherlands, United Kingdom,
-                    Ireland, Spain, Sweden) on a harmonized
+                    Ireland, Spain, Sweden, Italy) on a harmonized
                     wage grid, expressed in international dollars (purchasing
                     power parity), to compare equivalent standards of living
                     rather than nominal wages.
@@ -929,7 +984,7 @@
                         class="chart-subtitle"
                         id="comparison-metrics-subtitle-en"
                     >
-                        Values for the 9 countries at the selected harmonized
+                        Values for the 10 countries at the selected harmonized
                         wage point, expressed in international dollars (PPP).
                     </p>
 
@@ -998,6 +1053,12 @@
                             <strong id="metric-comparison-se-net-en">—</strong>
                             <span class="metric-note">Net before tax, intl $</span>
                         </article>
+
+                        <article class="metric-card">
+                            <span class="metric-label">Italy</span>
+                            <strong id="metric-comparison-it-net-en">—</strong>
+                            <span class="metric-note">Net before tax, intl $</span>
+                        </article>
                     </section>
                 </div>
 
@@ -1005,7 +1066,7 @@
                     <h2>Comparative charts</h2>
 
                     <p>
-                        The charts below compare the 9 countries across the
+                        The charts below compare the 10 countries across the
                         whole harmonized wage grid, in international dollars
                         (PPP). Each curve is computed directly by the matching
                         national module's engine.
@@ -1018,7 +1079,7 @@
 
                         <p class="chart-subtitle">
                             Wage net of social contributions, comparable
-                            across the 9 countries.
+                            across the 10 countries.
                         </p>
 
                         <div
@@ -1219,6 +1280,7 @@
                                     <th>Ireland</th>
                                     <th>Spain</th>
                                     <th>Sweden</th>
+                                    <th>Italy</th>
                                 </tr>
                             </thead>
 
@@ -1247,8 +1309,8 @@
                         This module does not redefine any national parameter:
                         it directly reuses the calculation engines of the
                         France, Germany, Belgium, Switzerland, Netherlands,
-                        United Kingdom, Ireland, Spain and Sweden modules, at
-                        common wage points.
+                        United Kingdom, Ireland, Spain, Sweden and Italy
+                        modules, at common wage points.
                     </p>
 
                     <h3>1. Harmonized wage grid</h3>
@@ -1257,7 +1319,7 @@
                         21 wage points, from 2,000 to 12,000 international
                         dollars per month in steps of 500. The lower bound is
                         deliberately set below the minimum (or reference) wage
-                        floor of the 9 countries, once converted to
+                        floor of the 10 countries, once converted to
                         international dollars, so that the lowest wage ranges
                         remain visible. Wage points below a country's legal
                         minimum are flagged with an asterisk (*) in the Data
@@ -1269,8 +1331,10 @@
                         Wage) about 2,711, Belgium (RMMMG) about 2,911, United
                         Kingdom (National Living Wage) about 3,025, Netherlands
                         (WML, statutory minimum wage) about 3,152, Germany
-                        about 3,434, Sweden (Migrationsverket threshold, not a
-                        statutory minimum wage, see section 11) about 4,020.
+                        about 3,434, Italy (CCNL Commercio, not a statutory
+                        minimum wage, see section 12) about 3,702, Sweden
+                        (Migrationsverket threshold, not a statutory minimum
+                        wage, see section 11) about 4,020.
                     </p>
 
                     <h3>2. Conversion by purchasing power parity</h3>
@@ -1281,7 +1345,7 @@
                         private-consumption purchasing-power-parity conversion
                         factor (World Bank, International Comparison Program,
                         indicator PA.NUS.PRVT.PP, 2024 reference year). This
-                        factor is applied individually to the 9 countries,
+                        factor is applied individually to the 10 countries,
                         including Switzerland, following the same logic as the
                         OECD's "Taxing Wages" comparisons.
                     </p>
@@ -1325,6 +1389,12 @@
                         (employer contributions, flat 31.42% rate, no ceiling),
                         no visible employee contribution (the 7% allman
                         pensionsavgift is fully offset by an equal tax credit).
+                        Italy: single, childless employee, Rome and Lazio as
+                        the reference municipality and region (national
+                        IRPEF, addizionale regionale and addizionale
+                        comunale), INPS employee and employer contributions,
+                        employer cost including TFR (deferred severance
+                        accrual, about 6.91% of annual gross pay).
                     </p>
 
                     <h3>5. Swiss cantonal aggregation</h3>
@@ -1518,7 +1588,40 @@
                         tab for full detail.
                     </p>
 
-                    <h3>12. Lab-E</h3>
+                    <h3>12. Reference wage, contributions and income tax in Italy</h3>
+
+                    <p>
+                        Italy has no statutory minimum wage either -- one of 5
+                        European Union countries (with Austria, Denmark,
+                        Finland and Sweden) relying exclusively on
+                        sector-level collective bargaining (CCNL), which
+                        covers over 80% of private-sector employees. This
+                        module uses as its reference wage the CCNL Commercio
+                        (Confcommercio) level-3 minimo tabellare, EUR
+                        1,983.91/month paid over 14 installments, prorated
+                        over 12 months to EUR 2,314.56/month -- a
+                        methodological choice, not a statutory minimum wage.
+                    </p>
+
+                    <p>
+                        Italy's "employee contributions" and "employer
+                        contributions" indicators are INPS contributions only.
+                        Italy's "employer cost" additionally includes TFR
+                        (trattamento di fine rapporto), a mandatory deferred
+                        severance accrual (about 6.91% of annual gross pay)
+                        that is a genuine personnel cost under standard
+                        Italian accounting practice, but is not available to
+                        the employee as immediate net pay -- unlike every
+                        other country in this comparison. Income tax bundles
+                        national IRPEF with the Lazio addizionale regionale
+                        and the Roma addizionale comunale, two tiered-flat
+                        mechanisms (a single rate applied to the whole taxable
+                        income once a threshold is crossed), rather than
+                        progressive marginal brackets. See the Italy module's
+                        Methodology tab for full detail.
+                    </p>
+
+                    <h3>13. Lab-E</h3>
 
                     <p>
                         The Lab-E indicator (100 × net before tax / employer cost)
@@ -1533,7 +1636,7 @@
 
                     <p class="method-note">
                         The Dutch Lab-E is structurally overstated relative to the other
-                        8 countries: loonheffing bundles national insurance with income
+                        countries: loonheffing bundles national insurance with income
                         tax, so the "net before tax" used here is close to the gross wage
                         for the Netherlands (see the Netherlands note above). Sweden's
                         Lab-E, by contrast, is not overstated in the same way: Swedish net
@@ -1541,10 +1644,15 @@
                         employee pension contribution is genuinely neutralized by an equal
                         tax credit, not because a non-zero contribution is bundled into the
                         displayed tax (see section 11 above and the Sweden module's
+                        Methodology tab). Italy's Lab-E is structurally the lowest in the
+                        comparison -- but for a third, distinct reason: Italian employer
+                        cost genuinely includes TFR, a real personnel cost that will reach
+                        the employee later (at contract termination) but is not available
+                        as immediate net pay (see section 12 above and the Italy module's
                         Methodology tab).
                     </p>
 
-                    <h3>13. Limits</h3>
+                    <h3>14. Limits</h3>
 
                     <p class="method-note">
                         The income-tax calculation assumes a single, childless

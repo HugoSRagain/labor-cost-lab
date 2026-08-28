@@ -1,0 +1,1737 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Italy Labour Cost Lab</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+    <link rel="stylesheet" href="../../assets/style.css?v=28">
+    <script defer src="../../assets/i18n_common.js?v=3"></script>
+    <script defer src="./assets/italy_app.js?v=1"></script>
+</head>
+
+<body>
+    <div class="global-project-banner">
+        <a href="../../index.html">
+            ← Labor Cost Lab
+        </a>
+
+        <span>
+            Italy module · Available socio-fiscal version
+        </span>
+    </div>
+
+    <div class="language-section active" id="section-fr">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · Module Italie
+                </p>
+
+                <h1>Italy Labour Cost Lab</h1>
+
+                <p>
+                    Module de simulation du coût du travail en Italie. Cette
+                    version calcule le salaire brut, les cotisations INPS
+                    (patronales et salariales), le TFR (indemnité de départ
+                    différée), l'impôt sur le revenu (IRPEF, addizionale
+                    regionale, addizionale comunale), le coût employeur et les
+                    principaux indicateurs de coin social et socio-fiscal.
+                </p>
+
+                <p class="author-line">
+                    Par Hugo Spring-Ragain, Économiste, CEDS Paris
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchItalyLanguage()">
+                    English
+                </button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>Italie · module socio-fiscal 2026</h2>
+
+                <p>
+                    <strong>Point d'attention méthodologique : l'Italie n'a pas
+                    de salaire minimum légal.</strong> C'est l'un des 5 pays de
+                    l'Union européenne (avec l'Autriche, le Danemark, la
+                    Finlande et la Suède, déjà modélisée dans ce Lab) qui
+                    s'appuient exclusivement sur la négociation collective de
+                    branche (CCNL), laquelle couvre plus de 80 % des salariés
+                    du privé. En l'absence d'un chiffre national unique, ce
+                    module retient par convention, comme salaire de référence
+                    1,0x, le minimo tabellare de niveau 3 du CCNL Commercio
+                    (Confcommercio), soit 1 983,91 EUR versés en 14
+                    mensualités, proratisé sur 12 mois à 2 314,56 EUR/mois. Ce
+                    n'est pas un salaire minimum légal. Voir l'onglet
+                    Méthodologie pour le détail complet.
+                </p>
+
+                <p>
+                    Le module combine les cotisations INPS (patronales et
+                    salariales, y compris le plafond de cotisation IVS et la
+                    cotisation additionnelle de 1 %), le TFR (trattamento di
+                    fine rapporto) — une indemnité de départ différée
+                    obligatoire, incluse dans le coût employeur mais absente
+                    du salaire net immédiat, la particularité la plus
+                    distinctive du système italien — et l'impôt sur le revenu
+                    (IRPEF national, addizionale regionale du Latium,
+                    addizionale comunale de Rome).
+                </p>
+            </section>
+
+            <nav class="tabs" aria-label="Navigation Italie">
+                <button class="tab-button active" data-tab="simulation" onclick="showItalyTab('fr', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showItalyTab('fr', 'flcl-index')">
+                    Indice du Lab
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showItalyTab('fr', 'data')">
+                    Données
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showItalyTab('fr', 'methodology')">
+                    Méthodologie
+                </button>
+            </nav>
+
+            <section id="tab-fr-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="italy-waterfall-title-fr">
+                        Du salaire net au coût employeur
+                    </h3>
+
+                    <p class="chart-subtitle" id="italy-waterfall-subtitle-fr">
+                        Décomposition du passage du salaire net après impôt au
+                        coût employeur total, en distinguant l'impôt sur le
+                        revenu, les cotisations INPS et le TFR (indemnité de
+                        départ différée).
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="italy-waterfall-multiple-fr">
+                                Point de salaire sélectionné
+                            </label>
+
+                            <select id="italy-waterfall-multiple-fr">
+                                <option value="0.80">0,80 salaire de référence</option>
+                                <option value="1.00" selected>1,00 salaire de référence</option>
+                                <option value="1.25">1,25 salaire de référence</option>
+                                <option value="1.50">1,50 salaire de référence</option>
+                                <option value="2.00">2,00 salaires de référence</option>
+                                <option value="2.50">2,50 salaires de référence</option>
+                                <option value="3.00">3,00 salaires de référence</option>
+                                <option value="4.00">4,00 salaires de référence</option>
+                                <option value="5.00">5,00 salaires de référence</option>
+                                <option value="6.00">6,00 salaires de référence</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-italy-waterfall-fr"
+                        class="plotly-chart"
+                        aria-label="Décomposition du coût du travail en Italie"
+                    ></div>
+
+                    <p class="method-note">
+                        Le TFR (environ 6,91 % du brut annuel) est isolé comme
+                        un segment distinct du coût employeur : il augmente le
+                        coût du travail mais n'est pas disponible pour le
+                        salarié avant la rupture du contrat de travail. Voir
+                        l'onglet Méthodologie.
+                    </p>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Graphiques complémentaires</h2>
+
+                    <p>
+                        Les graphiques suivants détaillent les salaires, les
+                        taux effectifs, la décomposition des cotisations INPS
+                        et de l'impôt sur le revenu, le coin socio-fiscal et le
+                        rendement marginal du salaire brut.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Coût employeur, salaire brut et salaires nets</h3>
+
+                        <p class="chart-subtitle">
+                            Comparaison du salaire brut, du salaire net avant
+                            impôt, du salaire net après impôt et du coût
+                            employeur (y compris TFR) selon le multiple du
+                            salaire de référence italien.
+                        </p>
+
+                        <div
+                            id="chart-italy-cost-fr"
+                            class="plotly-chart"
+                            aria-label="Coût du travail en Italie"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Taux effectifs de prélèvement</h3>
+
+                        <p class="chart-subtitle">
+                            Taux salarié et taux employeur INPS (hors TFR), taux
+                            employeur y compris TFR, et taux d'imposition
+                            effectif. Le repli des taux INPS au-delà de 4,4x
+                            environ reflète le plafond de cotisation IVS
+                            (massimale contributivo).
+                        </p>
+
+                        <div
+                            id="chart-italy-rates-fr"
+                            class="plotly-chart"
+                            aria-label="Taux de prélèvement en Italie"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Décomposition des cotisations INPS</h3>
+
+                        <p class="chart-subtitle">
+                            IVS employeur et salarié, autres cotisations
+                            employeur (NASpI, CIGO, CIGS, maternità, Fondo
+                            Garanzia TFR, CUAF, INAIL), CIGS salarié et
+                            cotisation additionnelle de 1 % (active au-delà de
+                            56 224 EUR/an de rémunération pensionnable).
+                        </p>
+
+                        <div
+                            id="chart-italy-inps-breakdown-fr"
+                            class="plotly-chart"
+                            aria-label="Décomposition des cotisations INPS en Italie"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Décomposition de l'impôt sur le revenu</h3>
+
+                        <p class="chart-subtitle">
+                            IRPEF national (net des détrazioni et du
+                            trattamento integrativo), addizionale regionale du
+                            Latium et addizionale comunale de Rome — ces deux
+                            dernières étant des mécanismes « par palier »
+                            (taux unique appliqué à la totalité du revenu),
+                            pas des tranches marginales. Montants mensuels
+                            reconstitués à partir des totaux annuels.
+                        </p>
+
+                        <div
+                            id="chart-italy-tax-breakdown-fr"
+                            class="plotly-chart"
+                            aria-label="Décomposition de l'impôt sur le revenu en Italie"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Coin social et coin socio-fiscal</h3>
+
+                        <p class="chart-subtitle">
+                            Comparaison du coin social avant impôt (y compris
+                            TFR) et du coin socio-fiscal après impôt sur le
+                            revenu.
+                        </p>
+
+                        <div
+                            id="chart-italy-wedge-fr"
+                            class="plotly-chart"
+                            aria-label="Coin social et socio-fiscal italien"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Rendement marginal d'une hausse de salaire brut</h3>
+
+                        <p class="chart-subtitle">
+                            Part d'un euro supplémentaire de salaire brut
+                            conservée avant et après impôt sur le revenu.
+                        </p>
+
+                        <div
+                            id="chart-italy-fiscal-return-fr"
+                            class="plotly-chart"
+                            aria-label="Rendement socio-fiscal d'une hausse de salaire brut en Italie"
+                        ></div>
+
+                        <p class="method-note">
+                            L'effet marginal se déplace autour de 28 000 EUR et
+                            50 000 EUR de revenu imposable (tranches IRPEF), et
+                            autour de 4,4x-4,6x le salaire de référence (seuil
+                            de la cotisation additionnelle de 1 % et plafond
+                            massimale contributivo).
+                        </p>
+                    </div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Indicateurs clés</h2>
+
+                    <p>
+                        Les indicateurs ci-dessous sont calculés au salaire de
+                        référence italien (multiple = 1).
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="italy-metrics-fr">
+                    <article class="metric-card">
+                        <span class="metric-label">Salaire brut de référence</span>
+                        <strong id="metric-italy-reference-wage-fr">—</strong>
+                        <span class="metric-note">CCNL Commercio, niveau 3, mensuel</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Taux d'imposition effectif</span>
+                        <strong id="metric-italy-income-tax-rate-fr">—</strong>
+                        <span class="metric-note">Impôt sur le revenu / brut</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Taux employeur INPS</span>
+                        <strong id="metric-italy-employer-rate-fr">—</strong>
+                        <span class="metric-note">Hors TFR</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Part du TFR dans le coût employeur</span>
+                        <strong id="metric-italy-tfr-rate-fr">—</strong>
+                        <span class="metric-note">Indemnité de départ différée</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Ratio coût / net à 1 salaire de référence</span>
+                        <strong id="metric-italy-cost-to-net-fr">—</strong>
+                        <span class="metric-note">Après impôt sur le revenu, coût y compris TFR</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-fr-flcl-index" class="tab-content">
+                <section class="chart-card">
+                    <h2>Indice du Lab</h2>
+                    <p class="chart-subtitle">
+                        Indicateurs d'efficacité salariale du coût du travail.
+                    </p>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-E</span>
+                            <strong id="italy-flcl-e-value-fr">—</strong>
+                            <span class="metric-note" id="italy-flcl-e-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-B</span>
+                            <strong id="italy-flcl-b-value-fr">—</strong>
+                            <span class="metric-note" id="italy-flcl-b-caption-fr"></span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Transmission marginale</span>
+                            <strong id="italy-flcl-transmission-value-fr">—</strong>
+                            <span class="metric-note" id="italy-flcl-transmission-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Captation marginale</span>
+                            <strong id="italy-flcl-capture-value-fr">—</strong>
+                            <span class="metric-note" id="italy-flcl-capture-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Progressivité implicite</span>
+                            <strong id="italy-flcl-progressivity-value-fr">—</strong>
+                            <span class="metric-note" id="italy-flcl-progressivity-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Soutien bas salaires</span>
+                            <strong id="italy-flcl-support-value-fr">—</strong>
+                            <span class="metric-note" id="italy-flcl-support-caption-fr"></span>
+                        </div>
+                    </div>
+
+                    <p class="method-note" style="margin-top: 16px;">
+                        Aucun allègement employeur ciblé et dégressif n'est
+                        modélisé pour l'Italie : l'indicateur Lab-R ne
+                        s'applique donc pas ici. Le Lab-E italien est
+                        structurellement inférieur à celui de la plupart des
+                        autres pays du Lab, mais pas pour la même raison que
+                        le Lab-E néerlandais (qui surestime un artefact de
+                        présentation) : ici, le coût employeur inclut
+                        réellement le TFR, une charge de personnel réelle qui
+                        n'est simplement pas disponible pour le salarié
+                        immédiatement — elle lui reviendra à la rupture du
+                        contrat. Voir l'onglet Méthodologie.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Indice du Lab</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × salaire net avant impôt / coût employeur (coût employeur y compris TFR).
+                        </p>
+                        <div id="chart-italy-flcl-e-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Transmission marginale</h3>
+                        <p class="chart-subtitle">
+                            Part d'un euro supplémentaire de coût employeur allant au salarié net avant impôt.
+                        </p>
+                        <div id="chart-italy-flcl-marginal-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Progressivité implicite</h3>
+                        <p class="chart-subtitle">
+                            Variation de Lab-E lorsque le niveau de salaire augmente. Le point d'inflexion autour de 4,4x-4,6x correspond au plafond massimale contributivo.
+                        </p>
+                        <div id="chart-italy-flcl-progressivity-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Destination marginale d'un euro supplémentaire de coût employeur</h3>
+                        <p class="chart-subtitle">
+                            Répartition marginale entre salaire net, cotisations salarié, cotisations employeur (INPS) et TFR.
+                        </p>
+                        <div id="chart-italy-flcl-destination-fr" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-fr-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Données</h3>
+
+                    <p class="chart-subtitle">
+                        Le jeu de données italien peut être téléchargé au
+                        format CSV. Il contient l'ensemble des points de
+                        salaire simulés pour le profil standard : salaire
+                        brut, impôt sur le revenu, cotisations INPS, TFR, coût
+                        employeur et indicateurs de coin socio-fiscal.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/italy/italy_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Télécharger le jeu de données Italie
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/italy/italy_parameters_2026.json"
+                            download
+                        >
+                            Télécharger les paramètres 2026
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/italy/italy_sources_2026.json"
+                            download
+                        >
+                            Télécharger les sources 2026
+                        </a>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Données du profil standard</h3>
+
+                    <p
+                        class="chart-subtitle"
+                        id="italy-data-caption-fr"
+                    >
+                        Salarié standard (Rome, Latium)
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Multiple</th>
+                                    <th>Salaire brut (EUR)</th>
+                                    <th>Net avant impôt (EUR)</th>
+                                    <th>Impôt sur le revenu (EUR)</th>
+                                    <th>Net après impôt (EUR)</th>
+                                    <th>TFR (EUR)</th>
+                                    <th>Coût employeur (EUR)</th>
+                                    <th>Cotisations salarié (EUR)</th>
+                                    <th>Cotisations employeur (EUR)</th>
+                                    <th>Coin social (EUR)</th>
+                                    <th>Coin socio-fiscal (EUR)</th>
+                                    <th>Taux employeur INPS</th>
+                                    <th>Coût / net après impôt</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="italy-data-table-body-fr">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="chart-subtitle" style="margin-top: 10px;">
+                        Cotisations salarié et employeur = cotisations INPS
+                        uniquement (hors TFR). Le TFR est isolé dans sa propre
+                        colonne : il est inclus dans le coût employeur mais pas
+                        dans le net.
+                    </p>
+                </div>
+            </section>
+
+            <section id="tab-fr-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Méthodologie</h2>
+
+                    <p>
+                        Le module Italie repose sur une simulation
+                        réglementaire du coût du travail pour un salarié
+                        standard du secteur privé (operaio/impiegato), en
+                        contrat à durée indéterminée, dans une entreprise de
+                        plus de 50 salariés, intégralement dans le système
+                        contributif de retraite, résidant à Rome (Latium),
+                        célibataire sans enfant, sans autre revenu.
+                    </p>
+
+                    <h3>1. Le salaire de référence : pourquoi l'Italie n'a pas de salaire minimum légal, et la convention des 14 mensilità</h3>
+
+                    <p>
+                        L'Italie ne fixe aucun salaire minimum légal : les
+                        planchers salariaux résultent exclusivement de la
+                        négociation collective de branche (CCNL), qui couvre
+                        plus de 80 % des salariés du privé. C'est l'un des 5
+                        pays de l'Union européenne dans ce cas, avec
+                        l'Autriche, le Danemark, la Finlande et la Suède (déjà
+                        modélisée dans ce Lab). Depuis le 1er mai 2026, un
+                        décret-loi « salario giusto » (n. 62/2026) introduit un
+                        mécanisme de rémunération minimale garantie pour les
+                        salariés non couverts par un CCNL, mais il ne fixe
+                        aucun montant unique : il renvoie au CCNL « le plus
+                        représentatif » de chaque secteur, déterminé par le
+                        CNEL — un mécanisme de renvoi contractuel, pas un
+                        montant légal.
+                    </p>
+
+                    <p>
+                        En l'absence d'un chiffre national unique, ce module
+                        retient par convention, comme salaire de référence
+                        1,0x, le minimo tabellare de niveau 3 du CCNL
+                        Commercio, Terziario e Distribuzione e Servizi
+                        (Confcommercio) — le CCNL le plus cité et le plus
+                        large en couverture (environ 3 millions de salariés),
+                        soit 1 983,91 EUR/mois (valeurs en vigueur au 1er
+                        novembre 2025). Un chiffre alternatif très proche
+                        (CCNL Metalmeccanici Industria, niveau C1, 2 022,12
+                        EUR/mois, environ 2 % de plus) confirme que le choix
+                        du CCNL de référence ne fait pas fortement varier ce
+                        repère — mais ce n'est, dans tous les cas, ni un
+                        salaire minimum légal, ni le résultat unique et
+                        incontestable d'une négociation collective.
+                    </p>
+
+                    <p>
+                        Le CCNL Commercio verse 14 « mensilità » par an (12
+                        mois ordinaires plus tredicesima et quattordicesima).
+                        Conformément à la convention déjà utilisée pour le SMI
+                        espagnol (également versé en 14 fois), le salaire de
+                        référence est proratisé sur 12 mois : 1 983,91 × 14 / 12
+                        = 2 314,56 EUR/mois. Tous les points de la grille de ce
+                        module sont donc des moyennes mensuelles continues
+                        (rémunération annuelle brute / 12), et non le montant
+                        littéralement versé un mois ordinaire.
+                    </p>
+
+                    <h3>2. Cotisations INPS : plafond de cotisation et cotisation additionnelle de 1 %</h3>
+
+                    <p>
+                        Les cotisations INPS 2026 (Circolare INPS n. 6 du 30
+                        janvier 2026) se décomposent en : IVS (invalidità,
+                        vecchiaia, superstiti — Fondo Pensioni Lavoratori
+                        Dipendenti), 33,00 % au total (23,81 % employeur /
+                        9,19 % salarié) ; NASpI (chômage, employeur
+                        uniquement), 1,61 % ; CIGO (fonds de garantie salariale
+                        ordinaire, employeur uniquement, entreprises de plus
+                        de 50 salariés), 2,00 % (1,70 % pour les entreprises
+                        plus petites) ; CIGS (fonds de garantie salariale
+                        extraordinaire, entreprises de plus de 15 salariés),
+                        0,90 % au total (0,60 % employeur / 0,30 % salarié) ;
+                        contributo maternità (employeur uniquement), 0,46 % ;
+                        Fondo di Garanzia TFR (employeur uniquement), 0,20 % ;
+                        ex-CUAF / assegni familiari (employeur uniquement,
+                        maintenue après la réforme de l'Assegno Unico
+                        Universale), 0,68 % ; INAIL (assurance accidents du
+                        travail), taux illustratif de 0,50 % (profil
+                        bureau/commerce à faible risque — l'INAIL ne publie
+                        pas de taux moyen national, les taux réels variant
+                        d'environ 0,3 % à 11,0 % selon la classe de risque).
+                    </p>
+
+                    <p>
+                        Une cotisation salariale additionnelle de 1 % (art.
+                        3-ter, loi 438/1992) s'applique sur la part de la
+                        rémunération pensionnable annuelle dépassant la
+                        « prima fascia di retribuzione pensionabile »
+                        (56 224 EUR en 2026) — visible dans ce module à partir
+                        d'environ 4,4x le salaire de référence. La base IVS
+                        (part de base et cotisation additionnelle) est en
+                        outre plafonnée au « massimale contributivo » annuel
+                        (art. 2, alinéa 18, loi 335/1995), 122 295 EUR en 2026,
+                        applicable aux salariés intégralement dans le système
+                        contributif (carrière de cotisation commencée après le
+                        31 décembre 1995 — l'hypothèse retenue ici). Ce plafond
+                        commence à s'appliquer autour de 4,4x-4,6x le salaire
+                        de référence sur la grille de ce module, ce qui
+                        explique le repli visible des taux de cotisation
+                        employeur et salarié au-delà de ce seuil : il s'agit
+                        d'un effet réel du plafonnement, pas d'une anomalie de
+                        calcul.
+                    </p>
+
+                    <h3>3. Le TFR (trattamento di fine rapporto) : la particularité la plus distinctive du système italien</h3>
+
+                    <p>
+                        Le TFR est une indemnité de départ différée
+                        obligatoire (art. 2120 du Code civil italien ; loi n.
+                        297 du 29 mai 1982), accumulée chaque année à hauteur
+                        de la rémunération annuelle divisée par 13,5, diminuée
+                        de 0,5 % de la même base — soit environ 6,9074 % du
+                        brut annuel, sans plafond de cotisation. Conformément
+                        à la pratique comptable italienne standard (« costo
+                        azienda », poste B9 du compte de résultat), ce module
+                        inclut le TFR dans le coût employeur total comme une
+                        ligne de rémunération différée distincte, clairement
+                        identifiée dans le graphique de décomposition
+                        (waterfall) et dans le tableau de données.
+                    </p>
+
+                    <p class="method-note">
+                        Point crucial pour l'interprétation de ce module : le
+                        TFR augmente réellement le coût du travail, mais il
+                        n'est PAS disponible immédiatement pour le salarié —
+                        il est versé à la rupture du contrat de travail
+                        (démission, licenciement, retraite), ou par avance
+                        partielle dans des cas spécifiques prévus par la loi
+                        (achat de la résidence principale, frais médicaux
+                        graves, après 8 ans d'ancienneté). Le salaire net de
+                        ce module (avant et après impôt) n'inclut donc jamais
+                        le TFR : gross + cotisations employeur INPS + TFR =
+                        coût employeur, mais net = gross − cotisations
+                        salarié INPS − impôt sur le revenu, sans TFR. C'est la
+                        seule composante de ce type dans l'ensemble des
+                        modules du Lab.
+                    </p>
+
+                    <h3>4. IRPEF, détrazioni et trattamento integrativo</h3>
+
+                    <p>
+                        L'IRPEF (impôt national sur le revenu, Legge di
+                        Bilancio 2026 / loi 199/2025) suit un barème marginal à
+                        3 tranches : 23 % jusqu'à 28 000 EUR, 33 % de 28 000 à
+                        50 000 EUR, 43 % au-delà. La detrazione da lavoro
+                        dipendente (art. 13 du TUIR, DPR 917/1986) est un
+                        crédit d'impôt dégressif en 3 segments entre 15 000 et
+                        50 000 EUR de revenu, majoré de 65 EUR supplémentaires
+                        pour un revenu strictement compris entre 25 000 et
+                        35 000 EUR. L'« ulteriore detrazione » (réforme 2024,
+                        stabilisée pour 2026) ajoute 1 000 EUR forfaitaires
+                        pour un revenu compris entre 20 000 EUR (exclu) et
+                        32 000 EUR, dégressif linéairement jusqu'à 0 EUR à
+                        40 000 EUR.
+                    </p>
+
+                    <p>
+                        Le trattamento integrativo (ex-bonus Renzi, 1 200
+                        EUR/an au maximum) est également modélisé dans le
+                        moteur de calcul, mais ne se déclenche à aucun point
+                        de la grille de salaire retenue par ce module : le
+                        salaire de référence (2 314,56 EUR/mois, soit environ
+                        27 775 EUR/an) est déjà proche ou au-delà du seuil où
+                        ce mécanisme cesse de s'appliquer intégralement. La
+                        base imposable (reddito imponibile) est le salaire
+                        brut annuel diminué des cotisations INPS du salarié
+                        (exclues du revenu de travail salarié au titre de
+                        l'art. 51 du TUIR) — la même base sert aux tests de
+                        seuil des détrazioni.
+                    </p>
+
+                    <h3>5. Addizionale regionale (Latium) et addizionale comunale (Rome) : un mécanisme « par palier », pas marginal</h3>
+
+                    <p>
+                        Contrairement à l'IRPEF national, l'addizionale
+                        regionale et l'addizionale comunale sont des
+                        mécanismes « par palier » (tiered-flat) : le taux
+                        applicable s'applique à la TOTALITÉ du revenu
+                        imposable dès qu'un seuil est franchi, et non
+                        seulement à la part qui dépasse ce seuil comme le
+                        ferait une tranche marginale. C'est un point
+                        méthodologique important — une source secondaire
+                        consultée lors de la construction de ce module
+                        décrivait à tort l'addizionale regionale du Latium
+                        comme un barème progressif par tranches ; la lecture
+                        directe du PDF officiel de la Région Latium a permis
+                        de corriger cette erreur.
+                    </p>
+
+                    <p>
+                        Pour 2026, la Région Latium (loi régionale n. 20 du 31
+                        décembre 2025) applique 1,73 % pour un revenu imposable
+                        inférieur ou égal à 28 000 EUR, et 3,33 % au-delà — un
+                        crédit de lissage de 60 EUR atténue l'effet de seuil
+                        pour un revenu compris entre 28 000 et 30 000 EUR
+                        (fourchette nationale : 1,23 % à 3,33 % selon la
+                        région). La commune de Rome applique un taux unique de
+                        0,90 %, avec une exonération totale (et non une part
+                        déductible) pour un revenu imposable inférieur ou égal
+                        à 14 000 EUR (fourchette nationale : 0 % à 0,9 %
+                        selon la commune).
+                    </p>
+
+                    <h3>6. Indicateurs produits</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Net avant impôt :</strong>
+                            salaire brut diminué des cotisations INPS du
+                            salarié (IVS, CIGS, cotisation additionnelle de
+                            1 %).
+                        </li>
+
+                        <li>
+                            <strong>Net après impôt :</strong>
+                            net avant impôt diminué de l'impôt sur le revenu
+                            mensuel (IRPEF national net des détrazioni et du
+                            trattamento integrativo, plus addizionale
+                            regionale et addizionale comunale).
+                        </li>
+
+                        <li>
+                            <strong>Coût employeur :</strong>
+                            salaire brut augmenté des cotisations INPS
+                            employeur et du TFR.
+                        </li>
+
+                        <li>
+                            <strong>Coin social :</strong>
+                            différence entre le coût employeur (y compris TFR)
+                            et le net avant impôt.
+                        </li>
+
+                        <li>
+                            <strong>Coin socio-fiscal :</strong>
+                            différence entre le coût employeur (y compris TFR)
+                            et le net après impôt.
+                        </li>
+
+                        <li>
+                            <strong>Rendement marginal :</strong>
+                            part d'un euro supplémentaire de salaire brut
+                            conservée avant et après impôt sur le revenu.
+                        </li>
+                    </ul>
+
+                    <h3>7. Indice du Lab</h3>
+
+                    <p>
+                        L'Indice du Lab mesure l'efficacité salariale du coût
+                        du travail, indépendamment de l'impôt sur le revenu.
+                        Lab-E = 100 × salaire net avant impôt / coût employeur,
+                        Lab-B = 100 − Lab-E. Aucun allègement employeur ciblé
+                        et dégressif n'est modélisé pour l'Italie : l'indicateur
+                        Lab-R ne s'applique donc pas ici.
+                    </p>
+
+                    <p class="method-note">
+                        Le Lab-E italien est structurellement plus bas que
+                        celui de la plupart des autres pays du Lab, mais pour
+                        une raison différente du Lab-E néerlandais (qui
+                        surestime l'efficacité salariale en fusionnant une
+                        cotisation sociale réelle dans l'impôt affiché) : ici,
+                        le coût employeur inclut réellement le TFR, une charge
+                        de personnel effective qui reviendra au salarié plus
+                        tard (à la rupture du contrat), mais qui n'est pas
+                        disponible comme net immédiat. Le Lab-E italien reflète
+                        donc fidèlement un coût du travail réellement plus
+                        élevé que le seul salaire courant, et non un artefact
+                        de présentation.
+                    </p>
+
+                    <h3>8. Limites du scénario</h3>
+
+                    <ul class="method-note">
+                        <li>
+                            L'Italie n'a pas de salaire minimum légal : le
+                            salaire de référence 1,0x de ce module est un
+                            choix méthodologique (minimo tabellare du CCNL
+                            Commercio, niveau 3), pas un plancher légal ni le
+                            résultat unique et incontestable d'une négociation
+                            collective — un autre CCNL de référence (par
+                            exemple Metalmeccanici) donnerait un chiffre
+                            proche mais différent.
+                        </li>
+
+                        <li>
+                            Une seule région (Latium) et une seule commune
+                            (Rome) sont modélisées pour l'addizionale
+                            regionale et l'addizionale comunale ; l'addizionale
+                            regionale varie de 1,23 % à 3,33 % et l'addizionale
+                            comunale de 0 % à 0,9 % selon la localisation en
+                            Italie.
+                        </li>
+
+                        <li>
+                            Le taux INAIL (assurance accidents du travail) est
+                            illustratif (0,50 %, profil bureau/commerce à
+                            faible risque) : l'INAIL ne publie pas de taux
+                            moyen national, les taux réels variant d'environ
+                            0,3 % à 11,0 % selon la classe de risque du poste.
+                        </li>
+
+                        <li>
+                            Le CIGO est modélisé au taux applicable aux
+                            entreprises de plus de 50 salariés (2,00 %) ; les
+                            entreprises plus petites bénéficient d'un taux
+                            réduit (1,70 %).
+                        </li>
+
+                        <li>
+                            Le plafond de cotisation IVS (massimale
+                            contributivo, 122 295 EUR/an en 2026) suppose que
+                            le salarié a intégralement commencé sa carrière de
+                            cotisation après le 31 décembre 1995 (système
+                            contributif) ; les salariés dont la carrière a
+                            débuté avant cette date (système retributivo ou
+                            mixte) ne sont pas soumis à ce plafond.
+                        </li>
+
+                        <li>
+                            Le mécanisme du trattamento integrativo (ex-bonus
+                            Renzi) est modélisé mais ne se déclenche à aucun
+                            point de la grille de salaire retenue, le salaire
+                            de référence étant déjà supérieur au niveau où ce
+                            mécanisme s'active.
+                        </li>
+
+                        <li>
+                            Les dispositifs fiscaux exceptionnels 2026
+                            (imposition substitutive à 5 % sur les
+                            augmentations salariales issues du renouvellement
+                            des CCNL, à 15 % sur les indemnités de nuit/travail
+                            posté/astreinte, seuils d'exonération des
+                            avantages en nature) ne sont pas modélisés, le
+                            profil de référence ne comportant que le salaire
+                            de base.
+                        </li>
+
+                        <li>
+                            Le TFR est intégré au coût employeur comme une
+                            ligne de rémunération différée distincte : il
+                            n'est pas disponible immédiatement pour le
+                            salarié (versé à la rupture du contrat), à la
+                            différence du salaire net.
+                        </li>
+                    </ul>
+
+                    <h3>9. Sources</h3>
+
+                    <p class="method-note">
+                        INPS, Circolare n. 6 del 30 gennaio 2026 (valeurs
+                        contributives et salariales 2026) ; art. 13 du TUIR
+                        (DPR 917/1986), consulté via Brocardi.it ; Legge di
+                        Bilancio 2026 (loi n. 199/2025) pour le barème IRPEF ;
+                        loi n. 207/2024 pour l'ulteriore detrazione ;
+                        décret-loi n. 3/2020 pour le trattamento integrativo ;
+                        Région Latium, loi régionale n. 20 du 31 décembre 2025
+                        (PDF officiel consulté directement) pour l'addizionale
+                        regionale ; Rome Capitale, Délibération de l'Assemblea
+                        Capitolina n. 186 du 19 décembre 2024 pour
+                        l'addizionale comunale ; CCNL Commercio-Confcommercio,
+                        Testo Unico signé le 3 février 2026, pour le salaire
+                        de référence ; art. 2120 du Code civil italien et loi
+                        n. 297/1982 pour le TFR ; Banque mondiale (Programme de
+                        comparaison internationale) pour le facteur de
+                        conversion PPA. OCDE Taxing Wages 2026 (Italie) et
+                        ISTAT (structure des rémunérations 2022) ont servi de
+                        recoupements de plausibilité. Voir le fichier de
+                        sources téléchargeable dans l'onglet Données pour le
+                        détail complet des citations.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="language-section" id="section-en">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · Italy module
+                </p>
+
+                <h1>Italy Labour Cost Lab</h1>
+
+                <p>
+                    Simulation module for Italian labour costs. This version
+                    computes the gross wage, INPS contributions (employer and
+                    employee), TFR (deferred severance accrual), income tax
+                    (IRPEF, addizionale regionale, addizionale comunale), the
+                    employer cost, and the main social and socio-fiscal wedge
+                    indicators.
+                </p>
+
+                <p class="author-line">
+                    By Hugo Spring-Ragain, Economist, CEDS Paris
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchItalyLanguage()">
+                    Français
+                </button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>Italy · 2026 socio-fiscal module</h2>
+
+                <p>
+                    <strong>Methodological note: Italy has no statutory
+                    minimum wage.</strong> It is one of 5 European Union
+                    countries (with Austria, Denmark, Finland and Sweden,
+                    already modeled in this Lab) that rely exclusively on
+                    sector-level collective bargaining (CCNL), which covers
+                    over 80% of private-sector employees. Absent a single
+                    national figure, this module uses by convention, as its
+                    1.0x reference wage, the CCNL Commercio (Confcommercio)
+                    level-3 minimo tabellare: EUR 1,983.91 paid over 14
+                    installments, prorated over 12 months to EUR 2,314.56/
+                    month. This is not a statutory minimum wage. See the
+                    Methodology tab for full detail.
+                </p>
+
+                <p>
+                    The module combines INPS contributions (employer and
+                    employee, including the IVS contribution ceiling and the
+                    additional 1% contribution) with TFR (trattamento di fine
+                    rapporto) — a mandatory deferred severance accrual,
+                    included in employer cost but absent from current net
+                    take-home pay, the most distinctive feature of the Italian
+                    system — and income tax (national IRPEF, the Lazio
+                    addizionale regionale, and the Roma addizionale comunale).
+                </p>
+            </section>
+
+            <nav class="tabs" aria-label="Italy navigation">
+                <button class="tab-button active" data-tab="simulation" onclick="showItalyTab('en', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showItalyTab('en', 'flcl-index')">
+                    Lab Index
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showItalyTab('en', 'data')">
+                    Data
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showItalyTab('en', 'methodology')">
+                    Methodology
+                </button>
+            </nav>
+
+            <section id="tab-en-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="italy-waterfall-title-en">
+                        From net wage to employer cost
+                    </h3>
+
+                    <p class="chart-subtitle" id="italy-waterfall-subtitle-en">
+                        Breakdown of the path from net wage after tax to total
+                        employer cost, distinguishing income tax, INPS
+                        contributions and TFR (deferred severance accrual).
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="italy-waterfall-multiple-en">
+                                Selected wage point
+                            </label>
+
+                            <select id="italy-waterfall-multiple-en">
+                                <option value="0.80">0.80 reference wage</option>
+                                <option value="1.00" selected>1.00 reference wage</option>
+                                <option value="1.25">1.25 reference wages</option>
+                                <option value="1.50">1.50 reference wages</option>
+                                <option value="2.00">2.00 reference wages</option>
+                                <option value="2.50">2.50 reference wages</option>
+                                <option value="3.00">3.00 reference wages</option>
+                                <option value="4.00">4.00 reference wages</option>
+                                <option value="5.00">5.00 reference wages</option>
+                                <option value="6.00">6.00 reference wages</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-italy-waterfall-en"
+                        class="plotly-chart"
+                        aria-label="Breakdown of labour cost in Italy"
+                    ></div>
+
+                    <p class="method-note">
+                        TFR (about 6.91% of annual gross pay) is isolated as a
+                        distinct segment of employer cost: it increases labour
+                        cost but is not available to the employee before the
+                        employment contract ends. See the Methodology tab.
+                    </p>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Additional charts</h2>
+
+                    <p>
+                        The charts below detail wages, effective rates, the
+                        breakdown of INPS contributions and income tax, the
+                        socio-fiscal wedge, and the marginal return on a
+                        gross-wage increase.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Employer cost, gross wage and net wages</h3>
+
+                        <p class="chart-subtitle">
+                            Comparison of the gross wage, net wage before tax,
+                            net wage after tax, and employer cost (including
+                            TFR) across the multiple of the Italian reference
+                            wage.
+                        </p>
+
+                        <div
+                            id="chart-italy-cost-en"
+                            class="plotly-chart"
+                            aria-label="Labour cost in Italy"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Effective levy rates</h3>
+
+                        <p class="chart-subtitle">
+                            Employee and employer INPS rates (excluding TFR),
+                            employer rate including TFR, and effective income
+                            tax rate. The dip in the INPS rates beyond about
+                            4.4x reflects the IVS contribution ceiling
+                            (massimale contributivo).
+                        </p>
+
+                        <div
+                            id="chart-italy-rates-en"
+                            class="plotly-chart"
+                            aria-label="Levy rates in Italy"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>INPS contributions breakdown</h3>
+
+                        <p class="chart-subtitle">
+                            Employer and employee IVS, other employer
+                            contributions (NASpI, CIGO, CIGS, maternita, Fondo
+                            Garanzia TFR, CUAF, INAIL), employee CIGS, and the
+                            additional 1% contribution (active above EUR
+                            56,224/year of pensionable pay).
+                        </p>
+
+                        <div
+                            id="chart-italy-inps-breakdown-en"
+                            class="plotly-chart"
+                            aria-label="INPS contributions breakdown in Italy"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Income tax breakdown</h3>
+
+                        <p class="chart-subtitle">
+                            National IRPEF (net of detrazioni and the
+                            trattamento integrativo), the Lazio addizionale
+                            regionale, and the Roma addizionale comunale —
+                            the latter two being tiered-flat mechanisms (a
+                            single rate applied to the whole income), not
+                            marginal brackets. Monthly amounts reconstructed
+                            from the annual totals.
+                        </p>
+
+                        <div
+                            id="chart-italy-tax-breakdown-en"
+                            class="plotly-chart"
+                            aria-label="Income tax breakdown in Italy"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Social wedge and total socio-fiscal wedge</h3>
+
+                        <p class="chart-subtitle">
+                            Comparison of the social wedge before tax
+                            (including TFR) and the total socio-fiscal wedge
+                            after income tax.
+                        </p>
+
+                        <div
+                            id="chart-italy-wedge-en"
+                            class="plotly-chart"
+                            aria-label="Social and socio-fiscal wedge in Italy"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Marginal return on a gross-wage increase</h3>
+
+                        <p class="chart-subtitle">
+                            Share of an additional euro of gross wage kept
+                            before and after income tax.
+                        </p>
+
+                        <div
+                            id="chart-italy-fiscal-return-en"
+                            class="plotly-chart"
+                            aria-label="Socio-fiscal return on a gross-wage increase in Italy"
+                        ></div>
+
+                        <p class="method-note">
+                            The marginal effect shifts around EUR 28,000 and
+                            EUR 50,000 of taxable income (IRPEF brackets), and
+                            around 4.4x-4.6x the reference wage (the
+                            additional 1% contribution threshold and the
+                            massimale contributivo ceiling).
+                        </p>
+                    </div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Key indicators</h2>
+
+                    <p>
+                        The indicators below are computed at the Italian
+                        reference wage (multiple = 1).
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="italy-metrics-en">
+                    <article class="metric-card">
+                        <span class="metric-label">Reference gross wage</span>
+                        <strong id="metric-italy-reference-wage-en">—</strong>
+                        <span class="metric-note">CCNL Commercio, level 3, monthly</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Effective income tax rate</span>
+                        <strong id="metric-italy-income-tax-rate-en">—</strong>
+                        <span class="metric-note">Income tax / gross</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Employer INPS rate</span>
+                        <strong id="metric-italy-employer-rate-en">—</strong>
+                        <span class="metric-note">Excluding TFR</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">TFR share of employer cost</span>
+                        <strong id="metric-italy-tfr-rate-en">—</strong>
+                        <span class="metric-note">Deferred severance accrual</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Cost / net ratio at 1 reference wage</span>
+                        <strong id="metric-italy-cost-to-net-en">—</strong>
+                        <span class="metric-note">After income tax, cost including TFR</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-en-flcl-index" class="tab-content">
+                <section class="chart-card">
+                    <h2>Lab Index</h2>
+                    <p class="chart-subtitle">
+                        Labour cost efficiency indicators.
+                    </p>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-E</span>
+                            <strong id="italy-flcl-e-value-en">—</strong>
+                            <span class="metric-note" id="italy-flcl-e-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-B</span>
+                            <strong id="italy-flcl-b-value-en">—</strong>
+                            <span class="metric-note" id="italy-flcl-b-caption-en"></span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Marginal transmission</span>
+                            <strong id="italy-flcl-transmission-value-en">—</strong>
+                            <span class="metric-note" id="italy-flcl-transmission-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Marginal capture</span>
+                            <strong id="italy-flcl-capture-value-en">—</strong>
+                            <span class="metric-note" id="italy-flcl-capture-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Implicit progressivity</span>
+                            <strong id="italy-flcl-progressivity-value-en">—</strong>
+                            <span class="metric-note" id="italy-flcl-progressivity-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Low-wage support</span>
+                            <strong id="italy-flcl-support-value-en">—</strong>
+                            <span class="metric-note" id="italy-flcl-support-caption-en"></span>
+                        </div>
+                    </div>
+
+                    <p class="method-note" style="margin-top: 16px;">
+                        No targeted, degressive employer relief is modeled for
+                        Italy: the Lab-R indicator does not apply here.
+                        Italy's Lab-E is structurally lower than most other
+                        countries in the Lab, but not for the same reason as
+                        the Dutch Lab-E (which overstates wage efficiency by
+                        bundling a real social contribution into the
+                        displayed tax): here, employer cost genuinely includes
+                        TFR, a real personnel cost that will eventually reach
+                        the employee (at contract termination), but is simply
+                        not available as immediate net pay. Italy's Lab-E
+                        therefore faithfully reflects a labour cost that is
+                        genuinely higher than current wages alone, not a
+                        presentation artifact.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Lab Index</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × net wage before income tax / employer cost (employer cost including TFR).
+                        </p>
+                        <div id="chart-italy-flcl-e-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal transmission</h3>
+                        <p class="chart-subtitle">
+                            Share of one additional euro of employer cost reaching net wage before tax.
+                        </p>
+                        <div id="chart-italy-flcl-marginal-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Implicit progressivity</h3>
+                        <p class="chart-subtitle">
+                            Change in Lab-E when the wage level increases. The kink around 4.4x-4.6x corresponds to the massimale contributivo ceiling.
+                        </p>
+                        <div id="chart-italy-flcl-progressivity-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal destination of one additional euro of employer cost</h3>
+                        <p class="chart-subtitle">
+                            Marginal split between net wage, employee contributions, employer (INPS) contributions, and TFR.
+                        </p>
+                        <div id="chart-italy-flcl-destination-en" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-en-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Data</h3>
+
+                    <p class="chart-subtitle">
+                        The Italian dataset can be downloaded as a CSV file.
+                        It contains every simulated wage point for the
+                        standard profile: gross wage, income tax, INPS
+                        contributions, TFR, employer cost, and socio-fiscal
+                        wedge indicators.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/italy/italy_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Download the Italy dataset
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/italy/italy_parameters_2026.json"
+                            download
+                        >
+                            Download the 2026 parameters
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/italy/italy_sources_2026.json"
+                            download
+                        >
+                            Download the 2026 sources
+                        </a>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Data for the standard profile</h3>
+
+                    <p
+                        class="chart-subtitle"
+                        id="italy-data-caption-en"
+                    >
+                        Standard employee (Rome, Lazio)
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Multiple</th>
+                                    <th>Gross wage (EUR)</th>
+                                    <th>Net before tax (EUR)</th>
+                                    <th>Income tax (EUR)</th>
+                                    <th>Net after tax (EUR)</th>
+                                    <th>TFR (EUR)</th>
+                                    <th>Employer cost (EUR)</th>
+                                    <th>Employee contributions (EUR)</th>
+                                    <th>Employer contributions (EUR)</th>
+                                    <th>Social wedge (EUR)</th>
+                                    <th>Total socio-fiscal wedge (EUR)</th>
+                                    <th>Employer INPS rate</th>
+                                    <th>Cost / net after tax</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="italy-data-table-body-en">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="chart-subtitle" style="margin-top: 10px;">
+                        Employee and employer contributions = INPS
+                        contributions only (excluding TFR). TFR is isolated in
+                        its own column: it is included in employer cost but
+                        not in net pay.
+                    </p>
+                </div>
+            </section>
+
+            <section id="tab-en-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Methodology</h2>
+
+                    <p>
+                        The Italy module relies on a regulatory simulation of
+                        labour cost for a standard private-sector employee
+                        (operaio/impiegato), open-ended contract, at a firm
+                        with more than 50 employees, fully within the
+                        contributory pension system, resident in Rome (Lazio),
+                        single, childless, with no other income.
+                    </p>
+
+                    <h3>1. The reference wage: why Italy has no statutory minimum wage, and the 14-mensilita convention</h3>
+
+                    <p>
+                        Italy sets no statutory minimum wage: wage floors
+                        result exclusively from sector-level collective
+                        bargaining (CCNL), which covers over 80% of
+                        private-sector employees. It is one of 5 European
+                        Union countries in this position, alongside Austria,
+                        Denmark, Finland, and Sweden (already modeled in this
+                        Lab). Since 1 May 2026, a "salario giusto" decree-law
+                        (n. 62/2026) introduces a guaranteed minimum pay
+                        mechanism for employees not covered by a CCNL, but it
+                        sets no single amount: it points to the "most
+                        representative" CCNL per sector, as determined by the
+                        CNEL — a contractual pointer mechanism, not a legal
+                        amount.
+                    </p>
+
+                    <p>
+                        Absent a single national figure, this module uses by
+                        convention, as its 1.0x reference wage, the level-3
+                        minimo tabellare of the CCNL Commercio, Terziario e
+                        Distribuzione e Servizi (Confcommercio) — the most
+                        cited, broadest-coverage CCNL (about 3 million
+                        employees), i.e. EUR 1,983.91/month (values in force
+                        from 1 November 2025). A very close alternative
+                        figure (CCNL Metalmeccanici Industria, level C1, EUR
+                        2,022.12/month, about 2% higher) confirms that the
+                        choice of reference CCNL does not strongly change this
+                        benchmark — but in either case, this is neither a
+                        statutory minimum wage nor the unique, uncontested
+                        outcome of a collective negotiation.
+                    </p>
+
+                    <p>
+                        The CCNL Commercio pays 14 "mensilita" per year (12
+                        ordinary months plus tredicesima and quattordicesima).
+                        Consistent with the convention already used for
+                        Spain's SMI (also paid over 14 installments), the
+                        reference wage is prorated over 12 months: 1,983.91 x
+                        14 / 12 = EUR 2,314.56/month. All wage grid points in
+                        this module are therefore continuous monthly averages
+                        (annual gross pay / 12), not the amount literally paid
+                        in an ordinary month.
+                    </p>
+
+                    <h3>2. INPS contributions: the contribution ceiling and the additional 1% contribution</h3>
+
+                    <p>
+                        2026 INPS contributions (INPS Circolare n. 6 of 30
+                        January 2026) break down into: IVS (invalidita,
+                        vecchiaia, superstiti — Fondo Pensioni Lavoratori
+                        Dipendenti), 33.00% total (23.81% employer / 9.19%
+                        employee); NASpI (unemployment, employer only), 1.61%;
+                        CIGO (ordinary wage-guarantee fund, employer only,
+                        firms with more than 50 employees), 2.00% (1.70% for
+                        smaller firms); CIGS (extraordinary wage-guarantee
+                        fund, firms with more than 15 employees), 0.90% total
+                        (0.60% employer / 0.30% employee); contributo
+                        maternita (employer only), 0.46%; Fondo di Garanzia
+                        TFR (employer only), 0.20%; ex-CUAF / assegni
+                        familiari (employer only, maintained after the
+                        Assegno Unico Universale reform), 0.68%; INAIL
+                        (workplace injury insurance), an illustrative 0.50%
+                        rate (a low-risk office/commerce profile — INAIL
+                        publishes no single national average rate, real rates
+                        ranging from about 0.3% to 11.0% by risk class).
+                    </p>
+
+                    <p>
+                        An additional 1% employee-only contribution (art.
+                        3-ter, law 438/1992) applies on the portion of annual
+                        pensionable pay above the "prima fascia di
+                        retribuzione pensionabile" (EUR 56,224 in 2026) —
+                        visible in this module from about 4.4x the reference
+                        wage onward. The IVS base (both the base share and the
+                        additional contribution) is further capped at the
+                        annual "massimale contributivo" (art. 2, comma 18, law
+                        335/1995), EUR 122,295 in 2026, applicable to
+                        employees fully within the contributory pension system
+                        (a contribution career started after 31 December 1995
+                        — the assumption used here). This ceiling starts
+                        binding around 4.4x-4.6x the reference wage on this
+                        module's grid, which explains the visible dip in the
+                        employer and employee contribution rates beyond that
+                        point: this is a genuine effect of the ceiling, not a
+                        calculation error.
+                    </p>
+
+                    <h3>3. TFR (trattamento di fine rapporto): the most distinctive feature of the Italian system</h3>
+
+                    <p>
+                        TFR is a mandatory deferred severance accrual (art.
+                        2120 of the Italian Civil Code; law n. 297 of 29 May
+                        1982), accumulated each year at the annual pay divided
+                        by 13.5, less 0.5% of the same base — about 6.9074% of
+                        annual gross pay, with no contribution ceiling.
+                        Consistent with standard Italian accounting practice
+                        ("costo azienda", line B9 of the income statement),
+                        this module includes TFR in total employer cost as a
+                        distinct deferred-compensation line, clearly
+                        identified in the breakdown (waterfall) chart and the
+                        data table.
+                    </p>
+
+                    <p class="method-note">
+                        A crucial point for interpreting this module: TFR
+                        genuinely increases labour cost, but it is NOT
+                        available to the employee immediately — it is paid
+                        out when the employment contract ends (resignation,
+                        dismissal, retirement), or as a partial advance in
+                        specific cases provided by law (purchase of a primary
+                        residence, serious medical expenses, after 8 years of
+                        seniority). This module's net wage (before and after
+                        tax) therefore never includes TFR: gross + employer
+                        INPS contributions + TFR = employer cost, but net =
+                        gross - employee INPS contributions - income tax, with
+                        no TFR. This is the only component of this kind across
+                        every module in the Lab.
+                    </p>
+
+                    <h3>4. IRPEF, detrazioni and trattamento integrativo</h3>
+
+                    <p>
+                        IRPEF (national income tax, Legge di Bilancio 2026 /
+                        law 199/2025) follows a 3-bracket marginal scale: 23%
+                        up to EUR 28,000, 33% from EUR 28,000 to EUR 50,000,
+                        43% above. The detrazione da lavoro dipendente (art.
+                        13 of the TUIR, DPR 917/1986) is a tax credit phasing
+                        out over 3 segments between EUR 15,000 and EUR 50,000
+                        of income, increased by a further EUR 65 for income
+                        strictly between EUR 25,000 and EUR 35,000. The
+                        "ulteriore detrazione" (2024 reform, stabilised for
+                        2026) adds EUR 1,000 flat for income between EUR
+                        20,000 (exclusive) and EUR 32,000, phasing out
+                        linearly to zero at EUR 40,000.
+                    </p>
+
+                    <p>
+                        The trattamento integrativo (ex-bonus Renzi, up to EUR
+                        1,200/year) is also modeled in the calculation engine,
+                        but does not trigger at any point of this module's
+                        wage grid: the reference wage (EUR 2,314.56/month,
+                        about EUR 27,775/year) is already close to or beyond
+                        the level where this mechanism stops applying in full.
+                        The taxable base (reddito imponibile) is annual gross
+                        pay less the employee's INPS contributions (excluded
+                        from employment income under art. 51 of the TUIR) —
+                        the same base is used for the detrazioni threshold
+                        tests.
+                    </p>
+
+                    <h3>5. Addizionale regionale (Lazio) and addizionale comunale (Roma): a tiered-flat mechanism, not marginal</h3>
+
+                    <p>
+                        Unlike national IRPEF, the addizionale regionale and
+                        addizionale comunale are tiered-flat mechanisms: the
+                        applicable rate applies to the WHOLE taxable income
+                        once a threshold is crossed, not only to the portion
+                        above it as a marginal bracket would. This is an
+                        important methodological point — a secondary source
+                        consulted while building this module incorrectly
+                        described the Lazio addizionale regionale as a
+                        progressive bracket scale; reading the official Lazio
+                        region PDF directly corrected this error.
+                    </p>
+
+                    <p>
+                        For 2026, the Lazio region (regional law n. 20 of 31
+                        December 2025) applies 1.73% for taxable income at or
+                        below EUR 28,000, and 3.33% above — a EUR 60 smoothing
+                        credit softens the threshold effect for income between
+                        EUR 28,000 and EUR 30,000 (national range: 1.23% to
+                        3.33% depending on the region). The city of Rome
+                        applies a single 0.90% rate, with a full exemption
+                        (not a deductible slice) for taxable income at or
+                        below EUR 14,000 (national range: 0% to 0.9% depending
+                        on the municipality).
+                    </p>
+
+                    <h3>6. Indicators produced</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Net before tax:</strong>
+                            gross wage minus the employee's INPS contributions
+                            (IVS, CIGS, the additional 1% contribution).
+                        </li>
+
+                        <li>
+                            <strong>Net after tax:</strong>
+                            net before tax minus monthly income tax (national
+                            IRPEF net of detrazioni and the trattamento
+                            integrativo, plus the addizionale regionale and
+                            addizionale comunale).
+                        </li>
+
+                        <li>
+                            <strong>Employer cost:</strong>
+                            gross wage plus employer INPS contributions plus
+                            TFR.
+                        </li>
+
+                        <li>
+                            <strong>Social wedge:</strong>
+                            difference between employer cost (including TFR)
+                            and net wage before tax.
+                        </li>
+
+                        <li>
+                            <strong>Total socio-fiscal wedge:</strong>
+                            difference between employer cost (including TFR)
+                            and net wage after tax.
+                        </li>
+
+                        <li>
+                            <strong>Marginal return:</strong>
+                            share of an additional euro of gross wage kept
+                            before and after income tax.
+                        </li>
+                    </ul>
+
+                    <h3>7. Lab Index</h3>
+
+                    <p>
+                        The Lab Index measures the wage efficiency of labour
+                        cost, independently of income tax. Lab-E = 100 × net
+                        wage before income tax / employer cost, Lab-B = 100 −
+                        Lab-E. No targeted, degressive employer relief is
+                        modeled for Italy: the Lab-R indicator therefore does
+                        not apply here.
+                    </p>
+
+                    <p class="method-note">
+                        Italy's Lab-E is structurally lower than most other
+                        countries in the Lab, but for a different reason than
+                        the Dutch Lab-E (which overstates wage efficiency by
+                        bundling a genuinely due social contribution into the
+                        displayed tax): here, employer cost genuinely includes
+                        TFR, a real personnel cost that will reach the
+                        employee later (at contract termination), but is not
+                        available as immediate net pay. Italy's Lab-E
+                        therefore faithfully reflects a labour cost genuinely
+                        higher than current wages alone, not a presentation
+                        artifact.
+                    </p>
+
+                    <h3>8. Limits of the scenario</h3>
+
+                    <ul class="method-note">
+                        <li>
+                            Italy has no statutory minimum wage: this module's
+                            1.0x reference wage is a methodological choice
+                            (the CCNL Commercio, level 3, minimo tabellare),
+                            not a legal floor nor the unique, uncontested
+                            outcome of a collective negotiation — a different
+                            reference CCNL (for example Metalmeccanici) would
+                            give a close but different figure.
+                        </li>
+
+                        <li>
+                            Only one region (Lazio) and one municipality
+                            (Rome) are modeled for the addizionale regionale
+                            and addizionale comunale; the addizionale
+                            regionale ranges from 1.23% to 3.33% and the
+                            addizionale comunale from 0% to 0.9% depending on
+                            location in Italy.
+                        </li>
+
+                        <li>
+                            The INAIL rate (workplace injury insurance) is
+                            illustrative (0.50%, a low-risk office/commerce
+                            profile): INAIL does not publish a single national
+                            average rate, real rates ranging from about 0.3%
+                            to 11.0% depending on the job's risk class.
+                        </li>
+
+                        <li>
+                            CIGO is modeled at the rate applicable to firms
+                            with more than 50 employees (2.00%); smaller firms
+                            benefit from a reduced rate (1.70%).
+                        </li>
+
+                        <li>
+                            The IVS contribution ceiling (massimale
+                            contributivo, EUR 122,295/year in 2026) assumes
+                            the employee's contribution career began entirely
+                            after 31 December 1995 (sistema contributivo);
+                            employees whose career began before that date
+                            (sistema retributivo or misto) are not subject to
+                            this ceiling.
+                        </li>
+
+                        <li>
+                            The trattamento integrativo mechanism (ex-bonus
+                            Renzi) is modeled but does not trigger at any
+                            point of this module's wage grid, since the
+                            reference wage is already above the level at
+                            which this mechanism activates.
+                        </li>
+
+                        <li>
+                            The 2026 exceptional tax regimes (a 5% substitute
+                            tax on wage increases from CCNL renewals, a 15%
+                            substitute tax on night/shift/on-call allowances,
+                            fringe-benefit exemption thresholds) are not
+                            modeled, since the reference profile consists only
+                            of base salary.
+                        </li>
+
+                        <li>
+                            TFR is included in employer cost as a distinct
+                            deferred-compensation line: it is not immediately
+                            available to the employee (paid out at contract
+                            termination), unlike net wage.
+                        </li>
+                    </ul>
+
+                    <h3>9. Sources</h3>
+
+                    <p class="method-note">
+                        INPS, Circolare n. 6 del 30 gennaio 2026 (2026
+                        contribution and wage values); art. 13 of the TUIR
+                        (DPR 917/1986), accessed via Brocardi.it; Legge di
+                        Bilancio 2026 (law n. 199/2025) for the IRPEF scale;
+                        law n. 207/2024 for the ulteriore detrazione;
+                        decree-law n. 3/2020 for the trattamento integrativo;
+                        Lazio Region, regional law n. 20 of 31 December 2025
+                        (official PDF accessed directly) for the addizionale
+                        regionale; Roma Capitale, Deliberazione dell'Assemblea
+                        Capitolina n. 186 of 19 December 2024 for the
+                        addizionale comunale; CCNL Commercio-Confcommercio,
+                        Testo Unico signed 3 February 2026, for the reference
+                        wage; art. 2120 of the Italian Civil Code and law n.
+                        297/1982 for TFR; World Bank (International Comparison
+                        Program) for the PPP conversion factor. OECD Taxing
+                        Wages 2026 (Italy) and ISTAT (2022 wage structure
+                        survey) were used as plausibility cross-checks. See
+                        the downloadable sources file in the Data tab for the
+                        full citation detail.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

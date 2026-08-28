@@ -1,0 +1,141 @@
+{
+    "country": "Italy",
+    "country_code": "IT",
+    "version": "2026",
+    "status": "source_audit",
+    "sources": {
+        "wage_reference_ccnl_commercio_2026": {
+            "label": "CCNL Commercio, Terziario e Distribuzione e Servizi (Confcommercio), minimo tabellare Livello 3",
+            "value": "1 983,91 EUR/mois (base 1 453,94 + contingenza 527,90 + terzo elemento 2,07), verses en 14 mensualites, valeurs en vigueur au 1er novembre 2025",
+            "source_name": "CCNL Commercio-Confcommercio, Testo Unico signe le 3 fevrier 2026 (accord de renouvellement du 22 mars 2024, periode 2023-2027)",
+            "source_type": "official_aggregated",
+            "url": "https://ilccnl.it/contratto/ccnl/commercio---confcommercio",
+            "confidence": "medium",
+            "note": "Confiance qualifiee de moyenne car il s'agit d'un choix methodologique (le CCNL le plus cite et le plus large en couverture, ~3 millions de salaries) et non d'un salaire minimum legal. Chiffre alternatif de controle : CCNL Metalmeccanici Industria (Federmeccanica-Assistal, renouvele le 22 novembre 2025), niveau C1, 2 022,12 EUR/mois a compter du 1er juin 2026 (source : bulletin FIM-CISL, https://www.fim-cisl.it/2026/06/15/ccnl-federmeccanica-assistal-2025-2028-nuovi-minimi-tabellari-giugno-2026/) -- environ 2 % au-dessus du chiffre retenu, confirmant que le choix du CCNL ne fait pas fortement varier le repere."
+        },
+        "salario_giusto_decree_2026": {
+            "label": "Decret-loi \"salario giusto\" (salaire juste), en vigueur depuis le 1er mai 2026",
+            "value": "Mecanisme de renvoi au CCNL le plus representatif par secteur (determine par le CNEL), sans montant numerique unique",
+            "source_name": "Decreto-Legge 30 aprile 2026, n. 62 (Gazzetta Ufficiale n. 99 du 30/4/2026), converti avec modifications par la Legge 25 giugno 2026, n. 112",
+            "source_type": "official",
+            "url": "https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.legge:2026-04-30;62",
+            "confidence": "high",
+            "note": "Confirme comme non utilisable pour un chiffre de reference unique : le mecanisme est un renvoi contractuel, pas un montant legal. Loi habilitante : Legge 26 settembre 2025, n. 144 (transposition de la directive europeenne 2022/2041 sur des salaires minimaux adequats)."
+        },
+        "istat_wage_structure_2022": {
+            "label": "Structure des remunerations en Italie, retribuzione lorda media annua (equivalent temps plein)",
+            "value": "37 302 EUR/an (hommes 39 982, femmes 33 807), annee de reference octobre 2022",
+            "source_name": "ISTAT, \"La struttura delle retribuzioni in Italia | Anno 2022\", publie le 20 janvier 2025",
+            "source_type": "official",
+            "url": "https://www.istat.it/wp-content/uploads/2025/01/REPORT_STRUTTURA_RETRIBUZIONI_2022.pdf",
+            "confidence": "high",
+            "note": "Chiffre de reference pour le salaire MOYEN (pas un salaire plancher), utilise ici uniquement a titre de recoupement/contexte, pas comme salaire de reference 1,0x. Enquete quadriennale (SES europeenne) : pas de version 2023-2026 disponible a ce jour."
+        },
+        "inps_circolare_6_2026": {
+            "label": "Valeurs contributives et salariales INPS 2026",
+            "value": "IVS 33,00 % (23,81 % employeur / 9,19 % salarie), massimale contributivo 122 295 EUR/an, prima fascia 56 224 EUR/an, NASpI 1,61 %, CIGO 1,70 %/2,00 %, CIGS 0,90 % (0,60/0,30), maternita 0,46 %, Fondo Garanzia TFR 0,20 %, ex-CUAF 0,68 %",
+            "source_name": "INPS, Circolare n. 6 del 30 gennaio 2026",
+            "source_type": "official",
+            "url": "https://www.inps.it/it/it/inps-comunica/atti/circolari-messaggi-e-normativa/dettaglio.circolari-e-messaggi.2026.01.circolare-numero-6-del-30-01-2026_15151.html",
+            "confidence": "high",
+            "note": "Figures triangulees independamment par au moins 3 sources de conseil en paie citant explicitement cette circulaire par son numero, avec des chiffres identiques. Base legale de chaque composante : IVS/massimale (L. 335/1995, art. 2 comma 18), aggiuntivo 1% (L. 438/1992, art. 3-ter), CIGO/CIGS (D.Lgs. 148/2015, art. 13 et 23), Fondo Garanzia TFR (L. 297/1982 art. 2 ; L. 88/1989 art. 24 ; D.Lgs. 80/1992), ex-CUAF confirme maintenu par un communique INPS de clarification (2022) suite a la reforme de l'Assegno Unico Universale."
+        },
+        "inail_illustrative_rate": {
+            "label": "Taux INAIL illustratif (assurance accidents du travail)",
+            "value": "0,50 % (illustratif, profil bureau/commerce a faible risque)",
+            "source_name": "Aucun taux moyen national publie par l'INAIL ; les taux reels varient par classe de risque (voce di tariffa), de 0,3 % environ a un plafond legal de 11,0 %",
+            "source_type": "illustrative_not_official_average",
+            "confidence": "low",
+            "note": "Contrairement aux autres composantes, ce taux n'est pas une moyenne officielle publiee mais une estimation illustrative coherente avec un profil de bureau/commerce, documentee comme telle pour eviter de presenter un chiffre invente comme une donnee sourcee."
+        },
+        "tfr_civil_code": {
+            "label": "Trattamento di Fine Rapporto (TFR), formule et revalorisation",
+            "value": "Remuneration annuelle / 13,5, moins 0,5 % de la meme base (~6,91 % du brut annuel) ; revalorisation annuelle a 1,5 % + 75 % de l'inflation ISTAT (FOI)",
+            "source_name": "Art. 2120 Code civil italien ; Legge 29 maggio 1982, n. 297",
+            "source_type": "official",
+            "confidence": "high"
+        },
+        "irpef_brackets_2026": {
+            "label": "Bareme national de l'IRPEF 2026",
+            "value": "23 % jusqu'a 28 000 EUR, 33 % de 28 000 a 50 000 EUR (fusion de l'ancienne 2e tranche a 35 %), 43 % au-dela",
+            "source_name": "Legge di Bilancio 2026 (Legge 30 dicembre 2025, n. 199)",
+            "source_type": "official",
+            "confidence": "high"
+        },
+        "detrazione_lavoro_dipendente_art13_tuir": {
+            "label": "Detrazione da lavoro dipendente, art. 13 TUIR, et supplement comma 1.1",
+            "value": "1 955 EUR (<=15 000 EUR), 1 910 + 1 190 x (28 000-reddito)/13 000 (15 000-28 000 EUR), 1 910 x (50 000-reddito)/22 000 (28 000-50 000 EUR), 0 EUR au-dela, + 65 EUR pour un revenu strictement compris entre 25 000 et 35 000 EUR",
+            "source_name": "Art. 13, DPR 917/1986 (TUIR)",
+            "source_type": "official_aggregated",
+            "url": "https://www.brocardi.it/testo-unico-imposte-redditi/titolo-i/capo-i/art13.html",
+            "confidence": "high",
+            "note": "Texte de loi consulte via Brocardi.it (republication du texte codifie), recoupe avec 3 guides de paie independants donnant des coefficients identiques."
+        },
+        "ulteriore_detrazione_2024_reform": {
+            "label": "Ulteriore detrazione (reforme 2024, stabilisee pour 2026)",
+            "value": "1 000 EUR forfaitaires pour un revenu compris entre 20 000 EUR (exclu) et 32 000 EUR, degressif lineairement jusqu'a 0 EUR a 40 000 EUR",
+            "source_name": "Legge 30 dicembre 2024, n. 207 (Legge di Bilancio 2025), art. 1, commi 2-3, confirmee inchangee pour 2026 par la Legge di Bilancio 2026 (L. 199/2025)",
+            "source_type": "official",
+            "confidence": "high"
+        },
+        "trattamento_integrativo": {
+            "label": "Trattamento integrativo (ex-bonus Renzi)",
+            "value": "1 200 EUR/an inconditionnels si revenu <=15 000 EUR ; entre 15 000 et 28 000 EUR, difference positive entre la detrazione lavoro dipendente et l'IRPEF brute, plafonnee a 1 200 EUR",
+            "source_name": "Decreto-Legge 5 febbraio 2020, n. 3 (conv. Legge 21/2020), montant confirme inchange pour 2026 par la Legge di Bilancio 2026 (L. 199/2025)",
+            "source_type": "official",
+            "confidence": "high"
+        },
+        "addizionale_regionale_lazio_2026": {
+            "label": "Addizionale regionale IRPEF, Latium, annee d'imposition 2026",
+            "value": "1,73 % jusqu'a 28 000 EUR, 3,33 % au-dela (mecanisme par palier applique a la totalite du revenu, pas marginal), credit de lissage de 60 EUR entre 28 001 et 30 000 EUR",
+            "source_name": "Regione Lazio, \"Misura dell'aliquota dell'addizionale regionale IRPEF -- Anno d'imposta 2026\" (Legge Regionale n. 20 del 31 dicembre 2025)",
+            "source_type": "official",
+            "url": "https://www.regione.lazio.it/sites/default/files/2026-01/Addizionale-regionale-2026.pdf",
+            "confidence": "high",
+            "note": "Source primaire consultee directement (PDF officiel de la Region Latium). Une source secondaire (CGIL Latium) decrivait a tort ce mecanisme comme marginal/progressif par tranche ; la lecture directe du PDF regional confirme qu'il s'agit d'un taux unique applique a la totalite du revenu selon le palier atteint."
+        },
+        "addizionale_comunale_roma_2026": {
+            "label": "Addizionale comunale IRPEF, Rome Capitale, 2026",
+            "value": "0,90 % (taux unique), exoneration totale si le revenu imposable est inferieur ou egal a 14 000 EUR",
+            "source_name": "Deliberazione dell'Assemblea Capitolina n. 186 del 19 dicembre 2024",
+            "source_type": "secondary_multi_source",
+            "confidence": "medium",
+            "note": "Chiffres cites de maniere concordante par plusieurs sources secondaires specialisees en paie, mais la deliberation elle-meme n'a pas pu etre verifiee directement en ligne pour l'annee 2026 specifiquement (page comune.roma.it consultee ne renvoyait que la version anterieure a 2025). A confirmer directement aupres du site comune.roma.it avant une revision future."
+        },
+        "ppp_conversion_factor": {
+            "label": "Facteur de conversion PPA, consommation finale des menages et ISBLSM (LCU pour 1 dollar international), Italie, 2024",
+            "value": 0.625157,
+            "source_name": "Banque mondiale, International Comparison Program (ICP)",
+            "source_type": "official",
+            "url": "https://api.worldbank.org/v2/country/ITA/indicator/PA.NUS.PRVT.PP",
+            "confidence": "high",
+            "note": "Annee de reference 2024 retenue par coherence avec les autres modules de ce projet (une valeur 2025 plus recente existe, 0,644824, mais n'est pas utilisee pour rester coherent avec la convention 2024 deja adoptee ailleurs)."
+        },
+        "oecd_taxing_wages_2026_italy": {
+            "label": "OECD Taxing Wages 2026, note pays Italie (donnees fiscales 2025)",
+            "value": "Coin fiscal salarie seul 45,8 % (2025) ; taux d'imposition net moyen 28,6 %",
+            "source_name": "OCDE, \"Taxing Wages 2026: Italy\" (donnees relatives a l'annee fiscale 2025, decalage standard d'un an de l'OCDE)",
+            "source_type": "official",
+            "url": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2026/04/taxing-wages-2026-country-notes_491a0e97/italy_cac3ab59/80db66e3-en.pdf",
+            "confidence": "medium",
+            "note": "Utilise uniquement comme recoupement de plausibilite (le \"salarie moyen\" OCDE n'est pas le meme profil que le salaire de reference CCNL retenu par ce module) ; les taux de cotisation salariale/patronale detailles de l'OCDE (9,49 %/31,58 % cites par des sources secondaires) n'ont pas pu etre verifies directement dans le PDF primaire et ne sont pas utilises comme entree du moteur."
+        }
+    },
+    "audit_decision": {
+        "v0_scope": [
+            "Cotisations INPS (IVS, aggiuntivo 1%, NASpI, CIGO, CIGS, maternita, Fondo Garanzia TFR, ex-CUAF, INAIL illustratif)",
+            "Plafond de cotisation IVS (massimale contributivo)",
+            "TFR (accumulation annuelle, inclus dans le cout employeur comme ligne distincte)",
+            "IRPEF national (bareme, detrazione lavoro dipendente, ulteriore detrazione, trattamento integrativo)",
+            "Addizionale regionale (Latium) et addizionale comunale (Rome)"
+        ],
+        "not_yet_included": [
+            "Autres regions et communes que le Latium/Rome (addizionale regionale 1,23%-3,33%, addizionale comunale 0%-0,9%)",
+            "Taux INAIL specifiques par secteur/classe de risque (taux illustratif unique retenu)",
+            "Taux CIGO reduit pour les entreprises de 50 salaries ou moins (1,70 % au lieu de 2,00 %)",
+            "Regimes fiscaux exceptionnels 2026 (imposition substitutive 5% sur les hausses CCNL, 15% sur les indemnites de nuit/poste/astreinte, plafonds d'exoneration des avantages en nature)",
+            "Plafond de cotisation pour les carrieres commencees avant 1996 (systeme retributivo/misto) : non pertinent, non modelise",
+            "Detrazioni pour charges de famille (le profil de reference n'a pas d'enfant a charge)"
+        ]
+    }
+}

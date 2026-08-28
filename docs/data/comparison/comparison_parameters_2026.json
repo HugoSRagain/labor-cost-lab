@@ -1,7 +1,7 @@
 {
     "module_name": "Cross-Country Labour Cost Comparison",
     "version": "2026-01",
-    "countries": ["France", "Germany", "Belgium", "Switzerland", "Netherlands", "United Kingdom", "Ireland", "Spain", "Sweden"],
+    "countries": ["France", "Germany", "Belgium", "Switzerland", "Netherlands", "United Kingdom", "Ireland", "Spain", "Sweden", "Italy"],
     "methodology": [
         "Comparison axis: absolute wage levels converted via purchasing power parity (PPP), not wages re-indexed to each country's own minimum wage.",
         "PPP is applied individually to all 4 countries (including Switzerland), following the same logic as the OECD 'Taxing Wages' cross-country comparisons.",
@@ -26,7 +26,8 @@
         "UK": {"value_local": 2065.38, "currency": "GBP", "value_intl_usd": 3025.1, "source": "National Living Wage (21+), 12.71 GBP/h x 37.5h/week (most commonly cited UK full-time benchmark), docs/data/uk/uk_parameters_2026.json"},
         "IE": {"value_local": 2391.35, "currency": "EUR", "value_intl_usd": 2711.4, "source": "National Minimum Wage (20+), 14.15 EUR/h x 39h/week (most commonly cited Irish full-time benchmark), docs/data/ireland/ireland_parameters_2026.json"},
         "ES": {"value_local": 1424.50, "currency": "EUR", "value_intl_usd": 2421.0, "source": "Salario Minimo Interprofesional (SMI) 2026, 1,221 EUR/month x 14 payments, prorated over 12 months, docs/data/spain/spain_parameters_2026.json"},
-        "SE": {"value_local": 34470, "currency": "SEK", "value_intl_usd": 4019.8, "source": "Sweden has no statutory minimum wage; this is the Migrationsverket work-permit wage floor (90% of the SCB median salary), used as this module's reference wage by convention, docs/data/sweden/sweden_parameters_2026.json"}
+        "SE": {"value_local": 34470, "currency": "SEK", "value_intl_usd": 4019.8, "source": "Sweden has no statutory minimum wage; this is the Migrationsverket work-permit wage floor (90% of the SCB median salary), used as this module's reference wage by convention, docs/data/sweden/sweden_parameters_2026.json"},
+        "IT": {"value_local": 2314.56, "currency": "EUR", "value_intl_usd": 3702.4, "source": "Italy has no statutory minimum wage; this is the CCNL Commercio Livello 3 minimo tabellare (1,983.91 EUR x 14 payments / 12), used as this module's reference wage by convention, docs/data/italy/italy_parameters_2026.json"}
     },
     "ppp_conversion_factors": {
         "basis": "Household (private) final consumption expenditure PPP conversion factor, LCU per international dollar",
@@ -43,7 +44,8 @@
             "UK": 0.682739,
             "IE": 0.88195,
             "ES": 0.588481,
-            "SE": 8.577614
+            "SE": 8.577614,
+            "IT": 0.625157
         }
     },
     "reference_profiles": {
@@ -91,6 +93,11 @@
             "profile_id": "sweden__standard_employee_stockholm",
             "description": "Standard, single, childless employee, Stockholm kommun as the reference municipality (kommunalskatt 30.55%). No separate visible employee contribution: the 7% allman pensionsavgift is fully offset by an equal skattereduktion across this module's entire wage range, so 'employee_contributions' is 0 by construction, mirroring how the Netherlands' bundled loonheffing is handled.",
             "compute_source": "analysis/sweden/build_sweden_dataset.py and analysis/sweden/swedish_tax_2026.py"
+        },
+        "IT": {
+            "profile_id": "italy__standard_employee_roma_lazio",
+            "description": "Standard, single, childless private-sector employee, open-ended contract, firm with more than 50 employees, Roma/Lazio as the reference region and municipality (national IRPEF plus the Lazio addizionale regionale and Roma addizionale comunale, both tiered-flat surcharges on the whole taxable income). employer_cost includes the TFR (trattamento di fine rapporto) deferred severance accrual (~6.91% of gross annual pay), a personnel cost under standard Italian payroll accounting that is not available to the employee as current net pay.",
+            "compute_source": "analysis/italy/build_italy_dataset.py and analysis/italy/italian_payroll_2026.py"
         }
     },
     "switzerland_canton_population_weights": {
@@ -181,6 +188,7 @@
         "Ireland's 'income_tax_or_withholding_tax' figure bundles PAYE income tax and the Universal Social Charge (USC), since USC is a separate tax on income rather than a social contribution; 'employee_contributions' and 'employer_contributions' are PRSI Class A only, using the January-September 2026 rates (a further rate increase scheduled for 1 October 2026 is not modeled).",
         "Spain's income tax (IRPF) is a population-weighted average across 16 comunidades autonomas (see 'es_region_population_weights'), mirroring how Switzerland's cantons are aggregated; Navarra and Pais Vasco are excluded (separate foral tax systems). 'employee_contributions' and 'employer_contributions' are Seguridad Social Regimen General only, national and identical across all regions.",
         "Sweden has no statutory minimum wage and no single universal collective agreement (the Ghent/Nordic model: roughly 700 sector-level agreements negotiated by employers and unions cover about 90% of employees). This module uses the Migrationsverket work-permit wage floor (90% of the SCB median salary, 34,470 SEK/month for decisions from 1 June 2026) as its reference wage by convention -- an official, dated figure, but not a legal minimum or a negotiated collective-bargaining floor. Sweden's 'employee_contributions' is 0 by construction: the 7% allman pensionsavgift is fully offset by an equal skattereduktion (capped at total tax due) across this module's entire wage range, so the entire employee-side deduction is reported under 'income_tax_or_withholding_tax'. Only Stockholm kommun (30.55% combined kommunalskatt) is modeled as the reference municipality; the national range is 28.93%-35.65%.",
+        "Italy has no statutory minimum wage either -- one of five EU countries (with Austria, Denmark, Finland and Sweden) relying exclusively on sector-level collective bargaining (CCNL), which covers over 80% of private-sector employees. This module uses the CCNL Commercio Livello 3 minimo tabellare (EUR 1,983.91/month, paid over 14 installments, prorated to EUR 2,314.56/month over 12 months) as its reference wage by convention -- a methodological choice, not a legal minimum. Italy's 'employer_cost' includes the TFR (trattamento di fine rapporto) deferred severance accrual (~6.91% of gross annual pay), a personnel cost under standard Italian payroll accounting that is not available to the employee as current net pay, unlike every other country in this comparison. Income tax bundles national IRPEF with the Lazio addizionale regionale and Roma addizionale comunale, both tiered-flat surcharges (the whole taxable income is taxed at one rate once a threshold is crossed, not a marginal bracket) rather than progressive brackets.",
         "All amounts are also cross-country comparable in international dollars (PPP) in addition to local currency."
     ]
 }
