@@ -1,0 +1,91 @@
+{
+    "country": "Sweden",
+    "country_code": "SE",
+    "version": "2026",
+    "status": "source_audit",
+    "sources": {
+        "arbetsgivaravgifter_2026": {
+            "label": "Taux des cotisations patronales (arbetsgivaravgifter), 2026",
+            "value": "31.42% du salaire brut, sans plafond : socialavgifter 18,80% (alderspensionsavgift 10,21%, efterlevandepensionsavgift 0,30%, sjukforsakringsavgift 3,55%, foraldraforsakringsavgift 2,00%, arbetsmarknadsavgift 2,64%, arbetsskadeavgift 0,10%) + allman loneavgift 12,62%",
+            "source_name": "Socialavgiftslag (2000:980) par. 26, telle que modifiee par la loi (2025:1362) ; Lag (1994:1920) om allman loneavgift par. 3, telle que modifiee par la loi (2025:1360) ; Skatteverket",
+            "source_type": "official",
+            "url": "https://www.skatteverket.se/foretag/arbetsgivare/socialavgifter",
+            "confidence": "high",
+            "note": "Verifie mot pour mot contre le texte de loi apres qu'une premiere recherche par sources secondaires a donne une decomposition incoherente pour l'allman loneavgift (11,62% cite a tort dans certaines sources secondaires contre 12,62% dans le texte de loi) ; les composantes verifiees totalisent exactement 31,42%."
+        },
+        "grundavdrag_jobbskatteavdrag_2026": {
+            "label": "Formules officielles du grundavdrag et du jobbskatteavdrag, annee de revenus 2026",
+            "value": "Grundavdrag (5 segments) et jobbskatteavdrag (4 segments, colonne 1 : moins de 66 ans), exprimes en multiples du prisbasbelopp 2026 (59 200 SEK)",
+            "source_name": "Skatteverket, Teknisk beskrivning SKV 433, edition 36, 2025-12-10, sections 6.1 et 7.5.2",
+            "source_type": "official",
+            "url": "https://www.skatteverket.se/download/18.1522bf3f19aea8075ba55c/1766385913260/teknisk-beskrivning-skv-433-2026-utgava-36.pdf",
+            "confidence": "high",
+            "note": "PDF officiel recupere et lu directement (pages 8-19). Formules et coefficients (0,423 / 0,77 / 0,293 PBB pour le grundavdrag ; 0,91 / 3,24 / 8,08 PBB, 38,74% / 25,10%, 0,3874 / 0,251 / 1,813 / 3,027 PBB pour le jobbskatteavdrag) transcrits directement du document et revalides contre ses deux exemples chiffres officiels dans chaque section (grundavdrag : 37 400 SEK a 120 000 SEK de revenu annuel, 31 600 SEK a 324 000 SEK ; jobbskatteavdrag : 11 976 SEK de reduction a 90 000 SEK de revenu avec un taux communal d'exemple de 32,84%, 26 083 SEK a 240 000 SEK) -- implementation dans analysis/sweden/swedish_tax_2026.py reproduit ces deux exemples a l'identique."
+        },
+        "allman_pensionsavgift_2026": {
+            "label": "Allman pensionsavgift et sa skattereduktion compensatoire, 2026",
+            "value": "7% du revenu, plafonne a 8,07 x l'inkomstbasbelopp (673 038 SEK, avgift max 47 100 SEK) ; skattereduktion de 100% de l'avgift, plafonnee a l'impot statlig+kommunal du avant credit",
+            "source_name": "Skatteverket, Teknisk beskrivning SKV 433, edition 36, 2025-12-10, sections 7.4 et 7.5.1",
+            "source_type": "official",
+            "url": "https://www.skatteverket.se/download/18.1522bf3f19aea8075ba55c/1766385913260/teknisk-beskrivning-skv-433-2026-utgava-36.pdf",
+            "confidence": "high"
+        },
+        "statlig_inkomstskatt_skiktgrans_2026": {
+            "label": "Seuil de l'impot national sur le revenu (skiktgrans), annee de revenus 2026",
+            "value": "643 000 SEK de revenu imposable (apres grundavdrag) ; 20% au-dela ; suppression definitive du varnskatt depuis l'annee de revenus 2020",
+            "source_name": "Skatteverket, Teknisk beskrivning SKV 433, edition 36, 2025-12-10, section 7.2 ; Skatteverket, Belopp och procent 2026",
+            "source_type": "official",
+            "url": "https://www.skatteverket.se/privat/skatter/beloppochprocent/2026.4.1522bf3f19aea8075ba21.html",
+            "confidence": "high"
+        },
+        "kommunalskatt_stockholm_2026": {
+            "label": "Taux communal + regional combine de Stockholm, 2026",
+            "value": "30,55% (18,22% kommun + 12,33% region) ; moyenne nationale 32,38%, fourchette 28,93%-35,65%",
+            "source_name": "Ville de Stockholm (stockholm.se) ; Ekonomifakta, agregation des taux communaux suedois 2026",
+            "source_type": "official_aggregated",
+            "url": "https://www.ekonomifakta.se/sakomraden/skatt/hur-blir-din-skatt-2026_1239470.html",
+            "confidence": "high"
+        },
+        "prisbasbelopp_inkomstbasbelopp_2026": {
+            "label": "Prisbasbelopp et inkomstbasbelopp, 2026",
+            "value": "Prisbasbelopp 59 200 SEK, prisbasbelopp rehausse 60 500 SEK, inkomstbasbelopp 83 400 SEK",
+            "source_name": "Skatteverket, Teknisk beskrivning SKV 433, edition 36, 2025-12-10, section 1",
+            "source_type": "official",
+            "url": "https://www.skatteverket.se/download/18.1522bf3f19aea8075ba55c/1766385913260/teknisk-beskrivning-skv-433-2026-utgava-36.pdf",
+            "confidence": "high"
+        },
+        "wage_reference_migrationsverket_2026": {
+            "label": "Seuil salarial pour les permis de travail (90% du salaire median SCB), decisions a compter du 1er juin 2026",
+            "value": "34 470 SEK/mois (salaire median SCB de reference : 38 300 SEK/mois)",
+            "source_name": "Migrationsverket (Office suedois des migrations) / Statistiska centralbyran (SCB)",
+            "source_type": "official",
+            "url": "https://www.migrationsverket.se/",
+            "confidence": "medium",
+            "note": "La Suede n'ayant ni salaire minimum legal ni convention collective unique et universelle (environ 700 conventions de branche couvrant ~90% des salaries), ce chiffre officiel et date sert de repere de reference 1,0x par convention de ce module, comme precise dans sweden_parameters_2026.json. Confiance qualifiee de moyenne car ce chiffre repond a un objectif administratif (seuil de permis de travail) distinct de celui d'un salaire d'entree representatif, meme s'il en constitue l'approximation officielle la plus directement comparable."
+        },
+        "ppp_conversion_factor": {
+            "label": "Facteur de conversion PPA, consommation finale des menages et ISBLSM (LCU pour 1 dollar international), Suede, 2024",
+            "value": 8.577614,
+            "source_name": "Banque mondiale, International Comparison Program (ICP)",
+            "source_type": "official",
+            "url": "https://api.worldbank.org/v2/country/SWE/indicator/PA.NUS.PRVT.PP",
+            "confidence": "high"
+        }
+    },
+    "audit_decision": {
+        "v0_scope": [
+            "Arbetsgivaravgifter (cotisations patronales), taux plat 31,42%, sans plafond",
+            "Grundavdrag (abattement de base), formule complete a 5 segments",
+            "Jobbskatteavdrag (credit d'impot pour revenu d'activite), formule complete a 4 segments, colonne 1 (moins de 66 ans)",
+            "Statlig inkomstskatt (impot national), 20% au-dela du skiktgrans",
+            "Kommunalskatt (impot communal + regional), taux combine de Stockholm"
+        ],
+        "not_yet_included": [
+            "Cotisations patronales pour les branches negociees au-dela de la loi (retraite professionnelle ITP/SAF-LO, assurances collectives type AFA/TFA, souvent 4-5 points de salaire supplementaires selon la convention de branche)",
+            "Taux communaux autres que Stockholm (fourchette 28,93%-35,65% selon la commune, 2026)",
+            "Skattereduktion pour sjuk- och aktivitetsersattning (non pertinente pour le profil de reference)",
+            "Avgift till registrerat trossamfund au taux individuel reel (module suppose une non-affiliation)",
+            "Colonnes 2/3/4/5/6 des tables Skatteverket (plus de 66 ans, retraites, indemnites) hors du profil de reference"
+        ]
+    }
+}

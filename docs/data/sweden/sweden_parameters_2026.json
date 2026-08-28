@@ -1,0 +1,84 @@
+{
+    "country": "Sweden",
+    "country_code": "SE",
+    "version": "2026-01",
+    "effective_from": "2026-01-01",
+    "status": "prototype_v1",
+    "currency": "SEK",
+    "wage_reference": {
+        "name": "Seuil salarial Migrationsverket (permis de travail), 90 % du salaire median SCB",
+        "gross_monthly_sek": 34470,
+        "source": "Migrationsverket / Statistiska centralbyran (SCB), decisions a compter du 1er juin 2026",
+        "note": "La Suede n'a pas de salaire minimum legal ni de convention collective unique et universelle : environ 90 % des salaries sont couverts par l'un des quelque 700 accords de branche negocies par les partenaires sociaux (modele suedois / modele de Gand), chacun avec ses propres planchers salariaux. En l'absence d'un chiffre national unique comparable a un SMIC, ce module retient le seuil salarial fixe par l'Office suedois des migrations pour l'octroi des permis de travail (90 % du salaire median national publie par SCB, soit 34 470 SEK/mois pour les decisions a compter du 1er juin 2026, le salaire median lui-meme etant de 38 300 SEK/mois) comme repere de reference 1,0x -- un chiffre officiel, date et directement comparable en niveau a un salaire d'entree sur le marche du travail, mais qui n'est ni un salaire minimum legal ni le resultat d'une negociation collective."
+    },
+    "grid": {
+        "min_multiple": 0.80,
+        "max_multiple": 6.00,
+        "step": 0.01
+    },
+    "social_security": {
+        "arbetsgivaravgifter": {
+            "total_rate": 0.3142,
+            "components": {
+                "alderspensionsavgift": 0.1021,
+                "efterlevandepensionsavgift": 0.0030,
+                "sjukforsakringsavgift": 0.0355,
+                "foraldraforsakringsavgift": 0.0200,
+                "arbetsmarknadsavgift": 0.0264,
+                "arbetsskadeavgift": 0.0010,
+                "allman_loneavgift": 0.1262
+            },
+            "ceiling": null,
+            "note": "Cotisations patronales suedoises (arbetsgivaravgifter), integralement a la charge de l'employeur, sans plafond de salaire. Total 31,42 % = socialavgifter 18,80 % (Socialavgiftslag 2000:980 par. 26, tel que modifie par la loi 2025:1362) + allman loneavgift 12,62 % (loi 1994:1920 par. 3, telle que modifiee par la loi 2025:1360)."
+        },
+        "allman_pensionsavgift": {
+            "nominal_rate": 0.07,
+            "ceiling_annual_sek": 673038,
+            "max_avgift_sek": 47100,
+            "floor_annual_income_sek": 25042,
+            "status": "modeled_as_net_zero",
+            "note": "La cotisation salariale de pension (allman pensionsavgift, 7 % du revenu, plafonnee a 8,07 x le montant de base des revenus soit 673 038 SEK, avgift max 47 100 SEK) est integralement compensee par un credit d'impot equivalent (skattereduktion, 100 % de l'avgift, plafonne a l'impot total du avant credit -- SKV 433 section 7.5.1). Sur toute la grille de ce module (0,8x a 6x le salaire de reference), l'impot du avant credit depasse toujours l'avgift plafonnee : le credit est donc toujours integralement utilisable et l'effet net sur le salaire net est nul. Conformement a la convention deja adoptee pour des mecanismes neerlandais similaires, cette cotisation et son credit compensateur ne sont pas modelises comme deux lignes distinctes : la cotisation salariale est de 0 SEK par construction dans ce module."
+        }
+    },
+    "income_tax": {
+        "prisbasbelopp_2026_sek": 59200,
+        "inkomstbasbelopp_2026_sek": 83400,
+        "skiktgrans_2026_sek": 643000,
+        "reference_kommun": "Stockholm",
+        "kommunalskatt_2026": {
+            "kommun_rate": 0.1822,
+            "region_rate": 0.1233,
+            "combined_rate": 0.3055,
+            "begravningsavgift_trossamfund_standard_rate": 0.0116,
+            "note": "Taux communal + regional combine 2026 de la commune de Stockholm, retenue comme commune de reference (convention identique a celle deja utilisee pour Zurich en Suisse ou Londres au Royaume-Uni). Le taux moyen national 2026 est de 32,38 % (fourchette 28,93 % - 35,65 % selon la commune) : non retenu ici, cf. limites."
+        },
+        "statlig_inkomstskatt_2026": {
+            "rate": 0.20,
+            "skiktgrans_sek": 643000,
+            "de_minimis_excess_sek": 200,
+            "note": "Impot national de 20 % sur la part du revenu imposable (apres grundavdrag) qui depasse le seuil de 643 000 SEK, applique des que le depassement atteint 200 SEK. Le \"varnskatt\" (tranche additionnelle de 5 points) a ete definitivement supprime depuis l'annee de revenus 2020."
+        },
+        "grundavdrag_2026": {
+            "prisbasbelopp_sek": 59200,
+            "note": "Abattement de base a 5 segments fonction du revenu annuel constate (FFI), exprime en multiples du prisbasbelopp (PBB=59 200 SEK) : <=0,99 PBB -> 0,423 PBB ; 0,99-2,72 PBB -> 0,423 PBB + 20% x (FFI-0,99 PBB) ; 2,72-3,11 PBB -> 0,77 PBB ; 3,11-7,88 PBB -> 0,77 PBB - 10% x (FFI-3,11 PBB) ; >7,88 PBB -> 0,293 PBB. Arrondi au superieur au centaine de SEK. Formule et bornes verifiees mot pour mot contre Skatteverket, Teknisk beskrivning SKV 433 (edition 36, 2025-12-10), section 6.1, et contre ses deux exemples chiffres officiels (37 400 SEK a 120 000 SEK de revenu annuel, 31 600 SEK a 324 000 SEK). Voir analysis/sweden/swedish_tax_2026.py."
+        },
+        "jobbskatteavdrag_2026": {
+            "prisbasbelopp_sek": 59200,
+            "note": "Credit d'impot pour revenu d'activite (jobbskatteavdrag), impute uniquement sur l'impot communal, a 4 segments fonction du revenu d'activite (AI, arrondi a la centaine inferieure) exprime en multiples du prisbasbelopp : <=0,91 PBB -> (AI-GA) x KI ; 0,91-3,24 PBB -> (0,91 PBB + 38,74% x (AI-0,91 PBB) - GA) x KI ; 3,24-8,08 PBB -> (1,813 PBB + 25,10% x (AI-3,24 PBB) - GA) x KI ; >8,08 PBB -> (3,027 PBB - GA) x KI, ou GA est le grundavdrag et KI le taux communal combine hors les 1,16 points de begravningsavgift/trossamfund. Resultat arrondi a l'euro (SEK) inferieur, plancher a zero. Formule, bornes et coefficients verifies mot pour mot contre Skatteverket, Teknisk beskrivning SKV 433 (edition 36, 2025-12-10), section 7.5.2, et contre ses deux exemples chiffres officiels (11 976 SEK de reduction a 90 000 SEK de revenu, 26 083 SEK a 240 000 SEK, taux communal d'exemple 34% - 1,16 = 32,84%). Avec le taux de Stockholm (30,55% - 1,16 = 29,39%), le plafond du credit a un revenu tres eleve est d'environ 47 553 SEK/an."
+        }
+    },
+    "profiles": [
+        {
+            "profile_id": "sweden__standard_employee_stockholm",
+            "label_fr": "Suede · salarie standard (Stockholm)",
+            "label_en": "Sweden · standard employee (Stockholm)"
+        }
+    ],
+    "limits": [
+        "La Suede n'a pas de salaire minimum legal : le salaire de reference 1,0x de ce module est le seuil Migrationsverket (90 % du salaire median SCB), un chiffre officiel et date mais distinct des planchers effectivement negocies par les quelque 700 conventions collectives de branche qui couvrent environ 90 % des salaries suedois.",
+        "Une seule commune de reference (Stockholm) est modelisee ; le taux communal combine varie de 28,93 % a 35,65 % selon la commune en 2026 (moyenne nationale 32,38 %), ce qui deplace a la fois le montant de kommunalskatt et le plafond du jobbskatteavdrag.",
+        "La cotisation salariale de pension (allman pensionsavgift, 7 %) et son credit d'impot integralement compensateur ne sont pas modelises comme deux lignes distinctes car ils s'annulent exactement sur toute la plage de salaires de ce module (voir social_security.allman_pensionsavgift) -- la cotisation salariale affichee est donc 0 SEK par construction.",
+        "Seul le profil celibataire sans enfant, sans avgift till registrerat trossamfund (cotisation confessionnelle), sans revenu de pension ni autre revenu, est modelise.",
+        "Le calcul utilise les formules continues officielles du grundavdrag et du jobbskatteavdrag (avant leur discretisation en tables de retenue a la source mensuelles), coherent avec l'approche generale de ce projet qui vise l'impot final du plutot que la table de retenue utilisee pour la paie."
+    ]
+}

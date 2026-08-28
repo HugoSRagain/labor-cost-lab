@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Sweden Labour Cost Lab</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+    <link rel="stylesheet" href="../../assets/style.css?v=28">
+    <script defer src="../../assets/i18n_common.js?v=3"></script>
+    <script defer src="./assets/sweden_app.js?v=2"></script>
+</head>
+
+<body>
+    <div class="global-project-banner">
+        <a href="../../index.html">
+            ← Labor Cost Lab
+        </a>
+
+        <span>
+            Sweden module · Available socio-fiscal version
+        </span>
+    </div>
+
+    <div class="language-section active" id="section-fr">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · Module Suède
+                </p>
+
+                <h1>Sweden Labour Cost Lab</h1>
+
+                <p>
+                    Module de simulation du coût du travail en Suède. Cette
+                    version calcule le salaire brut, les arbetsgivaravgifter
+                    (cotisations patronales), l'impôt sur le revenu
+                    (kommunalskatt, statlig inkomstskatt, grundavdrag,
+                    jobbskatteavdrag), le coût employeur et les principaux
+                    indicateurs de coin social et socio-fiscal.
+                </p>
+
+                <p class="author-line">
+                    Par Hugo Spring-Ragain, Économiste, CEDS Paris
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchSwedenLanguage()">
+                    English
+                </button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>Suède · module socio-fiscal 2026</h2>
+
+                <p>
+                    <strong>Point d'attention méthodologique : la Suède n'a pas
+                    de salaire minimum légal.</strong> Il n'existe pas non plus
+                    de convention collective unique et universelle : le modèle
+                    suédois (« modèle de Gand ») repose sur environ 700
+                    conventions collectives de branche négociées par les
+                    partenaires sociaux, qui couvrent au total environ 90 % des
+                    salariés, chacune avec ses propres planchers salariaux. En
+                    l'absence d'un chiffre national unique comparable à un
+                    SMIC, ce module retient par convention, comme salaire de
+                    référence 1,0x, le seuil salarial fixé par l'Office suédois
+                    des migrations (Migrationsverket) pour l'octroi des permis
+                    de travail : 90 % du salaire médian national publié par
+                    Statistiska centralbyrån (SCB), soit 34 470 SEK/mois pour
+                    les décisions à compter du 1er juin 2026. C'est un chiffre
+                    officiel et daté, mais qui n'est ni un salaire minimum
+                    légal, ni le résultat d'une négociation collective. Voir
+                    l'onglet Méthodologie pour le détail complet.
+                </p>
+
+                <p>
+                    Le module combine les arbetsgivaravgifter (cotisations
+                    patronales, taux plat de 31,42 %, sans plafond de salaire),
+                    et l'impôt sur le revenu suédois : kommunalskatt (impôt
+                    communal et régional, taux combiné de Stockholm retenu
+                    comme commune de référence), statlig inkomstskatt (impôt
+                    national de 20 % au-delà d'un seuil), grundavdrag
+                    (abattement de base) et jobbskatteavdrag (crédit d'impôt
+                    pour revenu d'activité).
+                </p>
+            </section>
+
+            <nav class="tabs" aria-label="Navigation Suède">
+                <button class="tab-button active" data-tab="simulation" onclick="showSwedenTab('fr', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showSwedenTab('fr', 'flcl-index')">
+                    Indice du Lab
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showSwedenTab('fr', 'data')">
+                    Données
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showSwedenTab('fr', 'methodology')">
+                    Méthodologie
+                </button>
+            </nav>
+
+            <section id="tab-fr-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="sweden-waterfall-title-fr">
+                        Du salaire net au coût employeur
+                    </h3>
+
+                    <p class="chart-subtitle" id="sweden-waterfall-subtitle-fr">
+                        Décomposition du passage du salaire net après impôt au
+                        coût employeur total, en distinguant l'impôt sur le
+                        revenu et les arbetsgivaravgifter (cotisations
+                        patronales).
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="sweden-waterfall-multiple-fr">
+                                Point de salaire sélectionné
+                            </label>
+
+                            <select id="sweden-waterfall-multiple-fr">
+                                <option value="0.80">0,80 salaire de référence</option>
+                                <option value="1.00">1,00 salaire de référence</option>
+                                <option value="1.25">1,25 salaire de référence</option>
+                                <option value="1.50">1,50 salaire de référence</option>
+                                <option value="2.00" selected>2,00 salaires de référence</option>
+                                <option value="2.50">2,50 salaires de référence</option>
+                                <option value="3.00">3,00 salaires de référence</option>
+                                <option value="4.00">4,00 salaires de référence</option>
+                                <option value="5.00">5,00 salaires de référence</option>
+                                <option value="6.00">6,00 salaires de référence</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-sweden-waterfall-fr"
+                        class="plotly-chart"
+                        aria-label="Décomposition du coût du travail en Suède"
+                    ></div>
+
+                    <p class="method-note">
+                        La cotisation salariale (allman pensionsavgift, 7 %)
+                        est intégralement compensée par un crédit d'impôt
+                        équivalent sur toute la grille de ce module : elle
+                        apparaît donc à 0 SEK par construction. Voir l'onglet
+                        Méthodologie.
+                    </p>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Graphiques complémentaires</h2>
+
+                    <p>
+                        Les graphiques suivants détaillent les salaires, les
+                        taux effectifs, la décomposition de l'impôt sur le
+                        revenu, le coin socio-fiscal et le rendement marginal
+                        du salaire brut.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Coût employeur, salaire brut et salaires nets</h3>
+
+                        <p class="chart-subtitle">
+                            Comparaison du salaire brut, du salaire net avant
+                            impôt, du salaire net après impôt et du coût
+                            employeur selon le multiple du salaire de
+                            référence suédois.
+                        </p>
+
+                        <div
+                            id="chart-sweden-cost-fr"
+                            class="plotly-chart"
+                            aria-label="Coût du travail en Suède"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Taux effectifs de prélèvement</h3>
+
+                        <p class="chart-subtitle">
+                            Taux salarié (toujours nul par construction), taux
+                            employeur (arbetsgivaravgifter, plat) et taux
+                            d'imposition effectif.
+                        </p>
+
+                        <div
+                            id="chart-sweden-rates-fr"
+                            class="plotly-chart"
+                            aria-label="Taux de prélèvement en Suède"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Décomposition de l'impôt sur le revenu</h3>
+
+                        <p class="chart-subtitle">
+                            Kommunalskatt (impôt communal et régional) et
+                            statlig inkomstskatt (impôt national), diminués du
+                            jobbskatteavdrag (crédit d'impôt pour revenu
+                            d'activité), montants mensuels reconstitués à
+                            partir des totaux annuels.
+                        </p>
+
+                        <div
+                            id="chart-sweden-tax-breakdown-fr"
+                            class="plotly-chart"
+                            aria-label="Décomposition de l'impôt sur le revenu en Suède"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Coin social et coin socio-fiscal</h3>
+
+                        <p class="chart-subtitle">
+                            Comparaison du coin social avant impôt et du coin
+                            socio-fiscal après impôt sur le revenu.
+                        </p>
+
+                        <div
+                            id="chart-sweden-wedge-fr"
+                            class="plotly-chart"
+                            aria-label="Coin social et socio-fiscal suédois"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Rendement marginal d'une hausse de salaire brut</h3>
+
+                        <p class="chart-subtitle">
+                            Part d'une couronne suédoise supplémentaire de
+                            salaire brut conservée avant et après impôt sur le
+                            revenu.
+                        </p>
+
+                        <div
+                            id="chart-sweden-fiscal-return-fr"
+                            class="plotly-chart"
+                            aria-label="Rendement socio-fiscal d'une hausse de salaire brut en Suède"
+                        ></div>
+
+                        <p class="method-note">
+                            L'effet marginal évolue autour du seuil statlig
+                            inkomstskatt (643 000 SEK/an) et suit la
+                            progressivité continue du grundavdrag et du
+                            jobbskatteavdrag ; les arbetsgivaravgifter restant
+                            un taux plat sans plafond, ils ne créent aucun
+                            effet de seuil côté employeur.
+                        </p>
+                    </div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Indicateurs clés</h2>
+
+                    <p>
+                        Les indicateurs ci-dessous sont calculés au salaire de
+                        référence suédois (multiple = 1).
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="sweden-metrics-fr">
+                    <article class="metric-card">
+                        <span class="metric-label">Salaire brut de référence</span>
+                        <strong id="metric-sweden-reference-wage-fr">—</strong>
+                        <span class="metric-note">Seuil Migrationsverket, mensuel</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Taux d'imposition effectif</span>
+                        <strong id="metric-sweden-income-tax-rate-fr">—</strong>
+                        <span class="metric-note">Impôt sur le revenu / brut</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Taux employeur effectif</span>
+                        <strong id="metric-sweden-employer-rate-fr">—</strong>
+                        <span class="metric-note">Arbetsgivaravgifter (taux plat)</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Ratio coût / net à 1 salaire de référence</span>
+                        <strong id="metric-sweden-cost-to-net-fr">—</strong>
+                        <span class="metric-note">Après impôt sur le revenu</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-fr-flcl-index" class="tab-content">
+                <section class="chart-card">
+                    <h2>Indice du Lab</h2>
+                    <p class="chart-subtitle">
+                        Indicateurs d'efficacité salariale du coût du travail.
+                    </p>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-E</span>
+                            <strong id="sweden-flcl-e-value-fr">—</strong>
+                            <span class="metric-note" id="sweden-flcl-e-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-B</span>
+                            <strong id="sweden-flcl-b-value-fr">—</strong>
+                            <span class="metric-note" id="sweden-flcl-b-caption-fr"></span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Transmission marginale</span>
+                            <strong id="sweden-flcl-transmission-value-fr">—</strong>
+                            <span class="metric-note" id="sweden-flcl-transmission-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Captation marginale</span>
+                            <strong id="sweden-flcl-capture-value-fr">—</strong>
+                            <span class="metric-note" id="sweden-flcl-capture-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Progressivité implicite</span>
+                            <strong id="sweden-flcl-progressivity-value-fr">—</strong>
+                            <span class="metric-note" id="sweden-flcl-progressivity-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Soutien bas salaires</span>
+                            <strong id="sweden-flcl-support-value-fr">—</strong>
+                            <span class="metric-note" id="sweden-flcl-support-caption-fr"></span>
+                        </div>
+                    </div>
+
+                    <p class="method-note" style="margin-top: 16px;">
+                        Aucun allègement employeur ciblé et dégressif n'est
+                        modélisé pour la Suède : l'indicateur Lab-R ne
+                        s'applique donc pas ici. Le Lab-E suédois n'est, en
+                        revanche, pas structurellement surestimé comme il peut
+                        l'être pour les Pays-Bas : ici, le salaire net avant
+                        impôt est réellement égal au salaire brut parce que la
+                        cotisation salariale de pension est réellement
+                        compensée au SEK près par un crédit d'impôt équivalent,
+                        et non parce qu'une cotisation sociale non nulle serait
+                        fusionnée dans l'impôt affiché (voir l'onglet
+                        Méthodologie).
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Indice du Lab</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × salaire net avant impôt / coût employeur.
+                        </p>
+                        <div id="chart-sweden-flcl-e-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Transmission marginale</h3>
+                        <p class="chart-subtitle">
+                            Part d'une couronne suédoise supplémentaire de coût employeur allant au salarié net.
+                        </p>
+                        <div id="chart-sweden-flcl-marginal-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Progressivité implicite</h3>
+                        <p class="chart-subtitle">
+                            Variation de Lab-E lorsque le niveau de salaire augmente.
+                        </p>
+                        <div id="chart-sweden-flcl-progressivity-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Destination marginale d'une couronne suédoise supplémentaire de coût employeur</h3>
+                        <p class="chart-subtitle">
+                            Répartition marginale entre salaire net, cotisations salarié et cotisations employeur.
+                        </p>
+                        <div id="chart-sweden-flcl-destination-fr" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-fr-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Données</h3>
+
+                    <p class="chart-subtitle">
+                        Le jeu de données suédois peut être téléchargé au
+                        format CSV. Il contient l'ensemble des points de
+                        salaire simulés pour le profil standard : salaire
+                        brut, impôt sur le revenu, arbetsgivaravgifter, coût
+                        employeur et indicateurs de coin socio-fiscal.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/sweden/sweden_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Télécharger le jeu de données Suède
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/sweden/sweden_parameters_2026.json"
+                            download
+                        >
+                            Télécharger les paramètres 2026
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/sweden/sweden_sources_2026.json"
+                            download
+                        >
+                            Télécharger les sources 2026
+                        </a>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Données du profil standard</h3>
+
+                    <p
+                        class="chart-subtitle"
+                        id="sweden-data-caption-fr"
+                    >
+                        Salarié standard (Stockholm)
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Multiple</th>
+                                    <th>Salaire brut (SEK)</th>
+                                    <th>Net avant impôt (SEK)</th>
+                                    <th>Impôt sur le revenu (SEK)</th>
+                                    <th>Net après impôt (SEK)</th>
+                                    <th>Coût employeur (SEK)</th>
+                                    <th>Cotisations salarié (SEK)</th>
+                                    <th>Cotisations employeur (SEK)</th>
+                                    <th>Coin social (SEK)</th>
+                                    <th>Coin socio-fiscal (SEK)</th>
+                                    <th>Taux employeur</th>
+                                    <th>Coût / net après impôt</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="sweden-data-table-body-fr">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="chart-subtitle" style="margin-top: 10px;">
+                        Cotisations salarié = allman pensionsavgift nette
+                        (0 SEK par construction, voir l'onglet Méthodologie).
+                        Cotisations employeur = arbetsgivaravgifter.
+                    </p>
+                </div>
+            </section>
+
+            <section id="tab-fr-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Méthodologie</h2>
+
+                    <p>
+                        Le module Suède repose sur une simulation
+                        réglementaire du coût du travail pour un salarié
+                        standard, célibataire sans enfant, à temps plein,
+                        rattaché à la commune de Stockholm.
+                    </p>
+
+                    <h3>1. Le salaire de référence : pourquoi la Suède n'a pas de « SMIC »</h3>
+
+                    <p>
+                        La Suède ne fixe aucun salaire minimum légal et ne
+                        dispose d'aucune convention collective unique et
+                        universelle. Le modèle suédois (proche du « modèle de
+                        Gand ») repose sur environ 700 conventions collectives
+                        de branche négociées directement par les syndicats et
+                        les organisations patronales, qui couvrent au total
+                        environ 90 % des salariés suédois — chaque convention
+                        fixant son propre plancher salarial, sans qu'il
+                        existe de chiffre national unique et comparable à un
+                        salaire minimum interprofessionnel.
+                    </p>
+
+                    <p>
+                        En l'absence d'un tel chiffre, ce module retient par
+                        convention, comme salaire de référence 1,0x, le seuil
+                        salarial fixé par l'Office suédois des migrations
+                        (Migrationsverket) pour l'octroi des permis de
+                        travail : 90 % du salaire médian national publié par
+                        Statistiska centralbyrån (SCB), soit 34 470 SEK/mois
+                        pour les décisions à compter du 1er juin 2026 (le
+                        salaire médian national lui-même étant de 38 300
+                        SEK/mois). C'est un chiffre officiel et daté,
+                        directement comparable en niveau à un salaire d'entrée
+                        sur le marché du travail — mais il répond à un
+                        objectif administratif (seuil de permis de travail)
+                        distinct de celui d'un salaire minimum légal ou
+                        négocié, et doit être lu comme tel.
+                    </p>
+
+                    <h3>2. Arbetsgivaravgifter (cotisations patronales)</h3>
+
+                    <p>
+                        Les arbetsgivaravgifter sont intégralement à la charge
+                        de l'employeur, à un taux plat de 31,42 % du salaire
+                        brut, sans aucun plafond de salaire — à la différence
+                        des cotisations patronales de la plupart des autres
+                        pays modélisés dans le Lab. Ce taux se décompose en
+                        socialavgifter (18,80 % : alderspensionsavgift
+                        10,21 %, efterlevandepensionsavgift 0,30 %,
+                        sjukforsakringsavgift 3,55 %, foraldraforsakringsavgift
+                        2,00 %, arbetsmarknadsavgift 2,64 %,
+                        arbetsskadeavgift 0,10 %) et allman loneavgift
+                        (12,62 %). Le taux plat et l'absence de plafond
+                        signifient que le taux employeur effectif est
+                        rigoureusement constant (31,42 %) sur toute la grille
+                        de salaires de ce module.
+                    </p>
+
+                    <h3>3. Impôt sur le revenu : kommunalskatt, statlig inkomstskatt, grundavdrag, jobbskatteavdrag</h3>
+
+                    <p>
+                        L'impôt sur le revenu suédois combine quatre
+                        mécanismes, tous regroupés dans une seule colonne «
+                        impôt sur le revenu » de ce module :
+                    </p>
+
+                    <ul>
+                        <li>
+                            <strong>Grundavdrag</strong> (abattement de base) :
+                            un abattement à 5 segments fonction du revenu
+                            annuel, exprimé en multiples du prisbasbelopp
+                            (59 200 SEK en 2026), qui réduit la base imposable
+                            avant application des taux.
+                        </li>
+
+                        <li>
+                            <strong>Kommunalskatt</strong> (impôt communal et
+                            régional) : appliqué à taux constant sur la base
+                            imposable après grundavdrag. Ce module retient le
+                            taux combiné de la commune de Stockholm (30,55 % =
+                            18,22 % kommun + 12,33 % region), utilisée comme
+                            commune de référence, selon la même logique que
+                            Zurich pour la Suisse ou Londres pour le
+                            Royaume-Uni.
+                        </li>
+
+                        <li>
+                            <strong>Statlig inkomstskatt</strong> (impôt
+                            national) : 20 % de la part du revenu imposable
+                            qui dépasse le seuil (skiktgrans) de 643 000
+                            SEK/an. Le « varnskatt » (tranche additionnelle de
+                            5 points) a été définitivement supprimé depuis
+                            l'année de revenus 2020.
+                        </li>
+
+                        <li>
+                            <strong>Jobbskatteavdrag</strong> (crédit d'impôt
+                            pour revenu d'activité) : un crédit à 4 segments,
+                            imputé uniquement sur l'impôt communal, qui croît
+                            avec le revenu d'activité jusqu'à un plafond puis
+                            se stabilise (environ 47 553 SEK/an au taux
+                            communal de Stockholm à très haut revenu).
+                        </li>
+                    </ul>
+
+                    <p>
+                        Le calcul utilise les formules continues officielles
+                        du grundavdrag et du jobbskatteavdrag (avant leur
+                        discrétisation en tables de retenue à la source
+                        mensuelles), cohérent avec l'approche générale de ce
+                        projet qui vise l'impôt final dû plutôt que la table
+                        de retenue utilisée pour la paie. Ces formules ont été
+                        vérifiées mot pour mot contre Skatteverket, Teknisk
+                        beskrivning SKV 433 (édition 36, 2025-12-10), et
+                        revalidées contre ses exemples chiffrés officiels
+                        (voir analysis/sweden/swedish_tax_2026.py).
+                    </p>
+
+                    <h3>4. Pourquoi la cotisation salariale affichée est 0 SEK</h3>
+
+                    <p>
+                        La cotisation salariale de pension (allman
+                        pensionsavgift) est de 7 % du revenu, plafonnée à
+                        8,07 fois l'inkomstbasbelopp (673 038 SEK, avgift
+                        maximale 47 100 SEK). Cette cotisation est
+                        intégralement compensée, couronne pour couronne, par
+                        un crédit d'impôt équivalent (skattereduktion, 100 %
+                        de l'avgift), plafonné à l'impôt total dû avant
+                        crédit (SKV 433, section 7.5.1).
+                    </p>
+
+                    <p>
+                        Sur toute la grille de ce module (0,80x à 6,00x le
+                        salaire de référence), l'impôt dû avant crédit dépasse
+                        toujours l'avgift plafonnée : le crédit est donc
+                        toujours intégralement utilisable et l'effet net sur
+                        le salaire net est rigoureusement nul. Il ne s'agit
+                        pas de la même simplification que celle déjà adoptée
+                        pour les Pays-Bas (où le loonheffing fusionne
+                        réellement l'assurance nationale et l'impôt sur le
+                        revenu en une seule retenue) : pour la Suède, le
+                        mécanisme s'annule véritablement à zéro et est
+                        documenté comme tel. Conformément à la convention déjà
+                        adoptée pour ce mécanisme néerlandais, la cotisation
+                        salariale et son crédit compensateur ne sont pas
+                        modélisés comme deux lignes distinctes : la cotisation
+                        salariale est donc de 0 SEK par construction dans ce
+                        module.
+                    </p>
+
+                    <h3>5. Indicateurs produits</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Net avant impôt :</strong>
+                            salaire brut diminué de la cotisation salariale
+                            (0 SEK par construction, voir ci-dessus) — donc
+                            égal au salaire brut dans ce module.
+                        </li>
+
+                        <li>
+                            <strong>Net après impôt :</strong>
+                            net avant impôt diminué de l'impôt sur le revenu
+                            mensuel (kommunalskatt + statlig inkomstskatt −
+                            jobbskatteavdrag).
+                        </li>
+
+                        <li>
+                            <strong>Coût employeur :</strong>
+                            salaire brut augmenté des arbetsgivaravgifter.
+                        </li>
+
+                        <li>
+                            <strong>Coin social :</strong>
+                            différence entre le coût employeur et le net avant
+                            impôt (ici, exactement égal aux arbetsgivaravgifter).
+                        </li>
+
+                        <li>
+                            <strong>Coin socio-fiscal :</strong>
+                            différence entre le coût employeur et le net après
+                            impôt.
+                        </li>
+
+                        <li>
+                            <strong>Rendement marginal :</strong>
+                            part d'une couronne suédoise supplémentaire de
+                            salaire brut conservée avant et après impôt sur le
+                            revenu.
+                        </li>
+                    </ul>
+
+                    <h3>6. Indice du Lab</h3>
+
+                    <p>
+                        L'Indice du Lab mesure l'efficacité salariale du coût
+                        du travail, indépendamment de l'impôt sur le revenu.
+                        Lab-E = 100 × salaire net avant impôt / coût employeur,
+                        Lab-B = 100 − Lab-E. Aucun allègement employeur ciblé
+                        et dégressif n'est modélisé pour la Suède : l'indicateur
+                        Lab-R ne s'applique donc pas ici.
+                    </p>
+
+                    <p class="method-note">
+                        À la différence des Pays-Bas, où le Lab-E est
+                        structurellement surestimé parce que le loonheffing
+                        fusionne une cotisation sociale réellement due avec
+                        l'impôt sur le revenu affiché, le Lab-E suédois n'est
+                        pas un artefact de présentation : le salaire net avant
+                        impôt suédois est réellement égal au salaire brut
+                        parce que la cotisation salariale de pension est
+                        réellement neutralisée par un crédit d'impôt
+                        équivalent sur toute la grille de ce module (voir la
+                        section 4 ci-dessus).
+                    </p>
+
+                    <h3>7. Limites du scénario</h3>
+
+                    <p class="method-note">
+                        La Suède n'a pas de salaire minimum légal : le salaire
+                        de référence 1,0x de ce module est le seuil
+                        Migrationsverket (90 % du salaire médian SCB), un
+                        chiffre officiel et daté mais distinct des planchers
+                        effectivement négociés par les quelque 700 conventions
+                        collectives de branche qui couvrent environ 90 % des
+                        salariés suédois. Une seule commune de référence
+                        (Stockholm) est modélisée ; le taux communal combiné
+                        varie de 28,93 % à 35,65 % selon la commune en 2026
+                        (moyenne nationale 32,38 %), ce qui déplace à la fois
+                        le montant de kommunalskatt et le plafond du
+                        jobbskatteavdrag. La cotisation salariale de pension
+                        (allman pensionsavgift, 7 %) et son crédit d'impôt
+                        intégralement compensateur ne sont pas modélisés
+                        comme deux lignes distinctes car ils s'annulent
+                        exactement sur toute la plage de salaires de ce
+                        module — la cotisation salariale affichée est donc
+                        0 SEK par construction. Seul le profil célibataire
+                        sans enfant, sans avgift till registrerat trossamfund
+                        (cotisation confessionnelle), sans revenu de pension
+                        ni autre revenu, est modélisé. Le calcul utilise les
+                        formules continues officielles du grundavdrag et du
+                        jobbskatteavdrag (avant leur discrétisation en tables
+                        de retenue à la source mensuelles), cohérent avec
+                        l'approche générale de ce projet qui vise l'impôt
+                        final dû plutôt que la table de retenue utilisée pour
+                        la paie.
+                    </p>
+
+                    <h3>8. Sources</h3>
+
+                    <p class="method-note">
+                        Skatteverket, Teknisk beskrivning SKV 433 (édition 36,
+                        2025-12-10) ; Socialavgiftslag (2000:980) §26, telle
+                        que modifiée par la loi (2025:1362) ; Lag (1994:1920)
+                        om allman loneavgift §3, telle que modifiée par la loi
+                        (2025:1360) ; Skatteverket, Belopp och procent 2026 ;
+                        Migrationsverket / Statistiska centralbyrån (SCB) ;
+                        Ville de Stockholm et Ekonomifakta pour les taux
+                        communaux 2026. Voir le fichier de sources
+                        téléchargeable dans l'onglet Données pour le détail
+                        complet des citations.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="language-section" id="section-en">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · Sweden module
+                </p>
+
+                <h1>Sweden Labour Cost Lab</h1>
+
+                <p>
+                    Simulation module for Swedish labour costs. This version
+                    computes the gross wage, arbetsgivaravgifter (employer
+                    contributions), income tax (kommunalskatt, statlig
+                    inkomstskatt, grundavdrag, jobbskatteavdrag), the employer
+                    cost, and the main social and socio-fiscal wedge
+                    indicators.
+                </p>
+
+                <p class="author-line">
+                    By Hugo Spring-Ragain, Economist, CEDS Paris
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchSwedenLanguage()">
+                    Français
+                </button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>Sweden · 2026 socio-fiscal module</h2>
+
+                <p>
+                    <strong>Methodological note: Sweden has no statutory
+                    minimum wage.</strong> Nor does it have a single, universal
+                    collective agreement: the Swedish model (the "Ghent
+                    model") relies on roughly 700 sector-level collective
+                    agreements negotiated by unions and employers, covering
+                    about 90% of employees in total, each with its own
+                    negotiated wage floors. Absent a single national figure
+                    comparable to a statutory minimum wage, this module uses
+                    by convention, as its 1.0x reference wage, the work-permit
+                    wage threshold set by the Swedish Migration Agency
+                    (Migrationsverket): 90% of the national median salary
+                    published by Statistiska centralbyran (SCB), i.e. 34,470
+                    SEK/month for decisions from 1 June 2026. This is an
+                    official, dated figure, but it is neither a statutory
+                    minimum wage nor the outcome of a collective negotiation.
+                    See the Methodology tab for full detail.
+                </p>
+
+                <p>
+                    The module combines arbetsgivaravgifter (employer
+                    contributions, a flat 31.42% rate with no wage ceiling)
+                    with Swedish income tax: kommunalskatt (municipal and
+                    regional tax, Stockholm's combined rate used as the
+                    reference), statlig inkomstskatt (national tax, 20% above
+                    a threshold), grundavdrag (basic allowance), and
+                    jobbskatteavdrag (earned-income tax credit).
+                </p>
+            </section>
+
+            <nav class="tabs" aria-label="Sweden navigation">
+                <button class="tab-button active" data-tab="simulation" onclick="showSwedenTab('en', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showSwedenTab('en', 'flcl-index')">
+                    Lab Index
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showSwedenTab('en', 'data')">
+                    Data
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showSwedenTab('en', 'methodology')">
+                    Methodology
+                </button>
+            </nav>
+
+            <section id="tab-en-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="sweden-waterfall-title-en">
+                        From net wage to employer cost
+                    </h3>
+
+                    <p class="chart-subtitle" id="sweden-waterfall-subtitle-en">
+                        Breakdown of the path from net wage after tax to total
+                        employer cost, distinguishing income tax and
+                        arbetsgivaravgifter (employer contributions).
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="sweden-waterfall-multiple-en">
+                                Selected wage point
+                            </label>
+
+                            <select id="sweden-waterfall-multiple-en">
+                                <option value="0.80">0.80 reference wage</option>
+                                <option value="1.00">1.00 reference wage</option>
+                                <option value="1.25">1.25 reference wages</option>
+                                <option value="1.50">1.50 reference wages</option>
+                                <option value="2.00" selected>2.00 reference wages</option>
+                                <option value="2.50">2.50 reference wages</option>
+                                <option value="3.00">3.00 reference wages</option>
+                                <option value="4.00">4.00 reference wages</option>
+                                <option value="5.00">5.00 reference wages</option>
+                                <option value="6.00">6.00 reference wages</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-sweden-waterfall-en"
+                        class="plotly-chart"
+                        aria-label="Breakdown of labour cost in Sweden"
+                    ></div>
+
+                    <p class="method-note">
+                        The employee pension contribution (allman
+                        pensionsavgift, 7%) is fully offset by an equal tax
+                        credit across this module's entire wage range: it
+                        therefore shows as 0 SEK by construction. See the
+                        Methodology tab.
+                    </p>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Additional charts</h2>
+
+                    <p>
+                        The charts below detail wages, effective rates, the
+                        income-tax breakdown, the socio-fiscal wedge, and the
+                        marginal return on a gross-wage increase.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Employer cost, gross wage and net wages</h3>
+
+                        <p class="chart-subtitle">
+                            Comparison of the gross wage, net wage before tax,
+                            net wage after tax, and employer cost across the
+                            multiple of the Swedish reference wage.
+                        </p>
+
+                        <div
+                            id="chart-sweden-cost-en"
+                            class="plotly-chart"
+                            aria-label="Labour cost in Sweden"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Effective levy rates</h3>
+
+                        <p class="chart-subtitle">
+                            Employee rate (always zero by construction),
+                            employer rate (arbetsgivaravgifter, flat), and
+                            effective income tax rate.
+                        </p>
+
+                        <div
+                            id="chart-sweden-rates-en"
+                            class="plotly-chart"
+                            aria-label="Levy rates in Sweden"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Income tax breakdown</h3>
+
+                        <p class="chart-subtitle">
+                            Kommunalskatt (municipal and regional tax) and
+                            statlig inkomstskatt (national tax), net of
+                            jobbskatteavdrag (earned-income tax credit),
+                            monthly amounts reconstructed from the annual
+                            totals.
+                        </p>
+
+                        <div
+                            id="chart-sweden-tax-breakdown-en"
+                            class="plotly-chart"
+                            aria-label="Income tax breakdown in Sweden"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Social wedge and total socio-fiscal wedge</h3>
+
+                        <p class="chart-subtitle">
+                            Comparison of the social wedge before tax and the
+                            total socio-fiscal wedge after income tax.
+                        </p>
+
+                        <div
+                            id="chart-sweden-wedge-en"
+                            class="plotly-chart"
+                            aria-label="Social and socio-fiscal wedge in Sweden"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Marginal return on a gross-wage increase</h3>
+
+                        <p class="chart-subtitle">
+                            Share of an additional Swedish krona of gross wage
+                            kept before and after income tax.
+                        </p>
+
+                        <div
+                            id="chart-sweden-fiscal-return-en"
+                            class="plotly-chart"
+                            aria-label="Socio-fiscal return on a gross-wage increase in Sweden"
+                        ></div>
+
+                        <p class="method-note">
+                            The marginal effect moves around the statlig
+                            inkomstskatt threshold (643,000 SEK/year) and
+                            follows the continuous progressivity of the
+                            grundavdrag and jobbskatteavdrag; since
+                            arbetsgivaravgifter is a flat, uncapped rate, it
+                            creates no threshold effect on the employer side.
+                        </p>
+                    </div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Key indicators</h2>
+
+                    <p>
+                        The indicators below are computed at the Swedish
+                        reference wage (multiple = 1).
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="sweden-metrics-en">
+                    <article class="metric-card">
+                        <span class="metric-label">Reference gross wage</span>
+                        <strong id="metric-sweden-reference-wage-en">—</strong>
+                        <span class="metric-note">Migrationsverket threshold, monthly</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Effective income tax rate</span>
+                        <strong id="metric-sweden-income-tax-rate-en">—</strong>
+                        <span class="metric-note">Income tax / gross</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Effective employer rate</span>
+                        <strong id="metric-sweden-employer-rate-en">—</strong>
+                        <span class="metric-note">Arbetsgivaravgifter (flat rate)</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Cost / net ratio at 1 reference wage</span>
+                        <strong id="metric-sweden-cost-to-net-en">—</strong>
+                        <span class="metric-note">After income tax</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-en-flcl-index" class="tab-content">
+                <section class="chart-card">
+                    <h2>Lab Index</h2>
+                    <p class="chart-subtitle">
+                        Labour cost efficiency indicators.
+                    </p>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-E</span>
+                            <strong id="sweden-flcl-e-value-en">—</strong>
+                            <span class="metric-note" id="sweden-flcl-e-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-B</span>
+                            <strong id="sweden-flcl-b-value-en">—</strong>
+                            <span class="metric-note" id="sweden-flcl-b-caption-en"></span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Marginal transmission</span>
+                            <strong id="sweden-flcl-transmission-value-en">—</strong>
+                            <span class="metric-note" id="sweden-flcl-transmission-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Marginal capture</span>
+                            <strong id="sweden-flcl-capture-value-en">—</strong>
+                            <span class="metric-note" id="sweden-flcl-capture-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Implicit progressivity</span>
+                            <strong id="sweden-flcl-progressivity-value-en">—</strong>
+                            <span class="metric-note" id="sweden-flcl-progressivity-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Low-wage support</span>
+                            <strong id="sweden-flcl-support-value-en">—</strong>
+                            <span class="metric-note" id="sweden-flcl-support-caption-en"></span>
+                        </div>
+                    </div>
+
+                    <p class="method-note" style="margin-top: 16px;">
+                        No targeted, degressive employer relief is modeled for
+                        Sweden: the Lab-R indicator does not apply here. Unlike
+                        the Netherlands, however, the Swedish Lab-E is not
+                        structurally overstated: here, net wage before tax is
+                        genuinely equal to the gross wage because the employee
+                        pension contribution is genuinely offset, krona for
+                        krona, by an equal tax credit, not because a non-zero
+                        social contribution is bundled into the reported tax
+                        (see the Methodology tab).
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Lab Index</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × net wage before income tax / employer cost.
+                        </p>
+                        <div id="chart-sweden-flcl-e-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal transmission</h3>
+                        <p class="chart-subtitle">
+                            Share of one additional Swedish krona of employer cost reaching net wage.
+                        </p>
+                        <div id="chart-sweden-flcl-marginal-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Implicit progressivity</h3>
+                        <p class="chart-subtitle">
+                            Change in Lab-E when the wage level increases.
+                        </p>
+                        <div id="chart-sweden-flcl-progressivity-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal destination of one additional Swedish krona of employer cost</h3>
+                        <p class="chart-subtitle">
+                            Marginal split between net wage, employee contributions and employer contributions.
+                        </p>
+                        <div id="chart-sweden-flcl-destination-en" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-en-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Data</h3>
+
+                    <p class="chart-subtitle">
+                        The Swedish dataset can be downloaded as a CSV file.
+                        It contains every simulated wage point for the
+                        standard profile: gross wage, income tax,
+                        arbetsgivaravgifter, employer cost, and socio-fiscal
+                        wedge indicators.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/sweden/sweden_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Download the Sweden dataset
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/sweden/sweden_parameters_2026.json"
+                            download
+                        >
+                            Download the 2026 parameters
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/sweden/sweden_sources_2026.json"
+                            download
+                        >
+                            Download the 2026 sources
+                        </a>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Data for the standard profile</h3>
+
+                    <p
+                        class="chart-subtitle"
+                        id="sweden-data-caption-en"
+                    >
+                        Standard employee (Stockholm)
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Multiple</th>
+                                    <th>Gross wage (SEK)</th>
+                                    <th>Net before tax (SEK)</th>
+                                    <th>Income tax (SEK)</th>
+                                    <th>Net after tax (SEK)</th>
+                                    <th>Employer cost (SEK)</th>
+                                    <th>Employee contributions (SEK)</th>
+                                    <th>Employer contributions (SEK)</th>
+                                    <th>Social wedge (SEK)</th>
+                                    <th>Total socio-fiscal wedge (SEK)</th>
+                                    <th>Employer rate</th>
+                                    <th>Cost / net after tax</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="sweden-data-table-body-en">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="chart-subtitle" style="margin-top: 10px;">
+                        Employee contributions = net allman pensionsavgift
+                        (0 SEK by construction, see the Methodology tab).
+                        Employer contributions = arbetsgivaravgifter.
+                    </p>
+                </div>
+            </section>
+
+            <section id="tab-en-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Methodology</h2>
+
+                    <p>
+                        The Sweden module relies on a regulatory simulation of
+                        labour cost for a standard, single, childless
+                        full-time employee, in Stockholm kommun.
+                    </p>
+
+                    <h3>1. The reference wage: why Sweden has no "SMIC"</h3>
+
+                    <p>
+                        Sweden sets no statutory minimum wage and has no
+                        single, universal collective agreement. The Swedish
+                        model (close to the "Ghent model") relies on roughly
+                        700 sector-level collective agreements negotiated
+                        directly by unions and employer organizations, which
+                        together cover about 90% of Swedish employees — each
+                        agreement setting its own wage floor, with no single
+                        national figure comparable to a statutory
+                        cross-industry minimum wage.
+                    </p>
+
+                    <p>
+                        Absent such a figure, this module uses by convention,
+                        as its 1.0x reference wage, the work-permit wage
+                        threshold set by the Swedish Migration Agency
+                        (Migrationsverket): 90% of the national median salary
+                        published by Statistiska centralbyran (SCB), i.e.
+                        34,470 SEK/month for decisions from 1 June 2026 (the
+                        national median salary itself being 38,300 SEK/month).
+                        This is an official, dated figure, directly comparable
+                        in level to a labour-market entry wage — but it serves
+                        an administrative purpose (a work-permit threshold)
+                        distinct from that of a statutory or negotiated
+                        minimum wage, and should be read as such.
+                    </p>
+
+                    <h3>2. Arbetsgivaravgifter (employer contributions)</h3>
+
+                    <p>
+                        Arbetsgivaravgifter are entirely borne by the
+                        employer, at a flat rate of 31.42% of the gross wage,
+                        with no wage ceiling at all -- unlike employer
+                        contributions in most other countries modeled in the
+                        Lab. This rate breaks down into socialavgifter
+                        (18.80%: alderspensionsavgift 10.21%,
+                        efterlevandepensionsavgift 0.30%,
+                        sjukforsakringsavgift 3.55%, foraldraforsakringsavgift
+                        2.00%, arbetsmarknadsavgift 2.64%, arbetsskadeavgift
+                        0.10%) and allman loneavgift (12.62%). The flat rate
+                        and the absence of a ceiling mean the effective
+                        employer rate is exactly constant (31.42%) across this
+                        module's entire wage grid.
+                    </p>
+
+                    <h3>3. Income tax: kommunalskatt, statlig inkomstskatt, grundavdrag, jobbskatteavdrag</h3>
+
+                    <p>
+                        Swedish income tax combines four mechanisms, all
+                        bundled into a single "income tax" column in this
+                        module:
+                    </p>
+
+                    <ul>
+                        <li>
+                            <strong>Grundavdrag</strong> (basic allowance): a
+                            5-segment allowance based on annual income,
+                            expressed in multiples of the prisbasbelopp
+                            (59,200 SEK in 2026), which reduces the taxable
+                            base before rates are applied.
+                        </li>
+
+                        <li>
+                            <strong>Kommunalskatt</strong> (municipal and
+                            regional tax): applied at a constant rate on the
+                            taxable base after grundavdrag. This module uses
+                            Stockholm kommun's combined rate (30.55% = 18.22%
+                            kommun + 12.33% region) as the reference
+                            municipality, following the same logic as Zurich
+                            for Switzerland or London for the United Kingdom.
+                        </li>
+
+                        <li>
+                            <strong>Statlig inkomstskatt</strong> (national
+                            tax): 20% of the taxable income above the
+                            threshold (skiktgrans) of 643,000 SEK/year. The
+                            "varnskatt" (an additional 5-point bracket) was
+                            permanently abolished from the 2020 income year
+                            onward.
+                        </li>
+
+                        <li>
+                            <strong>Jobbskatteavdrag</strong> (earned-income
+                            tax credit): a 4-segment credit, applied only
+                            against municipal tax, which grows with earned
+                            income up to a cap and then plateaus (about 47,553
+                            SEK/year at Stockholm's municipal rate, at very
+                            high income).
+                        </li>
+                    </ul>
+
+                    <p>
+                        The calculation uses the official continuous formulas
+                        for the grundavdrag and jobbskatteavdrag (prior to
+                        their discretization into monthly withholding
+                        tables), consistent with this project's general
+                        approach of targeting the final tax due rather than
+                        the payroll withholding table. These formulas were
+                        verified word for word against Skatteverket, Teknisk
+                        beskrivning SKV 433 (edition 36, 2025-12-10), and
+                        revalidated against its official worked examples (see
+                        analysis/sweden/swedish_tax_2026.py).
+                    </p>
+
+                    <h3>4. Why the displayed employee contribution is 0 SEK</h3>
+
+                    <p>
+                        The employee pension contribution (allman
+                        pensionsavgift) is 7% of income, capped at 8.07 times
+                        the inkomstbasbelopp (673,038 SEK, maximum avgift
+                        47,100 SEK). This contribution is fully offset, krona
+                        for krona, by an equal tax credit (skattereduktion,
+                        100% of the avgift), capped at the total tax due
+                        before the credit (SKV 433, section 7.5.1).
+                    </p>
+
+                    <p>
+                        Across this module's entire grid (0.80x to 6.00x the
+                        reference wage), the tax due before the credit always
+                        exceeds the capped avgift: the credit is therefore
+                        always fully usable, and the net effect on take-home
+                        pay is exactly zero. This is not the same
+                        simplification already adopted for the Netherlands
+                        (where loonheffing genuinely bundles national
+                        insurance and income tax into a single withholding):
+                        for Sweden, the mechanism genuinely cancels to zero
+                        and is documented as such. Following the convention
+                        already adopted for that Dutch mechanism, the employee
+                        contribution and its offsetting credit are not
+                        modeled as two separate lines: the employee
+                        contribution is therefore 0 SEK by construction in
+                        this module.
+                    </p>
+
+                    <h3>5. Indicators produced</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Net before tax:</strong>
+                            gross wage minus the employee contribution (0 SEK
+                            by construction, see above) -- so equal to the
+                            gross wage in this module.
+                        </li>
+
+                        <li>
+                            <strong>Net after tax:</strong>
+                            net before tax minus monthly income tax
+                            (kommunalskatt + statlig inkomstskatt minus
+                            jobbskatteavdrag).
+                        </li>
+
+                        <li>
+                            <strong>Employer cost:</strong>
+                            gross wage plus arbetsgivaravgifter.
+                        </li>
+
+                        <li>
+                            <strong>Social wedge:</strong>
+                            difference between employer cost and net before
+                            tax (here, exactly equal to arbetsgivaravgifter).
+                        </li>
+
+                        <li>
+                            <strong>Total socio-fiscal wedge:</strong>
+                            difference between employer cost and net after
+                            tax.
+                        </li>
+
+                        <li>
+                            <strong>Marginal return:</strong>
+                            share of an additional Swedish krona of gross wage
+                            kept before and after income tax.
+                        </li>
+                    </ul>
+
+                    <h3>6. Lab Index</h3>
+
+                    <p>
+                        The Lab Index measures the wage efficiency of labour
+                        cost, independently of income tax. Lab-E = 100 × net
+                        wage before income tax / employer cost, Lab-B = 100 −
+                        Lab-E. No targeted, degressive employer relief is
+                        modeled for Sweden: the Lab-R indicator therefore does
+                        not apply here.
+                    </p>
+
+                    <p class="method-note">
+                        Unlike the Netherlands, where Lab-E is structurally
+                        overstated because loonheffing bundles a genuinely due
+                        social contribution with the displayed income tax, the
+                        Swedish Lab-E is not a presentation artifact: net wage
+                        before tax genuinely equals the gross wage because the
+                        employee pension contribution is genuinely neutralized
+                        by an equal tax credit across this module's entire
+                        grid (see section 4 above).
+                    </p>
+
+                    <h3>7. Limits of the scenario</h3>
+
+                    <p class="method-note">
+                        Sweden has no statutory minimum wage: this module's
+                        1.0x reference wage is the Migrationsverket threshold
+                        (90% of the SCB median salary), an official, dated
+                        figure that is distinct from the floors actually
+                        negotiated by the roughly 700 sector-level collective
+                        agreements covering about 90% of Swedish employees.
+                        Only one reference municipality (Stockholm) is
+                        modeled; the combined municipal+regional rate ranges
+                        from 28.93% to 35.65% depending on the kommun in 2026
+                        (national average 32.38%), which shifts both the
+                        kommunalskatt amount and the jobbskatteavdrag cap. The
+                        employee pension contribution (allman pensionsavgift,
+                        7%) and its fully offsetting tax credit are not
+                        modeled as two separate lines because they cancel out
+                        exactly over this module's entire wage range -- the
+                        displayed employee contribution is therefore 0 SEK by
+                        construction. Only the single, childless profile is
+                        modeled, with no avgift till registrerat trossamfund
+                        (religious-community fee), no pension income, and no
+                        other income. The calculation uses the official
+                        continuous formulas for the grundavdrag and
+                        jobbskatteavdrag (prior to their discretization into
+                        monthly withholding tables), consistent with this
+                        project's general approach of targeting the final tax
+                        due rather than the payroll withholding table.
+                    </p>
+
+                    <h3>8. Sources</h3>
+
+                    <p class="method-note">
+                        Skatteverket, Teknisk beskrivning SKV 433 (edition 36,
+                        2025-12-10); Socialavgiftslag (2000:980) §26, as
+                        amended by law (2025:1362); Lag (1994:1920) om allman
+                        loneavgift §3, as amended by law (2025:1360);
+                        Skatteverket, Belopp och procent 2026;
+                        Migrationsverket / Statistiska centralbyran (SCB);
+                        City of Stockholm and Ekonomifakta for 2026 municipal
+                        rates. See the downloadable sources file in the Data
+                        tab for the full citation detail.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

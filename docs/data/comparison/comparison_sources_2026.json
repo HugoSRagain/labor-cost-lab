@@ -1,7 +1,7 @@
 {
     "module_name": "Cross-Country Labour Cost Comparison",
     "version": "2026-01",
-    "countries_covered": ["France", "Germany", "Belgium", "Switzerland", "Netherlands", "United Kingdom", "Ireland", "Spain"],
+    "countries_covered": ["France", "Germany", "Belgium", "Switzerland", "Netherlands", "United Kingdom", "Ireland", "Spain", "Sweden"],
     "sources": [
         {
             "id": "worldbank_icp_private_consumption_ppp",
@@ -191,6 +191,33 @@
                 "Converting the harmonized wage grid into euros and back into international dollars for Spain"
             ],
             "status": "official"
+        },
+        {
+            "id": "skatteverket_skv433_teknisk_beskrivning_2026",
+            "institution": "Skatteverket (Swedish Tax Agency)",
+            "institution_fr": "Skatteverket (administration fiscale suedoise)",
+            "title": "Teknisk beskrivning SKV 433, edition 36, 2025-12-10 (grundavdrag, jobbskatteavdrag, statlig/kommunal inkomstskatt, allman pensionsavgift)",
+            "url": "https://www.skatteverket.se/download/18.1522bf3f19aea8075ba55c/1766385913260/teknisk-beskrivning-skv-433-2026-utgava-36.pdf",
+            "reference_year": 2026,
+            "retrieved": "2026-08-28",
+            "used_for": [
+                "Sweden's grundavdrag and jobbskatteavdrag formulas, statlig inkomstskatt skiktgrans, kommunalskatt base and the allman pensionsavgift/skattereduktion net-zero mechanism"
+            ],
+            "status": "official"
+        },
+        {
+            "id": "worldbank_icp_ppp_sweden",
+            "institution": "World Bank, International Comparison Program (ICP)",
+            "institution_fr": "Banque mondiale, Programme de comparaison internationale (PCI)",
+            "title": "PPP conversion factor, private consumption (LCU per international $), Sweden",
+            "indicator_code": "PA.NUS.PRVT.PP",
+            "url": "https://api.worldbank.org/v2/country/SWE/indicator/PA.NUS.PRVT.PP",
+            "reference_year": 2024,
+            "retrieved": "2026-08-28",
+            "used_for": [
+                "Converting the harmonized wage grid into Swedish kronor and back into international dollars for Sweden"
+            ],
+            "status": "official"
         }
     ],
     "notes": [
@@ -200,6 +227,7 @@
         "The Netherlands has no separate employee social-security contribution: AOW/Anw/Wlz national-insurance premiums are bundled into the Box 1 wage-tax rate. See docs/data/netherlands/netherlands_sources_2026.json for the full loonheffing formulas, employer-levy rates and an independent cross-check against a secondary net-minimum-wage figure.",
         "The United Kingdom's reference profile is outside Scotland (rUK income-tax bands only) and includes the statutory-minimum automatic-enrolment workplace pension (employee 5%, employer 3% of qualifying earnings) alongside Class 1 National Insurance in the employee/employer contribution figures. See docs/data/uk/uk_sources_2026.json for the full rate schedule and sources.",
         "Ireland's employee/employer contribution figures are PRSI Class A only (January-September 2026 rates); the Universal Social Charge (USC), a separate tax on income, is bundled into the income-tax figure alongside PAYE. See docs/data/ireland/ireland_sources_2026.json for the full rate schedule and sources.",
-        "Spain's reference profile uses the Comunidad de Madrid regional IRPF scale; the other 16 comunidades autonomas each set their own regional scale and are not modelled. Employee/employer contribution figures are Seguridad Social Regimen General only. See docs/data/spain/spain_sources_2026.json for the full rate schedule and sources."
+        "Spain's reference profile uses the Comunidad de Madrid regional IRPF scale; the other 16 comunidades autonomas each set their own regional scale and are not modelled. Employee/employer contribution figures are Seguridad Social Regimen General only. See docs/data/spain/spain_sources_2026.json for the full rate schedule and sources.",
+        "Sweden has no statutory minimum wage; the reference wage used is the Migrationsverket work-permit wage floor (90% of the SCB median salary). The allman pensionsavgift (7% employee pension contribution) is fully offset by an equal skattereduktion across this module's wage range, so employee_contributions is 0 by construction and the full payroll tax liability appears under income_tax_or_withholding_tax. Only Stockholm kommun is modelled. See docs/data/sweden/sweden_sources_2026.json for the full rate schedule and sources."
     ]
 }

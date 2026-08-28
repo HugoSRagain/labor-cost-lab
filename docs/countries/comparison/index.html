@@ -165,9 +165,9 @@
                 <h1>Comparaison internationale du coût du travail</h1>
 
                 <p>
-                    Ce module met en regard les huit modules nationaux (France,
+                    Ce module met en regard les neuf modules nationaux (France,
                     Allemagne, Belgique, Suisse, Pays-Bas, Royaume-Uni, Irlande,
-                    Espagne) sur
+                    Espagne, Suède) sur
                     une grille de salaires harmonisée, exprimée en dollars internationaux
                     (parité de pouvoir d'achat), afin de comparer des niveaux de
                     vie équivalents plutôt que des salaires nominaux.
@@ -219,7 +219,7 @@
                         class="chart-subtitle"
                         id="comparison-metrics-subtitle-fr"
                     >
-                        Valeurs des 8 pays au point de salaire harmonisé
+                        Valeurs des 9 pays au point de salaire harmonisé
                         sélectionné, exprimées en dollars internationaux (PPA).
                     </p>
 
@@ -282,6 +282,12 @@
                             <strong id="metric-comparison-es-net-fr">—</strong>
                             <span class="metric-note">Net avant impôt, intl $</span>
                         </article>
+
+                        <article class="metric-card">
+                            <span class="metric-label">Suède</span>
+                            <strong id="metric-comparison-se-net-fr">—</strong>
+                            <span class="metric-note">Net avant impôt, intl $</span>
+                        </article>
                     </section>
                 </div>
 
@@ -289,7 +295,7 @@
                     <h2>Graphiques comparatifs</h2>
 
                     <p>
-                        Les graphiques suivants comparent les 8 pays sur toute la
+                        Les graphiques suivants comparent les 9 pays sur toute la
                         grille de salaires harmonisée, en dollars internationaux
                         (PPA). Chaque courbe est calculée directement par le
                         moteur du module national correspondant.
@@ -302,7 +308,7 @@
 
                         <p class="chart-subtitle">
                             Salaire net de cotisations sociales, comparable entre
-                            les 8 pays.
+                            les 9 pays.
                         </p>
 
                         <div
@@ -500,6 +506,7 @@
                                     <th>Royaume-Uni</th>
                                     <th>Irlande</th>
                                     <th>Espagne</th>
+                                    <th>Suède</th>
                                 </tr>
                             </thead>
 
@@ -527,8 +534,9 @@
                     <p>
                         Ce module ne redéfinit aucun paramètre national : il
                         réutilise directement les moteurs de calcul des modules
-                        France, Allemagne, Belgique, Suisse, Pays-Bas et
-                        Royaume-Uni, à des points de salaire communs.
+                        France, Allemagne, Belgique, Suisse, Pays-Bas,
+                        Royaume-Uni, Irlande, Espagne et Suède, à des points de
+                        salaire communs.
                     </p>
 
                     <h3>1. Grille de salaires harmonisée</h3>
@@ -537,7 +545,7 @@
                         21 points de salaire, de 2 000 à 12 000 dollars
                         internationaux mensuels par pas de 500. La borne basse est
                         volontairement fixée sous le plancher de salaire minimum
-                        (ou de référence) des 8 pays, une fois converti en dollars
+                        (ou de référence) des 9 pays, une fois converti en dollars
                         internationaux, afin que les grilles de salaire les plus
                         basses restent visibles. Les points de salaire inférieurs
                         au minimum légal d'un pays sont signalés par un
@@ -549,7 +557,9 @@
                         Irlande (National Minimum Wage) environ 2 711, Belgique
                         (RMMMG) environ 2 911, Royaume-Uni (National Living
                         Wage) environ 3 025, Pays-Bas (WML, salaire minimum
-                        légal) environ 3 152, Allemagne environ 3 434.
+                        légal) environ 3 152, Allemagne environ 3 434, Suède
+                        (seuil Migrationsverket, non un salaire minimum légal,
+                        voir la section 11) environ 4 020.
                     </p>
 
                     <h3>2. Conversion par parité de pouvoir d'achat</h3>
@@ -561,7 +571,7 @@
                         ménages (Banque mondiale, Programme de comparaison
                         internationale, indicateur PA.NUS.PRVT.PP, année de
                         référence 2024). Ce facteur est appliqué individuellement
-                        aux 8 pays, y compris la Suisse, selon la même logique que
+                        aux 9 pays, y compris la Suisse, selon la même logique que
                         les comparaisons « Taxing Wages » de l'OCDE.
                     </p>
 
@@ -598,7 +608,13 @@
                         salarié célibataire sans enfant, temps plein, impôt sur
                         le revenu moyenné par population entre 16 communautés
                         autonomes, cotisations de Seguridad Social du Régime
-                        général.
+                        général. Suède : salarié célibataire sans enfant, commune
+                        de Stockholm comme référence (kommunalskatt 30,55 %),
+                        arbetsgivaravgifter (cotisations patronales, taux plat
+                        de 31,42 %, sans plafond), aucune cotisation salariale
+                        visible (l'allman pensionsavgift de 7 % est
+                        intégralement compensée par un crédit d'impôt
+                        équivalent).
                     </p>
 
                     <h3>5. Agrégation cantonale suisse</h3>
@@ -763,7 +779,42 @@
                         complet des 16 barèmes régionaux.
                     </p>
 
-                    <h3>11. Lab-E</h3>
+                    <h3>11. Salaire de référence, cotisations et impôt sur le revenu en Suède</h3>
+
+                    <p>
+                        La Suède n'a pas de salaire minimum légal et ne dispose
+                        d'aucune convention collective unique et universelle
+                        (modèle suédois / modèle de Gand : environ 700
+                        conventions collectives de branche, négociées par les
+                        partenaires sociaux, couvrent au total environ 90 % des
+                        salariés). Ce module retient donc, par convention, le
+                        seuil salarial fixé par l'Office suédois des migrations
+                        (Migrationsverket) pour l'octroi des permis de travail
+                        (90 % du salaire médian national SCB, 34 470 SEK/mois
+                        pour les décisions à compter du 1er juin 2026) comme
+                        salaire de référence 1,0x — un chiffre officiel et daté,
+                        mais qui n'est ni un salaire minimum légal, ni le
+                        résultat d'une négociation collective.
+                    </p>
+
+                    <p>
+                        Les indicateurs « cotisations salarié » et « cotisations
+                        employeur » de la Suède correspondent aux
+                        arbetsgivaravgifter (cotisations patronales, taux plat
+                        de 31,42 %, sans plafond de salaire) côté employeur, et
+                        à 0 SEK côté salarié : l'allman pensionsavgift (7 % du
+                        revenu) est intégralement compensée par un crédit
+                        d'impôt équivalent (skattereduktion) sur toute la
+                        grille de salaires de ce module, si bien que
+                        l'ensemble de la retenue salariale apparaît dans
+                        l'indicateur « impôt sur le revenu ». Seule la commune
+                        de Stockholm (kommunalskatt combiné de 30,55 %) est
+                        modélisée comme commune de référence ; la fourchette
+                        nationale est de 28,93 % à 35,65 %. Voir l'onglet
+                        Méthodologie du module Suède pour le détail complet.
+                    </p>
+
+                    <h3>12. Lab-E</h3>
 
                     <p>
                         L'indicateur Lab-E (100 × net avant impôt / coût employeur)
@@ -779,13 +830,19 @@
 
                     <p class="method-note">
                         Le Lab-E néerlandais est structurellement surestimé par rapport
-                        aux 7 autres pays : le loonheffing fusionne l'assurance nationale
+                        aux 8 autres pays : le loonheffing fusionne l'assurance nationale
                         et l'impôt sur le revenu, si bien que le « net avant impôt »
                         utilisé ici est proche du salaire brut pour les Pays-Bas (voir la
-                        note sur les Pays-Bas plus haut).
+                        note sur les Pays-Bas plus haut). Le Lab-E suédois, en revanche,
+                        n'est pas surestimé de la même façon : le net avant impôt suédois
+                        est réellement égal au salaire brut parce que la cotisation
+                        salariale de pension est réellement neutralisée par un crédit
+                        d'impôt équivalent, et non parce qu'une cotisation non nulle
+                        serait fusionnée dans l'impôt affiché (voir la section 11
+                        ci-dessus et l'onglet Méthodologie du module Suède).
                     </p>
 
-                    <h3>12. Limites</h3>
+                    <h3>13. Limites</h3>
 
                     <p class="method-note">
                         Le calcul de l'impôt sur le revenu suppose un salarié
@@ -818,9 +875,9 @@
                 <h1>Cross-country comparison of labour costs</h1>
 
                 <p>
-                    This module compares the eight national modules (France,
+                    This module compares the nine national modules (France,
                     Germany, Belgium, Switzerland, Netherlands, United Kingdom,
-                    Ireland, Spain) on a harmonized
+                    Ireland, Spain, Sweden) on a harmonized
                     wage grid, expressed in international dollars (purchasing
                     power parity), to compare equivalent standards of living
                     rather than nominal wages.
@@ -872,7 +929,7 @@
                         class="chart-subtitle"
                         id="comparison-metrics-subtitle-en"
                     >
-                        Values for the 8 countries at the selected harmonized
+                        Values for the 9 countries at the selected harmonized
                         wage point, expressed in international dollars (PPP).
                     </p>
 
@@ -935,6 +992,12 @@
                             <strong id="metric-comparison-es-net-en">—</strong>
                             <span class="metric-note">Net before tax, intl $</span>
                         </article>
+
+                        <article class="metric-card">
+                            <span class="metric-label">Sweden</span>
+                            <strong id="metric-comparison-se-net-en">—</strong>
+                            <span class="metric-note">Net before tax, intl $</span>
+                        </article>
                     </section>
                 </div>
 
@@ -942,7 +1005,7 @@
                     <h2>Comparative charts</h2>
 
                     <p>
-                        The charts below compare the 8 countries across the
+                        The charts below compare the 9 countries across the
                         whole harmonized wage grid, in international dollars
                         (PPP). Each curve is computed directly by the matching
                         national module's engine.
@@ -955,7 +1018,7 @@
 
                         <p class="chart-subtitle">
                             Wage net of social contributions, comparable
-                            across the 8 countries.
+                            across the 9 countries.
                         </p>
 
                         <div
@@ -1155,6 +1218,7 @@
                                     <th>United Kingdom</th>
                                     <th>Ireland</th>
                                     <th>Spain</th>
+                                    <th>Sweden</th>
                                 </tr>
                             </thead>
 
@@ -1183,8 +1247,8 @@
                         This module does not redefine any national parameter:
                         it directly reuses the calculation engines of the
                         France, Germany, Belgium, Switzerland, Netherlands,
-                        United Kingdom, Ireland and Spain modules, at common
-                        wage points.
+                        United Kingdom, Ireland, Spain and Sweden modules, at
+                        common wage points.
                     </p>
 
                     <h3>1. Harmonized wage grid</h3>
@@ -1193,7 +1257,7 @@
                         21 wage points, from 2,000 to 12,000 international
                         dollars per month in steps of 500. The lower bound is
                         deliberately set below the minimum (or reference) wage
-                        floor of the 8 countries, once converted to
+                        floor of the 9 countries, once converted to
                         international dollars, so that the lowest wage ranges
                         remain visible. Wage points below a country's legal
                         minimum are flagged with an asterisk (*) in the Data
@@ -1205,7 +1269,8 @@
                         Wage) about 2,711, Belgium (RMMMG) about 2,911, United
                         Kingdom (National Living Wage) about 3,025, Netherlands
                         (WML, statutory minimum wage) about 3,152, Germany
-                        about 3,434.
+                        about 3,434, Sweden (Migrationsverket threshold, not a
+                        statutory minimum wage, see section 11) about 4,020.
                     </p>
 
                     <h3>2. Conversion by purchasing power parity</h3>
@@ -1216,7 +1281,7 @@
                         private-consumption purchasing-power-parity conversion
                         factor (World Bank, International Comparison Program,
                         indicator PA.NUS.PRVT.PP, 2024 reference year). This
-                        factor is applied individually to the 8 countries,
+                        factor is applied individually to the 9 countries,
                         including Switzerland, following the same logic as the
                         OECD's "Taxing Wages" comparisons.
                     </p>
@@ -1254,7 +1319,12 @@
                         September 2026 rates). Spain: single, childless
                         employee, full-time, income tax population-weighted
                         across 16 comunidades autonomas, Seguridad Social
-                        Regimen General contributions.
+                        Regimen General contributions. Sweden: single, childless
+                        employee, Stockholm kommun as the reference
+                        municipality (kommunalskatt 30.55%), arbetsgivaravgifter
+                        (employer contributions, flat 31.42% rate, no ceiling),
+                        no visible employee contribution (the 7% allman
+                        pensionsavgift is fully offset by an equal tax credit).
                     </p>
 
                     <h3>5. Swiss cantonal aggregation</h3>
@@ -1415,7 +1485,40 @@
                         scales.
                     </p>
 
-                    <h3>11. Lab-E</h3>
+                    <h3>11. Reference wage, contributions and income tax in Sweden</h3>
+
+                    <p>
+                        Sweden has no statutory minimum wage and no single,
+                        universal collective agreement (the Swedish model / the
+                        Ghent model: roughly 700 sector-level collective
+                        agreements, negotiated by unions and employers, cover
+                        about 90% of employees in total). This module therefore
+                        uses, by convention, the work-permit wage threshold set
+                        by the Swedish Migration Agency (Migrationsverket) --
+                        90% of the national median salary published by SCB,
+                        34,470 SEK/month for decisions from 1 June 2026 -- as
+                        its 1.0x reference wage: an official, dated figure, but
+                        neither a statutory minimum wage nor the outcome of a
+                        collective negotiation.
+                    </p>
+
+                    <p>
+                        Sweden's "employee contributions" and "employer
+                        contributions" indicators are arbetsgivaravgifter
+                        (employer contributions, a flat 31.42% rate with no
+                        wage ceiling) on the employer side, and 0 SEK on the
+                        employee side: the allman pensionsavgift (7% of
+                        income) is fully offset by an equal tax credit
+                        (skattereduktion) across this module's entire wage
+                        grid, so the entire employee-side deduction appears
+                        under the "income tax" indicator. Only Stockholm
+                        kommun (combined kommunalskatt of 30.55%) is modeled as
+                        the reference municipality; the national range is
+                        28.93% to 35.65%. See the Sweden module's Methodology
+                        tab for full detail.
+                    </p>
+
+                    <h3>12. Lab-E</h3>
 
                     <p>
                         The Lab-E indicator (100 × net before tax / employer cost)
@@ -1430,12 +1533,18 @@
 
                     <p class="method-note">
                         The Dutch Lab-E is structurally overstated relative to the other
-                        7 countries: loonheffing bundles national insurance with income
+                        8 countries: loonheffing bundles national insurance with income
                         tax, so the "net before tax" used here is close to the gross wage
-                        for the Netherlands (see the Netherlands note above).
+                        for the Netherlands (see the Netherlands note above). Sweden's
+                        Lab-E, by contrast, is not overstated in the same way: Swedish net
+                        wage before tax is genuinely equal to the gross wage because the
+                        employee pension contribution is genuinely neutralized by an equal
+                        tax credit, not because a non-zero contribution is bundled into the
+                        displayed tax (see section 11 above and the Sweden module's
+                        Methodology tab).
                     </p>
 
-                    <h3>12. Limits</h3>
+                    <h3>13. Limits</h3>
 
                     <p class="method-note">
                         The income-tax calculation assumes a single, childless

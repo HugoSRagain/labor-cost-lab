@@ -1,7 +1,7 @@
 {
     "module_name": "Cross-Country Labour Cost Comparison",
     "version": "2026-01",
-    "countries": ["France", "Germany", "Belgium", "Switzerland", "Netherlands", "United Kingdom", "Ireland", "Spain"],
+    "countries": ["France", "Germany", "Belgium", "Switzerland", "Netherlands", "United Kingdom", "Ireland", "Spain", "Sweden"],
     "methodology": [
         "Comparison axis: absolute wage levels converted via purchasing power parity (PPP), not wages re-indexed to each country's own minimum wage.",
         "PPP is applied individually to all 4 countries (including Switzerland), following the same logic as the OECD 'Taxing Wages' cross-country comparisons.",
@@ -25,7 +25,8 @@
         "NL": {"value_local": 2338.44, "currency": "EUR", "value_intl_usd": 3151.7, "source": "Wettelijk minimumloon (WML), 14.99 EUR/h x 36h/week (CBS full-time convention), docs/data/netherlands/netherlands_parameters_2026.json"},
         "UK": {"value_local": 2065.38, "currency": "GBP", "value_intl_usd": 3025.1, "source": "National Living Wage (21+), 12.71 GBP/h x 37.5h/week (most commonly cited UK full-time benchmark), docs/data/uk/uk_parameters_2026.json"},
         "IE": {"value_local": 2391.35, "currency": "EUR", "value_intl_usd": 2711.4, "source": "National Minimum Wage (20+), 14.15 EUR/h x 39h/week (most commonly cited Irish full-time benchmark), docs/data/ireland/ireland_parameters_2026.json"},
-        "ES": {"value_local": 1424.50, "currency": "EUR", "value_intl_usd": 2421.0, "source": "Salario Minimo Interprofesional (SMI) 2026, 1,221 EUR/month x 14 payments, prorated over 12 months, docs/data/spain/spain_parameters_2026.json"}
+        "ES": {"value_local": 1424.50, "currency": "EUR", "value_intl_usd": 2421.0, "source": "Salario Minimo Interprofesional (SMI) 2026, 1,221 EUR/month x 14 payments, prorated over 12 months, docs/data/spain/spain_parameters_2026.json"},
+        "SE": {"value_local": 34470, "currency": "SEK", "value_intl_usd": 4019.8, "source": "Sweden has no statutory minimum wage; this is the Migrationsverket work-permit wage floor (90% of the SCB median salary), used as this module's reference wage by convention, docs/data/sweden/sweden_parameters_2026.json"}
     },
     "ppp_conversion_factors": {
         "basis": "Household (private) final consumption expenditure PPP conversion factor, LCU per international dollar",
@@ -41,7 +42,8 @@
             "NL": 0.74195,
             "UK": 0.682739,
             "IE": 0.88195,
-            "ES": 0.588481
+            "ES": 0.588481,
+            "SE": 8.577614
         }
     },
     "reference_profiles": {
@@ -84,6 +86,11 @@
             "profile_id": "spain__population_weighted_average_16_regions",
             "description": "Population-weighted average across 16 comunidades autonomas (Madrid, Andalucia, Aragon, Asturias, Baleares, Canarias, Cantabria, Castilla-La Mancha, Castilla y Leon, Cataluna, Extremadura, Galicia, Murcia, La Rioja, Comunidad Valenciana, Ceuta/Melilla), standard single childless employee, full-time, Seguridad Social Regimen General. Navarra and Pais Vasco excluded (foral tax systems).",
             "compute_source": "analysis/spain/build_spain_dataset.py and analysis/spain/irpf_seguridad_social_2026.py, aggregated across 16 regions"
+        },
+        "SE": {
+            "profile_id": "sweden__standard_employee_stockholm",
+            "description": "Standard, single, childless employee, Stockholm kommun as the reference municipality (kommunalskatt 30.55%). No separate visible employee contribution: the 7% allman pensionsavgift is fully offset by an equal skattereduktion across this module's entire wage range, so 'employee_contributions' is 0 by construction, mirroring how the Netherlands' bundled loonheffing is handled.",
+            "compute_source": "analysis/sweden/build_sweden_dataset.py and analysis/sweden/swedish_tax_2026.py"
         }
     },
     "switzerland_canton_population_weights": {
@@ -173,6 +180,7 @@
         "The United Kingdom's 'employee_contributions' and 'employer_contributions' figures include both Class 1 National Insurance and the statutory-minimum automatic-enrolment workplace pension (employee 5%, employer 3% of qualifying earnings), not income tax alone -- income tax (PAYE) is reported separately, as for the other countries. Income tax is a population-weighted average of the rUK (England/Wales/Northern Ireland) and Scotland devolved bands (see 'uk_region_population_weights'), mirroring how Switzerland's cantons are aggregated; National Insurance and the workplace pension are not devolved and are identical in both regions.",
         "Ireland's 'income_tax_or_withholding_tax' figure bundles PAYE income tax and the Universal Social Charge (USC), since USC is a separate tax on income rather than a social contribution; 'employee_contributions' and 'employer_contributions' are PRSI Class A only, using the January-September 2026 rates (a further rate increase scheduled for 1 October 2026 is not modeled).",
         "Spain's income tax (IRPF) is a population-weighted average across 16 comunidades autonomas (see 'es_region_population_weights'), mirroring how Switzerland's cantons are aggregated; Navarra and Pais Vasco are excluded (separate foral tax systems). 'employee_contributions' and 'employer_contributions' are Seguridad Social Regimen General only, national and identical across all regions.",
+        "Sweden has no statutory minimum wage and no single universal collective agreement (the Ghent/Nordic model: roughly 700 sector-level agreements negotiated by employers and unions cover about 90% of employees). This module uses the Migrationsverket work-permit wage floor (90% of the SCB median salary, 34,470 SEK/month for decisions from 1 June 2026) as its reference wage by convention -- an official, dated figure, but not a legal minimum or a negotiated collective-bargaining floor. Sweden's 'employee_contributions' is 0 by construction: the 7% allman pensionsavgift is fully offset by an equal skattereduktion (capped at total tax due) across this module's entire wage range, so the entire employee-side deduction is reported under 'income_tax_or_withholding_tax'. Only Stockholm kommun (30.55% combined kommunalskatt) is modeled as the reference municipality; the national range is 28.93%-35.65%.",
         "All amounts are also cross-country comparable in international dollars (PPP) in addition to local currency."
     ]
 }
