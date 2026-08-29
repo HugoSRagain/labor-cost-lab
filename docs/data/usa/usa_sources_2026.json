@@ -1,0 +1,98 @@
+{
+    "country": "United States",
+    "country_code": "US",
+    "version": "2026",
+    "status": "source_audit",
+    "sources": {
+        "irs_federal_brackets_2026": {
+            "label": "Baremes de l'impot federal sur le revenu et deduction forfaitaire, 2026",
+            "value": "7 tranches (10/12/22/24/32/35/37%), deduction forfaitaire 16 100 USD (celibataire)",
+            "source_name": "IRS, Revenue Procedure 2025-32",
+            "source_type": "official",
+            "url": "https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill",
+            "confidence": "high"
+        },
+        "ssa_oasdi_wage_base_2026": {
+            "label": "Plafond de cotisation Social Security (OASDI) et taux, 2026",
+            "value": "6,2 % salarie / 6,2 % employeur, plafond 184 500 USD/an",
+            "source_name": "Social Security Administration, fiche COLA 2026",
+            "source_type": "official_aggregated",
+            "confidence": "high",
+            "note": "ssa.gov a renvoye une erreur 403 aux requetes automatisees ; confirme independamment par The Tax Adviser et Kiplinger, tous deux citant l'annonce officielle de la SSA."
+        },
+        "irs_additional_medicare_tax": {
+            "label": "Additional Medicare Tax",
+            "value": "0,9 % a la charge du seul salarie, sur la remuneration depassant 200 000 USD (celibataire), seuil non indexe depuis 2013",
+            "source_name": "IRS, Questions and Answers for the Additional Medicare Tax",
+            "source_type": "official",
+            "url": "https://www.irs.gov/businesses/small-businesses-self-employed/questions-and-answers-for-the-additional-medicare-tax",
+            "confidence": "high"
+        },
+        "dol_futa_credit_reduction_2026": {
+            "label": "FUTA, taux net et etats a risque de reduction de credit pour 2026",
+            "value": "Taux net standard 0,6 % ; Californie et Iles Vierges americaines signalees a risque d'une reduction de credit, non finalisee avant le 10 novembre 2026",
+            "source_name": "US Department of Labor, FUTA Credit Reduction page ; Payroll.org",
+            "source_type": "official_aggregated",
+            "url": "https://oui.doleta.gov/unemploy/futa_credit.asp",
+            "confidence": "medium",
+            "note": "Page DOL non directement accessible (403/502) ; confirme via Payroll.org et Bloomberg Tax citant la meme source."
+        },
+        "census_bureau_state_population_2024": {
+            "label": "Population par Etat, 1er juillet 2024",
+            "value": "Population de reference pour la ponderation demographique des 50 Etats + DC dans le module Comparaison",
+            "source_name": "US Census Bureau, Annual Estimates of the Resident Population (NST-EST2024-POP)",
+            "source_type": "official",
+            "url": "https://www2.census.gov/programs-surveys/popest/tables/2020-2024/state/totals/NST-EST2024-POP.xlsx",
+            "confidence": "high",
+            "note": "Fichier XLSX officiel recupere et lu directement."
+        },
+        "state_income_tax_brackets_2026": {
+            "label": "Baremes d'imposition sur le revenu des 50 Etats + DC, 2026",
+            "value": "Voir analysis/usa/us_payroll_2026.py (dictionnaire STATE_DATA_2026) pour le detail complet par Etat",
+            "source_name": "Departements du revenu (Department of Revenue/Taxation) de chaque Etat ; recoupes avec Tax Foundation, Bloomberg Tax et EY Tax News pour les changements legislatifs 2026",
+            "source_type": "official_aggregated",
+            "confidence": "high",
+            "note": "La grande majorite des 41 Etats + DC imposant le revenu a ete verifiee via une page officielle du departement fiscal de l'Etat ou un document officiel directement lu (Oregon, Californie, Caroline du Sud, Georgie, Kentucky, Mississippi, Missouri, Montana, Arkansas, Virginie-Occidentale, New York, Connecticut, Maine, Maryland, District de Columbia notamment). Deux Etats restent en confiance moyenne malgre plusieurs tentatives de verification directe : Hawaii (barème complet a 12 tranches, sources secondaires convergentes mais document officiel non exploitable automatiquement) et le seuil superieur du Dakota du Nord. Voir les champs confidence_note dans STATE_DATA_2026 pour le detail Etat par Etat."
+        },
+        "state_sui_rates_2026": {
+            "label": "Taux d'assurance chomage (SUI/SUTA) nouvel-employeur et plafonds salariaux, 50 Etats + DC, 2026",
+            "value": "Voir analysis/usa/us_payroll_2026.py",
+            "source_name": "Departements du travail (Department of Labor/Employment Security) de chaque Etat ; recoupes avec Bloomberg Tax",
+            "source_type": "official_aggregated",
+            "confidence": "medium",
+            "note": "Plusieurs Etats assignent des taux specifiques par secteur plutot qu'un taux unique publie (Colorado, Louisiane, Minnesota, Wyoming) : ce module retient alors un taux illustratif documente comme tel. Quelques plafonds salariaux restent en confiance moyenne (Illinois, Kansas, Utah) faute d'acces direct au document officiel dans le cadre de cette recherche."
+        },
+        "state_extra_mandatory_payroll_items_2026": {
+            "label": "Dispositifs de protection sociale obligatoires additionnels par Etat (SDI, PFML, etc.), 2026",
+            "value": "Californie (SDI/PFL), Colorado (FAMLI), Connecticut (CTPL), Delaware (Paid Leave, nouveau 2026), District de Columbia (PFL), Massachusetts (PFML), Maine (PFML), Minnesota (Paid Leave, nouveau 2026), New Jersey (DI + FLI), New York (SDI + PFL), Oregon (Paid Leave Oregon), Rhode Island (TDI), Washington (PFML + WA Cares Fund)",
+            "source_name": "Sites officiels des programmes de chaque Etat (ex. pl.mn.gov, paidleave.wa.gov, edd.ca.gov)",
+            "source_type": "official_aggregated",
+            "confidence": "high",
+            "note": "Le Programme de conge familial et medical de Virginie a ete exclu car ses cotisations ne debutent qu'en avril 2028."
+        },
+        "federal_minimum_wage": {
+            "label": "Salaire minimum federal",
+            "value": "7,25 USD/heure, inchange depuis le 24 juillet 2009",
+            "source_name": "Fair Labor Standards Act ; US Department of Labor",
+            "source_type": "official",
+            "confidence": "high"
+        }
+    },
+    "audit_decision": {
+        "v0_scope": [
+            "Impot federal sur le revenu (bareme 7 tranches, deduction forfaitaire)",
+            "FICA (Social Security + Medicare + Additional Medicare Tax)",
+            "FUTA (taux net standard)",
+            "Impot sur le revenu de chacun des 50 Etats + DC (ou absence d'impot)",
+            "SUI/SUTA de chaque Etat (taux nouvel-employeur)",
+            "Dispositifs de protection sociale obligatoires additionnels des Etats qui en ont un (SDI, PFML, TDI, etc.)"
+        ],
+        "not_yet_included": [
+            "Impots locaux sur le revenu (comtes, villes)",
+            "Taux SUI/SUTA experience-rated reels (au-dela du taux nouvel-employeur standard)",
+            "Credits d'impot pour enfants, imposition conjointe, autres statuts de declaration",
+            "Assurance maladie privee (mandat ACA, non fiscal)",
+            "Reduction potentielle du credit FUTA pour la Californie en 2026 (non finalisee)"
+        ]
+    }
+}

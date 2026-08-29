@@ -141,7 +141,7 @@
     </style>
 
     <script defer src="../../assets/i18n_common.js?v=3"></script>
-    <script defer src="./assets/comparison_app.js?v=9"></script>
+    <script defer src="./assets/comparison_app.js?v=10"></script>
 </head>
 
 <body>
@@ -165,9 +165,9 @@
                 <h1>Comparaison internationale du coût du travail</h1>
 
                 <p>
-                    Ce module met en regard les dix modules nationaux (France,
+                    Ce module met en regard les onze modules nationaux (France,
                     Allemagne, Belgique, Suisse, Pays-Bas, Royaume-Uni, Irlande,
-                    Espagne, Suède, Italie) sur
+                    Espagne, Suède, Italie, États-Unis) sur
                     une grille de salaires harmonisée, exprimée en dollars internationaux
                     (parité de pouvoir d'achat), afin de comparer des niveaux de
                     vie équivalents plutôt que des salaires nominaux.
@@ -219,7 +219,7 @@
                         class="chart-subtitle"
                         id="comparison-metrics-subtitle-fr"
                     >
-                        Valeurs des 10 pays au point de salaire harmonisé
+                        Valeurs des 11 pays au point de salaire harmonisé
                         sélectionné, exprimées en dollars internationaux (PPA).
                     </p>
 
@@ -294,6 +294,12 @@
                             <strong id="metric-comparison-it-net-fr">—</strong>
                             <span class="metric-note">Net avant impôt, intl $</span>
                         </article>
+
+                        <article class="metric-card">
+                            <span class="metric-label">États-Unis</span>
+                            <strong id="metric-comparison-us-net-fr">—</strong>
+                            <span class="metric-note">Net avant impôt, intl $</span>
+                        </article>
                     </section>
                 </div>
 
@@ -301,7 +307,7 @@
                     <h2>Graphiques comparatifs</h2>
 
                     <p>
-                        Les graphiques suivants comparent les 10 pays sur toute la
+                        Les graphiques suivants comparent les 11 pays sur toute la
                         grille de salaires harmonisée, en dollars internationaux
                         (PPA). Chaque courbe est calculée directement par le
                         moteur du module national correspondant.
@@ -314,7 +320,7 @@
 
                         <p class="chart-subtitle">
                             Salaire net de cotisations sociales, comparable entre
-                            les 10 pays.
+                            les 11 pays.
                         </p>
 
                         <div
@@ -514,6 +520,7 @@
                                     <th>Espagne</th>
                                     <th>Suède</th>
                                     <th>Italie</th>
+                                    <th>États-Unis</th>
                                 </tr>
                             </thead>
 
@@ -542,8 +549,8 @@
                         Ce module ne redéfinit aucun paramètre national : il
                         réutilise directement les moteurs de calcul des modules
                         France, Allemagne, Belgique, Suisse, Pays-Bas,
-                        Royaume-Uni, Irlande, Espagne, Suède et Italie, à des
-                        points de salaire communs.
+                        Royaume-Uni, Irlande, Espagne, Suède, Italie et
+                        États-Unis, à des points de salaire communs.
                     </p>
 
                     <h3>1. Grille de salaires harmonisée</h3>
@@ -552,14 +559,15 @@
                         21 points de salaire, de 2 000 à 12 000 dollars
                         internationaux mensuels par pas de 500. La borne basse est
                         volontairement fixée sous le plancher de salaire minimum
-                        (ou de référence) des 10 pays, une fois converti en dollars
+                        (ou de référence) des 11 pays, une fois converti en dollars
                         internationaux, afin que les grilles de salaire les plus
                         basses restent visibles. Les points de salaire inférieurs
                         au minimum légal d'un pays sont signalés par un
                         astérisque (*) dans l'onglet Données : ils représentent
                         un salaire hypothétique pour ce pays à ce point de la
                         grille. Les seuils 2024/2026 convertis en dollars
-                        internationaux sont : Espagne (SMI) environ 2 421,
+                        internationaux sont : États-Unis (salaire minimum
+                        fédéral) environ 1 257, Espagne (SMI) environ 2 421,
                         France (SMIC) environ 2 604, Suisse environ 2 710,
                         Irlande (National Minimum Wage) environ 2 711, Belgique
                         (RMMMG) environ 2 911, Royaume-Uni (National Living
@@ -568,7 +576,11 @@
                         (seuil Migrationsverket, non un salaire minimum légal,
                         voir la section 11) environ 4 020, Italie (CCNL
                         Commercio, non un salaire minimum légal, voir la
-                        section 12) environ 3 702.
+                        section 12) environ 3 702. Le salaire minimum fédéral
+                        américain, à environ 1 257 dollars internationaux, est
+                        déjà inférieur à la borne basse de la grille (2 000) :
+                        aucun point de cette grille harmonisée n'est donc
+                        hypothétique pour les États-Unis.
                     </p>
 
                     <h3>2. Conversion par parité de pouvoir d'achat</h3>
@@ -580,8 +592,11 @@
                         ménages (Banque mondiale, Programme de comparaison
                         internationale, indicateur PA.NUS.PRVT.PP, année de
                         référence 2024). Ce facteur est appliqué individuellement
-                        aux 10 pays, y compris la Suisse, selon la même logique que
-                        les comparaisons « Taxing Wages » de l'OCDE.
+                        aux 11 pays, y compris la Suisse, selon la même logique que
+                        les comparaisons « Taxing Wages » de l'OCDE. Le facteur de
+                        conversion PPA du dollar américain vaut exactement 1,0 par
+                        construction (le dollar international est étalonné sur les
+                        prix américains).
                     </p>
 
                     <h3>3. Calcul direct, sans interpolation</h3>
@@ -628,7 +643,15 @@
                         (IRPEF national, addizionale regionale et addizionale
                         comunale), cotisations INPS salarié et employeur, coût
                         employeur incluant le TFR (indemnité de départ
-                        différée, environ 6,91 % du brut annuel).
+                        différée, environ 6,91 % du brut annuel). États-Unis :
+                        moyenne pondérée par la population des 50 États et du
+                        District de Columbia, salarié célibataire sans enfant,
+                        statut fédéral « single » ; impôt fédéral sur le
+                        revenu, FICA et FUTA identiques partout ; impôt
+                        d'État (absent dans 9 États), assurance chômage
+                        d'État et dispositif d'État obligatoire additionnel
+                        (SDI/PFML/TDI dans 13 juridictions) variables selon
+                        l'État.
                     </p>
 
                     <h3>5. Agrégation cantonale suisse</h3>
@@ -863,7 +886,40 @@
                         Méthodologie du module Italie pour le détail complet.
                     </p>
 
-                    <h3>13. Lab-E</h3>
+                    <h3>13. Salaire de référence, cotisations et impôt sur le revenu aux États-Unis</h3>
+
+                    <p>
+                        Les États-Unis sont le seul système réellement fédéral
+                        de cette comparaison : un impôt fédéral sur le revenu
+                        et des cotisations FICA/FUTA uniformes s'appliquent
+                        partout, AUXQUELS s'ajoutent l'impôt sur le revenu
+                        propre à chacun des 50 États et de DC (9 États n'en
+                        prélèvent aucun), l'assurance chômage d'État (SUI), et,
+                        dans 13 juridictions, un dispositif d'État obligatoire
+                        assimilable à une cotisation sociale (assurance
+                        invalidité d'État en Californie et à New York, congé
+                        familial et médical rémunéré au Colorado, dans le
+                        Massachusetts, le Maine, le Minnesota, l'Oregon,
+                        l'État de Washington et à DC, assurance invalidité
+                        temporaire à Rhode Island et à Hawaï, dispositif «
+                        Paid Leave » nouveau pour 2026 dans le Delaware, et le
+                        dispositif combiné chômage/invalidité/congé familial
+                        du New Jersey). Ce module agrège les 50 États et DC
+                        par une moyenne pondérée par la population (voir
+                        « us_state_population_weights »), selon la même
+                        logique que l'agrégation cantonale suisse, les
+                        régions dévolues du Royaume-Uni et les communautés
+                        autonomes espagnoles. Le salaire de référence est le
+                        salaire minimum fédéral (7,25 USD/heure, inchangé
+                        depuis 2009) ; de nombreux États et villes fixent des
+                        minima bien supérieurs. Le facteur de conversion PPA
+                        du dollar américain vaut exactement 1,0 par
+                        construction (le dollar international est étalonné
+                        sur les prix américains). Voir l'onglet Méthodologie
+                        du module États-Unis pour le détail complet.
+                    </p>
+
+                    <h3>14. Lab-E</h3>
 
                     <p>
                         L'indicateur Lab-E (100 × net avant impôt / coût employeur)
@@ -895,9 +951,18 @@
                         effective qui reviendra au salarié plus tard (à la rupture du
                         contrat) mais n'est pas disponible comme net immédiat (voir la
                         section 12 ci-dessus et l'onglet Méthodologie du module Italie).
+                        Le Lab-E américain, à l'inverse, est structurellement le plus
+                        élevé de la comparaison sur la partie basse de la grille : au
+                        salaire minimum fédéral, la charge fiscale et sociale
+                        américaine est réellement très faible (le salaire de référence
+                        se situe bien en dessous de la déduction forfaitaire fédérale
+                        et des seuils d'imposition de la plupart des États), et non par
+                        un artefact de présentation comparable aux Pays-Bas (voir la
+                        section 13 ci-dessus et l'onglet Méthodologie du module
+                        États-Unis).
                     </p>
 
-                    <h3>14. Limites</h3>
+                    <h3>15. Limites</h3>
 
                     <p class="method-note">
                         Le calcul de l'impôt sur le revenu suppose un salarié
@@ -930,9 +995,9 @@
                 <h1>Cross-country comparison of labour costs</h1>
 
                 <p>
-                    This module compares the ten national modules (France,
+                    This module compares the eleven national modules (France,
                     Germany, Belgium, Switzerland, Netherlands, United Kingdom,
-                    Ireland, Spain, Sweden, Italy) on a harmonized
+                    Ireland, Spain, Sweden, Italy, United States) on a harmonized
                     wage grid, expressed in international dollars (purchasing
                     power parity), to compare equivalent standards of living
                     rather than nominal wages.
@@ -984,7 +1049,7 @@
                         class="chart-subtitle"
                         id="comparison-metrics-subtitle-en"
                     >
-                        Values for the 10 countries at the selected harmonized
+                        Values for the 11 countries at the selected harmonized
                         wage point, expressed in international dollars (PPP).
                     </p>
 
@@ -1059,6 +1124,12 @@
                             <strong id="metric-comparison-it-net-en">—</strong>
                             <span class="metric-note">Net before tax, intl $</span>
                         </article>
+
+                        <article class="metric-card">
+                            <span class="metric-label">United States</span>
+                            <strong id="metric-comparison-us-net-en">—</strong>
+                            <span class="metric-note">Net before tax, intl $</span>
+                        </article>
                     </section>
                 </div>
 
@@ -1066,7 +1137,7 @@
                     <h2>Comparative charts</h2>
 
                     <p>
-                        The charts below compare the 10 countries across the
+                        The charts below compare the 11 countries across the
                         whole harmonized wage grid, in international dollars
                         (PPP). Each curve is computed directly by the matching
                         national module's engine.
@@ -1079,7 +1150,7 @@
 
                         <p class="chart-subtitle">
                             Wage net of social contributions, comparable
-                            across the 10 countries.
+                            across the 11 countries.
                         </p>
 
                         <div
@@ -1281,6 +1352,7 @@
                                     <th>Spain</th>
                                     <th>Sweden</th>
                                     <th>Italy</th>
+                                    <th>United States</th>
                                 </tr>
                             </thead>
 
@@ -1309,8 +1381,8 @@
                         This module does not redefine any national parameter:
                         it directly reuses the calculation engines of the
                         France, Germany, Belgium, Switzerland, Netherlands,
-                        United Kingdom, Ireland, Spain, Sweden and Italy
-                        modules, at common wage points.
+                        United Kingdom, Ireland, Spain, Sweden, Italy and
+                        United States modules, at common wage points.
                     </p>
 
                     <h3>1. Harmonized wage grid</h3>
@@ -1319,13 +1391,14 @@
                         21 wage points, from 2,000 to 12,000 international
                         dollars per month in steps of 500. The lower bound is
                         deliberately set below the minimum (or reference) wage
-                        floor of the 10 countries, once converted to
+                        floor of the 11 countries, once converted to
                         international dollars, so that the lowest wage ranges
                         remain visible. Wage points below a country's legal
                         minimum are flagged with an asterisk (*) in the Data
                         tab: they represent a hypothetical wage for that
                         country at this point of the grid. The 2024/2026
                         thresholds converted to international dollars are:
+                        United States (federal minimum wage) about 1,257,
                         Spain (SMI) about 2,421, France (SMIC) about 2,604,
                         Switzerland about 2,710, Ireland (National Minimum
                         Wage) about 2,711, Belgium (RMMMG) about 2,911, United
@@ -1334,7 +1407,11 @@
                         about 3,434, Italy (CCNL Commercio, not a statutory
                         minimum wage, see section 12) about 3,702, Sweden
                         (Migrationsverket threshold, not a statutory minimum
-                        wage, see section 11) about 4,020.
+                        wage, see section 11) about 4,020. The US federal
+                        minimum wage, at about 1,257 international dollars, is
+                        already below the grid's lower bound (2,000): no point
+                        of this harmonized grid is therefore hypothetical for
+                        the United States.
                     </p>
 
                     <h3>2. Conversion by purchasing power parity</h3>
@@ -1345,9 +1422,12 @@
                         private-consumption purchasing-power-parity conversion
                         factor (World Bank, International Comparison Program,
                         indicator PA.NUS.PRVT.PP, 2024 reference year). This
-                        factor is applied individually to the 10 countries,
+                        factor is applied individually to the 11 countries,
                         including Switzerland, following the same logic as the
-                        OECD's "Taxing Wages" comparisons.
+                        OECD's "Taxing Wages" comparisons. The US dollar's own
+                        PPP conversion factor is exactly 1.0 by construction
+                        (the international dollar is benchmarked to US
+                        prices).
                     </p>
 
                     <h3>3. Direct calculation, no interpolation</h3>
@@ -1394,7 +1474,15 @@
                         IRPEF, addizionale regionale and addizionale
                         comunale), INPS employee and employer contributions,
                         employer cost including TFR (deferred severance
-                        accrual, about 6.91% of annual gross pay).
+                        accrual, about 6.91% of annual gross pay). United
+                        States: population-weighted average across the 50
+                        states and the District of Columbia, single,
+                        childless employee, federal "single" filing status;
+                        federal income tax, FICA and FUTA identical
+                        everywhere; state income tax (absent in 9 states),
+                        State Unemployment Insurance, and an additional
+                        mandatory state scheme (SDI/PFML/TDI in 13
+                        jurisdictions) varying by state.
                     </p>
 
                     <h3>5. Swiss cantonal aggregation</h3>
@@ -1621,7 +1709,37 @@
                         Methodology tab for full detail.
                     </p>
 
-                    <h3>13. Lab-E</h3>
+                    <h3>13. Reference wage, contributions and income tax in the United States</h3>
+
+                    <p>
+                        The United States is the only genuinely federal system
+                        in this comparison: a uniform federal income tax and
+                        FICA/FUTA payroll taxes apply everywhere, PLUS each of
+                        the 50 states' (and DC's) own income tax (9 states
+                        have none), State Unemployment Insurance, and in 13
+                        jurisdictions a state-mandated payroll deduction
+                        analogous to social insurance (State Disability
+                        Insurance in California and New York, Paid Family and
+                        Medical Leave in Colorado, Massachusetts, Maine,
+                        Minnesota, Oregon, Washington and DC, Temporary
+                        Disability Insurance in Rhode Island and Hawaii,
+                        Delaware's new-for-2026 Paid Leave, and New Jersey's
+                        combined UI/DI/FLI scheme). This module aggregates
+                        all 50 states and DC with a population-weighted
+                        average (see "us_state_population_weights"),
+                        mirroring how Switzerland's cantons, the UK's
+                        devolved regions and Spain's comunidades autonomas
+                        are aggregated. The reference wage is the federal
+                        minimum wage (USD 7.25/hour, unchanged since 2009);
+                        many states and cities set substantially higher
+                        minimum wages of their own. The US dollar's own PPP
+                        conversion factor is exactly 1.0 by construction (the
+                        international dollar is benchmarked to US prices).
+                        See the United States module's Methodology tab for
+                        full detail.
+                    </p>
+
+                    <h3>14. Lab-E</h3>
 
                     <p>
                         The Lab-E indicator (100 × net before tax / employer cost)
@@ -1649,10 +1767,16 @@
                         cost genuinely includes TFR, a real personnel cost that will reach
                         the employee later (at contract termination) but is not available
                         as immediate net pay (see section 12 above and the Italy module's
-                        Methodology tab).
+                        Methodology tab). The US Lab-E, conversely, is structurally the
+                        highest in the comparison across the low end of the grid: at the
+                        federal minimum wage, the US tax and social-security burden is
+                        genuinely very low (the reference wage sits well below the federal
+                        standard deduction and most states' own income-tax thresholds),
+                        not a presentation artifact comparable to the Netherlands (see
+                        section 13 above and the United States module's Methodology tab).
                     </p>
 
-                    <h3>14. Limits</h3>
+                    <h3>15. Limits</h3>
 
                     <p class="method-note">
                         The income-tax calculation assumes a single, childless

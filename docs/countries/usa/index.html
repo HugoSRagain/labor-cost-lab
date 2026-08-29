@@ -1,0 +1,1583 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>USA Labour Cost Lab</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+    <link rel="stylesheet" href="../../assets/style.css?v=28">
+    <script defer src="../../assets/i18n_common.js?v=3"></script>
+    <script defer src="./assets/usa_app.js?v=1"></script>
+</head>
+
+<body>
+    <div class="global-project-banner">
+        <a href="../../index.html">
+            ← Labor Cost Lab
+        </a>
+
+        <span>
+            United States module · Available socio-fiscal version
+        </span>
+    </div>
+
+    <div class="language-section active" id="section-fr">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · Module États-Unis
+                </p>
+
+                <h1>USA Labour Cost Lab</h1>
+
+                <p>
+                    Module de simulation du coût du travail aux États-Unis, le
+                    seul système réellement fédéral de ce Lab : une couche
+                    fédérale uniforme (impôt sur le revenu, FICA, FUTA)
+                    s'applique partout, et se combine avec la fiscalité et les
+                    cotisations propres à chacun des 50 États et au District
+                    de Columbia, sélectionnables individuellement dans les
+                    onglets Simulation, Indice du Lab et Données.
+                </p>
+
+                <p class="author-line">
+                    Par Hugo Spring-Ragain, Économiste, CEDS Paris
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchUsaLanguage()">
+                    English
+                </button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>États-Unis · module socio-fiscal 2026</h2>
+
+                <p>
+                    <strong>Point d'attention méthodologique : les États-Unis
+                    sont le seul pays de ce Lab dont la structure est
+                    réellement fédérale.</strong> Une couche fédérale unique
+                    (impôt fédéral sur le revenu, FICA, FUTA) s'applique de
+                    façon identique dans les 50 États et à Washington DC, et
+                    se superpose à 51 régimes d'État différents : impôt sur
+                    le revenu de l'État (9 États n'en prélèvent aucun),
+                    assurance chômage d'État (SUI/SUTA), et dans 13
+                    juridictions un dispositif de protection sociale
+                    obligatoire supplémentaire (assurance invalidité ou congé
+                    familial rémunéré, le plus significatif étant le SDI/PFL
+                    californien, 1,3 % sans plafond côté salarié). Le salaire
+                    de référence 1,0x retenu ici est le salaire minimum
+                    fédéral légal (7,25 USD/heure, inchangé depuis 2009) —
+                    de nombreux États et villes fixent des minima bien
+                    supérieurs. Voir l'onglet Méthodologie pour le détail
+                    complet.
+                </p>
+
+                <p class="method-note">
+                    Au salaire minimum fédéral, la charge fiscale et sociale
+                    apparaît structurellement très faible dans ce module : ce
+                    salaire de référence (1 256,67 USD/mois) se situe bien en
+                    dessous de la déduction forfaitaire fédérale (16 100
+                    USD/an) et des seuils d'imposition de la plupart des
+                    États. Ce n'est pas une anomalie de calcul, mais un
+                    résultat réel de la faible progressivité du système
+                    américain à ce niveau de salaire précis — la charge
+                    augmente fortement à des multiples plus élevés du salaire
+                    de référence (voir les graphiques de taux effectifs et de
+                    rendement marginal).
+                </p>
+            </section>
+
+            <nav class="tabs" aria-label="Navigation États-Unis">
+                <button class="tab-button active" data-tab="simulation" onclick="showUsaTab('fr', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showUsaTab('fr', 'flcl-index')">
+                    Indice du Lab
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showUsaTab('fr', 'data')">
+                    Données
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showUsaTab('fr', 'methodology')">
+                    Méthodologie
+                </button>
+            </nav>
+
+            <section id="tab-fr-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="usa-waterfall-title-fr">
+                        Du salaire net au coût employeur
+                    </h3>
+
+                    <p class="chart-subtitle" id="usa-waterfall-subtitle-fr">
+                        Décomposition du passage du salaire net après impôt
+                        au coût employeur total, en 4 segments fixes
+                        (identiques quel que soit l'État sélectionné) :
+                        impôt sur le revenu (fédéral + État), cotisations
+                        salarié, puis cotisations employeur.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="usa-state-select-fr">
+                                État de référence
+                            </label>
+
+                            <select id="usa-state-select-fr">
+                            </select>
+                        </div>
+
+                        <div class="selector-field">
+                            <label for="usa-waterfall-multiple-fr">
+                                Point de salaire sélectionné
+                            </label>
+
+                            <select id="usa-waterfall-multiple-fr">
+                                <option value="0.80">0,80 salaire minimum fédéral</option>
+                                <option value="1.00" selected>1,00 salaire minimum fédéral</option>
+                                <option value="1.25">1,25 salaire minimum fédéral</option>
+                                <option value="1.50">1,50 salaire minimum fédéral</option>
+                                <option value="2.00">2,00 salaires minimums fédéraux</option>
+                                <option value="2.50">2,50 salaires minimums fédéraux</option>
+                                <option value="3.00">3,00 salaires minimums fédéraux</option>
+                                <option value="4.00">4,00 salaires minimums fédéraux</option>
+                                <option value="5.00">5,00 salaires minimums fédéraux</option>
+                                <option value="6.00">6,00 salaires minimums fédéraux</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-usa-waterfall-fr"
+                        class="plotly-chart"
+                        aria-label="Décomposition du coût du travail aux États-Unis"
+                    ></div>
+
+                    <p class="method-note">
+                        La structure du graphique (4 segments) est
+                        volontairement identique pour les 51 juridictions,
+                        afin de rester comparable d'un État à l'autre. Les
+                        montants d'impôt et de cotisations affichés
+                        regroupent la part fédérale et la part de l'État
+                        sélectionné ; le graphique « Décomposition fédérale
+                        et État détaillée » ci-dessous détaille chaque ligne
+                        (elle vaut 0 USD pour les composantes qui ne
+                        s'appliquent pas à l'État choisi, par exemple l'impôt
+                        d'État au Texas ou en Floride).
+                    </p>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Graphiques complémentaires</h2>
+
+                    <p>
+                        Les graphiques suivants détaillent les salaires, les
+                        taux effectifs, la décomposition fédérale et État,
+                        le coin socio-fiscal et le rendement marginal du
+                        salaire brut, pour l'État sélectionné ci-dessus.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Coût employeur, salaire brut et salaires nets</h3>
+
+                        <p class="chart-subtitle">
+                            Comparaison du salaire brut, du salaire net avant
+                            impôt, du salaire net après impôt et du coût
+                            employeur selon le multiple du salaire minimum
+                            fédéral.
+                        </p>
+
+                        <div
+                            id="chart-usa-cost-fr"
+                            class="plotly-chart"
+                            aria-label="Coût du travail aux États-Unis"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Taux effectifs de prélèvement</h3>
+
+                        <p class="chart-subtitle">
+                            Taux salarié (FICA + dispositifs d'État) et taux
+                            employeur (FICA + FUTA + SUI + dispositifs
+                            d'État), et taux d'imposition effectif (fédéral +
+                            État).
+                        </p>
+
+                        <div
+                            id="chart-usa-rates-fr"
+                            class="plotly-chart"
+                            aria-label="Taux de prélèvement aux États-Unis"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Décomposition fédérale et État détaillée</h3>
+
+                        <p class="chart-subtitle">
+                            Impôt fédéral et impôt d'État, Social Security et
+                            Medicare (salarié et employeur), Additional
+                            Medicare Tax, cotisation chômage salariale
+                            (Alaska, New Jersey, Pennsylvanie), FUTA et
+                            SUI/SUTA employeur, et dispositif d'État
+                            supplémentaire (SDI/PFML/TDI...) côté salarié et
+                            employeur. Chaque ligne vaut 0 USD pour les
+                            composantes qui ne s'appliquent pas à l'État
+                            sélectionné.
+                        </p>
+
+                        <div
+                            id="chart-usa-breakdown-fr"
+                            class="plotly-chart"
+                            aria-label="Décomposition fédérale et État détaillée aux États-Unis"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Coin social et coin socio-fiscal</h3>
+
+                        <p class="chart-subtitle">
+                            Comparaison du coin social avant impôt et du coin
+                            socio-fiscal après impôt sur le revenu (fédéral +
+                            État), et ratios coût employeur / net.
+                        </p>
+
+                        <div
+                            id="chart-usa-wedge-fr"
+                            class="plotly-chart"
+                            aria-label="Coin social et socio-fiscal américain"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Rendement marginal d'une hausse de salaire brut</h3>
+
+                        <p class="chart-subtitle">
+                            Part d'un dollar supplémentaire de salaire brut
+                            conservée avant et après impôt sur le revenu, et
+                            effet marginal du système socio-fiscal.
+                        </p>
+
+                        <div
+                            id="chart-usa-marginal-fr"
+                            class="plotly-chart"
+                            aria-label="Rendement socio-fiscal d'une hausse de salaire brut aux États-Unis"
+                        ></div>
+
+                        <p class="method-note">
+                            Les points d'inflexion correspondent aux tranches
+                            de l'impôt fédéral, aux tranches propres à l'État
+                            sélectionné et, le cas échéant, aux plafonds de
+                            cotisation (Social Security, bases salariales
+                            FUTA/SUI).
+                        </p>
+                    </div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Indicateurs clés</h2>
+
+                    <p>
+                        Les indicateurs ci-dessous sont calculés au salaire
+                        minimum fédéral (multiple = 1) pour l'État
+                        sélectionné.
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="usa-metrics-fr">
+                    <article class="metric-card">
+                        <span class="metric-label">Salaire brut de référence</span>
+                        <strong id="metric-usa-reference-wage-fr">—</strong>
+                        <span class="metric-note">Salaire minimum fédéral, 7,25 USD/heure</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Taux d'imposition effectif</span>
+                        <strong id="metric-usa-income-tax-rate-fr">—</strong>
+                        <span class="metric-note">Impôt fédéral + État / brut</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Taux employeur effectif</span>
+                        <strong id="metric-usa-employer-rate-fr">—</strong>
+                        <span class="metric-note">FICA + FUTA + SUI + dispositifs d'État</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Ratio coût / net au salaire minimum fédéral</span>
+                        <strong id="metric-usa-cost-to-net-fr">—</strong>
+                        <span class="metric-note">Après impôt sur le revenu</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-fr-flcl-index" class="tab-content">
+                <section class="chart-card">
+                    <h2>Indice du Lab</h2>
+                    <p class="chart-subtitle">
+                        Indicateurs d'efficacité salariale du coût du
+                        travail.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="usa-flcl-state-select-fr">
+                                État
+                            </label>
+
+                            <select id="usa-flcl-state-select-fr">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-E</span>
+                            <strong id="usa-flcl-e-value-fr">—</strong>
+                            <span class="metric-note" id="usa-flcl-e-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-B</span>
+                            <strong id="usa-flcl-b-value-fr">—</strong>
+                            <span class="metric-note" id="usa-flcl-b-caption-fr"></span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Transmission marginale</span>
+                            <strong id="usa-flcl-transmission-value-fr">—</strong>
+                            <span class="metric-note" id="usa-flcl-transmission-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Captation marginale</span>
+                            <strong id="usa-flcl-capture-value-fr">—</strong>
+                            <span class="metric-note" id="usa-flcl-capture-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Progressivité implicite</span>
+                            <strong id="usa-flcl-progressivity-value-fr">—</strong>
+                            <span class="metric-note" id="usa-flcl-progressivity-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Soutien bas salaires</span>
+                            <strong id="usa-flcl-support-value-fr">—</strong>
+                            <span class="metric-note" id="usa-flcl-support-caption-fr"></span>
+                        </div>
+                    </div>
+
+                    <p class="method-note" style="margin-top: 16px;">
+                        Aucun allègement employeur ciblé et dégressif n'est
+                        modélisé pour les États-Unis : l'indicateur Lab-R ne
+                        s'applique donc pas ici. Le Lab-E américain est
+                        structurellement élevé au salaire minimum fédéral en
+                        raison de la faible pression fiscale et sociale à ce
+                        niveau de salaire précis (voir la note en tête de
+                        module) ; il diminue significativement à des
+                        multiples plus élevés du salaire de référence, une
+                        fois la déduction forfaitaire fédérale et les
+                        tranches d'imposition franchies.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Indice du Lab</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × salaire net avant impôt / coût employeur.
+                        </p>
+                        <div id="chart-usa-flcl-e-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Transmission marginale</h3>
+                        <p class="chart-subtitle">
+                            Part d'un dollar supplémentaire de coût employeur allant au salarié net.
+                        </p>
+                        <div id="chart-usa-flcl-marginal-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Progressivité implicite</h3>
+                        <p class="chart-subtitle">
+                            Variation de Lab-E lorsque le niveau de salaire augmente.
+                        </p>
+                        <div id="chart-usa-flcl-progressivity-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Destination marginale d'un dollar supplémentaire de coût employeur</h3>
+                        <p class="chart-subtitle">
+                            Répartition marginale entre salaire net, cotisations salarié et cotisations employeur.
+                        </p>
+                        <div id="chart-usa-flcl-destination-fr" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-fr-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Données</h3>
+
+                    <p class="chart-subtitle">
+                        Le jeu de données américain peut être téléchargé au
+                        format CSV. Il contient l'ensemble des points de
+                        salaire simulés pour les 50 États et le District de
+                        Columbia (521 points de salaire chacun) : salaire
+                        brut, impôt fédéral et d'État, cotisations FICA,
+                        FUTA, SUI et dispositifs d'État, coût employeur et
+                        indicateurs de coin socio-fiscal.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/usa/usa_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Télécharger le jeu de données États-Unis
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/usa/usa_parameters_2026.json"
+                            download
+                        >
+                            Télécharger les paramètres 2026
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/usa/usa_sources_2026.json"
+                            download
+                        >
+                            Télécharger les sources 2026
+                        </a>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Données du profil standard</h3>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="usa-data-state-select-fr">
+                                État
+                            </label>
+
+                            <select id="usa-data-state-select-fr">
+                            </select>
+                        </div>
+                    </div>
+
+                    <p
+                        class="chart-subtitle"
+                        id="usa-data-caption-fr"
+                    >
+                        Salarié standard (Californie)
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Multiple</th>
+                                    <th>Salaire brut ($)</th>
+                                    <th>Net avant impôt ($)</th>
+                                    <th>Impôt sur le revenu ($)</th>
+                                    <th>Net après impôt ($)</th>
+                                    <th>Coût employeur ($)</th>
+                                    <th>Cotisations salarié ($)</th>
+                                    <th>Cotisations employeur ($)</th>
+                                    <th>Coin social ($)</th>
+                                    <th>Coin socio-fiscal ($)</th>
+                                    <th>Taux employeur</th>
+                                    <th>Coût / net après impôt</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="usa-data-table-body-fr">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="chart-subtitle" style="margin-top: 10px;">
+                        Impôt sur le revenu = impôt fédéral + impôt de
+                        l'État sélectionné. Cotisations salarié et employeur
+                        regroupent FICA, FUTA, SUI et les dispositifs d'État
+                        (SDI/PFML/TDI...) applicables. Voir l'onglet
+                        Méthodologie.
+                    </p>
+                </div>
+            </section>
+
+            <section id="tab-fr-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Méthodologie</h2>
+
+                    <p>
+                        Le module États-Unis repose sur une simulation
+                        réglementaire du coût du travail pour un salarié
+                        standard, célibataire sans enfant, sans autre revenu,
+                        imposé au statut fédéral « single », dans l'État (ou
+                        le District de Columbia) sélectionné parmi les 51
+                        juridictions modélisées. C'est le seul module de ce
+                        Lab dont la structure est réellement fédérale : une
+                        couche fédérale identique partout se superpose à 51
+                        régimes d'État distincts.
+                    </p>
+
+                    <h3>1. Le salaire de référence : le salaire minimum fédéral</h3>
+
+                    <p>
+                        Contrairement à la Suède ou à l'Italie, les
+                        États-Unis ont un salaire minimum fédéral légal
+                        (Fair Labor Standards Act), 7,25 USD/heure, inchangé
+                        depuis le 24 juillet 2009. C'est ce montant, converti
+                        en équivalent mensuel sur une base de 40 heures/
+                        semaine (1 256,6667 USD/mois), qui est retenu comme
+                        repère de référence 1,0x commun aux 51 juridictions —
+                        la même convention que pour les autres pays de ce
+                        projet. De nombreux États et municipalités fixent des
+                        minima bien supérieurs : jusqu'à 17,13 USD/heure dans
+                        l'État de Washington, ou encore 16,90 USD en
+                        Californie, contre 7,25 USD (le plancher fédéral) dans
+                        une vingtaine d'États qui n'ont pas relevé leur propre
+                        minimum au-delà du seuil fédéral. Voir le champ
+                        min_wage_usd de chaque État, documenté dans
+                        usa_parameters_2026.json.
+                    </p>
+
+                    <h3>2. La couche fédérale : impôt sur le revenu, FICA, FUTA</h3>
+
+                    <p>
+                        L'impôt fédéral sur le revenu 2026 (IRS, Revenue
+                        Procedure 2025-32) suit un barème progressif à 7
+                        tranches marginales (10 % / 12 % / 22 % / 24 % / 32 %
+                        / 35 % / 37 %), avec une déduction forfaitaire
+                        (standard deduction) de 16 100 USD/an pour un
+                        célibataire. FICA regroupe Social Security (OASDI,
+                        6,2 % salarié / 6,2 % employeur, plafonné à 184 500
+                        USD/an de rémunération) et Medicare (1,45 % salarié /
+                        1,45 % employeur, sans plafond), auquel s'ajoute
+                        l'Additional Medicare Tax (0,9 %, à la seule charge
+                        du salarié, sur la part de rémunération dépassant
+                        200 000 USD — un seuil fixé par la loi et non indexé
+                        sur l'inflation depuis 2013, non compensé par
+                        l'employeur). FUTA (Federal Unemployment Tax Act) est
+                        modélisée au taux net standard de 0,6 % (crédit
+                        standard de 5,4 % appliqué sur le taux nominal de
+                        6,0 %), sur une base salariale plafonnée à 7 000
+                        USD/an — la Californie et les Îles Vierges
+                        américaines sont signalées par le Department of Labor
+                        comme à risque d'une réduction de ce crédit au titre
+                        de 2026, non finalisée avant le 10 novembre 2026 et
+                        non modélisée ici.
+                    </p>
+
+                    <h3>3. La couche des États : 9 États sans impôt, 13 juridictions avec un dispositif supplémentaire, 3 États avec cotisation chômage salariale</h3>
+
+                    <p>
+                        Chacun des 50 États et le District de Columbia
+                        applique son propre régime, entièrement documenté
+                        dans analysis/usa/us_payroll_2026.py (dictionnaire
+                        STATE_DATA_2026, source de vérité unique de ce
+                        module) : barème d'imposition sur le revenu (ou
+                        absence d'impôt), taux d'assurance chômage d'État
+                        (SUI/SUTA, taux « nouvel employeur » standard), et,
+                        pour certains États, un dispositif de protection
+                        sociale obligatoire additionnel.
+                    </p>
+
+                    <p>
+                        <strong>9 États ne prélèvent aucun impôt sur le
+                        revenu</strong> : Alaska, Floride, Nevada, New
+                        Hampshire, Dakota du Sud, Tennessee, Texas, État de
+                        Washington et Wyoming. L'Alaska prélève néanmoins une
+                        cotisation chômage salariale (0,5 %), et l'État de
+                        Washington applique le Paid Family and Medical Leave
+                        (PFML, 1,13 % réparti 0,81 %/0,32 %) et le WA Cares
+                        Fund (0,58 % salarié, financement de la dépendance) —
+                        l'absence d'impôt sur le revenu n'y signifie donc pas
+                        l'absence de toute retenue obligatoire.
+                    </p>
+
+                    <p>
+                        <strong>13 juridictions (12 États + DC) appliquent un
+                        dispositif de protection sociale obligatoire
+                        supplémentaire</strong>, distinct de l'impôt ordinaire
+                        et du SUI : Californie (SDI/PFL, 1,3 % salarié sans
+                        plafond de salaire — le dispositif le plus
+                        significatif de tous), Colorado (FAMLI, 0,88 %
+                        réparti 0,44 %/0,44 %), Connecticut (CTPL, 0,5 %
+                        salarié), Delaware (Paid Leave, 0,8 % réparti
+                        0,4 %/0,4 %, nouveau pour 2026), District de Columbia
+                        (PFL, 0,75 % employeur), Massachusetts (PFML, 0,88 %
+                        environ 0,46 %/0,42 %), Maine (PFML, 1 % réparti
+                        0,5 %/0,5 %), Minnesota (Paid Leave, 0,88 % réparti
+                        0,44 %/0,44 %, nouveau pour 2026), New Jersey
+                        (cotisation chômage salariale + assurance invalidité
+                        DI + Family Leave Insurance FLI, combinées), New York
+                        (SDI forfaitaire + PFL 0,432 % plafonnée), Oregon
+                        (Paid Leave Oregon, 1 % réparti 0,6 %/0,4 %), Rhode
+                        Island (TDI, 1,1 % salarié) et État de Washington
+                        (PFML + WA Cares Fund, voir ci-dessus).
+                    </p>
+
+                    <p>
+                        <strong>Seuls 3 États prélèvent une cotisation
+                        chômage à la charge du salarié</strong> (en plus de la
+                        cotisation employeur SUI/SUTA universelle) : Alaska
+                        (0,5 %), New Jersey (dans le cadre du dispositif
+                        combiné) et Pennsylvanie (0,07 %) — partout ailleurs,
+                        l'assurance chômage d'État est financée uniquement
+                        par l'employeur.
+                    </p>
+
+                    <p class="method-note">
+                        Les impôts locaux sur le revenu (comtés de l'Indiana
+                        — 92 comtés — et du Kentucky, comté de Maryland «
+                        piggyback tax », villes de Pennsylvanie dont
+                        Philadelphie) sont réels et parfois significatifs,
+                        mais ne sont pas modélisés dans ce module ; voir la
+                        section Limites.
+                    </p>
+
+                    <h3>4. Indicateurs produits</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Net avant impôt :</strong>
+                            salaire brut diminué des cotisations salarié
+                            (FICA, dispositifs d'État côté salarié, et
+                            cotisation chômage salariale en Alaska/New
+                            Jersey/Pennsylvanie).
+                        </li>
+
+                        <li>
+                            <strong>Net après impôt :</strong>
+                            net avant impôt diminué de l'impôt sur le revenu
+                            mensuel (impôt fédéral et impôt de l'État
+                            sélectionné combinés).
+                        </li>
+
+                        <li>
+                            <strong>Coût employeur :</strong>
+                            salaire brut augmenté des cotisations employeur
+                            (FICA employeur, FUTA, SUI, dispositifs d'État
+                            côté employeur).
+                        </li>
+
+                        <li>
+                            <strong>Coin social :</strong>
+                            différence entre le coût employeur et le net
+                            avant impôt.
+                        </li>
+
+                        <li>
+                            <strong>Coin socio-fiscal :</strong>
+                            différence entre le coût employeur et le net
+                            après impôt.
+                        </li>
+
+                        <li>
+                            <strong>Rendement marginal :</strong>
+                            part d'un dollar supplémentaire de salaire brut
+                            conservée avant et après impôt sur le revenu.
+                        </li>
+                    </ul>
+
+                    <h3>5. Indice du Lab</h3>
+
+                    <p>
+                        L'Indice du Lab mesure l'efficacité salariale du coût
+                        du travail, indépendamment de l'impôt sur le revenu.
+                        Lab-E = 100 × salaire net avant impôt / coût
+                        employeur, Lab-B = 100 − Lab-E. Aucun allègement
+                        employeur ciblé et dégressif n'est modélisé pour les
+                        États-Unis : l'indicateur Lab-R ne s'applique donc
+                        pas ici.
+                    </p>
+
+                    <h3>6. Limites du scénario</h3>
+
+                    <ul class="method-note">
+                        <li>
+                            Seul le salaire minimum fédéral (7,25 USD/heure)
+                            est retenu comme repère de référence commun à
+                            tous les États ; de nombreux États/villes fixent
+                            des minima bien supérieurs (jusqu'à plus de
+                            17 USD/heure à Washington), voir le champ
+                            min_wage_usd de chaque État.
+                        </li>
+
+                        <li>
+                            Les impôts locaux sur le revenu (comtés de
+                            l'Indiana, du Kentucky, du Maryland ; villes de
+                            Pennsylvanie comme Philadelphie ; certains comtés
+                            de l'Ohio) ne sont pas modélisés alors qu'ils
+                            sont significatifs dans plusieurs États.
+                        </li>
+
+                        <li>
+                            Seul un profil célibataire sans enfant, sans
+                            autre revenu, est modélisé (pas de crédit d'impôt
+                            pour enfants, pas d'imposition conjointe).
+                        </li>
+
+                        <li>
+                            Les taux SUI/SUTA retenus sont les taux standard
+                            « nouvel employeur » de chaque État, pas les taux
+                            experience-rated réels (qui varient fortement
+                            selon l'historique de l'employeur).
+                        </li>
+
+                        <li>
+                            La réduction potentielle du crédit FUTA pour la
+                            Californie (et les Îles Vierges américaines) au
+                            titre de 2026 n'est pas finalisée avant le 10
+                            novembre 2026 et n'est pas modélisée.
+                        </li>
+
+                        <li>
+                            Le barème complet d'Hawaï (12 tranches) et la
+                            déduction du Nouveau-Mexique reposent sur des
+                            sources secondaires convergentes mais non
+                            vérifiées directement contre un document officiel
+                            dans le cadre de cette recherche — confiance
+                            moyenne, voir usa_sources_2026.json.
+                        </li>
+
+                        <li>
+                            Le Programme de congé familial et médical (PFML)
+                            de Virginie a été adopté en 2026 mais ses
+                            cotisations ne débutent qu'en avril 2028 — non
+                            modélisé pour cette année de référence.
+                        </li>
+
+                        <li>
+                            Le TFR-équivalent, une retenue de sécurité
+                            sociale forfaitaire additionnelle, une éventuelle
+                            assurance maladie privée obligatoire (mandat
+                            fédéral ACA, non fiscal) et les avantages en
+                            nature ne sont pas modélisés.
+                        </li>
+                    </ul>
+
+                    <h3>7. Sources</h3>
+
+                    <p class="method-note">
+                        IRS, Revenue Procedure 2025-32 (barème fédéral et
+                        déduction forfaitaire) ; Social Security
+                        Administration, fiche COLA 2026 (taux et plafond
+                        Social Security) ; IRS, Questions and Answers for the
+                        Additional Medicare Tax ; US Department of Labor,
+                        FUTA Credit Reduction (taux net et États à risque) ;
+                        départements du revenu et du travail de chacun des 50
+                        États et de DC pour les barèmes d'imposition, taux
+                        SUI/SUTA et dispositifs de protection sociale
+                        obligatoires additionnels, recoupés avec Tax
+                        Foundation, Bloomberg Tax, Payroll.org et EY Tax News
+                        ; US Census Bureau (Annual Estimates of the Resident
+                        Population) pour la pondération démographique
+                        utilisée dans le module Comparaison. Voir le fichier
+                        de sources téléchargeable dans l'onglet Données pour
+                        le détail complet des citations, État par État.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="language-section" id="section-en">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · United States module
+                </p>
+
+                <h1>USA Labour Cost Lab</h1>
+
+                <p>
+                    Simulation module for United States labour costs, the
+                    only genuinely federal system in this Lab: a uniform
+                    federal layer (income tax, FICA, FUTA) applies
+                    everywhere, and combines with the tax rules and
+                    contributions specific to each of the 50 states and the
+                    District of Columbia, individually selectable in the
+                    Simulation, Lab Index and Data tabs.
+                </p>
+
+                <p class="author-line">
+                    By Hugo Spring-Ragain, Economist, CEDS Paris
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchUsaLanguage()">
+                    Français
+                </button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>United States · 2026 socio-fiscal module</h2>
+
+                <p>
+                    <strong>Methodological note: the United States is the
+                    only country in this Lab with a genuinely federal
+                    structure.</strong> A single federal layer (federal
+                    income tax, FICA, FUTA) applies identically across all 50
+                    states and Washington DC, and sits on top of 51 different
+                    state-level regimes: state income tax (9 states levy
+                    none), State Unemployment Insurance (SUI/SUTA), and in 13
+                    jurisdictions an additional mandatory social-protection
+                    scheme (disability insurance or paid family leave, the
+                    most significant being California's SDI/PFL, 1.3%
+                    uncapped on the employee side). The 1.0x reference wage
+                    used here is the statutory federal minimum wage (USD
+                    7.25/hour, unchanged since 2009) — many states and cities
+                    set substantially higher minimums. See the Methodology
+                    tab for full detail.
+                </p>
+
+                <p class="method-note">
+                    At the federal minimum wage, the tax and social-security
+                    burden appears structurally very low in this module: this
+                    reference wage (USD 1,256.67/month) sits well below the
+                    federal standard deduction (USD 16,100/year) and most
+                    states' own income-tax thresholds. This is not a
+                    calculation error but a genuine result of the low
+                    progressivity of the US system at this specific wage
+                    level — the burden rises sharply at higher multiples of
+                    the reference wage (see the effective-rate and marginal-
+                    return charts).
+                </p>
+            </section>
+
+            <nav class="tabs" aria-label="United States navigation">
+                <button class="tab-button active" data-tab="simulation" onclick="showUsaTab('en', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showUsaTab('en', 'flcl-index')">
+                    Lab Index
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showUsaTab('en', 'data')">
+                    Data
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showUsaTab('en', 'methodology')">
+                    Methodology
+                </button>
+            </nav>
+
+            <section id="tab-en-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="usa-waterfall-title-en">
+                        From net wage to employer cost
+                    </h3>
+
+                    <p class="chart-subtitle" id="usa-waterfall-subtitle-en">
+                        Breakdown of the path from net wage after tax to
+                        total employer cost, in 4 fixed segments (identical
+                        regardless of the selected state): income tax
+                        (federal + state), employee contributions, then
+                        employer contributions.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="usa-state-select-en">
+                                Reference state
+                            </label>
+
+                            <select id="usa-state-select-en">
+                            </select>
+                        </div>
+
+                        <div class="selector-field">
+                            <label for="usa-waterfall-multiple-en">
+                                Selected wage point
+                            </label>
+
+                            <select id="usa-waterfall-multiple-en">
+                                <option value="0.80">0.80 federal minimum wage</option>
+                                <option value="1.00" selected>1.00 federal minimum wage</option>
+                                <option value="1.25">1.25 federal minimum wages</option>
+                                <option value="1.50">1.50 federal minimum wages</option>
+                                <option value="2.00">2.00 federal minimum wages</option>
+                                <option value="2.50">2.50 federal minimum wages</option>
+                                <option value="3.00">3.00 federal minimum wages</option>
+                                <option value="4.00">4.00 federal minimum wages</option>
+                                <option value="5.00">5.00 federal minimum wages</option>
+                                <option value="6.00">6.00 federal minimum wages</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-usa-waterfall-en"
+                        class="plotly-chart"
+                        aria-label="Breakdown of labour cost in the United States"
+                    ></div>
+
+                    <p class="method-note">
+                        The chart structure (4 segments) is deliberately
+                        identical across all 51 jurisdictions, to remain
+                        comparable from state to state. The tax and
+                        contribution amounts shown combine the federal share
+                        with the selected state's own share; the "Detailed
+                        federal and state breakdown" chart below details each
+                        line (it is USD 0 for components that do not apply to
+                        the chosen state, e.g. state income tax in Texas or
+                        Florida).
+                    </p>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Additional charts</h2>
+
+                    <p>
+                        The charts below detail wages, effective rates, the
+                        federal and state breakdown, the socio-fiscal wedge,
+                        and the marginal return on a gross-wage increase, for
+                        the state selected above.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Employer cost, gross wage and net wages</h3>
+
+                        <p class="chart-subtitle">
+                            Comparison of the gross wage, net wage before
+                            tax, net wage after tax, and employer cost across
+                            the multiple of the federal minimum wage.
+                        </p>
+
+                        <div
+                            id="chart-usa-cost-en"
+                            class="plotly-chart"
+                            aria-label="Labour cost in the United States"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Effective levy rates</h3>
+
+                        <p class="chart-subtitle">
+                            Employee rate (FICA + state items) and employer
+                            rate (FICA + FUTA + SUI + state items), and
+                            effective income tax rate (federal + state).
+                        </p>
+
+                        <div
+                            id="chart-usa-rates-en"
+                            class="plotly-chart"
+                            aria-label="Levy rates in the United States"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Detailed federal and state breakdown</h3>
+
+                        <p class="chart-subtitle">
+                            Federal and state income tax, Social Security and
+                            Medicare (employee and employer), Additional
+                            Medicare Tax, employee unemployment contribution
+                            (Alaska, New Jersey, Pennsylvania), employer FUTA
+                            and SUI/SUTA, and any additional state-mandated
+                            item (SDI/PFML/TDI...) on both the employee and
+                            employer side. Each line is USD 0 for components
+                            that do not apply to the selected state.
+                        </p>
+
+                        <div
+                            id="chart-usa-breakdown-en"
+                            class="plotly-chart"
+                            aria-label="Detailed federal and state breakdown in the United States"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Social wedge and total socio-fiscal wedge</h3>
+
+                        <p class="chart-subtitle">
+                            Comparison of the social wedge before tax and the
+                            total socio-fiscal wedge after income tax
+                            (federal + state), and cost/net ratios.
+                        </p>
+
+                        <div
+                            id="chart-usa-wedge-en"
+                            class="plotly-chart"
+                            aria-label="Social and socio-fiscal wedge in the United States"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Marginal return on a gross-wage increase</h3>
+
+                        <p class="chart-subtitle">
+                            Share of an additional dollar of gross wage kept
+                            before and after income tax, and the marginal
+                            effect of the socio-fiscal system.
+                        </p>
+
+                        <div
+                            id="chart-usa-marginal-en"
+                            class="plotly-chart"
+                            aria-label="Socio-fiscal return on a gross-wage increase in the United States"
+                        ></div>
+
+                        <p class="method-note">
+                            The inflection points correspond to the federal
+                            tax brackets, the selected state's own brackets,
+                            and, where applicable, contribution ceilings
+                            (Social Security, FUTA/SUI wage bases).
+                        </p>
+                    </div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Key indicators</h2>
+
+                    <p>
+                        The indicators below are computed at the federal
+                        minimum wage (multiple = 1) for the selected state.
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="usa-metrics-en">
+                    <article class="metric-card">
+                        <span class="metric-label">Reference gross wage</span>
+                        <strong id="metric-usa-reference-wage-en">—</strong>
+                        <span class="metric-note">Federal minimum wage, USD 7.25/hour</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Effective income tax rate</span>
+                        <strong id="metric-usa-income-tax-rate-en">—</strong>
+                        <span class="metric-note">Federal + state income tax / gross</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Effective employer rate</span>
+                        <strong id="metric-usa-employer-rate-en">—</strong>
+                        <span class="metric-note">FICA + FUTA + SUI + state items</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Cost / net ratio at the federal minimum wage</span>
+                        <strong id="metric-usa-cost-to-net-en">—</strong>
+                        <span class="metric-note">After income tax</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-en-flcl-index" class="tab-content">
+                <section class="chart-card">
+                    <h2>Lab Index</h2>
+                    <p class="chart-subtitle">
+                        Labour cost efficiency indicators.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="usa-flcl-state-select-en">
+                                State
+                            </label>
+
+                            <select id="usa-flcl-state-select-en">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-E</span>
+                            <strong id="usa-flcl-e-value-en">—</strong>
+                            <span class="metric-note" id="usa-flcl-e-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-B</span>
+                            <strong id="usa-flcl-b-value-en">—</strong>
+                            <span class="metric-note" id="usa-flcl-b-caption-en"></span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Marginal transmission</span>
+                            <strong id="usa-flcl-transmission-value-en">—</strong>
+                            <span class="metric-note" id="usa-flcl-transmission-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Marginal capture</span>
+                            <strong id="usa-flcl-capture-value-en">—</strong>
+                            <span class="metric-note" id="usa-flcl-capture-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Implicit progressivity</span>
+                            <strong id="usa-flcl-progressivity-value-en">—</strong>
+                            <span class="metric-note" id="usa-flcl-progressivity-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Low-wage support</span>
+                            <strong id="usa-flcl-support-value-en">—</strong>
+                            <span class="metric-note" id="usa-flcl-support-caption-en"></span>
+                        </div>
+                    </div>
+
+                    <p class="method-note" style="margin-top: 16px;">
+                        No targeted, degressive employer relief is modeled
+                        for the United States: the Lab-R indicator does not
+                        apply here. The US Lab-E is structurally high at the
+                        federal minimum wage because of the low tax and
+                        social-security burden at that specific wage level
+                        (see the note at the top of this module); it falls
+                        significantly at higher multiples of the reference
+                        wage, once the federal standard deduction and income
+                        tax brackets are crossed.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Lab Index</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × net wage before income tax / employer cost.
+                        </p>
+                        <div id="chart-usa-flcl-e-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal transmission</h3>
+                        <p class="chart-subtitle">
+                            Share of one additional dollar of employer cost reaching net wage.
+                        </p>
+                        <div id="chart-usa-flcl-marginal-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Implicit progressivity</h3>
+                        <p class="chart-subtitle">
+                            Change in Lab-E when the wage level increases.
+                        </p>
+                        <div id="chart-usa-flcl-progressivity-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal destination of one additional dollar of employer cost</h3>
+                        <p class="chart-subtitle">
+                            Marginal split between net wage, employee contributions and employer contributions.
+                        </p>
+                        <div id="chart-usa-flcl-destination-en" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-en-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Data</h3>
+
+                    <p class="chart-subtitle">
+                        The United States dataset can be downloaded as a CSV
+                        file. It contains every simulated wage point for all
+                        50 states and the District of Columbia (521 wage
+                        points each): gross wage, federal and state income
+                        tax, FICA, FUTA, SUI and state-mandated
+                        contributions, employer cost, and socio-fiscal wedge
+                        indicators.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/usa/usa_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Download the United States dataset
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/usa/usa_parameters_2026.json"
+                            download
+                        >
+                            Download the 2026 parameters
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/usa/usa_sources_2026.json"
+                            download
+                        >
+                            Download the 2026 sources
+                        </a>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Data for the standard profile</h3>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="usa-data-state-select-en">
+                                State
+                            </label>
+
+                            <select id="usa-data-state-select-en">
+                            </select>
+                        </div>
+                    </div>
+
+                    <p
+                        class="chart-subtitle"
+                        id="usa-data-caption-en"
+                    >
+                        Standard employee (California)
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Multiple</th>
+                                    <th>Gross wage ($)</th>
+                                    <th>Net before tax ($)</th>
+                                    <th>Income tax ($)</th>
+                                    <th>Net after tax ($)</th>
+                                    <th>Employer cost ($)</th>
+                                    <th>Employee contributions ($)</th>
+                                    <th>Employer contributions ($)</th>
+                                    <th>Social wedge ($)</th>
+                                    <th>Total socio-fiscal wedge ($)</th>
+                                    <th>Employer rate</th>
+                                    <th>Cost / net after tax</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="usa-data-table-body-en">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="chart-subtitle" style="margin-top: 10px;">
+                        Income tax = federal income tax + the selected
+                        state's own income tax. Employee and employer
+                        contributions combine FICA, FUTA, SUI and any
+                        applicable state-mandated item (SDI/PFML/TDI...). See
+                        the Methodology tab.
+                    </p>
+                </div>
+            </section>
+
+            <section id="tab-en-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Methodology</h2>
+
+                    <p>
+                        The United States module relies on a regulatory
+                        simulation of labour cost for a standard employee,
+                        single, childless, with no other income, taxed under
+                        the federal "single" filing status, in the state (or
+                        the District of Columbia) selected among the 51
+                        modeled jurisdictions. This is the only module in
+                        this Lab with a genuinely federal structure: an
+                        identical federal layer everywhere sits on top of 51
+                        distinct state regimes.
+                    </p>
+
+                    <h3>1. The reference wage: the federal minimum wage</h3>
+
+                    <p>
+                        Unlike Sweden or Italy, the United States has a
+                        statutory federal minimum wage (Fair Labor Standards
+                        Act), USD 7.25/hour, unchanged since 24 July 2009.
+                        This figure, converted to a monthly equivalent on a
+                        40-hour/week basis (USD 1,256.6667/month), is used as
+                        the common 1.0x reference wage across all 51
+                        jurisdictions — the same convention used for the
+                        other countries in this project. Many states and
+                        municipalities set substantially higher minimums: up
+                        to USD 17.13/hour in Washington State, or USD 16.90
+                        in California, versus USD 7.25 (the federal floor) in
+                        about twenty states that have not raised their own
+                        minimum above the federal threshold. See the
+                        min_wage_usd field for each state, documented in
+                        usa_parameters_2026.json.
+                    </p>
+
+                    <h3>2. The federal layer: income tax, FICA, FUTA</h3>
+
+                    <p>
+                        The 2026 federal income tax (IRS, Revenue Procedure
+                        2025-32) follows a progressive scale with 7 marginal
+                        brackets (10% / 12% / 22% / 24% / 32% / 35% / 37%),
+                        with a standard deduction of USD 16,100/year for a
+                        single filer. FICA combines Social Security (OASDI,
+                        6.2% employee / 6.2% employer, capped at USD
+                        184,500/year of pay) and Medicare (1.45% employee /
+                        1.45% employer, uncapped), plus the Additional
+                        Medicare Tax (0.9%, employee-only, on pay above USD
+                        200,000 — a statutory threshold not indexed for
+                        inflation since 2013, not matched by the employer).
+                        FUTA (Federal Unemployment Tax Act) is modeled at the
+                        standard net rate of 0.6% (the standard 5.4% credit
+                        applied against the nominal 6.0% rate), on a wage
+                        base capped at USD 7,000/year — California and the
+                        US Virgin Islands are flagged by the Department of
+                        Labor as at risk of a credit reduction for 2026, not
+                        finalized before 10 November 2026 and not modeled
+                        here.
+                    </p>
+
+                    <h3>3. The state layer: 9 states with no income tax, 13 jurisdictions with an additional item, 3 states with an employee unemployment contribution</h3>
+
+                    <p>
+                        Each of the 50 states and the District of Columbia
+                        applies its own regime, fully documented in
+                        analysis/usa/us_payroll_2026.py (the STATE_DATA_2026
+                        dictionary, this module's single source of truth):
+                        an income tax scale (or no income tax), a State
+                        Unemployment Insurance rate (SUI/SUTA, standard
+                        "new employer" rate), and, for some states, an
+                        additional mandatory social-protection scheme.
+                    </p>
+
+                    <p>
+                        <strong>9 states levy no income tax at
+                        all</strong>: Alaska, Florida, Nevada, New Hampshire,
+                        South Dakota, Tennessee, Texas, Washington State and
+                        Wyoming. Alaska nonetheless levies an employee
+                        unemployment contribution (0.5%), and Washington
+                        applies Paid Family and Medical Leave (PFML, 1.13%
+                        split 0.81%/0.32%) and the WA Cares Fund (0.58%
+                        employee, long-term care financing) — the absence of
+                        income tax there does not mean the absence of any
+                        mandatory deduction.
+                    </p>
+
+                    <p>
+                        <strong>13 jurisdictions (12 states + DC) apply an
+                        additional mandatory social-protection scheme</strong>,
+                        distinct from ordinary income tax and SUI:
+                        California (SDI/PFL, 1.3% employee, uncapped — the
+                        most significant of all these schemes), Colorado
+                        (FAMLI, 0.88% split 0.44%/0.44%), Connecticut (CTPL,
+                        0.5% employee), Delaware (Paid Leave, 0.8% split
+                        0.4%/0.4%, new for 2026), District of Columbia (PFL,
+                        0.75% employer), Massachusetts (PFML, about 0.88%
+                        split roughly 0.46%/0.42%), Maine (PFML, 1% split
+                        0.5%/0.5%), Minnesota (Paid Leave, 0.88% split
+                        0.44%/0.44%, new for 2026), New Jersey (employee
+                        unemployment contribution plus combined disability
+                        insurance DI and Family Leave Insurance FLI), New
+                        York (flat SDI plus PFL 0.432% capped), Oregon (Paid
+                        Leave Oregon, 1% split 0.6%/0.4%), Rhode Island (TDI,
+                        1.1% employee) and Washington State (PFML + WA Cares
+                        Fund, see above).
+                    </p>
+
+                    <p>
+                        <strong>Only 3 states levy an unemployment
+                        contribution on the employee</strong> (in addition to
+                        the universal employer-side SUI/SUTA contribution):
+                        Alaska (0.5%), New Jersey (as part of its combined
+                        scheme), and Pennsylvania (0.07%) — everywhere else,
+                        State Unemployment Insurance is funded by the
+                        employer alone.
+                    </p>
+
+                    <p class="method-note">
+                        Local income taxes (Indiana's 92 counties, Kentucky
+                        counties, Maryland's county "piggyback tax",
+                        Pennsylvania cities including Philadelphia) are real
+                        and sometimes significant, but are not modeled in
+                        this module; see the Limitations section.
+                    </p>
+
+                    <h3>4. Indicators produced</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Net before tax:</strong>
+                            gross wage reduced by employee contributions
+                            (FICA, employee-side state items, and the
+                            employee unemployment contribution in
+                            Alaska/New Jersey/Pennsylvania).
+                        </li>
+
+                        <li>
+                            <strong>Net after tax:</strong>
+                            net before tax reduced by monthly income tax
+                            (combined federal income tax and the selected
+                            state's own income tax).
+                        </li>
+
+                        <li>
+                            <strong>Employer cost:</strong>
+                            gross wage increased by employer contributions
+                            (employer FICA, FUTA, SUI, employer-side state
+                            items).
+                        </li>
+
+                        <li>
+                            <strong>Social wedge:</strong>
+                            difference between employer cost and net wage
+                            before tax.
+                        </li>
+
+                        <li>
+                            <strong>Total socio-fiscal wedge:</strong>
+                            difference between employer cost and net wage
+                            after tax.
+                        </li>
+
+                        <li>
+                            <strong>Marginal return:</strong>
+                            share of an additional dollar of gross wage kept
+                            before and after income tax.
+                        </li>
+                    </ul>
+
+                    <h3>5. Lab Index</h3>
+
+                    <p>
+                        The Lab Index measures the wage efficiency of labour
+                        cost, independent of income tax. Lab-E = 100 × net
+                        wage before income tax / employer cost, Lab-B = 100
+                        − Lab-E. No targeted, degressive employer relief is
+                        modeled for the United States: the Lab-R indicator
+                        does not apply here.
+                    </p>
+
+                    <h3>6. Scenario limitations</h3>
+
+                    <ul class="method-note">
+                        <li>
+                            Only the federal minimum wage (USD 7.25/hour) is
+                            used as the common reference wage across states;
+                            many states/cities set substantially higher
+                            minimums (up to over USD 17/hour in Washington),
+                            see the min_wage_usd field for each state.
+                        </li>
+
+                        <li>
+                            Local income taxes (Indiana, Kentucky, and
+                            Maryland counties; Pennsylvania cities including
+                            Philadelphia; some Ohio counties) are not
+                            modeled although they are significant in several
+                            states.
+                        </li>
+
+                        <li>
+                            Only a single, childless taxpayer with no other
+                            income is modeled (no child tax credit, no joint
+                            filing).
+                        </li>
+
+                        <li>
+                            The SUI/SUTA rates used are each state's standard
+                            "new employer" rate, not real experience-rated
+                            rates (which vary widely by employer history).
+                        </li>
+
+                        <li>
+                            The potential FUTA credit reduction for
+                            California (and the US Virgin Islands) for 2026
+                            is not finalized before 10 November 2026 and is
+                            not modeled.
+                        </li>
+
+                        <li>
+                            Hawaii's full 12-bracket scale and the New
+                            Mexico deduction rely on convergent secondary
+                            sources not directly verified against an
+                            official document within the scope of this
+                            research — medium confidence, see
+                            usa_sources_2026.json.
+                        </li>
+
+                        <li>
+                            Virginia's Paid Family and Medical Leave (PFML)
+                            program was enacted in 2026 but its
+                            contributions do not begin until April 2028 —
+                            not modeled for this reference year.
+                        </li>
+
+                        <li>
+                            A TFR-equivalent, a flat additional
+                            social-security contribution, any mandatory
+                            private health insurance (the federal ACA
+                            mandate, not a tax), and benefits in kind are not
+                            modeled.
+                        </li>
+                    </ul>
+
+                    <h3>7. Sources</h3>
+
+                    <p class="method-note">
+                        IRS, Revenue Procedure 2025-32 (federal scale and
+                        standard deduction); Social Security Administration,
+                        2026 COLA fact sheet (Social Security rate and wage
+                        base); IRS, Questions and Answers for the Additional
+                        Medicare Tax; US Department of Labor, FUTA Credit
+                        Reduction (net rate and at-risk states); each of the
+                        50 states' and DC's own revenue and labor
+                        departments for income tax scales, SUI/SUTA rates and
+                        additional mandatory social-protection schemes,
+                        cross-checked against Tax Foundation, Bloomberg Tax,
+                        Payroll.org and EY Tax News; US Census Bureau (Annual
+                        Estimates of the Resident Population) for the
+                        population weighting used in the Comparison module.
+                        See the downloadable sources file in the Data tab for
+                        the full citation detail, state by state.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

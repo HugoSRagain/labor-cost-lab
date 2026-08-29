@@ -1,0 +1,122 @@
+{
+    "country": "United States",
+    "country_code": "US",
+    "version": "2026-01",
+    "effective_from": "2026-01-01",
+    "status": "prototype_v1",
+    "currency": "USD",
+    "wage_reference": {
+        "name": "Salaire minimum federal (Federal Minimum Wage), 40h/semaine",
+        "gross_monthly_usd": 1256.6667,
+        "hourly_rate_usd": 7.25,
+        "weekly_hours": 40,
+        "source": "Fair Labor Standards Act, taux inchange depuis le 24 juillet 2009",
+        "note": "Contrairement a la Suede ou l'Italie, les Etats-Unis ont un salaire minimum federal legal (7,25 USD/heure), retenu ici comme repere de reference 1,0x commun a tous les Etats -- la meme convention que pour les autres pays de ce projet. De nombreux Etats et municipalites fixent des minima bien superieurs (jusqu'a plus de 17 USD/heure) ; voir le champ state_minimum_wage_hourly de chaque Etat dans analysis/usa/us_payroll_2026.py et la section Limites."
+    },
+    "grid": {
+        "min_multiple": 0.80,
+        "max_multiple": 6.00,
+        "step": 0.01
+    },
+    "note_on_data_source": "Les baremes complets par Etat (tranches d'imposition, deductions, taux SUI, dispositifs specifiques type SDI/PFML) sont la source de verite unique dans analysis/usa/us_payroll_2026.py (dictionnaire STATE_DATA_2026), afin d'eviter toute duplication susceptible de diverger. Ce fichier JSON documente le niveau federal et une synthese par Etat ; voir usa_sources_2026.json pour les citations completes.",
+    "federal_2026": {
+        "income_tax_brackets_single": [
+            {"upper_bound_usd": 12400, "rate": 0.10},
+            {"upper_bound_usd": 50400, "rate": 0.12},
+            {"upper_bound_usd": 105700, "rate": 0.22},
+            {"upper_bound_usd": 201775, "rate": 0.24},
+            {"upper_bound_usd": 256225, "rate": 0.32},
+            {"upper_bound_usd": 640600, "rate": 0.35},
+            {"upper_bound_usd": null, "rate": 0.37}
+        ],
+        "standard_deduction_single_usd": 16100,
+        "source": "IRS Revenue Procedure 2025-32",
+        "social_security_oasdi": {
+            "employee_rate": 0.062,
+            "employer_rate": 0.062,
+            "wage_base_usd": 184500,
+            "source": "Social Security Administration, 2026 COLA fact sheet"
+        },
+        "medicare": {
+            "employee_rate": 0.0145,
+            "employer_rate": 0.0145,
+            "wage_base": null,
+            "additional_medicare_tax": {
+                "employee_only_rate": 0.009,
+                "threshold_single_usd": 200000,
+                "note": "Seuil fixe par la loi (IRC 3101(b)(2)), non indexe sur l'inflation depuis 2013 ; non compense par l'employeur."
+            }
+        },
+        "futa": {
+            "nominal_rate": 0.06,
+            "standard_credit": 0.054,
+            "net_rate_used": 0.006,
+            "wage_base_usd": 7000,
+            "note": "Taux net de 0,6 % retenu par ce module (credit standard applique). La Californie et les Iles Vierges americaines sont signalees par le Department of Labor comme a risque d'une reduction de credit pour 2026 (majoration potentielle du taux net), non finalisee avant le 10 novembre 2026 -- non modelisee, voir Limites."
+        }
+    },
+    "states": [
+        {"code": "AL", "name_fr": "Alabama", "has_income_tax": true, "structure": "3 tranches, 2%-5%", "sui_new_employer_rate": 0.027, "min_wage_usd": 7.25},
+        {"code": "AK", "name_fr": "Alaska", "has_income_tax": false, "structure": "aucun", "sui_new_employer_rate": 0.01, "extra_items": ["cotisation chomage salariale 0,5%"], "min_wage_usd": 14.00},
+        {"code": "AZ", "name_fr": "Arizona", "has_income_tax": true, "structure": "taux unique 2,5%", "sui_new_employer_rate": 0.02, "min_wage_usd": 15.15},
+        {"code": "AR", "name_fr": "Arkansas", "has_income_tax": true, "structure": "5 tranches, 0%-3,7%", "sui_new_employer_rate": 0.022, "min_wage_usd": 11.00},
+        {"code": "CA", "name_fr": "Californie", "has_income_tax": true, "structure": "10 tranches, 1%-13,3% (incl. surtaxe sante mentale 1% au-dela de 1M USD)", "sui_new_employer_rate": 0.034, "extra_items": ["SDI/PFL salariale 1,3% sans plafond", "ETT patronale 0,1%"], "min_wage_usd": 16.90},
+        {"code": "CO", "name_fr": "Colorado", "has_income_tax": true, "structure": "taux unique 4,4%", "sui_new_employer_rate": 0.017, "extra_items": ["FAMLI 0,88% (0,44/0,44)"], "min_wage_usd": 15.16},
+        {"code": "CT", "name_fr": "Connecticut", "has_income_tax": true, "structure": "7 tranches, 2%-6,99%", "sui_new_employer_rate": 0.019, "extra_items": ["CTPL salariale 0,5%"], "min_wage_usd": 16.94},
+        {"code": "DE", "name_fr": "Delaware", "has_income_tax": true, "structure": "7 tranches, 0%-6,6%", "sui_new_employer_rate": 0.02, "extra_items": ["Paid Leave 0,8% (0,4/0,4), nouveau 2026"], "min_wage_usd": 15.00},
+        {"code": "DC", "name_fr": "District de Columbia", "has_income_tax": true, "structure": "7 tranches, 4%-10,75%", "sui_new_employer_rate": 0.029, "extra_items": ["PFL patronale 0,75%"], "min_wage_usd": 18.40},
+        {"code": "FL", "name_fr": "Floride", "has_income_tax": false, "structure": "aucun", "sui_new_employer_rate": 0.027, "min_wage_usd": 15.00},
+        {"code": "GA", "name_fr": "Géorgie", "has_income_tax": true, "structure": "taux unique 4,99%", "sui_new_employer_rate": 0.027, "min_wage_usd": 7.25},
+        {"code": "HI", "name_fr": "Hawaï", "has_income_tax": true, "structure": "12 tranches, 1,4%-11% (confiance moyenne)", "sui_new_employer_rate": 0.024, "extra_items": ["TDI salariale ~0,5% (illustratif)"], "min_wage_usd": 16.00},
+        {"code": "ID", "name_fr": "Idaho", "has_income_tax": true, "structure": "taux unique 5,3%", "sui_new_employer_rate": 0.01, "min_wage_usd": 7.25},
+        {"code": "IL", "name_fr": "Illinois", "has_income_tax": true, "structure": "taux unique 4,95%", "sui_new_employer_rate": 0.03525, "min_wage_usd": 15.00},
+        {"code": "IN", "name_fr": "Indiana", "has_income_tax": true, "structure": "taux unique 2,95% (+ taxes locales de comte non modelisees)", "sui_new_employer_rate": 0.025, "min_wage_usd": 7.25},
+        {"code": "IA", "name_fr": "Iowa", "has_income_tax": true, "structure": "taux unique 3,8%", "sui_new_employer_rate": 0.01, "min_wage_usd": 7.25},
+        {"code": "KS", "name_fr": "Kansas", "has_income_tax": true, "structure": "2 tranches, 5,2%-5,58%", "sui_new_employer_rate": 0.027, "min_wage_usd": 7.25},
+        {"code": "KY", "name_fr": "Kentucky", "has_income_tax": true, "structure": "taux unique 3,5% (+ taxes locales non modelisees)", "sui_new_employer_rate": 0.027, "min_wage_usd": 7.25},
+        {"code": "LA", "name_fr": "Louisiane", "has_income_tax": true, "structure": "taux unique 3%", "sui_new_employer_rate": 0.012, "min_wage_usd": 7.25},
+        {"code": "ME", "name_fr": "Maine", "has_income_tax": true, "structure": "3 tranches, 5,8%-7,15%", "sui_new_employer_rate": 0.0254, "extra_items": ["PFML 1% (0,5/0,5)"], "min_wage_usd": 15.10},
+        {"code": "MD", "name_fr": "Maryland", "has_income_tax": true, "structure": "9 tranches, 2%-6,5% (+ taxes locales de comte non modelisees)", "sui_new_employer_rate": 0.026, "min_wage_usd": 15.00},
+        {"code": "MA", "name_fr": "Massachusetts", "has_income_tax": true, "structure": "taux unique 5% + surtaxe 4% au-dela de 1,1M USD", "sui_new_employer_rate": 0.0242, "extra_items": ["PFML 0,88% (~0,46/0,42)"], "min_wage_usd": 15.00},
+        {"code": "MI", "name_fr": "Michigan", "has_income_tax": true, "structure": "taux unique 4,25%", "sui_new_employer_rate": 0.027, "min_wage_usd": 13.73},
+        {"code": "MN", "name_fr": "Minnesota", "has_income_tax": true, "structure": "4 tranches, 5,35%-9,85%", "sui_new_employer_rate": 0.024, "extra_items": ["Paid Leave 0,88% (0,44/0,44), nouveau 2026"], "min_wage_usd": 11.41},
+        {"code": "MS", "name_fr": "Mississippi", "has_income_tax": true, "structure": "taux unique 4% au-dela de 10 000 USD exoneres", "sui_new_employer_rate": 0.01, "min_wage_usd": 7.25},
+        {"code": "MO", "name_fr": "Missouri", "has_income_tax": true, "structure": "8 tranches, 0%-4,7%", "sui_new_employer_rate": 0.02376, "min_wage_usd": 15.00},
+        {"code": "MT", "name_fr": "Montana", "has_income_tax": true, "structure": "2 tranches, 4,7%-5,65%", "sui_new_employer_rate": 0.0138, "min_wage_usd": 10.85},
+        {"code": "NE", "name_fr": "Nebraska", "has_income_tax": true, "structure": "3 tranches, 2,46%-4,55%", "sui_new_employer_rate": 0.0125, "min_wage_usd": 15.00},
+        {"code": "NV", "name_fr": "Nevada", "has_income_tax": false, "structure": "aucun", "sui_new_employer_rate": 0.03, "min_wage_usd": 12.00},
+        {"code": "NH", "name_fr": "New Hampshire", "has_income_tax": false, "structure": "aucun", "sui_new_employer_rate": 0.017, "min_wage_usd": 7.25},
+        {"code": "NJ", "name_fr": "New Jersey", "has_income_tax": true, "structure": "7 tranches, 1,4%-10,75%", "sui_new_employer_rate": 0.033, "extra_items": ["cotisation chomage salariale + DI + FLI"], "min_wage_usd": 15.49},
+        {"code": "NM", "name_fr": "Nouveau-Mexique", "has_income_tax": true, "structure": "6 tranches, 1,5%-5,9%", "sui_new_employer_rate": 0.01, "min_wage_usd": 12.00},
+        {"code": "NY", "name_fr": "New York", "has_income_tax": true, "structure": "9 tranches, 4%-10,9%", "sui_new_employer_rate": 0.041, "extra_items": ["SDI forfaitaire, PFL 0,432% plafonnee"], "min_wage_usd": 15.50},
+        {"code": "NC", "name_fr": "Caroline du Nord", "has_income_tax": true, "structure": "taux unique 3,99%", "sui_new_employer_rate": 0.01, "min_wage_usd": 7.25},
+        {"code": "ND", "name_fr": "Dakota du Nord", "has_income_tax": true, "structure": "3 tranches, 0%-2,5% (confiance moyenne sur le seuil superieur)", "sui_new_employer_rate": 0.01, "min_wage_usd": 7.25},
+        {"code": "OH", "name_fr": "Ohio", "has_income_tax": true, "structure": "2 tranches, 0%-2,75%", "sui_new_employer_rate": 0.03, "min_wage_usd": 11.00},
+        {"code": "OK", "name_fr": "Oklahoma", "has_income_tax": true, "structure": "4 tranches, 0%-4,5%", "sui_new_employer_rate": 0.015, "min_wage_usd": 7.25},
+        {"code": "OR", "name_fr": "Oregon", "has_income_tax": true, "structure": "4 tranches, 4,75%-9,9%", "sui_new_employer_rate": 0.024, "extra_items": ["Paid Leave Oregon 1% (0,6/0,4)"], "min_wage_usd": 15.55},
+        {"code": "PA", "name_fr": "Pennsylvanie", "has_income_tax": true, "structure": "taux unique 3,07% (+ taxes locales EIT non modelisees)", "sui_new_employer_rate": 0.03822, "extra_items": ["cotisation chomage salariale 0,07%"], "min_wage_usd": 7.25},
+        {"code": "RI", "name_fr": "Rhode Island", "has_income_tax": true, "structure": "3 tranches, 3,75%-5,99%", "sui_new_employer_rate": 0.0121, "extra_items": ["TDI salariale 1,1%"], "min_wage_usd": 16.00},
+        {"code": "SC", "name_fr": "Caroline du Sud", "has_income_tax": true, "structure": "2 tranches, 1,99%-5,21%", "sui_new_employer_rate": 0.0075, "min_wage_usd": 7.25},
+        {"code": "SD", "name_fr": "Dakota du Sud", "has_income_tax": false, "structure": "aucun", "sui_new_employer_rate": 0.0175, "min_wage_usd": 11.85},
+        {"code": "TN", "name_fr": "Tennessee", "has_income_tax": false, "structure": "aucun", "sui_new_employer_rate": 0.027, "min_wage_usd": 7.25},
+        {"code": "TX", "name_fr": "Texas", "has_income_tax": false, "structure": "aucun", "sui_new_employer_rate": 0.027, "min_wage_usd": 7.25},
+        {"code": "UT", "name_fr": "Utah", "has_income_tax": true, "structure": "taux unique 4,45%", "sui_new_employer_rate": 0.011, "min_wage_usd": 7.25},
+        {"code": "VT", "name_fr": "Vermont", "has_income_tax": true, "structure": "4 tranches, 3,35%-8,75%", "sui_new_employer_rate": 0.01, "min_wage_usd": 14.42},
+        {"code": "VA", "name_fr": "Virginie", "has_income_tax": true, "structure": "4 tranches, 2%-5,75%", "sui_new_employer_rate": 0.025, "min_wage_usd": 12.77},
+        {"code": "WA", "name_fr": "État de Washington", "has_income_tax": false, "structure": "aucun", "sui_new_employer_rate": 0.01, "extra_items": ["PFML 1,13% (0,81/0,32)", "WA Cares salariale 0,58%"], "min_wage_usd": 17.13},
+        {"code": "WV", "name_fr": "Virginie-Occidentale", "has_income_tax": true, "structure": "5 tranches, 2,11%-4,58%", "sui_new_employer_rate": 0.027, "min_wage_usd": 8.75},
+        {"code": "WI", "name_fr": "Wisconsin", "has_income_tax": true, "structure": "4 tranches, 3,5%-7,65%, deduction forfaitaire degressive selon le revenu", "sui_new_employer_rate": 0.0305, "min_wage_usd": 7.25},
+        {"code": "WY", "name_fr": "Wyoming", "has_income_tax": false, "structure": "aucun", "sui_new_employer_rate": 0.0228, "min_wage_usd": 7.25}
+    ],
+    "profiles_note": "Chaque Etat + DC constitue un profil distinct (state_code), sur le modele du selecteur de cantons suisses. Le module Comparaison agrege les 51 juridictions par pondération démographique (population 2024, US Census Bureau).",
+    "limits": [
+        "Seul le salaire minimum federal (7,25 USD/heure) est retenu comme repere de reference commun a tous les Etats ; de nombreux Etats/villes fixent des minima bien superieurs (jusqu'a plus de 17 USD/heure a Washington), voir le champ min_wage_usd de chaque Etat.",
+        "Les impots locaux sur le revenu (comtes de l'Indiana, du Kentucky, du Maryland ; villes de Pennsylvanie comme Philadelphie ; certains comtes de l'Ohio) ne sont pas modelises alors qu'ils sont significatifs dans plusieurs Etats.",
+        "Seul un profil celibataire sans enfant, sans autre revenu, est modelise (pas de credit d'impot pour enfants, pas d'imposition conjointe).",
+        "Les taux SUI/SUTA retenus sont les taux standard « nouvel employeur » de chaque Etat, pas les taux experience-rated reels (qui varient fortement selon l'historique de l'employeur).",
+        "La reduction potentielle du credit FUTA pour la Californie (et les Iles Vierges americaines) au titre de 2026 n'est pas finalisee avant le 10 novembre 2026 et n'est pas modelisee.",
+        "Le bareme complet d'Hawaii (12 tranches) et la deduction du Nouveau-Mexique reposent sur des sources secondaires convergentes mais non verifiees directement contre un document officiel dans le cadre de cette recherche -- confiance moyenne, voir usa_sources_2026.json.",
+        "Le Programme de conge familial et medical (PFML) de Virginie a ete adopte en 2026 mais ses cotisations ne debutent qu'en avril 2028 -- non modelise pour cette annee de reference.",
+        "Le TFR-equivalent, une retenue de securite sociale forfaitaire additionnelle, une eventuelle assurance maladie privee obligatoire (mandat federal ACA, non fiscal) et les avantages en nature ne sont pas modelises."
+    ]
+}

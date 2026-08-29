@@ -749,6 +749,7 @@
                             <button type="button" role="tab" aria-selected="false" onclick="setCountry('es', this)">Spain</button>
                             <button type="button" role="tab" aria-selected="false" onclick="setCountry('se', this)">Sweden</button>
                             <button type="button" role="tab" aria-selected="false" onclick="setCountry('it', this)">Italy</button>
+                            <button type="button" role="tab" aria-selected="false" onclick="setCountry('us', this)">United States</button>
                         </div>
                     </div>
 
@@ -1093,6 +1094,37 @@
                     </div>
                 </a>
 
+                <a class="mod" href="./countries/usa/index.html">
+                    <div>
+                        <div class="mod-name">United States</div>
+                        <div class="mod-tags">
+                            <span class="tag live" data-i18n="status.available">Disponible</span>
+                            <span class="tag" data-i18n="status.prototype">Prototype</span>
+                            <span class="tag">Federal + State</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="mod-desc" data-i18n="module.usa.text">
+                            Module socio-fiscal 2026 : impôt fédéral sur le
+                            revenu, FICA (Social Security, Medicare),
+                            FUTA, combinés aux 50 États et au District
+                            de Columbia (impôt d'État, SUI, dispositifs
+                            type SDI/PFML). Sélecteur des 51 juridictions.
+                        </p>
+                        <div class="minibar" aria-hidden="true">
+                            <span class="m-emp" style="width:9%"></span>
+                            <span class="m-sal" style="width:7%"></span>
+                            <span class="m-tax" style="width:1%"></span>
+                            <span class="m-net" style="width:83%"></span>
+                        </div>
+                    </div>
+                    <div class="mod-net">
+                        <b>83</b>
+                        <span data-i18n="module.netshare">net / 100</span>
+                        <span class="mod-go" data-i18n="module.open">Ouvrir →</span>
+                    </div>
+                </a>
+
                 <a class="mod" href="./countries/comparison/index.html">
                     <div>
                         <div class="mod-name" data-i18n="module.comparison.name">Comparaison</div>
@@ -1103,14 +1135,14 @@
                     </div>
                     <div>
                         <p class="mod-desc" data-i18n="module.comparison.text">
-                            Met en regard les 10 modules nationaux sur une grille de
+                            Met en regard les 11 modules nationaux sur une grille de
                             salaires harmonisée en dollars internationaux (PPA), pour
                             comparer coût employeur, salaire net et prélèvements
                             obligatoires à niveau de vie équivalent.
                         </p>
                     </div>
                     <div class="mod-net">
-                        <b>10</b>
+                        <b>11</b>
                         <span data-i18n="module.comparison.count">pays comparés</span>
                         <span class="mod-go" data-i18n="module.open">Ouvrir →</span>
                     </div>
@@ -1299,8 +1331,9 @@
                 "module.spain.text": "Module socio-fiscal 2026 : IRPF (barème étatique et régional de Madrid), cotisations de Seguridad Social du Régime général, salarié et employeur.",
                 "module.sweden.text": "Module socio-fiscal 2026 : arbetsgivaravgifter (taux plat de 31,42 %, sans plafond), kommunalskatt, statlig inkomstskatt, grundavdrag et jobbskatteavdrag. Pas de salaire minimum légal : salaire de référence conventionnel (seuil Migrationsverket).",
                 "module.italy.text": "Module socio-fiscal 2026 : cotisations INPS (avec plafond de cotisation et cotisation additionnelle de 1 %), TFR (indemnité de départ différée), IRPEF, addizionale regionale et addizionale comunale. Pas de salaire minimum légal : salaire de référence conventionnel (CCNL Commercio).",
+                "module.usa.text": "Module socio-fiscal 2026 : impôt fédéral sur le revenu, FICA (Social Security, Medicare), FUTA, combinés aux 50 États et au District de Columbia (impôt d'État, SUI, dispositifs type SDI/PFML). Sélecteur des 51 juridictions.",
                 "module.comparison.name": "Comparaison",
-                "module.comparison.text": "Met en regard les 10 modules nationaux sur une grille de salaires harmonisée en dollars internationaux (PPA), pour comparer coût employeur, salaire net et prélèvements obligatoires à niveau de vie équivalent.",
+                "module.comparison.text": "Met en regard les 11 modules nationaux sur une grille de salaires harmonisée en dollars internationaux (PPA), pour comparer coût employeur, salaire net et prélèvements obligatoires à niveau de vie équivalent.",
                 "module.comparison.count": "pays comparés",
                 "module.open": "Ouvrir →",
                 "module.netshare": "net / 100",
@@ -1335,7 +1368,7 @@
                 "data.block4.title": "Code ouvert",
                 "data.block4.text": "Scripts de construction des jeux de données et interface web reproductible.",
                 "side.status.modules.label": "Modules accessibles",
-		"side.status.modules.value": "France · Allemagne · Belgique · Suisse · Pays-Bas · Royaume-Uni · Irlande · Espagne · Suède · Italie",
+		"side.status.modules.value": "France · Allemagne · Belgique · Suisse · Pays-Bas · Royaume-Uni · Irlande · Espagne · Suède · Italie · États-Unis",
                 "side.status.year.label": "Année réglementaire",
                 "side.status.output.label": "Sorties principales",
                 "side.status.output.value": "coût employeur · net · coins socio-fiscaux",
@@ -1370,8 +1403,10 @@
                 "module.ireland.text": "2026 socio-fiscal module: income tax (PAYE), the Universal Social Charge (USC), and PRSI Class A, employee and employer.",
                 "module.spain.text": "2026 socio-fiscal module: IRPF income tax (state scale and Madrid regional scale), Seguridad Social Regimen General contributions, employee and employer.",
                 "module.sweden.text": "2026 socio-fiscal module: arbetsgivaravgifter (a flat 31.42% rate with no ceiling), kommunalskatt, statlig inkomstskatt, grundavdrag and jobbskatteavdrag. No statutory minimum wage: a conventional reference wage (the Migrationsverket threshold) is used instead.",
+                "module.italy.text": "2026 socio-fiscal module: INPS contributions (with a contribution ceiling and an additional 1% contribution), TFR (deferred severance accrual), IRPEF, addizionale regionale and addizionale comunale. No statutory minimum wage: a conventional reference wage (CCNL Commercio) is used instead.",
+                "module.usa.text": "2026 socio-fiscal module: federal income tax, FICA (Social Security, Medicare), FUTA, combined with each of the 50 states and the District of Columbia (state income tax, SUI, SDI/PFML-type schemes). Selector for all 51 jurisdictions.",
                 "module.comparison.name": "Comparison",
-                "module.comparison.text": "Compares the 9 national modules on a wage grid harmonised in international dollars (PPP), to compare employer cost, net wage, and statutory levies at an equivalent standard of living.",
+                "module.comparison.text": "Compares the 11 national modules on a wage grid harmonised in international dollars (PPP), to compare employer cost, net wage, and statutory levies at an equivalent standard of living.",
                 "module.comparison.count": "countries compared",
                 "module.open": "Open →",
                 "module.netshare": "net / 100",
@@ -1406,7 +1441,7 @@
                 "data.block4.title": "Open code",
                 "data.block4.text": "Dataset-building scripts and a reproducible hosted web interface.",
                 "side.status.modules.label": "Available modules",
-		"side.status.modules.value": "France · Germany · Belgium · Switzerland · Netherlands · United Kingdom · Ireland · Spain · Sweden · Italy",
+		"side.status.modules.value": "France · Germany · Belgium · Switzerland · Netherlands · United Kingdom · Ireland · Spain · Sweden · Italy · United States",
                 "side.status.year.label": "Regulatory year",
                 "side.status.output.label": "Main outputs",
                 "side.status.output.value": "employer cost · net · socio-fiscal wedges",
@@ -1485,6 +1520,12 @@
                 sal: { v: 7, fr: "Cotisations salarié (INPS)", en: "Employee contributions (INPS)" },
                 tax: { v: 8, fr: "Impôt sur le revenu (IRPEF, addizionale regionale et comunale)", en: "Income tax (IRPEF, addizionale regionale and comunale)" },
                 net: { v: 58, fr: "Salaire net après impôt", en: "Net wage after tax" }
+            },
+            us: {
+                emp: { v: 9, fr: "Cotisations employeur (FICA, FUTA, SUI)", en: "Employer contributions (FICA, FUTA, SUI)" },
+                sal: { v: 7, fr: "Cotisations salarié (FICA)", en: "Employee contributions (FICA)" },
+                tax: { v: 1, fr: "Impôt sur le revenu (fédéral + État, très faible au salaire minimum fédéral)", en: "Income tax (federal + state, unusually low at the federal minimum wage)" },
+                net: { v: 83, fr: "Salaire net après impôt", en: "Net wage after tax" }
             }
         };
 

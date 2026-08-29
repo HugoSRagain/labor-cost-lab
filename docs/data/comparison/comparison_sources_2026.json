@@ -1,7 +1,7 @@
 {
     "module_name": "Cross-Country Labour Cost Comparison",
     "version": "2026-01",
-    "countries_covered": ["France", "Germany", "Belgium", "Switzerland", "Netherlands", "United Kingdom", "Ireland", "Spain", "Sweden", "Italy"],
+    "countries_covered": ["France", "Germany", "Belgium", "Switzerland", "Netherlands", "United Kingdom", "Ireland", "Spain", "Sweden", "Italy", "United States"],
     "sources": [
         {
             "id": "worldbank_icp_private_consumption_ppp",
@@ -220,6 +220,46 @@
             "status": "official"
         },
         {
+            "id": "irs_ssa_dol_federal_payroll_2026",
+            "institution": "IRS, Social Security Administration, US Department of Labor",
+            "institution_fr": "IRS, Social Security Administration, ministere americain du Travail",
+            "title": "Federal income tax brackets and standard deduction (Rev. Proc. 2025-32), Social Security/Medicare rates and wage base, FUTA net rate, federal minimum wage",
+            "url": "https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill",
+            "reference_year": 2026,
+            "retrieved": "2026-08-28",
+            "used_for": [
+                "The United States' federal income tax, FICA and FUTA layers, identical across all 50 states and DC"
+            ],
+            "status": "official"
+        },
+        {
+            "id": "us_state_departments_revenue_labor_2026",
+            "institution": "50 state Departments of Revenue/Taxation and Departments of Labor/Employment Security, plus DC OTR/DOES",
+            "institution_fr": "Administrations fiscales et du travail des 50 Etats americains et de DC",
+            "title": "State income tax brackets, State Unemployment Insurance rates and any state-mandated payroll deduction, 2026",
+            "url": "https://www.irs.gov/",
+            "reference_year": 2026,
+            "retrieved": "2026-08-28",
+            "used_for": [
+                "The United States' 50 state-level (+ DC) income tax, SUI and extra payroll-deduction layers"
+            ],
+            "status": "official_aggregated",
+            "note": "Full per-state citations and confidence flags in docs/data/usa/usa_sources_2026.json."
+        },
+        {
+            "id": "census_bureau_state_population_2024_comparison",
+            "institution": "US Census Bureau",
+            "institution_fr": "Bureau du recensement des Etats-Unis",
+            "title": "Annual Estimates of the Resident Population (NST-EST2024-POP)",
+            "url": "https://www2.census.gov/programs-surveys/popest/tables/2020-2024/state/totals/NST-EST2024-POP.xlsx",
+            "reference_year": 2024,
+            "retrieved": "2026-08-28",
+            "used_for": [
+                "Population weights for the 50-states-plus-DC population-weighted average, mirroring the Swiss canton weighting approach"
+            ],
+            "status": "official"
+        },
+        {
             "id": "inps_circolare_6_2026",
             "institution": "INPS (Istituto Nazionale della Previdenza Sociale)",
             "institution_fr": "INPS (institut national de la prevoyance sociale italien)",
@@ -269,6 +309,7 @@
         "Ireland's employee/employer contribution figures are PRSI Class A only (January-September 2026 rates); the Universal Social Charge (USC), a separate tax on income, is bundled into the income-tax figure alongside PAYE. See docs/data/ireland/ireland_sources_2026.json for the full rate schedule and sources.",
         "Spain's reference profile uses the Comunidad de Madrid regional IRPF scale; the other 16 comunidades autonomas each set their own regional scale and are not modelled. Employee/employer contribution figures are Seguridad Social Regimen General only. See docs/data/spain/spain_sources_2026.json for the full rate schedule and sources.",
         "Sweden has no statutory minimum wage; the reference wage used is the Migrationsverket work-permit wage floor (90% of the SCB median salary). The allman pensionsavgift (7% employee pension contribution) is fully offset by an equal skattereduktion across this module's wage range, so employee_contributions is 0 by construction and the full payroll tax liability appears under income_tax_or_withholding_tax. Only Stockholm kommun is modelled. See docs/data/sweden/sweden_sources_2026.json for the full rate schedule and sources.",
-        "Italy has no statutory minimum wage either; the reference wage used is the CCNL Commercio Livello 3 minimo tabellare (a methodological choice, not a legal minimum), prorated from its 14-installment payment schedule. employer_cost includes the TFR deferred severance accrual (~6.91% of gross annual pay), a personnel cost that is not available to the employee as current net pay. Income tax bundles national IRPEF with the Lazio addizionale regionale and Roma addizionale comunale, both tiered-flat (not marginal) surcharges. See docs/data/italy/italy_sources_2026.json for the full rate schedule and sources."
+        "Italy has no statutory minimum wage either; the reference wage used is the CCNL Commercio Livello 3 minimo tabellare (a methodological choice, not a legal minimum), prorated from its 14-installment payment schedule. employer_cost includes the TFR deferred severance accrual (~6.91% of gross annual pay), a personnel cost that is not available to the employee as current net pay. Income tax bundles national IRPEF with the Lazio addizionale regionale and Roma addizionale comunale, both tiered-flat (not marginal) surcharges. See docs/data/italy/italy_sources_2026.json for the full rate schedule and sources.",
+        "The United States is aggregated as a population-weighted average across all 50 states and DC, mirroring the Swiss canton/UK region/Spanish region approach; federal income tax, FICA and FUTA are uniform nationwide while state income tax (9 states have none), SUI and any state-mandated payroll deduction (SDI/PFML/TDI in 13 jurisdictions) vary by state. The reference wage is the federal minimum wage (USD 7.25/hour). See docs/data/usa/usa_sources_2026.json for the full per-state rate schedule and sources."
     ]
 }

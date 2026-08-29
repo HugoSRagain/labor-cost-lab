@@ -1,7 +1,7 @@
 {
     "module_name": "Cross-Country Labour Cost Comparison",
     "version": "2026-01",
-    "countries": ["France", "Germany", "Belgium", "Switzerland", "Netherlands", "United Kingdom", "Ireland", "Spain", "Sweden", "Italy"],
+    "countries": ["France", "Germany", "Belgium", "Switzerland", "Netherlands", "United Kingdom", "Ireland", "Spain", "Sweden", "Italy", "United States"],
     "methodology": [
         "Comparison axis: absolute wage levels converted via purchasing power parity (PPP), not wages re-indexed to each country's own minimum wage.",
         "PPP is applied individually to all 4 countries (including Switzerland), following the same logic as the OECD 'Taxing Wages' cross-country comparisons.",
@@ -27,7 +27,8 @@
         "IE": {"value_local": 2391.35, "currency": "EUR", "value_intl_usd": 2711.4, "source": "National Minimum Wage (20+), 14.15 EUR/h x 39h/week (most commonly cited Irish full-time benchmark), docs/data/ireland/ireland_parameters_2026.json"},
         "ES": {"value_local": 1424.50, "currency": "EUR", "value_intl_usd": 2421.0, "source": "Salario Minimo Interprofesional (SMI) 2026, 1,221 EUR/month x 14 payments, prorated over 12 months, docs/data/spain/spain_parameters_2026.json"},
         "SE": {"value_local": 34470, "currency": "SEK", "value_intl_usd": 4019.8, "source": "Sweden has no statutory minimum wage; this is the Migrationsverket work-permit wage floor (90% of the SCB median salary), used as this module's reference wage by convention, docs/data/sweden/sweden_parameters_2026.json"},
-        "IT": {"value_local": 2314.56, "currency": "EUR", "value_intl_usd": 3702.4, "source": "Italy has no statutory minimum wage; this is the CCNL Commercio Livello 3 minimo tabellare (1,983.91 EUR x 14 payments / 12), used as this module's reference wage by convention, docs/data/italy/italy_parameters_2026.json"}
+        "IT": {"value_local": 2314.56, "currency": "EUR", "value_intl_usd": 3702.4, "source": "Italy has no statutory minimum wage; this is the CCNL Commercio Livello 3 minimo tabellare (1,983.91 EUR x 14 payments / 12), used as this module's reference wage by convention, docs/data/italy/italy_parameters_2026.json"},
+        "US": {"value_local": 1256.67, "currency": "USD", "value_intl_usd": 1256.67, "source": "Federal Minimum Wage (7.25 USD/hour x 40h/week, unchanged since 24 July 2009), docs/data/usa/usa_parameters_2026.json; many states/cities set substantially higher minimums"}
     },
     "ppp_conversion_factors": {
         "basis": "Household (private) final consumption expenditure PPP conversion factor, LCU per international dollar",
@@ -45,7 +46,8 @@
             "IE": 0.88195,
             "ES": 0.588481,
             "SE": 8.577614,
-            "IT": 0.625157
+            "IT": 0.625157,
+            "US": 1.0
         }
     },
     "reference_profiles": {
@@ -98,6 +100,11 @@
             "profile_id": "italy__standard_employee_roma_lazio",
             "description": "Standard, single, childless private-sector employee, open-ended contract, firm with more than 50 employees, Roma/Lazio as the reference region and municipality (national IRPEF plus the Lazio addizionale regionale and Roma addizionale comunale, both tiered-flat surcharges on the whole taxable income). employer_cost includes the TFR (trattamento di fine rapporto) deferred severance accrual (~6.91% of gross annual pay), a personnel cost under standard Italian payroll accounting that is not available to the employee as current net pay.",
             "compute_source": "analysis/italy/build_italy_dataset.py and analysis/italy/italian_payroll_2026.py"
+        },
+        "US": {
+            "profile_id": "usa__population_weighted_average_50_states_dc__single_no_child",
+            "description": "Population-weighted average across all 50 states and the District of Columbia (2024 Census Bureau estimates), single, childless employee, federal filing status only. Federal income tax, FICA (Social Security + Medicare + Additional Medicare Tax) and FUTA are identical nationwide; state income tax (9 states have none), State Unemployment Insurance and any state-mandated payroll deduction (SDI/PFML/TDI in California, Colorado, Connecticut, Delaware, DC, Massachusetts, Maine, Minnesota, New Jersey, New York, Oregon, Rhode Island, Washington) vary by state.",
+            "compute_source": "analysis/usa/build_usa_dataset.py and analysis/usa/us_payroll_2026.py, aggregated across 50 states + DC"
         }
     },
     "switzerland_canton_population_weights": {
@@ -178,6 +185,13 @@
         },
         "note": "Navarra and Pais Vasco are excluded from the weighting base (separate foral tax systems, out of scope); the 16 modeled regions' populations sum to the total_population figure above. See docs/data/spain/spain_parameters_2026.json for the full per-region source citations."
     },
+    "us_state_population_weights": {
+        "source": "US Census Bureau, Annual Estimates of the Resident Population (NST-EST2024-POP)",
+        "url": "https://www2.census.gov/programs-surveys/popest/tables/2020-2024/state/totals/NST-EST2024-POP.xlsx",
+        "reference_year": 2024,
+        "retrieved": "2026-08-28",
+        "note": "Population weights for all 50 states and the District of Columbia are stored in analysis/usa/us_payroll_2026.py (STATE_DATA_2026, 'population' field) rather than duplicated here, to avoid drift between the two files."
+    },
     "notes": [
         "Germany, Belgium, Switzerland and the Netherlands' 'net after income tax' figures include a mandatory wage withholding tax computed directly from the wage (Lohnsteuer, pr\u00e9compte professionnel, impot a la source, loonheffing), which does not require household-specific information beyond the modeled reference profile.",
         "The Netherlands has no separate employee social-security contribution line: AOW/Anw/Wlz national-insurance premiums are bundled into the Box 1 wage-tax rate. Its 'employee_contributions_monthly' figure is therefore 0 by construction, and the full payroll deduction (income tax + national insurance combined, 'loonheffing') appears under the income-tax figure -- this does not mean Dutch employees pay no social insurance.",
@@ -189,6 +203,7 @@
         "Spain's income tax (IRPF) is a population-weighted average across 16 comunidades autonomas (see 'es_region_population_weights'), mirroring how Switzerland's cantons are aggregated; Navarra and Pais Vasco are excluded (separate foral tax systems). 'employee_contributions' and 'employer_contributions' are Seguridad Social Regimen General only, national and identical across all regions.",
         "Sweden has no statutory minimum wage and no single universal collective agreement (the Ghent/Nordic model: roughly 700 sector-level agreements negotiated by employers and unions cover about 90% of employees). This module uses the Migrationsverket work-permit wage floor (90% of the SCB median salary, 34,470 SEK/month for decisions from 1 June 2026) as its reference wage by convention -- an official, dated figure, but not a legal minimum or a negotiated collective-bargaining floor. Sweden's 'employee_contributions' is 0 by construction: the 7% allman pensionsavgift is fully offset by an equal skattereduktion (capped at total tax due) across this module's entire wage range, so the entire employee-side deduction is reported under 'income_tax_or_withholding_tax'. Only Stockholm kommun (30.55% combined kommunalskatt) is modeled as the reference municipality; the national range is 28.93%-35.65%.",
         "Italy has no statutory minimum wage either -- one of five EU countries (with Austria, Denmark, Finland and Sweden) relying exclusively on sector-level collective bargaining (CCNL), which covers over 80% of private-sector employees. This module uses the CCNL Commercio Livello 3 minimo tabellare (EUR 1,983.91/month, paid over 14 installments, prorated to EUR 2,314.56/month over 12 months) as its reference wage by convention -- a methodological choice, not a legal minimum. Italy's 'employer_cost' includes the TFR (trattamento di fine rapporto) deferred severance accrual (~6.91% of gross annual pay), a personnel cost under standard Italian payroll accounting that is not available to the employee as current net pay, unlike every other country in this comparison. Income tax bundles national IRPEF with the Lazio addizionale regionale and Roma addizionale comunale, both tiered-flat surcharges (the whole taxable income is taxed at one rate once a threshold is crossed, not a marginal bracket) rather than progressive brackets.",
+        "The United States is the only genuinely federal system in this comparison: a uniform federal income tax and FICA/FUTA payroll taxes apply everywhere, PLUS each of the 50 states' (and DC's) own income tax (9 states have none), State Unemployment Insurance, and in 13 jurisdictions a state-mandated payroll deduction analogous to social insurance (State Disability Insurance in California and New York, Paid Family and Medical Leave in Colorado/Massachusetts/Maine/Minnesota/Oregon/Washington/DC, Temporary Disability Insurance in Rhode Island/Hawaii, Delaware's new-for-2026 Paid Leave, and New Jersey's combined UI/DI/FLI). This module aggregates all 50 states + DC with a population-weighted average (see 'us_state_population_weights'), mirroring how Switzerland's cantons, the UK's devolved regions and Spain's comunidades autonomas are aggregated. The reference wage is the federal minimum wage (USD 7.25/hour, unchanged since 2009); many states and cities set substantially higher minimum wages of their own. The US dollar's own PPP conversion factor is exactly 1.0 by construction (the international dollar is benchmarked to US prices).",
         "All amounts are also cross-country comparable in international dollars (PPP) in addition to local currency."
     ]
 }

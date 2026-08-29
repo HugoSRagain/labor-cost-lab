@@ -1,6 +1,6 @@
 """
 Labor Cost Lab
-Cross-country comparison dataset builder (France, Germany, Belgium, Switzerland, Netherlands, United Kingdom, Ireland, Spain, Sweden, Italy).
+Cross-country comparison dataset builder (France, Germany, Belgium, Switzerland, Netherlands, United Kingdom, Ireland, Spain, Sweden, Italy, United States).
 
 Methodology
 -----------
@@ -34,6 +34,13 @@ local-currency wage:
     Italy:       analysis/italy/build_italy_dataset.py (compute_row), single
                  reference profile (Roma/Lazio), employer_cost includes the
                  TFR deferred severance accrual.
+    United States: analysis/usa/us_payroll_2026.py (compute_us_payroll_2026),
+                 computed for all 50 states + DC and aggregated with a
+                 population-weighted average (2024 Census Bureau estimates),
+                 mirroring the Swiss canton / UK region / Spanish region
+                 approach. Federal income tax, FICA and FUTA are identical
+                 nationwide; state income tax (9 states have none), SUI and
+                 any state-mandated payroll deduction vary by state.
 
 Important note on the United Kingdom: income tax is a population-weighted
 average of the rUK (England/Wales/Northern Ireland) and Scotland devolved
@@ -146,6 +153,7 @@ sys.path.insert(0, str(ROOT_DIR / "analysis" / "ireland"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "spain"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "sweden"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "italy"))
+sys.path.insert(0, str(ROOT_DIR / "analysis" / "usa"))
 
 import pandas as pd  # noqa: E402
 
@@ -208,6 +216,11 @@ from build_sweden_dataset import (  # noqa: E402
 from build_italy_dataset import (  # noqa: E402
     compute_row as it_compute_row,
     load_parameters as it_load_parameters,
+)
+
+from us_payroll_2026 import (  # noqa: E402
+    compute_us_payroll_2026,
+    STATE_DATA_2026 as US_STATE_DATA_2026,
 )
 
 
@@ -1046,6 +1059,109 @@ def compute_italy_row(
     return row
 
 
+def compute_usa_row(
+    wage_point_intl_usd: float,
+    ppp_factor: float,
+    state_weights: Dict[str, float],
+    wage_reference_monthly_usd: float,
+) -> Dict[str, Any]:
+    gross_local_usd = wage_point_intl_usd * ppp_factor
+
+    weighted_sums = {
+        "employee_contrib": 0.0,
+        "employer_contrib": 0.0,
+        "net_before_tax": 0.0,
+        "income_tax": 0.0,
+        "net_after_tax": 0.0,
+        "employer_cost": 0.0,
+    }
+
+    for state_code, weight in state_weights.items():
+        result = compute_us_payroll_2026(gross_local_usd, state_code)
+
+        employee_contrib = result["employee_contributions_monthly_usd"]
+        employer_contrib = result["employer_contributions_monthly_usd"]
+        income_tax = result["income_tax_monthly_usd"]
+        net_before_tax = gross_local_usd - employee_contrib
+        net_after_tax = net_before_tax - income_tax
+        employer_cost = gross_local_usd + employer_contrib
+
+        weighted_sums["employee_contrib"] += weight * employee_contrib
+        weighted_sums["employer_contrib"] += weight * employer_contrib
+        weighted_sums["net_before_tax"] += weight * net_before_tax
+        weighted_sums["income_tax"] += weight * income_tax
+        weighted_sums["net_after_tax"] += weight * net_after_tax
+        weighted_sums["employer_cost"] += weight * employer_cost
+
+    employer_cost = weighted_sums["employer_cost"]
+    net_before_income_tax = weighted_sums["net_before_tax"]
+    net_after_income_tax = weighted_sums["net_after_tax"]
+    income_tax = weighted_sums["income_tax"]
+
+    row = base_row(
+        country="United States",
+        country_code="US",
+        currency_code="USD",
+        reference_profile_id="usa__population_weighted_average_50_states_dc__single_no_child",
+        reference_profile_description=(
+            "Population-weighted average across all 50 states and the "
+            "District of Columbia (2024 Census Bureau estimates), single, "
+            "childless employee, federal filing status only."
+        ),
+        harmonized_wage_point_intl_usd=wage_point_intl_usd,
+        ppp_factor=ppp_factor,
+    )
+
+    row.update(
+        {
+            "gross_monthly_local": round_money(gross_local_usd),
+            "gross_monthly_intl_usd": round_money(gross_local_usd / ppp_factor),
+            "employee_contributions_monthly_local": round_money(weighted_sums["employee_contrib"]),
+            "employee_contributions_monthly_intl_usd": round_money(weighted_sums["employee_contrib"] / ppp_factor),
+            "employer_contributions_monthly_local": round_money(weighted_sums["employer_contrib"]),
+            "employer_contributions_monthly_intl_usd": round_money(weighted_sums["employer_contrib"] / ppp_factor),
+            "net_before_income_tax_monthly_local": round_money(net_before_income_tax),
+            "net_before_income_tax_monthly_intl_usd": round_money(net_before_income_tax / ppp_factor),
+            "income_tax_or_withholding_tax_monthly_local": round_money(income_tax),
+            "income_tax_or_withholding_tax_monthly_intl_usd": round_money(income_tax / ppp_factor),
+            "net_after_income_tax_monthly_local": round_money(net_after_income_tax),
+            "net_after_income_tax_monthly_intl_usd": round_money(net_after_income_tax / ppp_factor),
+            "employer_cost_monthly_local": round_money(employer_cost),
+            "employer_cost_monthly_intl_usd": round_money(employer_cost / ppp_factor),
+            "social_wedge_before_income_tax_rate": round(
+                (employer_cost - net_before_income_tax) / employer_cost, 6
+            ) if employer_cost else None,
+            "total_wedge_after_income_tax_rate": round(
+                (employer_cost - net_after_income_tax) / employer_cost, 6
+            ) if employer_cost else None,
+            "cost_to_net_before_income_tax_ratio": round(employer_cost / net_before_income_tax, 6)
+            if net_before_income_tax else None,
+            "cost_to_net_after_income_tax_ratio": round(employer_cost / net_after_income_tax, 6)
+            if net_after_income_tax else None,
+            "income_tax_modeled": True,
+            "aggregation_method": "population_weighted_average_50_states_dc",
+            "below_minimum_wage": bool(gross_local_usd < wage_reference_monthly_usd),
+            "national_minimum_wage_monthly_local": round_money(wage_reference_monthly_usd),
+            "note": (
+                "Federal income tax, FICA (Social Security + Medicare, "
+                "including the Additional Medicare Tax) and FUTA are "
+                "identical nationwide; employee_contributions, "
+                "employer_contributions and income_tax_or_withholding_tax "
+                "are a population-weighted average of the federal figures "
+                "plus each of the 50 states' and DC's own income tax, SUI, "
+                "and any state-mandated payroll deduction (SDI/PFML/TDI/"
+                "etc. in California, Colorado, Connecticut, Delaware, DC, "
+                "Massachusetts, Maine, Minnesota, New Jersey, New York, "
+                "Oregon, Rhode Island and Washington). The reference wage "
+                "is the federal minimum wage (USD 7.25/hour); many states "
+                "and cities set substantially higher minimum wages."
+            ),
+        }
+    )
+
+    return row
+
+
 def compute_spain_row(
     wage_point_intl_usd: float,
     ppp_factor: float,
@@ -1264,6 +1380,14 @@ def build_dataset() -> pd.DataFrame:
         if profile["profile_id"] == it_profile_id
     )
 
+    # --- USA setup ---
+    us_total_population = sum(state["population"] for state in US_STATE_DATA_2026.values())
+    us_state_weights = {
+        code: state["population"] / us_total_population
+        for code, state in US_STATE_DATA_2026.items()
+    }
+    us_wage_reference_monthly_usd = 7.25 * 40.0 * 52.0 / 12.0
+
     rows: List[Dict[str, Any]] = []
 
     for wage_point in wage_grid:
@@ -1362,6 +1486,15 @@ def build_dataset() -> pd.DataFrame:
                 ppp_values["IT"],
                 it_profile,
                 it_parameters,
+            )
+        )
+
+        rows.append(
+            compute_usa_row(
+                wage_point,
+                ppp_values["US"],
+                us_state_weights,
+                us_wage_reference_monthly_usd,
             )
         )
 
