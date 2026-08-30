@@ -1,369 +1,425 @@
 {
-    "module_name": "Cross-Country Labour Cost Comparison",
-    "version": "2026-01",
-    "countries_covered": ["France", "Germany", "Belgium", "Switzerland", "Netherlands", "United Kingdom", "Ireland", "Spain", "Sweden", "Italy", "United States", "China", "Japan"],
-    "sources": [
-        {
-            "id": "worldbank_icp_private_consumption_ppp",
-            "institution": "World Bank, International Comparison Program (ICP)",
-            "institution_fr": "Banque mondiale, Programme de comparaison internationale (PCI)",
-            "title": "PPP conversion factor, private consumption (LCU per international $)",
-            "indicator_code": "PA.NUS.PRVT.PP",
-            "url": "https://api.worldbank.org/v2/country/FRA;DEU;BEL;CHE/indicator/PA.NUS.PRVT.PP",
-            "reference_year": 2024,
-            "retrieved": "2026-08-04",
-            "used_for": [
-                "Converting the harmonized wage grid (expressed in international dollars) into each country's local currency",
-                "Converting each country's local-currency outputs back into international dollars for cross-country comparison"
-            ],
-            "status": "official"
-        },
-        {
-            "id": "bfs_permanent_resident_population_by_canton",
-            "institution": "Swiss Federal Statistical Office (Office fédéral de la statistique, BFS/OFS)",
-            "institution_fr": "Office fédéral de la statistique",
-            "title": "Population résidante permanente et non permanente selon Année, Canton et Type de population",
-            "table_id": "px-x-0103010000_101",
-            "url": "https://www.pxweb.bfs.admin.ch/pxweb/fr/px-x-0103010000_101/px-x-0103010000_101/px-x-0103010000_101.px",
-            "reference_year": 2024,
-            "retrieved": "2026-08-04",
-            "used_for": [
-                "Population weights for the 26 Swiss cantons, used to compute a single population-weighted Swiss reference case (Switzerland has no single national withholding-tax schedule)"
-            ],
-            "status": "official"
-        },
-        {
-            "id": "service_public_bareme_ir_2026",
-            "institution": "service-public.gouv.fr (Direction de l'information légale et administrative)",
-            "institution_fr": "service-public.gouv.fr (Direction de l'information légale et administrative)",
-            "title": "Barème de l'impôt sur le revenu 2026 (revenus 2025) et exemple de calcul par tranches",
-            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1419",
-            "reference_year": 2026,
-            "retrieved": "2026-08-04",
-            "used_for": [
-                "France's 'net after income tax' figure: the actual progressive income-tax barème (marginal brackets, 1 part de quotient familial) applied to a single, childless reference taxpayer"
-            ],
-            "status": "official"
-        },
-        {
-            "id": "bofip_taux_neutre_pas_2026",
-            "institution": "Direction générale des Finances publiques (DGFiP), BOFiP-Impôts",
-            "institution_fr": "Direction générale des Finances publiques (DGFiP), BOFiP-Impôts",
-            "title": "BOI-BAREME-000037 - Grilles de taux par défaut du prélèvement à la source",
-            "url": "https://bofip.impots.gouv.fr/bofip/11255-PGP.html/identifiant=BOI-BAREME-000037-20260407",
-            "reference_year": 2026,
-            "retrieved": "2026-08-04",
-            "used_for": [
-                "Reference documentation only: the non-personalized 'taux neutre' withholding mechanism (grille métropole, effective 1 May 2026) is no longer used to compute France's 'net after income tax' figure (see service_public_bareme_ir_2026 above); it is kept to document how the monthly prélèvement à la source actually works."
-            ],
-            "status": "official"
-        },
-        {
-            "id": "belastingdienst_box1_heffingskortingen_2026",
-            "institution": "Belastingdienst (Dutch Tax and Customs Administration)",
-            "institution_fr": "Belastingdienst (administration fiscale néerlandaise)",
-            "title": "Voorlopige aanslag 2026: gebruikte tarieven en heffingskortingen (Box 1, algemene heffingskorting, arbeidskorting)",
-            "url": "https://www.belastingdienst.nl/wps/wcm/connect/nl/voorlopige-aanslag/content/voorlopige-aanslag-tarieven-en-heffingskortingen",
-            "reference_year": 2026,
-            "retrieved": "2026-08-04",
-            "used_for": [
-                "Netherlands' loonheffing (Box 1 wage-tax brackets, algemene heffingskorting and arbeidskorting), the sole basis for the Netherlands' 'net after income tax' figure"
-            ],
-            "status": "official"
-        },
-        {
-            "id": "worldbank_icp_ppp_netherlands",
-            "institution": "World Bank, International Comparison Program (ICP)",
-            "institution_fr": "Banque mondiale, Programme de comparaison internationale (PCI)",
-            "title": "PPP conversion factor, private consumption (LCU per international $), Netherlands",
-            "indicator_code": "PA.NUS.PRVT.PP",
-            "url": "https://api.worldbank.org/v2/country/NLD/indicator/PA.NUS.PRVT.PP",
-            "reference_year": 2024,
-            "retrieved": "2026-08-04",
-            "used_for": [
-                "Converting the harmonized wage grid into Dutch euros and back into international dollars for the Netherlands"
-            ],
-            "status": "official"
-        },
-        {
-            "id": "gov_uk_ni_rates_2026_27",
-            "institution": "GOV.UK (HM Revenue & Customs)",
-            "institution_fr": "GOV.UK (HM Revenue & Customs)",
-            "title": "Rates and allowances: National Insurance contributions, 2026/27",
-            "url": "https://www.gov.uk/government/publications/rates-and-allowances-national-insurance-contributions/rates-and-allowances-national-insurance-contributions",
-            "reference_year": 2026,
-            "retrieved": "2026-08-05",
-            "used_for": [
-                "United Kingdom's Class 1 National Insurance rates and thresholds (employee and employer)"
-            ],
-            "status": "official"
-        },
-        {
-            "id": "uk_pensions_ae_thresholds_2026_27",
-            "institution": "UK Parliament / The Pensions Regulator",
-            "institution_fr": "Parlement britannique / The Pensions Regulator",
-            "title": "Automatic enrolment earnings trigger and qualifying earnings band, 2026/27",
-            "url": "https://questions-statements.parliament.uk/written-statements/detail/2025-12-18/hcws1206",
-            "reference_year": 2026,
-            "retrieved": "2026-08-05",
-            "used_for": [
-                "United Kingdom's automatic-enrolment workplace pension qualifying-earnings band and statutory minimum contribution rates"
-            ],
-            "status": "official"
-        },
-        {
-            "id": "worldbank_icp_ppp_uk",
-            "institution": "World Bank, International Comparison Program (ICP)",
-            "institution_fr": "Banque mondiale, Programme de comparaison internationale (PCI)",
-            "title": "PPP conversion factor, private consumption (LCU per international $), United Kingdom",
-            "indicator_code": "PA.NUS.PRVT.PP",
-            "url": "https://api.worldbank.org/v2/country/GBR/indicator/PA.NUS.PRVT.PP",
-            "reference_year": 2024,
-            "retrieved": "2026-08-05",
-            "used_for": [
-                "Converting the harmonized wage grid into pounds sterling and back into international dollars for the United Kingdom"
-            ],
-            "status": "official"
-        },
-        {
-            "id": "kpmg_ireland_budget_2026_tax_tables",
-            "institution": "KPMG Ireland (aggregating Revenue Commissioners / Budget 2026 figures)",
-            "institution_fr": "KPMG Irlande (agrégeant les chiffres de Revenue Commissioners / Budget 2026)",
-            "title": "Budget 2026 tax rates and credits tables (income tax, USC, PRSI Class A)",
-            "url": "https://kpmg.com/ie/en/insights/tax/budget-2026/tables.html",
-            "reference_year": 2026,
-            "retrieved": "2026-08-06",
-            "used_for": [
-                "Ireland's PAYE income tax bands and credits, USC bands and exemption threshold, and PRSI Class A employee/employer rates and thresholds"
-            ],
-            "status": "official_aggregated"
-        },
-        {
-            "id": "worldbank_icp_ppp_ireland",
-            "institution": "World Bank, International Comparison Program (ICP)",
-            "institution_fr": "Banque mondiale, Programme de comparaison internationale (PCI)",
-            "title": "PPP conversion factor, private consumption (LCU per international $), Ireland",
-            "indicator_code": "PA.NUS.PRVT.PP",
-            "url": "https://api.worldbank.org/v2/country/IRL/indicator/PA.NUS.PRVT.PP",
-            "reference_year": 2024,
-            "retrieved": "2026-08-06",
-            "used_for": [
-                "Converting the harmonized wage grid into euros and back into international dollars for Ireland"
-            ],
-            "status": "official"
-        },
-        {
-            "id": "ons_nrs_uk_mid2024_population_estimates",
-            "institution": "Office for National Statistics (ONS) and National Records of Scotland (NRS)",
-            "institution_fr": "Office for National Statistics (ONS) et National Records of Scotland (NRS)",
-            "title": "Mid-2024 population estimates for the UK and for Scotland",
-            "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/bulletins/annualmidyearpopulationestimates/mid2024",
-            "reference_year": 2024,
-            "retrieved": "2026-08-06",
-            "used_for": [
-                "Population weights (Scotland vs rUK) for the population-weighted average of the two UK devolved income-tax regimes in the comparison module, mirroring the Swiss canton population-weighting approach"
-            ],
-            "status": "official"
-        },
-        {
-            "id": "boe_real_decreto_126_2026_smi",
-            "institution": "Boletin Oficial del Estado (BOE), Gobierno de Espana",
-            "institution_fr": "Boletin Oficial del Estado (BOE), gouvernement espagnol",
-            "title": "Real Decreto 126/2026, de 18 de febrero, por el que se fija el salario minimo interprofesional para 2026 (BOE-A-2026-3815)",
-            "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2026-3815",
-            "reference_year": 2026,
-            "retrieved": "2026-08-06",
-            "used_for": [
-                "Spain's Salario Minimo Interprofesional (SMI), used as the wage-reference floor for the Spain module and comparison module"
-            ],
-            "status": "official"
-        },
-        {
-            "id": "worldbank_icp_ppp_spain",
-            "institution": "World Bank, International Comparison Program (ICP)",
-            "institution_fr": "Banque mondiale, Programme de comparaison internationale (PCI)",
-            "title": "PPP conversion factor, private consumption (LCU per international $), Spain",
-            "indicator_code": "PA.NUS.PRVT.PP",
-            "url": "https://api.worldbank.org/v2/country/ESP/indicator/PA.NUS.PRVT.PP",
-            "reference_year": 2024,
-            "retrieved": "2026-08-06",
-            "used_for": [
-                "Converting the harmonized wage grid into euros and back into international dollars for Spain"
-            ],
-            "status": "official"
-        },
-        {
-            "id": "skatteverket_skv433_teknisk_beskrivning_2026",
-            "institution": "Skatteverket (Swedish Tax Agency)",
-            "institution_fr": "Skatteverket (administration fiscale suedoise)",
-            "title": "Teknisk beskrivning SKV 433, edition 36, 2025-12-10 (grundavdrag, jobbskatteavdrag, statlig/kommunal inkomstskatt, allman pensionsavgift)",
-            "url": "https://www.skatteverket.se/download/18.1522bf3f19aea8075ba55c/1766385913260/teknisk-beskrivning-skv-433-2026-utgava-36.pdf",
-            "reference_year": 2026,
-            "retrieved": "2026-08-28",
-            "used_for": [
-                "Sweden's grundavdrag and jobbskatteavdrag formulas, statlig inkomstskatt skiktgrans, kommunalskatt base and the allman pensionsavgift/skattereduktion net-zero mechanism"
-            ],
-            "status": "official"
-        },
-        {
-            "id": "worldbank_icp_ppp_sweden",
-            "institution": "World Bank, International Comparison Program (ICP)",
-            "institution_fr": "Banque mondiale, Programme de comparaison internationale (PCI)",
-            "title": "PPP conversion factor, private consumption (LCU per international $), Sweden",
-            "indicator_code": "PA.NUS.PRVT.PP",
-            "url": "https://api.worldbank.org/v2/country/SWE/indicator/PA.NUS.PRVT.PP",
-            "reference_year": 2024,
-            "retrieved": "2026-08-28",
-            "used_for": [
-                "Converting the harmonized wage grid into Swedish kronor and back into international dollars for Sweden"
-            ],
-            "status": "official"
-        },
-        {
-            "id": "irs_ssa_dol_federal_payroll_2026",
-            "institution": "IRS, Social Security Administration, US Department of Labor",
-            "institution_fr": "IRS, Social Security Administration, ministere americain du Travail",
-            "title": "Federal income tax brackets and standard deduction (Rev. Proc. 2025-32), Social Security/Medicare rates and wage base, FUTA net rate, federal minimum wage",
-            "url": "https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill",
-            "reference_year": 2026,
-            "retrieved": "2026-08-28",
-            "used_for": [
-                "The United States' federal income tax, FICA and FUTA layers, identical across all 50 states and DC"
-            ],
-            "status": "official"
-        },
-        {
-            "id": "us_state_departments_revenue_labor_2026",
-            "institution": "50 state Departments of Revenue/Taxation and Departments of Labor/Employment Security, plus DC OTR/DOES",
-            "institution_fr": "Administrations fiscales et du travail des 50 Etats americains et de DC",
-            "title": "State income tax brackets, State Unemployment Insurance rates and any state-mandated payroll deduction, 2026",
-            "url": "https://www.irs.gov/",
-            "reference_year": 2026,
-            "retrieved": "2026-08-28",
-            "used_for": [
-                "The United States' 50 state-level (+ DC) income tax, SUI and extra payroll-deduction layers"
-            ],
-            "status": "official_aggregated",
-            "note": "Full per-state citations and confidence flags in docs/data/usa/usa_sources_2026.json."
-        },
-        {
-            "id": "census_bureau_state_population_2024_comparison",
-            "institution": "US Census Bureau",
-            "institution_fr": "Bureau du recensement des Etats-Unis",
-            "title": "Annual Estimates of the Resident Population (NST-EST2024-POP)",
-            "url": "https://www2.census.gov/programs-surveys/popest/tables/2020-2024/state/totals/NST-EST2024-POP.xlsx",
-            "reference_year": 2024,
-            "retrieved": "2026-08-28",
-            "used_for": [
-                "Population weights for the 50-states-plus-DC population-weighted average, mirroring the Swiss canton weighting approach"
-            ],
-            "status": "official"
-        },
-        {
-            "id": "china_iit_law_and_provincial_si_hpf_2026",
-            "institution": "国家税务总局 State Taxation Administration; 31 provincial/municipal 人力资源和社会保障厅/局, 医疗保障局 and 住房公积金管理中心",
-            "institution_fr": "Administration fiscale d'Etat chinoise ; administrations provinciales des ressources humaines, de la securite sociale, de la garantie medicale et du fonds de logement",
-            "title": "Individual Income Tax law and brackets (national); social insurance and Housing Provident Fund contribution bases/rates, 31 provinces, 2025-2026",
-            "url": "https://www.chinatax.gov.cn/",
-            "reference_year": 2026,
-            "retrieved": "2026-08-29",
-            "used_for": [
-                "China's national income tax layer and each of the 31 provinces' social-insurance/housing-fund layer"
-            ],
-            "status": "official_aggregated",
-            "note": "Full per-province citations and confidence flags in docs/data/china/china_sources_2026.json."
-        },
-        {
-            "id": "china_province_population_2024",
-            "institution": "National Bureau of Statistics of China",
-            "institution_fr": "Bureau national des statistiques de Chine",
-            "title": "2024 year-end resident population by province",
-            "reference_year": 2024,
-            "retrieved": "2026-08-29",
-            "used_for": [
-                "Population weights for the 31-province population-weighted average, mirroring the Swiss canton weighting approach"
-            ],
-            "status": "official_aggregated"
-        },
-        {
-            "id": "japan_nta_nenkin_kyokai_kenpo_mhlw_2026",
-            "institution": "国税庁 National Tax Agency; 日本年金機構 Japan Pension Service; 全国健康保険協会 Kyokai Kenpo; 厚生労働省 MHLW",
-            "institution_fr": "Administration fiscale nationale, Service japonais des pensions, Kyokai Kenpo, ministere de la Sante du Travail et des Affaires sociales",
-            "title": "National income tax brackets and 2026 basic-deduction reform; resident tax; employee pension standard-remuneration bands; Kyokai Kenpo prefecture health-insurance rates; employment and workers' accident insurance",
-            "url": "https://www.nta.go.jp/",
-            "reference_year": 2026,
-            "retrieved": "2026-08-30",
-            "used_for": [
-                "Japan's national income-tax/resident-tax layer and each of the 47 prefectures' Kyokai Kenpo health-insurance layer"
-            ],
-            "status": "official_aggregated",
-            "note": "Full citations and confidence flags in docs/data/japan/japan_sources_2026.json."
-        },
-        {
-            "id": "japan_prefecture_population_2025",
-            "institution": "Statistics Bureau of Japan",
-            "institution_fr": "Bureau des statistiques du Japon",
-            "title": "2025 estimated population by prefecture",
-            "reference_year": 2025,
-            "retrieved": "2026-08-30",
-            "used_for": [
-                "Population weights for the 47-prefecture population-weighted average, mirroring the Swiss canton weighting approach"
-            ],
-            "status": "official_aggregated"
-        },
-        {
-            "id": "inps_circolare_6_2026",
-            "institution": "INPS (Istituto Nazionale della Previdenza Sociale)",
-            "institution_fr": "INPS (institut national de la prevoyance sociale italien)",
-            "title": "Circolare n. 6 del 30 gennaio 2026 (valori contributivi e retributivi 2026)",
-            "url": "https://www.inps.it/it/it/inps-comunica/atti/circolari-messaggi-e-normativa/dettaglio.circolari-e-messaggi.2026.01.circolare-numero-6-del-30-01-2026_15151.html",
-            "reference_year": 2026,
-            "retrieved": "2026-08-28",
-            "used_for": [
-                "Italy's INPS employer/employee social contribution rates, the massimale contributivo ceiling and the prima fascia threshold for the additional 1% employee contribution"
-            ],
-            "status": "official"
-        },
-        {
-            "id": "regione_lazio_addizionale_2026",
-            "institution": "Regione Lazio",
-            "institution_fr": "Region du Latium",
-            "title": "Misura dell'aliquota dell'addizionale regionale IRPEF -- Anno d'imposta 2026",
-            "url": "https://www.regione.lazio.it/sites/default/files/2026-01/Addizionale-regionale-2026.pdf",
-            "reference_year": 2026,
-            "retrieved": "2026-08-28",
-            "used_for": [
-                "Italy's addizionale regionale (Lazio, the reference region), a tiered-flat surcharge on the whole taxable income"
-            ],
-            "status": "official"
-        },
-        {
-            "id": "worldbank_icp_ppp_italy",
-            "institution": "World Bank, International Comparison Program (ICP)",
-            "institution_fr": "Banque mondiale, Programme de comparaison internationale (PCI)",
-            "title": "PPP conversion factor, private consumption (LCU per international $), Italy",
-            "indicator_code": "PA.NUS.PRVT.PP",
-            "url": "https://api.worldbank.org/v2/country/ITA/indicator/PA.NUS.PRVT.PP",
-            "reference_year": 2024,
-            "retrieved": "2026-08-28",
-            "used_for": [
-                "Converting the harmonized wage grid into euros and back into international dollars for Italy"
-            ],
-            "status": "official"
-        }
-    ],
-    "notes": [
-        "This module reuses each country's own reference dataset (France: Mon-entreprise/Publicodes engine; Germany: analysis/germany; Belgium: analysis/belgium; Switzerland: analysis/switzerland; Netherlands: analysis/netherlands; United Kingdom: analysis/uk; Ireland: analysis/ireland) and does not redefine any country-level parameter.",
-        "See docs/data/comparison/comparison_parameters_2026.json for the harmonized wage grid, the exact PPP values used, the reference profile chosen per country, and the Swiss canton population figures.",
-        "France's 'net after income tax' figure is the actual tax due by a single, childless reference taxpayer (1 part de quotient familial), computed via the true progressive income-tax barème (see docs/data/france/france_income_tax_2026.json), directly analogous to Germany, Belgium and Switzerland's actual mandatory tax liability for a single/childless reference profile. The non-personalized 'taux neutre' withholding schedule was evaluated as an initial proxy but rejected because it does not represent any specific taxpayer's actual tax burden; it remains documented for reference only.",
-        "The Netherlands has no separate employee social-security contribution: AOW/Anw/Wlz national-insurance premiums are bundled into the Box 1 wage-tax rate. See docs/data/netherlands/netherlands_sources_2026.json for the full loonheffing formulas, employer-levy rates and an independent cross-check against a secondary net-minimum-wage figure.",
-        "The United Kingdom's reference profile is outside Scotland (rUK income-tax bands only) and includes the statutory-minimum automatic-enrolment workplace pension (employee 5%, employer 3% of qualifying earnings) alongside Class 1 National Insurance in the employee/employer contribution figures. See docs/data/uk/uk_sources_2026.json for the full rate schedule and sources.",
-        "Ireland's employee/employer contribution figures are PRSI Class A only (January-September 2026 rates); the Universal Social Charge (USC), a separate tax on income, is bundled into the income-tax figure alongside PAYE. See docs/data/ireland/ireland_sources_2026.json for the full rate schedule and sources.",
-        "Spain's reference profile uses the Comunidad de Madrid regional IRPF scale; the other 16 comunidades autonomas each set their own regional scale and are not modelled. Employee/employer contribution figures are Seguridad Social Regimen General only. See docs/data/spain/spain_sources_2026.json for the full rate schedule and sources.",
-        "Sweden has no statutory minimum wage; the reference wage used is the Migrationsverket work-permit wage floor (90% of the SCB median salary). The allman pensionsavgift (7% employee pension contribution) is fully offset by an equal skattereduktion across this module's wage range, so employee_contributions is 0 by construction and the full payroll tax liability appears under income_tax_or_withholding_tax. Only Stockholm kommun is modelled. See docs/data/sweden/sweden_sources_2026.json for the full rate schedule and sources.",
-        "Italy has no statutory minimum wage either; the reference wage used is the CCNL Commercio Livello 3 minimo tabellare (a methodological choice, not a legal minimum), prorated from its 14-installment payment schedule. employer_cost includes the TFR deferred severance accrual (~6.91% of gross annual pay), a personnel cost that is not available to the employee as current net pay. Income tax bundles national IRPEF with the Lazio addizionale regionale and Roma addizionale comunale, both tiered-flat (not marginal) surcharges. See docs/data/italy/italy_sources_2026.json for the full rate schedule and sources.",
-        "The United States is aggregated as a population-weighted average across all 50 states and DC, mirroring the Swiss canton/UK region/Spanish region approach; federal income tax, FICA and FUTA are uniform nationwide while state income tax (9 states have none), SUI and any state-mandated payroll deduction (SDI/PFML/TDI in 13 jurisdictions) vary by state. The reference wage is the federal minimum wage (USD 7.25/hour). See docs/data/usa/usa_sources_2026.json for the full per-state rate schedule and sources.",
-        "China is aggregated as a population-weighted average across all 31 mainland provinces/municipalities/autonomous regions; individual income tax is uniform nationwide while the social-insurance contribution-base floor/cap, some contribution rates, and the housing-fund contribution base vary by province (the housing-fund rate itself is a discretionary employer choice, modelled with one uniform illustrative 7% rate). The reference wage is Shanghai's own minimum wage (RMB 2,740/month), a methodological convention since China has no national minimum wage. See docs/data/china/china_sources_2026.json for the full per-province rate schedule and sources.",
-        "Japan is aggregated as a population-weighted average across all 47 prefectures; national income tax and resident tax are uniform nationwide (though using two different basic-deduction schedules since a 2026 reform) while only the Kyokai Kenpo health-insurance premium rate (9.21%-10.55%) varies by prefecture. The reference wage is Tokyo's own minimum wage (JPY 1,226/hour), a methodological convention since Japan has no national minimum wage. See docs/data/japan/japan_sources_2026.json for the full per-prefecture rate schedule and sources."
-    ]
+  "module_name": "Cross-Country Labour Cost Comparison",
+  "version": "2026-01",
+  "countries_covered": [
+    "France",
+    "Germany",
+    "Belgium",
+    "Switzerland",
+    "Netherlands",
+    "United Kingdom",
+    "Ireland",
+    "Spain",
+    "Sweden",
+    "Italy",
+    "United States",
+    "China",
+    "Japan",
+    "Canada"
+  ],
+  "sources": [
+    {
+      "id": "worldbank_icp_private_consumption_ppp",
+      "institution": "World Bank, International Comparison Program (ICP)",
+      "institution_fr": "Banque mondiale, Programme de comparaison internationale (PCI)",
+      "title": "PPP conversion factor, private consumption (LCU per international $)",
+      "indicator_code": "PA.NUS.PRVT.PP",
+      "url": "https://api.worldbank.org/v2/country/FRA;DEU;BEL;CHE/indicator/PA.NUS.PRVT.PP",
+      "reference_year": 2024,
+      "retrieved": "2026-08-04",
+      "used_for": [
+        "Converting the harmonized wage grid (expressed in international dollars) into each country's local currency",
+        "Converting each country's local-currency outputs back into international dollars for cross-country comparison"
+      ],
+      "status": "official"
+    },
+    {
+      "id": "bfs_permanent_resident_population_by_canton",
+      "institution": "Swiss Federal Statistical Office (Office fédéral de la statistique, BFS/OFS)",
+      "institution_fr": "Office fédéral de la statistique",
+      "title": "Population résidante permanente et non permanente selon Année, Canton et Type de population",
+      "table_id": "px-x-0103010000_101",
+      "url": "https://www.pxweb.bfs.admin.ch/pxweb/fr/px-x-0103010000_101/px-x-0103010000_101/px-x-0103010000_101.px",
+      "reference_year": 2024,
+      "retrieved": "2026-08-04",
+      "used_for": [
+        "Population weights for the 26 Swiss cantons, used to compute a single population-weighted Swiss reference case (Switzerland has no single national withholding-tax schedule)"
+      ],
+      "status": "official"
+    },
+    {
+      "id": "service_public_bareme_ir_2026",
+      "institution": "service-public.gouv.fr (Direction de l'information légale et administrative)",
+      "institution_fr": "service-public.gouv.fr (Direction de l'information légale et administrative)",
+      "title": "Barème de l'impôt sur le revenu 2026 (revenus 2025) et exemple de calcul par tranches",
+      "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1419",
+      "reference_year": 2026,
+      "retrieved": "2026-08-04",
+      "used_for": [
+        "France's 'net after income tax' figure: the actual progressive income-tax barème (marginal brackets, 1 part de quotient familial) applied to a single, childless reference taxpayer"
+      ],
+      "status": "official"
+    },
+    {
+      "id": "bofip_taux_neutre_pas_2026",
+      "institution": "Direction générale des Finances publiques (DGFiP), BOFiP-Impôts",
+      "institution_fr": "Direction générale des Finances publiques (DGFiP), BOFiP-Impôts",
+      "title": "BOI-BAREME-000037 - Grilles de taux par défaut du prélèvement à la source",
+      "url": "https://bofip.impots.gouv.fr/bofip/11255-PGP.html/identifiant=BOI-BAREME-000037-20260407",
+      "reference_year": 2026,
+      "retrieved": "2026-08-04",
+      "used_for": [
+        "Reference documentation only: the non-personalized 'taux neutre' withholding mechanism (grille métropole, effective 1 May 2026) is no longer used to compute France's 'net after income tax' figure (see service_public_bareme_ir_2026 above); it is kept to document how the monthly prélèvement à la source actually works."
+      ],
+      "status": "official"
+    },
+    {
+      "id": "belastingdienst_box1_heffingskortingen_2026",
+      "institution": "Belastingdienst (Dutch Tax and Customs Administration)",
+      "institution_fr": "Belastingdienst (administration fiscale néerlandaise)",
+      "title": "Voorlopige aanslag 2026: gebruikte tarieven en heffingskortingen (Box 1, algemene heffingskorting, arbeidskorting)",
+      "url": "https://www.belastingdienst.nl/wps/wcm/connect/nl/voorlopige-aanslag/content/voorlopige-aanslag-tarieven-en-heffingskortingen",
+      "reference_year": 2026,
+      "retrieved": "2026-08-04",
+      "used_for": [
+        "Netherlands' loonheffing (Box 1 wage-tax brackets, algemene heffingskorting and arbeidskorting), the sole basis for the Netherlands' 'net after income tax' figure"
+      ],
+      "status": "official"
+    },
+    {
+      "id": "worldbank_icp_ppp_netherlands",
+      "institution": "World Bank, International Comparison Program (ICP)",
+      "institution_fr": "Banque mondiale, Programme de comparaison internationale (PCI)",
+      "title": "PPP conversion factor, private consumption (LCU per international $), Netherlands",
+      "indicator_code": "PA.NUS.PRVT.PP",
+      "url": "https://api.worldbank.org/v2/country/NLD/indicator/PA.NUS.PRVT.PP",
+      "reference_year": 2024,
+      "retrieved": "2026-08-04",
+      "used_for": [
+        "Converting the harmonized wage grid into Dutch euros and back into international dollars for the Netherlands"
+      ],
+      "status": "official"
+    },
+    {
+      "id": "gov_uk_ni_rates_2026_27",
+      "institution": "GOV.UK (HM Revenue & Customs)",
+      "institution_fr": "GOV.UK (HM Revenue & Customs)",
+      "title": "Rates and allowances: National Insurance contributions, 2026/27",
+      "url": "https://www.gov.uk/government/publications/rates-and-allowances-national-insurance-contributions/rates-and-allowances-national-insurance-contributions",
+      "reference_year": 2026,
+      "retrieved": "2026-08-05",
+      "used_for": [
+        "United Kingdom's Class 1 National Insurance rates and thresholds (employee and employer)"
+      ],
+      "status": "official"
+    },
+    {
+      "id": "uk_pensions_ae_thresholds_2026_27",
+      "institution": "UK Parliament / The Pensions Regulator",
+      "institution_fr": "Parlement britannique / The Pensions Regulator",
+      "title": "Automatic enrolment earnings trigger and qualifying earnings band, 2026/27",
+      "url": "https://questions-statements.parliament.uk/written-statements/detail/2025-12-18/hcws1206",
+      "reference_year": 2026,
+      "retrieved": "2026-08-05",
+      "used_for": [
+        "United Kingdom's automatic-enrolment workplace pension qualifying-earnings band and statutory minimum contribution rates"
+      ],
+      "status": "official"
+    },
+    {
+      "id": "worldbank_icp_ppp_uk",
+      "institution": "World Bank, International Comparison Program (ICP)",
+      "institution_fr": "Banque mondiale, Programme de comparaison internationale (PCI)",
+      "title": "PPP conversion factor, private consumption (LCU per international $), United Kingdom",
+      "indicator_code": "PA.NUS.PRVT.PP",
+      "url": "https://api.worldbank.org/v2/country/GBR/indicator/PA.NUS.PRVT.PP",
+      "reference_year": 2024,
+      "retrieved": "2026-08-05",
+      "used_for": [
+        "Converting the harmonized wage grid into pounds sterling and back into international dollars for the United Kingdom"
+      ],
+      "status": "official"
+    },
+    {
+      "id": "kpmg_ireland_budget_2026_tax_tables",
+      "institution": "KPMG Ireland (aggregating Revenue Commissioners / Budget 2026 figures)",
+      "institution_fr": "KPMG Irlande (agrégeant les chiffres de Revenue Commissioners / Budget 2026)",
+      "title": "Budget 2026 tax rates and credits tables (income tax, USC, PRSI Class A)",
+      "url": "https://kpmg.com/ie/en/insights/tax/budget-2026/tables.html",
+      "reference_year": 2026,
+      "retrieved": "2026-08-06",
+      "used_for": [
+        "Ireland's PAYE income tax bands and credits, USC bands and exemption threshold, and PRSI Class A employee/employer rates and thresholds"
+      ],
+      "status": "official_aggregated"
+    },
+    {
+      "id": "worldbank_icp_ppp_ireland",
+      "institution": "World Bank, International Comparison Program (ICP)",
+      "institution_fr": "Banque mondiale, Programme de comparaison internationale (PCI)",
+      "title": "PPP conversion factor, private consumption (LCU per international $), Ireland",
+      "indicator_code": "PA.NUS.PRVT.PP",
+      "url": "https://api.worldbank.org/v2/country/IRL/indicator/PA.NUS.PRVT.PP",
+      "reference_year": 2024,
+      "retrieved": "2026-08-06",
+      "used_for": [
+        "Converting the harmonized wage grid into euros and back into international dollars for Ireland"
+      ],
+      "status": "official"
+    },
+    {
+      "id": "ons_nrs_uk_mid2024_population_estimates",
+      "institution": "Office for National Statistics (ONS) and National Records of Scotland (NRS)",
+      "institution_fr": "Office for National Statistics (ONS) et National Records of Scotland (NRS)",
+      "title": "Mid-2024 population estimates for the UK and for Scotland",
+      "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/bulletins/annualmidyearpopulationestimates/mid2024",
+      "reference_year": 2024,
+      "retrieved": "2026-08-06",
+      "used_for": [
+        "Population weights (Scotland vs rUK) for the population-weighted average of the two UK devolved income-tax regimes in the comparison module, mirroring the Swiss canton population-weighting approach"
+      ],
+      "status": "official"
+    },
+    {
+      "id": "boe_real_decreto_126_2026_smi",
+      "institution": "Boletin Oficial del Estado (BOE), Gobierno de Espana",
+      "institution_fr": "Boletin Oficial del Estado (BOE), gouvernement espagnol",
+      "title": "Real Decreto 126/2026, de 18 de febrero, por el que se fija el salario minimo interprofesional para 2026 (BOE-A-2026-3815)",
+      "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2026-3815",
+      "reference_year": 2026,
+      "retrieved": "2026-08-06",
+      "used_for": [
+        "Spain's Salario Minimo Interprofesional (SMI), used as the wage-reference floor for the Spain module and comparison module"
+      ],
+      "status": "official"
+    },
+    {
+      "id": "worldbank_icp_ppp_spain",
+      "institution": "World Bank, International Comparison Program (ICP)",
+      "institution_fr": "Banque mondiale, Programme de comparaison internationale (PCI)",
+      "title": "PPP conversion factor, private consumption (LCU per international $), Spain",
+      "indicator_code": "PA.NUS.PRVT.PP",
+      "url": "https://api.worldbank.org/v2/country/ESP/indicator/PA.NUS.PRVT.PP",
+      "reference_year": 2024,
+      "retrieved": "2026-08-06",
+      "used_for": [
+        "Converting the harmonized wage grid into euros and back into international dollars for Spain"
+      ],
+      "status": "official"
+    },
+    {
+      "id": "skatteverket_skv433_teknisk_beskrivning_2026",
+      "institution": "Skatteverket (Swedish Tax Agency)",
+      "institution_fr": "Skatteverket (administration fiscale suedoise)",
+      "title": "Teknisk beskrivning SKV 433, edition 36, 2025-12-10 (grundavdrag, jobbskatteavdrag, statlig/kommunal inkomstskatt, allman pensionsavgift)",
+      "url": "https://www.skatteverket.se/download/18.1522bf3f19aea8075ba55c/1766385913260/teknisk-beskrivning-skv-433-2026-utgava-36.pdf",
+      "reference_year": 2026,
+      "retrieved": "2026-08-28",
+      "used_for": [
+        "Sweden's grundavdrag and jobbskatteavdrag formulas, statlig inkomstskatt skiktgrans, kommunalskatt base and the allman pensionsavgift/skattereduktion net-zero mechanism"
+      ],
+      "status": "official"
+    },
+    {
+      "id": "worldbank_icp_ppp_sweden",
+      "institution": "World Bank, International Comparison Program (ICP)",
+      "institution_fr": "Banque mondiale, Programme de comparaison internationale (PCI)",
+      "title": "PPP conversion factor, private consumption (LCU per international $), Sweden",
+      "indicator_code": "PA.NUS.PRVT.PP",
+      "url": "https://api.worldbank.org/v2/country/SWE/indicator/PA.NUS.PRVT.PP",
+      "reference_year": 2024,
+      "retrieved": "2026-08-28",
+      "used_for": [
+        "Converting the harmonized wage grid into Swedish kronor and back into international dollars for Sweden"
+      ],
+      "status": "official"
+    },
+    {
+      "id": "irs_ssa_dol_federal_payroll_2026",
+      "institution": "IRS, Social Security Administration, US Department of Labor",
+      "institution_fr": "IRS, Social Security Administration, ministere americain du Travail",
+      "title": "Federal income tax brackets and standard deduction (Rev. Proc. 2025-32), Social Security/Medicare rates and wage base, FUTA net rate, federal minimum wage",
+      "url": "https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill",
+      "reference_year": 2026,
+      "retrieved": "2026-08-28",
+      "used_for": [
+        "The United States' federal income tax, FICA and FUTA layers, identical across all 50 states and DC"
+      ],
+      "status": "official"
+    },
+    {
+      "id": "us_state_departments_revenue_labor_2026",
+      "institution": "50 state Departments of Revenue/Taxation and Departments of Labor/Employment Security, plus DC OTR/DOES",
+      "institution_fr": "Administrations fiscales et du travail des 50 Etats americains et de DC",
+      "title": "State income tax brackets, State Unemployment Insurance rates and any state-mandated payroll deduction, 2026",
+      "url": "https://www.irs.gov/",
+      "reference_year": 2026,
+      "retrieved": "2026-08-28",
+      "used_for": [
+        "The United States' 50 state-level (+ DC) income tax, SUI and extra payroll-deduction layers"
+      ],
+      "status": "official_aggregated",
+      "note": "Full per-state citations and confidence flags in docs/data/usa/usa_sources_2026.json."
+    },
+    {
+      "id": "census_bureau_state_population_2024_comparison",
+      "institution": "US Census Bureau",
+      "institution_fr": "Bureau du recensement des Etats-Unis",
+      "title": "Annual Estimates of the Resident Population (NST-EST2024-POP)",
+      "url": "https://www2.census.gov/programs-surveys/popest/tables/2020-2024/state/totals/NST-EST2024-POP.xlsx",
+      "reference_year": 2024,
+      "retrieved": "2026-08-28",
+      "used_for": [
+        "Population weights for the 50-states-plus-DC population-weighted average, mirroring the Swiss canton weighting approach"
+      ],
+      "status": "official"
+    },
+    {
+      "id": "china_iit_law_and_provincial_si_hpf_2026",
+      "institution": "国家税务总局 State Taxation Administration; 31 provincial/municipal 人力资源和社会保障厅/局, 医疗保障局 and 住房公积金管理中心",
+      "institution_fr": "Administration fiscale d'Etat chinoise ; administrations provinciales des ressources humaines, de la securite sociale, de la garantie medicale et du fonds de logement",
+      "title": "Individual Income Tax law and brackets (national); social insurance and Housing Provident Fund contribution bases/rates, 31 provinces, 2025-2026",
+      "url": "https://www.chinatax.gov.cn/",
+      "reference_year": 2026,
+      "retrieved": "2026-08-29",
+      "used_for": [
+        "China's national income tax layer and each of the 31 provinces' social-insurance/housing-fund layer"
+      ],
+      "status": "official_aggregated",
+      "note": "Full per-province citations and confidence flags in docs/data/china/china_sources_2026.json."
+    },
+    {
+      "id": "china_province_population_2024",
+      "institution": "National Bureau of Statistics of China",
+      "institution_fr": "Bureau national des statistiques de Chine",
+      "title": "2024 year-end resident population by province",
+      "reference_year": 2024,
+      "retrieved": "2026-08-29",
+      "used_for": [
+        "Population weights for the 31-province population-weighted average, mirroring the Swiss canton weighting approach"
+      ],
+      "status": "official_aggregated"
+    },
+    {
+      "id": "japan_nta_nenkin_kyokai_kenpo_mhlw_2026",
+      "institution": "国税庁 National Tax Agency; 日本年金機構 Japan Pension Service; 全国健康保険協会 Kyokai Kenpo; 厚生労働省 MHLW",
+      "institution_fr": "Administration fiscale nationale, Service japonais des pensions, Kyokai Kenpo, ministere de la Sante du Travail et des Affaires sociales",
+      "title": "National income tax brackets and 2026 basic-deduction reform; resident tax; employee pension standard-remuneration bands; Kyokai Kenpo prefecture health-insurance rates; employment and workers' accident insurance",
+      "url": "https://www.nta.go.jp/",
+      "reference_year": 2026,
+      "retrieved": "2026-08-30",
+      "used_for": [
+        "Japan's national income-tax/resident-tax layer and each of the 47 prefectures' Kyokai Kenpo health-insurance layer"
+      ],
+      "status": "official_aggregated",
+      "note": "Full citations and confidence flags in docs/data/japan/japan_sources_2026.json."
+    },
+    {
+      "id": "japan_prefecture_population_2025",
+      "institution": "Statistics Bureau of Japan",
+      "institution_fr": "Bureau des statistiques du Japon",
+      "title": "2025 estimated population by prefecture",
+      "reference_year": 2025,
+      "retrieved": "2026-08-30",
+      "used_for": [
+        "Population weights for the 47-prefecture population-weighted average, mirroring the Swiss canton weighting approach"
+      ],
+      "status": "official_aggregated"
+    },
+    {
+      "id": "inps_circolare_6_2026",
+      "institution": "INPS (Istituto Nazionale della Previdenza Sociale)",
+      "institution_fr": "INPS (institut national de la prevoyance sociale italien)",
+      "title": "Circolare n. 6 del 30 gennaio 2026 (valori contributivi e retributivi 2026)",
+      "url": "https://www.inps.it/it/it/inps-comunica/atti/circolari-messaggi-e-normativa/dettaglio.circolari-e-messaggi.2026.01.circolare-numero-6-del-30-01-2026_15151.html",
+      "reference_year": 2026,
+      "retrieved": "2026-08-28",
+      "used_for": [
+        "Italy's INPS employer/employee social contribution rates, the massimale contributivo ceiling and the prima fascia threshold for the additional 1% employee contribution"
+      ],
+      "status": "official"
+    },
+    {
+      "id": "regione_lazio_addizionale_2026",
+      "institution": "Regione Lazio",
+      "institution_fr": "Region du Latium",
+      "title": "Misura dell'aliquota dell'addizionale regionale IRPEF -- Anno d'imposta 2026",
+      "url": "https://www.regione.lazio.it/sites/default/files/2026-01/Addizionale-regionale-2026.pdf",
+      "reference_year": 2026,
+      "retrieved": "2026-08-28",
+      "used_for": [
+        "Italy's addizionale regionale (Lazio, the reference region), a tiered-flat surcharge on the whole taxable income"
+      ],
+      "status": "official"
+    },
+    {
+      "id": "worldbank_icp_ppp_italy",
+      "institution": "World Bank, International Comparison Program (ICP)",
+      "institution_fr": "Banque mondiale, Programme de comparaison internationale (PCI)",
+      "title": "PPP conversion factor, private consumption (LCU per international $), Italy",
+      "indicator_code": "PA.NUS.PRVT.PP",
+      "url": "https://api.worldbank.org/v2/country/ITA/indicator/PA.NUS.PRVT.PP",
+      "reference_year": 2024,
+      "retrieved": "2026-08-28",
+      "used_for": [
+        "Converting the harmonized wage grid into euros and back into international dollars for Italy"
+      ],
+      "status": "official"
+    },
+    {
+      "id": "worldbank_icp_ppp_canada",
+      "institution": "World Bank, International Comparison Program (ICP)",
+      "institution_fr": "Banque mondiale, Programme de comparaison internationale (PCI)",
+      "title": "PPP conversion factor, private consumption (LCU per international $), Canada",
+      "indicator_code": "PA.NUS.PRVT.PP",
+      "url": "https://api.worldbank.org/v2/country/CAN/indicator/PA.NUS.PRVT.PP",
+      "reference_year": 2024,
+      "retrieved": "2026-08-30",
+      "used_for": [
+        "Converting the harmonized wage grid into Canadian dollars and back into international dollars for Canada"
+      ],
+      "status": "official"
+    },
+    {
+      "id": "canada_cra_rrq_edsc_provincial_finance_2026",
+      "institution": "Canada Revenue Agency (CRA); Retraite Quebec; Revenu Quebec; Employment and Social Development Canada (ESDC); provincial and territorial finance ministries",
+      "institution_fr": "Agence du revenu du Canada, Retraite Quebec, Revenu Quebec, Emploi et Developpement social Canada, ministeres des Finances provinciaux et territoriaux",
+      "title": "Federal and provincial/territorial income tax brackets and basic personal amounts; CPP/CPP2 and QPP/QPP2; Employment Insurance and QPIP; Ontario surtax, Health Premium and Employer Health Tax; Quebec Fonds des services de sante and federal abatement",
+      "url": "https://www.canada.ca/en/revenue-agency.html",
+      "reference_year": 2026,
+      "retrieved": "2026-08-30",
+      "used_for": [
+        "Canada's federal income-tax layer and each of the 13 provinces' and territories' own income-tax bracket schedule, basic personal amount, and province-specific payroll levies"
+      ],
+      "status": "official_aggregated",
+      "note": "Full citations, per-jurisdiction bracket tables and confidence flags in docs/data/canada/canada_sources_2026.json."
+    },
+    {
+      "id": "canada_province_population_2025",
+      "institution": "Statistics Canada",
+      "institution_fr": "Statistique Canada",
+      "title": "2025 estimated population by province and territory",
+      "reference_year": 2025,
+      "retrieved": "2026-08-30",
+      "used_for": [
+        "Population weights for the 13-province/territory population-weighted average, mirroring the Swiss canton weighting approach"
+      ],
+      "status": "official_aggregated"
+    }
+  ],
+  "notes": [
+    "This module reuses each country's own reference dataset (France: Mon-entreprise/Publicodes engine; Germany: analysis/germany; Belgium: analysis/belgium; Switzerland: analysis/switzerland; Netherlands: analysis/netherlands; United Kingdom: analysis/uk; Ireland: analysis/ireland) and does not redefine any country-level parameter.",
+    "See docs/data/comparison/comparison_parameters_2026.json for the harmonized wage grid, the exact PPP values used, the reference profile chosen per country, and the Swiss canton population figures.",
+    "France's 'net after income tax' figure is the actual tax due by a single, childless reference taxpayer (1 part de quotient familial), computed via the true progressive income-tax barème (see docs/data/france/france_income_tax_2026.json), directly analogous to Germany, Belgium and Switzerland's actual mandatory tax liability for a single/childless reference profile. The non-personalized 'taux neutre' withholding schedule was evaluated as an initial proxy but rejected because it does not represent any specific taxpayer's actual tax burden; it remains documented for reference only.",
+    "The Netherlands has no separate employee social-security contribution: AOW/Anw/Wlz national-insurance premiums are bundled into the Box 1 wage-tax rate. See docs/data/netherlands/netherlands_sources_2026.json for the full loonheffing formulas, employer-levy rates and an independent cross-check against a secondary net-minimum-wage figure.",
+    "The United Kingdom's reference profile is outside Scotland (rUK income-tax bands only) and includes the statutory-minimum automatic-enrolment workplace pension (employee 5%, employer 3% of qualifying earnings) alongside Class 1 National Insurance in the employee/employer contribution figures. See docs/data/uk/uk_sources_2026.json for the full rate schedule and sources.",
+    "Ireland's employee/employer contribution figures are PRSI Class A only (January-September 2026 rates); the Universal Social Charge (USC), a separate tax on income, is bundled into the income-tax figure alongside PAYE. See docs/data/ireland/ireland_sources_2026.json for the full rate schedule and sources.",
+    "Spain's reference profile uses the Comunidad de Madrid regional IRPF scale; the other 16 comunidades autonomas each set their own regional scale and are not modelled. Employee/employer contribution figures are Seguridad Social Regimen General only. See docs/data/spain/spain_sources_2026.json for the full rate schedule and sources.",
+    "Sweden has no statutory minimum wage; the reference wage used is the Migrationsverket work-permit wage floor (90% of the SCB median salary). The allman pensionsavgift (7% employee pension contribution) is fully offset by an equal skattereduktion across this module's wage range, so employee_contributions is 0 by construction and the full payroll tax liability appears under income_tax_or_withholding_tax. Only Stockholm kommun is modelled. See docs/data/sweden/sweden_sources_2026.json for the full rate schedule and sources.",
+    "Italy has no statutory minimum wage either; the reference wage used is the CCNL Commercio Livello 3 minimo tabellare (a methodological choice, not a legal minimum), prorated from its 14-installment payment schedule. employer_cost includes the TFR deferred severance accrual (~6.91% of gross annual pay), a personnel cost that is not available to the employee as current net pay. Income tax bundles national IRPEF with the Lazio addizionale regionale and Roma addizionale comunale, both tiered-flat (not marginal) surcharges. See docs/data/italy/italy_sources_2026.json for the full rate schedule and sources.",
+    "The United States is aggregated as a population-weighted average across all 50 states and DC, mirroring the Swiss canton/UK region/Spanish region approach; federal income tax, FICA and FUTA are uniform nationwide while state income tax (9 states have none), SUI and any state-mandated payroll deduction (SDI/PFML/TDI in 13 jurisdictions) vary by state. The reference wage is the federal minimum wage (USD 7.25/hour). See docs/data/usa/usa_sources_2026.json for the full per-state rate schedule and sources.",
+    "China is aggregated as a population-weighted average across all 31 mainland provinces/municipalities/autonomous regions; individual income tax is uniform nationwide while the social-insurance contribution-base floor/cap, some contribution rates, and the housing-fund contribution base vary by province (the housing-fund rate itself is a discretionary employer choice, modelled with one uniform illustrative 7% rate). The reference wage is Shanghai's own minimum wage (RMB 2,740/month), a methodological convention since China has no national minimum wage. See docs/data/china/china_sources_2026.json for the full per-province rate schedule and sources.",
+    "Japan is aggregated as a population-weighted average across all 47 prefectures; national income tax and resident tax are uniform nationwide (though using two different basic-deduction schedules since a 2026 reform) while only the Kyokai Kenpo health-insurance premium rate (9.21%-10.55%) varies by prefecture. The reference wage is Tokyo's own minimum wage (JPY 1,226/hour), a methodological convention since Japan has no national minimum wage. See docs/data/japan/japan_sources_2026.json for the full per-prefecture rate schedule and sources.",
+    "Canada: employee_contributions, employer_contributions and income_tax_or_withholding_tax are a population-weighted average across all 10 provinces and 3 territories (2025 Statistics Canada estimates). Federal income tax, CPP/CPP2 (QPP/QPP2 in Quebec) and Employment Insurance are set nationally but interact with each jurisdiction's own income-tax bracket schedule and basic personal amount. Quebec is structurally distinct: its own pension plan (QPP, higher rate than CPP), its own parental-insurance regime (QPIP, in addition to a reduced EI rate), a 16.5% federal tax abatement, and the Fonds des services de sante employer levy instead of Ontario's Employer Health Tax."
+  ]
 }

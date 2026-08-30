@@ -1,0 +1,116 @@
+{
+  "country": "Canada",
+  "country_code": "CA",
+  "version": "2026-01",
+  "effective_from": "2026-01-01",
+  "wage_reference": {
+    "name": "Salaire minimum de l'Ontario (reference conventionnelle)",
+    "gross_monthly_cad": 3050.6667,
+    "hourly_rate_cad": 17.60,
+    "weekly_hours": 40,
+    "source": "Ministere du Travail, de la Formation et du Developpement des competences de l'Ontario, en vigueur au 1er octobre 2025",
+    "note": "Le Canada n'a pas de salaire minimum national applicable a la generalite des salaries (un salaire minimum federal existe mais ne couvre qu'un petit nombre de secteurs sous reglementation federale) : chaque province et territoire fixe le sien. Ce module retient par convention le salaire minimum de l'Ontario (la province la plus peuplee, capitale financiere du pays), converti en equivalent mensuel plein temps (17,60 x 40h/semaine x 52/12 = 3050,67 CAD/mois), applique uniformement a toutes les provinces et territoires -- la meme logique que le salaire minimum federal americain, le salaire minimum de Shanghai ou celui de Tokyo retenus ailleurs dans ce projet."
+  },
+  "grid": {
+    "min_multiple": 0.8,
+    "max_multiple": 6.0,
+    "step": 0.01
+  },
+  "federal_income_tax_2026": {
+    "brackets": [
+      {"upper_cad": 58523.0, "rate": 0.14},
+      {"upper_cad": 117045.0, "rate": 0.205},
+      {"upper_cad": 181440.0, "rate": 0.26},
+      {"upper_cad": 258482.0, "rate": 0.29},
+      {"upper_cad": null, "rate": 0.33}
+    ],
+    "note": "Bareme federal 2026, indexe par l'ARC. Le premier taux est passe de 15% a 14% a compter de l'annee d'imposition 2026 (mesure annoncee en 2025).",
+    "source": "Agence du revenu du Canada (ARC), Bareme d'imposition federal 2026"
+  },
+  "federal_basic_personal_amount_2026": {
+    "upper_amount_cad": 16452.0,
+    "lower_amount_cad": 14829.0,
+    "phaseout_start_net_income_cad": 181440.0,
+    "phaseout_end_net_income_cad": 258482.0,
+    "note": "Le montant personnel de base federal a une structure a deux paliers depuis la reforme de 2023 : le plein montant s'applique jusqu'a 181 440 CAD de revenu net, puis diminue lineairement jusqu'au montant plancher a 258 482 CAD. Credit non remboursable calcule au taux du palier le plus bas (14%).",
+    "source": "Agence du revenu du Canada (ARC)"
+  },
+  "quebec_federal_abatement_2026": {
+    "rate": 0.165,
+    "note": "Les residents du Quebec beneficient d'un abattement de 16,5% sur l'impot federal a payer (apres credits), le Quebec percevant son propre impot complet et se retirant de certains programmes federaux-provinciaux.",
+    "source": "Agence du revenu du Canada (ARC)"
+  },
+  "cpp_2026": {
+    "ybe_cad": 3500.0,
+    "ympe_cad": 74600.0,
+    "yampe_cad": 85000.0,
+    "base_rate_employee": 0.0595,
+    "base_rate_employer": 0.0595,
+    "cpp2_rate_employee": 0.04,
+    "cpp2_rate_employer": 0.04,
+    "note": "Regime de pensions du Canada (RPC), applicable partout sauf au Quebec. Cotisation de base sur la tranche comprise entre l'exemption de base (3500 CAD) et le maximum des gains ouvrant droit a pension (MGAP, 74 600 CAD), plus le 'RPC2' sur la tranche additionnelle jusqu'au MGAP supplementaire (MGAPS, 85 000 CAD).",
+    "source": "Agence du revenu du Canada (ARC) / Emploi et Developpement social Canada (EDSC)"
+  },
+  "qpp_2026": {
+    "base_rate_employee": 0.063,
+    "base_rate_employer": 0.063,
+    "qpp2_rate_employee": 0.04,
+    "qpp2_rate_employer": 0.04,
+    "note": "Regime de rentes du Quebec (RRQ), remplace le RPC pour les travailleurs quebecois. Meme structure de tranches que le RPC (base + RRQ2) mais taux de base plus eleve (6,3% au lieu de 5,95%).",
+    "source": "Retraite Quebec"
+  },
+  "ei_2026": {
+    "mie_cad": 68900.0,
+    "employee_rate_standard": 0.0163,
+    "employee_rate_quebec": 0.0130,
+    "employer_multiplier": 1.4,
+    "note": "Assurance-emploi (AE), programme federal. Taux employeur = 1,4 x le taux employe. Taux reduit au Quebec car les prestations parentales/maternite y sont couvertes separement par le RQAP.",
+    "source": "Emploi et Developpement social Canada (EDSC) / Commission de l'assurance-emploi du Canada"
+  },
+  "qpip_2026": {
+    "mie_cad": 103000.0,
+    "employee_rate": 0.00430,
+    "employer_rate": 0.00602,
+    "note": "Regime quebecois d'assurance parentale (RQAP), plafond de gains assurables distinct et plus eleve que celui du RRQ/de l'AE.",
+    "source": "Revenu Quebec / Conseil de gestion de l'assurance parentale"
+  },
+  "ontario_surtax_2026": {
+    "tiers": [
+      {"threshold_cad": 5818.0, "rate": 0.20},
+      {"threshold_cad": 7446.0, "rate": 0.36}
+    ],
+    "note": "Surtaxe ontarienne, deux paliers cumulatifs appliques sur l'impot ontarien de base (avant surtaxe).",
+    "source": "Ministere des Finances de l'Ontario"
+  },
+  "ontario_health_premium_2026": {
+    "max_annual_cad": 900.0,
+    "note": "Prime-sante de l'Ontario, un prelevement personnel (pas une cotisation employeur) ajoute a la cotisation fiscale ontarienne, bareme par paliers de revenu imposable atteignant un maximum de 900 CAD/an au-dela de 200 000 CAD.",
+    "source": "Ministere des Finances de l'Ontario"
+  },
+  "ontario_eht_2026": {
+    "rate": 0.0195,
+    "note": "Impot-sante des employeurs (EHT) de l'Ontario, a la charge de l'employeur uniquement. Regime gradue selon la masse salariale totale de l'entreprise, avec exoneration/taux reduit pour les petits employeurs; ce module retient le taux plein applicable a un grand employeur standard.",
+    "source": "Ministere des Finances de l'Ontario"
+  },
+  "quebec_fss_2026": {
+    "rate": 0.0426,
+    "note": "Cotisation au Fonds des services de sante (FSS) du Quebec, a la charge de l'employeur uniquement. Regime gradue selon la masse salariale totale de l'entreprise; ce module retient le taux plein applicable a un grand employeur standard.",
+    "source": "Revenu Quebec"
+  },
+  "workers_compensation_2026": {
+    "rate": 0.0100,
+    "note": "Chaque province et territoire gere son propre regime obligatoire d'assurance contre les accidents du travail (CNESST au Quebec, WSIB en Ontario, WorkSafeBC en Colombie-Britannique, etc.), avec des taux tarifes par secteur d'activite et propres a chaque juridiction -- aucune moyenne nationale unique n'est publiee. Ce module retient, par convention, un taux illustratif national uniforme de 1,00% du salaire brut, a la charge de l'employeur uniquement et sans plafond -- la meme convention que l'INAIL italien ou l'assurance accidents du travail japonaise retenues ailleurs dans ce projet.",
+    "source": "Convention methodologique du module (voir aussi CNESST, WSIB, WorkSafeBC)"
+  },
+  "provincial_income_tax_2026": {
+    "note": "Chaque province et territoire fixe son propre bareme complet et son propre montant personnel de base (MPB), egalement un credit non remboursable calcule au taux le plus bas du bareme provincial/territorial. Deux juridictions ont un mecanisme de MPB non standard : le Yukon reproduit exactement la structure federale a deux paliers (memes montants et seuils, au taux le plus bas du Yukon); le Manitoba applique une reduction lineaire jusqu'a zero entre 200 000 et 400 000 CAD de revenu net. Voir canada_sources_2026.json pour le detail bareme par bareme et juridiction par juridiction.",
+    "source": "Agence du revenu du Canada (ARC) -- Taux d'imposition provinciaux et territoriaux; ministeres des Finances provinciaux/territoriaux; Revenu Quebec"
+  },
+  "limits": [
+    "Le Canada n'a pas de salaire minimum national : le module retient par convention le salaire minimum de l'Ontario, applique uniformement a toutes les juridictions (voir wage_reference).",
+    "Le taux d'assurance contre les accidents du travail (CNESST/WSIB/WorkSafeBC/etc.) est un taux illustratif national uniforme de 1,00%, car chaque juridiction tarife par secteur d'activite sans moyenne nationale publiee.",
+    "L'impot-sante des employeurs de l'Ontario (EHT) et la cotisation au Fonds des services de sante du Quebec (FSS) sont tous deux gradues selon la masse salariale totale de l'entreprise; ce module retient le taux plein applicable a un grand employeur standard, sans modeliser l'exoneration/le taux reduit des petites entreprises.",
+    "Seule la province de l'Ontario a une surtaxe provinciale et une prime-sante personnelle modelisees explicitement; aucune autre province/territoire n'a de mecanisme equivalent pour 2026.",
+    "Le profil de reference est un salarie celibataire sans enfant, cotisant standard a temps plein; aucun credit d'impot personnel autre que le montant personnel de base n'est modelise (pas de credit pour conjoint, personnes a charge, TPS/TVH, prime au travail, etc.)."
+  ]
+}

@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Canada Labour Cost Lab</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+    <link rel="stylesheet" href="../../assets/style.css?v=28">
+    <script defer src="../../assets/i18n_common.js?v=3"></script>
+    <script defer src="./assets/canada_app.js?v=1"></script>
+</head>
+
+<body>
+    <div class="global-project-banner">
+        <a href="../../index.html">
+            ← Labor Cost Lab
+        </a>
+
+        <span>
+            Canada module · Available socio-fiscal version
+        </span>
+    </div>
+
+    <div class="language-section active" id="section-fr">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · Module Canada
+                </p>
+
+                <h1>Canada Labour Cost Lab</h1>
+
+                <p>
+                    Module de simulation du coût du travail au Canada : un
+                    impôt sur le revenu fédéral et un impôt sur le revenu
+                    provincial ou territorial (barème et montant personnel de
+                    base propres à chacun), combinés à des cotisations
+                    sociales (RPC/RRQ, assurance-emploi, RQAP au Québec) et à
+                    des prélèvements employeur spécifiques (EHT ontarien, FSS
+                    québécois, accidents du travail), sélectionnables
+                    individuellement parmi les 10 provinces et 3 territoires,
+                    dans les onglets Simulation, Indice du Lab et Données.
+                </p>
+
+                <p class="author-line">
+                    Par Hugo Spring-Ragain, Économiste, CEDS Paris
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchCanadaLanguage()">
+                    English
+                </button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>Canada · module socio-fiscal 2026</h2>
+
+                <p>
+                    <strong>Point d'attention méthodologique majeur : le
+                    Québec diffère structurellement des 12 autres
+                    juridictions.</strong> Il gère son propre régime de
+                    pension (RRQ, taux de base 6,3 % au lieu du RPC fédéral,
+                    5,95 %), son propre régime d'assurance parentale (RQAP, en
+                    plus d'un taux d'assurance-emploi réduit), bénéficie d'un
+                    abattement fiscal fédéral de 16,5 %, et sa cotisation
+                    employeur au Fonds des services de santé (FSS, 4,26 %)
+                    remplace l'impôt-santé des employeurs ontarien (EHT,
+                    1,95 %) — lequel, symétriquement, ne s'applique qu'à
+                    l'Ontario. Sélectionnez le Québec dans le menu déroulant
+                    de juridiction pour voir RRQ et RQAP remplacer RPC dans la
+                    décomposition, et FSS apparaître à la place de l'EHT.
+                </p>
+
+                <p class="method-note">
+                    Le Canada n'a pas de salaire minimum national applicable à
+                    la généralité des salariés : chaque province et
+                    territoire fixe le sien. Ce module retient par convention
+                    le salaire minimum de l'Ontario (la province la plus
+                    peuplée, capitale financière du pays — 17,60 CAD/heure,
+                    en vigueur au 1er octobre 2025, soit 3 050,67 CAD/mois
+                    équivalent temps plein), comme salaire de référence 1,0x
+                    commun aux 13 juridictions — la même logique que le
+                    salaire minimum de Shanghai ou de Tokyo retenus ailleurs
+                    dans ce Lab.
+                </p>
+            </section>
+
+            <nav class="tabs" aria-label="Navigation Canada">
+                <button class="tab-button active" data-tab="simulation" onclick="showCanadaTab('fr', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showCanadaTab('fr', 'flcl-index')">
+                    Indice du Lab
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showCanadaTab('fr', 'data')">
+                    Données
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showCanadaTab('fr', 'methodology')">
+                    Méthodologie
+                </button>
+            </nav>
+
+            <section id="tab-fr-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="canada-waterfall-title-fr">
+                        Du salaire net au coût employeur
+                    </h3>
+
+                    <p class="chart-subtitle" id="canada-waterfall-subtitle-fr">
+                        Décomposition du passage du salaire net après impôt au
+                        coût employeur total : impôt sur le revenu (fédéral +
+                        provincial), cotisations salariales, puis cotisations
+                        patronales, pour la juridiction sélectionnée.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="canada-province-select-fr">
+                                Province ou territoire de référence
+                            </label>
+
+                            <select id="canada-province-select-fr">
+                            </select>
+                        </div>
+
+                        <div class="selector-field">
+                            <label for="canada-waterfall-multiple-fr">
+                                Point de salaire sélectionné
+                            </label>
+
+                            <select id="canada-waterfall-multiple-fr">
+                                <option value="0.80">0,80 salaire de référence</option>
+                                <option value="1.00" selected>1,00 salaire de référence</option>
+                                <option value="1.25">1,25 salaire de référence</option>
+                                <option value="1.50">1,50 salaire de référence</option>
+                                <option value="2.00">2,00 salaires de référence</option>
+                                <option value="2.50">2,50 salaires de référence</option>
+                                <option value="3.00">3,00 salaires de référence</option>
+                                <option value="4.00">4,00 salaires de référence</option>
+                                <option value="5.00">5,00 salaires de référence</option>
+                                <option value="6.00">6,00 salaires de référence</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-canada-waterfall-fr"
+                        class="plotly-chart"
+                        aria-label="Décomposition du coût du travail au Canada"
+                    ></div>
+
+                    <p class="method-note">
+                        La structure du graphique (4 segments) est
+                        volontairement identique pour les 13 juridictions,
+                        afin de rester comparable d'une province à l'autre.
+                        L'impôt affiché regroupe l'impôt fédéral et l'impôt
+                        provincial ou territorial de la juridiction
+                        sélectionnée. Le graphique « Décomposition détaillée »
+                        ci-dessous détaille chaque ligne de prélèvement,
+                        y compris la répartition fédéral / provincial de
+                        l'impôt.
+                    </p>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Graphiques complémentaires</h2>
+
+                    <p>
+                        Les graphiques suivants détaillent les salaires, les
+                        taux effectifs, la décomposition détaillée des
+                        prélèvements, le coin socio-fiscal et le rendement
+                        marginal du salaire brut, pour la juridiction
+                        sélectionnée ci-dessus.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Coût employeur, salaire brut et salaires nets</h3>
+
+                        <p class="chart-subtitle">
+                            Comparaison du salaire brut, du salaire net avant
+                            impôt, du salaire net après impôt et du coût
+                            employeur selon le multiple du salaire de référence.
+                        </p>
+
+                        <div
+                            id="chart-canada-cost-fr"
+                            class="plotly-chart"
+                            aria-label="Coût du travail au Canada"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Taux effectifs de prélèvement</h3>
+
+                        <p class="chart-subtitle">
+                            Taux salarié et taux employeur (RPC/RRQ, AE, RQAP,
+                            EHT/FSS, accidents du travail), et taux
+                            d'imposition effectif (fédéral + provincial).
+                        </p>
+
+                        <div
+                            id="chart-canada-rates-fr"
+                            class="plotly-chart"
+                            aria-label="Taux de prélèvement au Canada"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Décomposition détaillée des prélèvements</h3>
+
+                        <p class="chart-subtitle">
+                            Impôt fédéral et provincial (dérivés des montants
+                            annuels), RPC/RRQ, assurance-emploi et RQAP côté
+                            salarié et employeur, impôt-santé des employeurs
+                            ontarien (EHT), Fonds des services de santé
+                            québécois (FSS) et accidents du travail. Les
+                            composantes RQAP, EHT et FSS s'affichent à zéro
+                            pour toute juridiction où elles ne s'appliquent
+                            pas. La ligne pointillée est le total (impôt +
+                            cotisations salariales + patronales).
+                        </p>
+
+                        <div
+                            id="chart-canada-breakdown-fr"
+                            class="plotly-chart"
+                            aria-label="Décomposition détaillée des prélèvements au Canada"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Coin social et coin socio-fiscal</h3>
+
+                        <p class="chart-subtitle">
+                            Comparaison du coin social avant impôt et du coin
+                            socio-fiscal après impôt sur le revenu, et ratios
+                            coût employeur / net.
+                        </p>
+
+                        <div
+                            id="chart-canada-wedge-fr"
+                            class="plotly-chart"
+                            aria-label="Coin social et socio-fiscal canadien"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Rendement marginal d'une hausse de salaire brut</h3>
+
+                        <p class="chart-subtitle">
+                            Part d'un CAD supplémentaire de salaire brut
+                            conservée avant et après impôt sur le revenu, et
+                            effet marginal du système socio-fiscal.
+                        </p>
+
+                        <div
+                            id="chart-canada-marginal-fr"
+                            class="plotly-chart"
+                            aria-label="Rendement socio-fiscal d'une hausse de salaire brut au Canada"
+                        ></div>
+
+                        <p class="method-note">
+                            Les points d'inflexion correspondent aux tranches
+                            de l'impôt fédéral et provincial, ainsi qu'aux
+                            plafonds de cotisation (MGAP/MGAPS du RPC/RRQ,
+                            maximum de la rémunération assurable de l'AE et du
+                            RQAP) de la juridiction sélectionnée.
+                        </p>
+                    </div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Indicateurs clés</h2>
+
+                    <p>
+                        Les indicateurs ci-dessous sont calculés au salaire de
+                        référence (multiple = 1) pour la juridiction
+                        sélectionnée.
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="canada-metrics-fr">
+                    <article class="metric-card">
+                        <span class="metric-label">Salaire brut de référence</span>
+                        <strong id="metric-canada-reference-wage-fr">—</strong>
+                        <span class="metric-note">Salaire minimum de l'Ontario, 3 050,67 CAD/mois</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Taux d'imposition effectif</span>
+                        <strong id="metric-canada-income-tax-rate-fr">—</strong>
+                        <span class="metric-note">Fédéral + provincial / brut</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Taux employeur effectif</span>
+                        <strong id="metric-canada-employer-rate-fr">—</strong>
+                        <span class="metric-note">RPC/RRQ + AE + RQAP + EHT/FSS + accidents du travail</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Ratio coût / net au salaire de référence</span>
+                        <strong id="metric-canada-cost-to-net-fr">—</strong>
+                        <span class="metric-note">Après impôt sur le revenu</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-fr-flcl-index" class="tab-content">
+                <section class="chart-card">
+                    <h2>Indice du Lab</h2>
+                    <p class="chart-subtitle">
+                        Indicateurs d'efficacité salariale du coût du travail.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="canada-flcl-province-select-fr">
+                                Province ou territoire
+                            </label>
+
+                            <select id="canada-flcl-province-select-fr">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-E</span>
+                            <strong id="canada-flcl-e-value-fr">—</strong>
+                            <span class="metric-note" id="canada-flcl-e-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-B</span>
+                            <strong id="canada-flcl-b-value-fr">—</strong>
+                            <span class="metric-note" id="canada-flcl-b-caption-fr"></span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Transmission marginale</span>
+                            <strong id="canada-flcl-transmission-value-fr">—</strong>
+                            <span class="metric-note" id="canada-flcl-transmission-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Captation marginale</span>
+                            <strong id="canada-flcl-capture-value-fr">—</strong>
+                            <span class="metric-note" id="canada-flcl-capture-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Progressivité implicite</span>
+                            <strong id="canada-flcl-progressivity-value-fr">—</strong>
+                            <span class="metric-note" id="canada-flcl-progressivity-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Soutien bas salaires</span>
+                            <strong id="canada-flcl-support-value-fr">—</strong>
+                            <span class="metric-note" id="canada-flcl-support-caption-fr"></span>
+                        </div>
+                    </div>
+
+                    <p class="method-note" style="margin-top: 16px;">
+                        Aucun allègement employeur ciblé et dégressif n'est
+                        modélisé pour le Canada : l'indicateur Lab-R ne
+                        s'applique donc pas ici.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Indice du Lab</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × salaire net avant impôt / coût employeur.
+                        </p>
+                        <div id="chart-canada-flcl-e-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Transmission marginale</h3>
+                        <p class="chart-subtitle">
+                            Part d'un CAD supplémentaire de coût employeur allant au salarié net.
+                        </p>
+                        <div id="chart-canada-flcl-marginal-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Progressivité implicite</h3>
+                        <p class="chart-subtitle">
+                            Variation de Lab-E lorsque le niveau de salaire augmente.
+                        </p>
+                        <div id="chart-canada-flcl-progressivity-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Destination marginale d'un CAD supplémentaire de coût employeur</h3>
+                        <p class="chart-subtitle">
+                            Répartition marginale entre salaire net, cotisations salariales et cotisations patronales.
+                        </p>
+                        <div id="chart-canada-flcl-destination-fr" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-fr-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Données</h3>
+
+                    <p class="chart-subtitle">
+                        Le jeu de données canadien peut être téléchargé au
+                        format CSV. Il contient l'ensemble des points de
+                        salaire simulés pour les 10 provinces et 3 territoires
+                        (521 points de salaire chacun) : salaire brut, impôt
+                        fédéral et provincial, cotisations RPC/RRQ,
+                        assurance-emploi et RQAP, EHT/FSS, accidents du
+                        travail, coût employeur et indicateurs de coin
+                        socio-fiscal.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/canada/canada_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Télécharger le jeu de données Canada
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/canada/canada_parameters_2026.json"
+                            download
+                        >
+                            Télécharger les paramètres 2026
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/canada/canada_sources_2026.json"
+                            download
+                        >
+                            Télécharger les sources 2026
+                        </a>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Données du profil standard</h3>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="canada-data-province-select-fr">
+                                Province ou territoire
+                            </label>
+
+                            <select id="canada-data-province-select-fr">
+                            </select>
+                        </div>
+                    </div>
+
+                    <p
+                        class="chart-subtitle"
+                        id="canada-data-caption-fr"
+                    >
+                        Salarié standard (Ontario)
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Multiple</th>
+                                    <th>Salaire brut (CAD)</th>
+                                    <th>Net avant impôt (CAD)</th>
+                                    <th>Impôt sur le revenu (CAD)</th>
+                                    <th>Net après impôt (CAD)</th>
+                                    <th>Coût employeur (CAD)</th>
+                                    <th>Cotisations salariales (CAD)</th>
+                                    <th>Cotisations patronales (CAD)</th>
+                                    <th>Coin social (CAD)</th>
+                                    <th>Coin socio-fiscal (CAD)</th>
+                                    <th>Taux employeur</th>
+                                    <th>Coût / net après impôt</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="canada-data-table-body-fr">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="chart-subtitle" style="margin-top: 10px;">
+                        Impôt sur le revenu = impôt fédéral + impôt provincial
+                        ou territorial de la juridiction sélectionnée.
+                        Cotisations salariales et patronales regroupent
+                        RPC/RRQ, assurance-emploi, RQAP (Québec uniquement),
+                        EHT (Ontario uniquement) ou FSS (Québec uniquement),
+                        et accidents du travail. Voir l'onglet Méthodologie.
+                    </p>
+                </div>
+            </section>
+
+            <section id="tab-fr-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Méthodologie</h2>
+
+                    <p>
+                        Le module Canada repose sur une simulation
+                        réglementaire du coût du travail pour un salarié
+                        standard, célibataire sans enfant, cotisant standard à
+                        temps plein, dans la province ou le territoire
+                        sélectionné parmi les 13 juridictions modélisées (10
+                        provinces, 3 territoires). Version 2026-01, en
+                        vigueur au 1er janvier 2026.
+                    </p>
+
+                    <h3>1. Le salaire de référence : le salaire minimum de l'Ontario</h3>
+
+                    <p>
+                        Le Canada n'a pas de salaire minimum national
+                        applicable à la généralité des salariés (un salaire
+                        minimum fédéral existe mais ne couvre qu'un petit
+                        nombre de secteurs sous réglementation fédérale) :
+                        chaque province et territoire fixe le sien. Ce module
+                        retient, par convention, le salaire minimum de
+                        l'Ontario (la province la plus peuplée, capitale
+                        financière du pays), en vigueur au 1er octobre 2025 :
+                        17,60 CAD/heure x 40h/semaine x 52/12 = 3 050,67
+                        CAD/mois équivalent temps plein — la même logique que
+                        le salaire minimum fédéral américain, le salaire
+                        minimum de Shanghai ou celui de Tokyo retenus ailleurs
+                        dans ce Lab. Ce n'est ni une moyenne nationale, ni un
+                        minimum légal commun aux 13 juridictions : chaque
+                        province et territoire conserve son propre salaire
+                        minimum (documenté dans canada_sources_2026.json).
+                    </p>
+
+                    <h3>2. L'impôt fédéral sur le revenu</h3>
+
+                    <p>
+                        Barème fédéral 2026 (Agence du revenu du Canada, ARC),
+                        indexé annuellement, à cinq tranches : 14 % / 20,5 % /
+                        26 % / 29 % / 33 %, avec seuils à 58 523, 117 045,
+                        181 440 et 258 482 CAD. Le premier taux est passé de
+                        15 % à 14 % à compter de l'année d'imposition 2026.
+                    </p>
+
+                    <p>
+                        Le montant personnel de base (MPB) fédéral a une
+                        structure à deux paliers depuis la réforme de 2023 :
+                        le plein montant (16 452 CAD) s'applique jusqu'à
+                        181 440 CAD de revenu net, puis diminue linéairement
+                        jusqu'au montant plancher (14 829 CAD) à 258 482 CAD
+                        de revenu net — un mécanisme surtout invisible aux
+                        multiples de salaire bas de ce module, mais qui
+                        commence à s'appliquer en haut de la grille pour les
+                        juridictions à salaire minimum élevé.
+                    </p>
+
+                    <h3>3. L'impôt provincial et territorial sur le revenu</h3>
+
+                    <p>
+                        Chaque province et territoire fixe son propre barème
+                        complet et son propre montant personnel de base,
+                        également calculé en crédit non remboursable au taux
+                        le plus bas du barème provincial/territorial. Deux
+                        mécanismes non standard sont modélisés explicitement :
+                        le Yukon reproduit exactement la structure fédérale à
+                        deux paliers du MPB (mêmes montants et seuils, au taux
+                        du Yukon) ; le Manitoba applique une réduction
+                        linéaire de son MPB (gelé à 15 780 CAD) jusqu'à zéro
+                        entre 200 000 et 400 000 CAD de revenu net — un
+                        mécanisme qui ne commence à mordre qu'au sommet de la
+                        grille de salaire du Manitoba (plafond de la grille :
+                        6x le salaire de référence, environ 219 600 CAD/an).
+                    </p>
+
+                    <p class="method-note">
+                        Seule l'Ontario a, pour 2026, une surtaxe provinciale
+                        et une prime-santé personnelle modélisées
+                        explicitement : la surtaxe ontarienne applique deux
+                        paliers cumulatifs (20 % puis 36 % additionnel) sur
+                        l'impôt ontarien de base au-delà de 5 818 CAD puis
+                        7 446 CAD ; la prime-santé de l'Ontario est un
+                        prélèvement personnel (pas une cotisation employeur)
+                        par paliers de revenu imposable, plafonné à 900
+                        CAD/an. Ces deux mécanismes sont regroupés dans
+                        l'impôt provincial ontarien affiché par ce module.
+                        Voir canada_sources_2026.json pour le détail
+                        bareme par bareme et juridiction par juridiction.
+                    </p>
+
+                    <h3>4. Le Québec : une juridiction structurellement distincte</h3>
+
+                    <p>
+                        Le Québec perçoit son propre impôt complet et se
+                        retire de certains programmes fédéraux-provinciaux, ce
+                        qui se traduit par quatre différences structurelles
+                        vis-à-vis des 12 autres juridictions : un abattement
+                        de 16,5 % sur l'impôt fédéral à payer (après crédits)
+                        ; le Régime de rentes du Québec (RRQ, taux de base
+                        6,3 %) au lieu du Régime de pensions du Canada (RPC,
+                        5,95 %) ; le Régime québécois d'assurance parentale
+                        (RQAP, taux distincts employeur/salarié, plafond de
+                        gains assurables propre et plus élevé que celui du
+                        RRQ/de l'AE), en complément d'un taux
+                        d'assurance-emploi réduit (1,30 % salarié au lieu de
+                        1,63 % ailleurs, les prestations parentales/maternité
+                        étant couvertes séparément par le RQAP) ; et une
+                        cotisation employeur au Fonds des services de santé
+                        (FSS, 4,26 %) au lieu de l'impôt-santé des employeurs
+                        ontarien (EHT), qui elle ne s'applique qu'en Ontario.
+                    </p>
+
+                    <h3>5. RPC/RRQ, assurance-emploi et RQAP</h3>
+
+                    <p>
+                        <strong>RPC/RRQ :</strong> cotisation de base sur la
+                        tranche comprise entre l'exemption de base (3 500
+                        CAD/an) et le maximum des gains ouvrant droit à
+                        pension (MGAP, 74 600 CAD/an), au taux de 5,95 %
+                        (RPC) ou 6,3 % (RRQ, Québec), employeur et salarié à
+                        parité, plus un second palier « RPC2 »/« RRQ2 » à 4 %
+                        sur la tranche additionnelle jusqu'au MGAP
+                        supplémentaire (MGAPS, 85 000 CAD/an).
+                    </p>
+
+                    <p>
+                        <strong>Assurance-emploi (AE) :</strong> programme
+                        fédéral, taux salarié standard 1,63 % (1,30 % au
+                        Québec) sur la rémunération assurable jusqu'au maximum
+                        (68 900 CAD/an) ; taux employeur = 1,4x le taux
+                        salarié.
+                    </p>
+
+                    <p>
+                        <strong>RQAP :</strong> régime québécois d'assurance
+                        parentale, plafond de gains assurables distinct et
+                        plus élevé (103 000 CAD/an) que celui du RRQ/de l'AE ;
+                        taux salarié 0,430 %, taux employeur 0,602 %.
+                    </p>
+
+                    <h3>6. EHT ontarien, FSS québécois et accidents du travail</h3>
+
+                    <p>
+                        L'impôt-santé des employeurs (EHT) de l'Ontario
+                        (1,95 %) et la cotisation au Fonds des services de
+                        santé (FSS) du Québec (4,26 %) sont tous deux à la
+                        charge exclusive de l'employeur et tous deux, dans la
+                        réalité, gradués selon la masse salariale totale de
+                        l'entreprise (exonération ou taux réduit pour les
+                        petits employeurs) ; ce module retient dans les deux
+                        cas le taux plein applicable à un grand employeur
+                        standard.
+                    </p>
+
+                    <p>
+                        L'assurance contre les accidents du travail
+                        (CNESST au Québec, WSIB en Ontario, WorkSafeBC en
+                        Colombie-Britannique, etc.) est gérée séparément par
+                        chaque province et territoire, avec des taux tarifés
+                        par secteur d'activité et propres à chaque
+                        juridiction — aucune moyenne nationale unique n'est
+                        publiée. Ce module retient, par convention, un taux
+                        illustratif national uniforme de 1,00 % du salaire
+                        brut, à la charge de l'employeur uniquement et sans
+                        plafond, pour les 13 juridictions — la même convention
+                        que l'INAIL italien ou l'assurance accidents du
+                        travail japonaise retenues ailleurs dans ce Lab.
+                    </p>
+
+                    <h3>7. Indicateurs produits</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Net avant impôt :</strong>
+                            salaire brut diminué des cotisations salariales
+                            (RPC/RRQ, AE, RQAP le cas échéant).
+                        </li>
+
+                        <li>
+                            <strong>Net après impôt :</strong>
+                            net avant impôt diminué de l'impôt sur le revenu
+                            (fédéral + provincial/territorial de la
+                            juridiction sélectionnée).
+                        </li>
+
+                        <li>
+                            <strong>Coût employeur :</strong>
+                            salaire brut augmenté des cotisations patronales
+                            (RPC/RRQ, AE, RQAP le cas échéant, EHT ou FSS le
+                            cas échéant, accidents du travail).
+                        </li>
+
+                        <li>
+                            <strong>Coin social :</strong>
+                            différence entre le coût employeur et le net avant
+                            impôt.
+                        </li>
+
+                        <li>
+                            <strong>Coin socio-fiscal :</strong>
+                            différence entre le coût employeur et le net après
+                            impôt.
+                        </li>
+
+                        <li>
+                            <strong>Rendement marginal :</strong>
+                            part d'un CAD supplémentaire de salaire brut
+                            conservée avant et après impôt sur le revenu,
+                            calculée point à point (pas de fenêtre glissante :
+                            le Canada n'a pas de barème de cotisation par
+                            paliers susceptible de créer un bruit d'arrondi
+                            artificiel).
+                        </li>
+                    </ul>
+
+                    <h3>8. Indice du Lab</h3>
+
+                    <p>
+                        L'Indice du Lab mesure l'efficacité salariale du coût
+                        du travail, indépendamment de l'impôt sur le revenu.
+                        Lab-E = 100 × salaire net avant impôt / coût
+                        employeur, Lab-B = 100 − Lab-E. Aucun allègement
+                        employeur ciblé et dégressif n'est modélisé pour le
+                        Canada : l'indicateur Lab-R ne s'applique donc pas
+                        ici.
+                    </p>
+
+                    <h3>9. Limites du scénario</h3>
+
+                    <ul class="method-note">
+                        <li>
+                            Le Canada n'a pas de salaire minimum national : le
+                            module retient par convention le salaire minimum
+                            de l'Ontario, appliqué uniformément à toutes les
+                            juridictions.
+                        </li>
+
+                        <li>
+                            Le taux d'assurance contre les accidents du
+                            travail (CNESST/WSIB/WorkSafeBC/etc.) est un taux
+                            illustratif national uniforme de 1,00 %, car
+                            chaque juridiction tarife par secteur d'activité
+                            sans moyenne nationale publiée.
+                        </li>
+
+                        <li>
+                            L'impôt-santé des employeurs de l'Ontario (EHT) et
+                            la cotisation au Fonds des services de santé du
+                            Québec (FSS) sont tous deux gradués selon la masse
+                            salariale totale de l'entreprise dans la réalité ;
+                            ce module retient le taux plein applicable à un
+                            grand employeur standard, sans modéliser
+                            l'exonération/le taux réduit des petites
+                            entreprises.
+                        </li>
+
+                        <li>
+                            Seule la province de l'Ontario a une surtaxe
+                            provinciale et une prime-santé personnelle
+                            modélisées explicitement ; aucune autre
+                            province/territoire n'a de mécanisme équivalent
+                            pour 2026.
+                        </li>
+
+                        <li>
+                            La réduction linéaire du montant personnel de base
+                            du Manitoba (entre 200 000 et 400 000 CAD de
+                            revenu net) ne mord qu'au sommet de la grille de
+                            salaire de cette province et reste un raffinement
+                            mineur du modèle plutôt qu'un trait saillant à ce
+                            niveau de salaire.
+                        </li>
+
+                        <li>
+                            Le profil de référence est un salarié célibataire
+                            sans enfant, cotisant standard à temps plein ;
+                            aucun crédit d'impôt personnel autre que le
+                            montant personnel de base n'est modélisé (pas de
+                            crédit pour conjoint, personnes à charge, TPS/TVH,
+                            prime au travail, etc.).
+                        </li>
+                    </ul>
+
+                    <h3>10. Sources</h3>
+
+                    <p class="method-note">
+                        Agence du revenu du Canada (ARC) — taux d'imposition
+                        fédéraux et provinciaux/territoriaux, montant
+                        personnel de base 2026 ; Emploi et Développement
+                        social Canada (EDSC) — assurance-emploi, taux et
+                        maximums 2026 ; Retraite Québec — Régime de rentes du
+                        Québec, paramètres 2026 ; Revenu Québec — Régime
+                        québécois d'assurance parentale et Fonds des services
+                        de santé ; ministères des Finances provinciaux et
+                        territoriaux ; TaxTips.ca (agrégateur vérifié contre
+                        les sources officielles pour chaque juridiction) ;
+                        Statistique Canada — estimations de population par
+                        province et territoire, 2025 ; Banque mondiale —
+                        facteur de conversion PPA utilisé dans le module
+                        Comparaison. Voir canada_sources_2026.json pour le
+                        détail complet des citations, juridiction par
+                        juridiction, y compris les niveaux de confiance.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="language-section" id="section-en">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · Canada module
+                </p>
+
+                <h1>Canada Labour Cost Lab</h1>
+
+                <p>
+                    Simulation module for Canadian labour costs: a federal
+                    income tax and a provincial or territorial income tax
+                    (each with its own bracket table and basic personal
+                    amount), combined with social-insurance contributions
+                    (CPP/QPP, Employment Insurance, QPIP in Quebec) and
+                    employer-specific levies (Ontario's EHT, Quebec's FSS,
+                    workers' compensation), individually selectable among 10
+                    provinces and 3 territories, in the Simulation, Lab Index
+                    and Data tabs.
+                </p>
+
+                <p class="author-line">
+                    By Hugo Spring-Ragain, Economist, CEDS Paris
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchCanadaLanguage()">
+                    Français
+                </button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>Canada · 2026 socio-fiscal module</h2>
+
+                <p>
+                    <strong>Major methodological note: Quebec is
+                    structurally different from the other 12
+                    jurisdictions.</strong> It runs its own pension plan
+                    (QPP, base rate 6.3% instead of the federal CPP's
+                    5.95%), its own parental-insurance regime (QPIP, on top
+                    of a reduced Employment Insurance rate), benefits from a
+                    16.5% federal tax abatement, and its employer
+                    contribution to the Health Services Fund (FSS, 4.26%)
+                    replaces Ontario's Employer Health Tax (EHT, 1.95%) —
+                    which, symmetrically, only applies to Ontario. Select
+                    Quebec from the jurisdiction dropdown to see QPP and
+                    QPIP replace CPP in the breakdown, and FSS appear in
+                    place of EHT.
+                </p>
+
+                <p class="method-note">
+                    Canada has no national minimum wage covering the
+                    generality of employees: every province and territory
+                    sets its own. This module uses, by convention, Ontario's
+                    own minimum wage (the most populous province, the
+                    country's financial capital — CAD 17.60/hour, effective
+                    1 October 2025, i.e. CAD 3,050.67/month full-time
+                    equivalent) as its common 1.0x reference wage across all
+                    13 jurisdictions — the same convention used for the
+                    Shanghai and Tokyo minimum wages elsewhere in this Lab.
+                </p>
+            </section>
+
+            <nav class="tabs" aria-label="Canada navigation">
+                <button class="tab-button active" data-tab="simulation" onclick="showCanadaTab('en', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showCanadaTab('en', 'flcl-index')">
+                    Lab Index
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showCanadaTab('en', 'data')">
+                    Data
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showCanadaTab('en', 'methodology')">
+                    Methodology
+                </button>
+            </nav>
+
+            <section id="tab-en-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="canada-waterfall-title-en">
+                        From net wage to employer cost
+                    </h3>
+
+                    <p class="chart-subtitle" id="canada-waterfall-subtitle-en">
+                        Breakdown of the path from net wage after tax to
+                        total employer cost: income tax (federal +
+                        provincial), employee contributions, then employer
+                        contributions, for the selected jurisdiction.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="canada-province-select-en">
+                                Reference province or territory
+                            </label>
+
+                            <select id="canada-province-select-en">
+                            </select>
+                        </div>
+
+                        <div class="selector-field">
+                            <label for="canada-waterfall-multiple-en">
+                                Selected wage point
+                            </label>
+
+                            <select id="canada-waterfall-multiple-en">
+                                <option value="0.80">0.80 reference wage</option>
+                                <option value="1.00" selected>1.00 reference wage</option>
+                                <option value="1.25">1.25 reference wages</option>
+                                <option value="1.50">1.50 reference wages</option>
+                                <option value="2.00">2.00 reference wages</option>
+                                <option value="2.50">2.50 reference wages</option>
+                                <option value="3.00">3.00 reference wages</option>
+                                <option value="4.00">4.00 reference wages</option>
+                                <option value="5.00">5.00 reference wages</option>
+                                <option value="6.00">6.00 reference wages</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-canada-waterfall-en"
+                        class="plotly-chart"
+                        aria-label="Breakdown of labour cost in Canada"
+                    ></div>
+
+                    <p class="method-note">
+                        The chart structure (4 segments) is deliberately
+                        identical across all 13 jurisdictions, to remain
+                        comparable from province to province. The tax amount
+                        shown combines the federal tax and the selected
+                        jurisdiction's provincial or territorial tax. The
+                        "Detailed breakdown" chart below details every levy
+                        line, including the federal / provincial split of
+                        income tax.
+                    </p>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Additional charts</h2>
+
+                    <p>
+                        The charts below detail wages, effective rates, the
+                        detailed levy breakdown, the socio-fiscal wedge, and
+                        the marginal return on a gross-wage increase, for
+                        the jurisdiction selected above.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Employer cost, gross wage and net wages</h3>
+
+                        <p class="chart-subtitle">
+                            Comparison of the gross wage, net wage before tax,
+                            net wage after tax, and employer cost across the
+                            multiple of the reference wage.
+                        </p>
+
+                        <div
+                            id="chart-canada-cost-en"
+                            class="plotly-chart"
+                            aria-label="Labour cost in Canada"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Effective levy rates</h3>
+
+                        <p class="chart-subtitle">
+                            Employee rate and employer rate (CPP/QPP, EI,
+                            QPIP, EHT/FSS, workers' compensation), and
+                            effective income tax rate (federal + provincial).
+                        </p>
+
+                        <div
+                            id="chart-canada-rates-en"
+                            class="plotly-chart"
+                            aria-label="Levy rates in Canada"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Detailed levy breakdown</h3>
+
+                        <p class="chart-subtitle">
+                            Federal and provincial income tax (derived from
+                            the annual amounts), CPP/QPP, Employment
+                            Insurance and QPIP on both the employee and
+                            employer side, Ontario's Employer Health Tax
+                            (EHT), Quebec's Health Services Fund (FSS), and
+                            workers' compensation. The QPIP, EHT and FSS
+                            components render as a flat zero line for any
+                            jurisdiction where they do not apply. The dotted
+                            line is the total (income tax + employee
+                            contributions + employer contributions).
+                        </p>
+
+                        <div
+                            id="chart-canada-breakdown-en"
+                            class="plotly-chart"
+                            aria-label="Detailed levy breakdown in Canada"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Social wedge and total socio-fiscal wedge</h3>
+
+                        <p class="chart-subtitle">
+                            Comparison of the social wedge before tax and the
+                            total socio-fiscal wedge after income tax, and
+                            cost/net ratios.
+                        </p>
+
+                        <div
+                            id="chart-canada-wedge-en"
+                            class="plotly-chart"
+                            aria-label="Social and socio-fiscal wedge in Canada"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Marginal return on a gross-wage increase</h3>
+
+                        <p class="chart-subtitle">
+                            Share of an additional CAD of gross wage kept
+                            before and after income tax, and the marginal
+                            effect of the socio-fiscal system.
+                        </p>
+
+                        <div
+                            id="chart-canada-marginal-en"
+                            class="plotly-chart"
+                            aria-label="Socio-fiscal return on a gross-wage increase in Canada"
+                        ></div>
+
+                        <p class="method-note">
+                            The inflection points correspond to the federal
+                            and provincial tax brackets, and to the
+                            contribution ceilings (CPP/QPP's YMPE/YAMPE, the
+                            EI and QPIP maximum insurable earnings) of the
+                            selected jurisdiction.
+                        </p>
+                    </div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Key indicators</h2>
+
+                    <p>
+                        The indicators below are computed at the reference
+                        wage (multiple = 1) for the selected jurisdiction.
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="canada-metrics-en">
+                    <article class="metric-card">
+                        <span class="metric-label">Reference gross wage</span>
+                        <strong id="metric-canada-reference-wage-en">—</strong>
+                        <span class="metric-note">Ontario minimum wage, CAD 3,050.67/month</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Effective income tax rate</span>
+                        <strong id="metric-canada-income-tax-rate-en">—</strong>
+                        <span class="metric-note">Federal + provincial / gross</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Effective employer rate</span>
+                        <strong id="metric-canada-employer-rate-en">—</strong>
+                        <span class="metric-note">CPP/QPP + EI + QPIP + EHT/FSS + workers' comp</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Cost / net ratio at the reference wage</span>
+                        <strong id="metric-canada-cost-to-net-en">—</strong>
+                        <span class="metric-note">After income tax</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-en-flcl-index" class="tab-content">
+                <section class="chart-card">
+                    <h2>Lab Index</h2>
+                    <p class="chart-subtitle">
+                        Labour cost efficiency indicators.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="canada-flcl-province-select-en">
+                                Province or territory
+                            </label>
+
+                            <select id="canada-flcl-province-select-en">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-E</span>
+                            <strong id="canada-flcl-e-value-en">—</strong>
+                            <span class="metric-note" id="canada-flcl-e-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-B</span>
+                            <strong id="canada-flcl-b-value-en">—</strong>
+                            <span class="metric-note" id="canada-flcl-b-caption-en"></span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Marginal transmission</span>
+                            <strong id="canada-flcl-transmission-value-en">—</strong>
+                            <span class="metric-note" id="canada-flcl-transmission-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Marginal capture</span>
+                            <strong id="canada-flcl-capture-value-en">—</strong>
+                            <span class="metric-note" id="canada-flcl-capture-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Implicit progressivity</span>
+                            <strong id="canada-flcl-progressivity-value-en">—</strong>
+                            <span class="metric-note" id="canada-flcl-progressivity-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Low-wage support</span>
+                            <strong id="canada-flcl-support-value-en">—</strong>
+                            <span class="metric-note" id="canada-flcl-support-caption-en"></span>
+                        </div>
+                    </div>
+
+                    <p class="method-note" style="margin-top: 16px;">
+                        No targeted, degressive employer relief is modeled
+                        for Canada: the Lab-R indicator does not apply here.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Lab Index</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × net wage before income tax / employer cost.
+                        </p>
+                        <div id="chart-canada-flcl-e-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal transmission</h3>
+                        <p class="chart-subtitle">
+                            Share of one additional CAD of employer cost reaching net wage.
+                        </p>
+                        <div id="chart-canada-flcl-marginal-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Implicit progressivity</h3>
+                        <p class="chart-subtitle">
+                            Change in Lab-E when the wage level increases.
+                        </p>
+                        <div id="chart-canada-flcl-progressivity-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal destination of one additional CAD of employer cost</h3>
+                        <p class="chart-subtitle">
+                            Marginal split between net wage, employee contributions and employer contributions.
+                        </p>
+                        <div id="chart-canada-flcl-destination-en" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-en-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Data</h3>
+
+                    <p class="chart-subtitle">
+                        The Canada dataset can be downloaded as a CSV file.
+                        It contains every simulated wage point for all 10
+                        provinces and 3 territories (521 wage points each):
+                        gross wage, federal and provincial income tax,
+                        CPP/QPP, Employment Insurance and QPIP contributions,
+                        EHT/FSS, workers' compensation, employer cost, and
+                        socio-fiscal wedge indicators.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/canada/canada_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Download the Canada dataset
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/canada/canada_parameters_2026.json"
+                            download
+                        >
+                            Download the 2026 parameters
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/canada/canada_sources_2026.json"
+                            download
+                        >
+                            Download the 2026 sources
+                        </a>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Data for the standard profile</h3>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="canada-data-province-select-en">
+                                Province or territory
+                            </label>
+
+                            <select id="canada-data-province-select-en">
+                            </select>
+                        </div>
+                    </div>
+
+                    <p
+                        class="chart-subtitle"
+                        id="canada-data-caption-en"
+                    >
+                        Standard employee (Ontario)
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Multiple</th>
+                                    <th>Gross wage (CAD)</th>
+                                    <th>Net before tax (CAD)</th>
+                                    <th>Income tax (CAD)</th>
+                                    <th>Net after tax (CAD)</th>
+                                    <th>Employer cost (CAD)</th>
+                                    <th>Employee contributions (CAD)</th>
+                                    <th>Employer contributions (CAD)</th>
+                                    <th>Social wedge (CAD)</th>
+                                    <th>Total socio-fiscal wedge (CAD)</th>
+                                    <th>Employer rate</th>
+                                    <th>Cost / net after tax</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="canada-data-table-body-en">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="chart-subtitle" style="margin-top: 10px;">
+                        Income tax = federal income tax + the selected
+                        jurisdiction's provincial or territorial income tax.
+                        Employee and employer contributions combine CPP/QPP,
+                        Employment Insurance, QPIP (Quebec only), EHT
+                        (Ontario only) or FSS (Quebec only), and workers'
+                        compensation. See the Methodology tab.
+                    </p>
+                </div>
+            </section>
+
+            <section id="tab-en-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Methodology</h2>
+
+                    <p>
+                        The Canada module relies on a regulatory simulation
+                        of labour cost for a standard employee, single,
+                        childless, in standard full-time employment, in the
+                        province or territory selected among the 13 modeled
+                        jurisdictions (10 provinces, 3 territories). Version
+                        2026-01, effective 1 January 2026.
+                    </p>
+
+                    <h3>1. The reference wage: Ontario's minimum wage</h3>
+
+                    <p>
+                        Canada has no national minimum wage covering the
+                        generality of employees (a federal minimum wage
+                        exists but covers only a small number of
+                        federally-regulated sectors): every province and
+                        territory sets its own. This module uses, by
+                        convention, Ontario's own minimum wage (the most
+                        populous province, the country's financial capital),
+                        effective 1 October 2025: CAD 17.60/hour x 40
+                        hours/week x 52/12 = CAD 3,050.67/month full-time
+                        equivalent — the same convention used for the US
+                        federal minimum wage, or the Shanghai and Tokyo
+                        minimum wages used elsewhere in this Lab. This is
+                        neither a national average nor a legal minimum
+                        common to all 13 jurisdictions: every province and
+                        territory retains its own minimum wage (documented
+                        in canada_sources_2026.json).
+                    </p>
+
+                    <h3>2. Federal income tax</h3>
+
+                    <p>
+                        The 2026 federal bracket table (Canada Revenue
+                        Agency, CRA), indexed annually, has five brackets:
+                        14% / 20.5% / 26% / 29% / 33%, with thresholds at
+                        CAD 58,523, 117,045, 181,440 and 258,482. The first
+                        rate dropped from 15% to 14% starting with the 2026
+                        tax year.
+                    </p>
+
+                    <p>
+                        The federal Basic Personal Amount (BPA) has had a
+                        two-tier structure since the 2023 reform: the full
+                        amount (CAD 16,452) applies up to CAD 181,440 of net
+                        income, then phases down linearly to the floor
+                        amount (CAD 14,829) by CAD 258,482 of net income — a
+                        mechanism that is mostly invisible at this module's
+                        lower wage multiples, but starts to apply at the top
+                        of the grid for the higher-minimum-wage
+                        jurisdictions.
+                    </p>
+
+                    <h3>3. Provincial and territorial income tax</h3>
+
+                    <p>
+                        Every province and territory sets its own full
+                        bracket table and its own Basic Personal Amount,
+                        likewise computed as a non-refundable credit at the
+                        lowest rate of the provincial/territorial table. Two
+                        non-standard mechanisms are modeled explicitly: the
+                        Yukon exactly reproduces the federal two-tier BPA
+                        structure (same amounts and thresholds, at the
+                        Yukon's own rate); Manitoba applies a linear
+                        reduction of its BPA (frozen at CAD 15,780) to zero
+                        between CAD 200,000 and 400,000 of net income — a
+                        mechanism that only starts to bite at the very top of
+                        Manitoba's own wage grid (grid ceiling: 6x the
+                        reference wage, roughly CAD 219,600/year).
+                    </p>
+
+                    <p class="method-note">
+                        Only Ontario has, for 2026, an explicitly modeled
+                        provincial surtax and personal health premium: the
+                        Ontario surtax applies two cumulative tiers (20%
+                        then an additional 36%) on base Ontario tax above
+                        CAD 5,818 then CAD 7,446; the Ontario Health Premium
+                        is a personal levy (not an employer contribution) by
+                        taxable-income bracket, capped at CAD 900/year. Both
+                        mechanisms are bundled into the Ontario provincial
+                        tax reported by this module. See
+                        canada_sources_2026.json for full bracket-by-bracket,
+                        jurisdiction-by-jurisdiction detail.
+                    </p>
+
+                    <h3>4. Quebec: a structurally distinct jurisdiction</h3>
+
+                    <p>
+                        Quebec collects its own full income tax and opts out
+                        of certain federal-provincial programs, which
+                        translates into four structural differences from the
+                        other 12 jurisdictions: a 16.5% abatement on federal
+                        tax payable (after credits); the Quebec Pension Plan
+                        (QPP, base rate 6.3%) instead of the Canada Pension
+                        Plan (CPP, 5.95%); the Quebec Parental Insurance Plan
+                        (QPIP, distinct employee/employer rates, its own and
+                        higher maximum insurable earnings than the QPP/EI),
+                        on top of a reduced Employment Insurance rate (1.30%
+                        employee instead of 1.63% elsewhere, since
+                        parental/maternity benefits are covered separately by
+                        QPIP); and an employer contribution to the Health
+                        Services Fund (FSS, 4.26%) instead of Ontario's
+                        Employer Health Tax (EHT), which itself only applies
+                        to Ontario.
+                    </p>
+
+                    <h3>5. CPP/QPP, Employment Insurance and QPIP</h3>
+
+                    <p>
+                        <strong>CPP/QPP:</strong> base contribution on the
+                        band between the basic exemption (CAD 3,500/year)
+                        and the Year's Maximum Pensionable Earnings (YMPE,
+                        CAD 74,600/year), at 5.95% (CPP) or 6.3% (QPP,
+                        Quebec), employer and employee at parity, plus a
+                        second "CPP2"/"QPP2" tier at 4% on the additional
+                        band up to the Year's Additional Maximum Pensionable
+                        Earnings (YAMPE, CAD 85,000/year).
+                    </p>
+
+                    <p>
+                        <strong>Employment Insurance (EI):</strong> federal
+                        program, standard employee rate 1.63% (1.30% in
+                        Quebec) on insurable earnings up to the maximum (CAD
+                        68,900/year); employer rate = 1.4x the employee
+                        rate.
+                    </p>
+
+                    <p>
+                        <strong>QPIP:</strong> Quebec's own parental
+                        insurance regime, with a distinct and higher maximum
+                        insurable earnings (CAD 103,000/year) than the
+                        QPP/EI; employee rate 0.430%, employer rate 0.602%.
+                    </p>
+
+                    <h3>6. Ontario's EHT, Quebec's FSS, and workers' compensation</h3>
+
+                    <p>
+                        Ontario's Employer Health Tax (EHT, 1.95%) and
+                        Quebec's Health Services Fund contribution (FSS,
+                        4.26%) are both borne exclusively by the employer
+                        and both, in reality, graduated by the employer's
+                        total payroll (exemption or reduced rate for small
+                        employers); this module uses, in both cases, the
+                        full rate applicable to a standard large employer.
+                    </p>
+
+                    <p>
+                        Workers' compensation insurance (CNESST in Quebec,
+                        WSIB in Ontario, WorkSafeBC in British Columbia,
+                        etc.) is separately administered by each province
+                        and territory, with rates tariffed by industry sector
+                        and specific to each jurisdiction — no single
+                        national average is published. This module uses, by
+                        convention, a uniform illustrative national rate of
+                        1.00% of gross wage, employer-only and uncapped,
+                        across all 13 jurisdictions — the same convention
+                        used for Italy's INAIL or Japan's workplace-injury
+                        insurance elsewhere in this Lab.
+                    </p>
+
+                    <h3>7. Indicators produced</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Net before tax:</strong>
+                            gross wage reduced by employee contributions
+                            (CPP/QPP, EI, QPIP where applicable).
+                        </li>
+
+                        <li>
+                            <strong>Net after tax:</strong>
+                            net before tax reduced by income tax (federal +
+                            the selected jurisdiction's provincial/territorial
+                            tax).
+                        </li>
+
+                        <li>
+                            <strong>Employer cost:</strong>
+                            gross wage increased by employer contributions
+                            (CPP/QPP, EI, QPIP where applicable, EHT or FSS
+                            where applicable, workers' compensation).
+                        </li>
+
+                        <li>
+                            <strong>Social wedge:</strong>
+                            difference between employer cost and net wage
+                            before tax.
+                        </li>
+
+                        <li>
+                            <strong>Total socio-fiscal wedge:</strong>
+                            difference between employer cost and net wage
+                            after tax.
+                        </li>
+
+                        <li>
+                            <strong>Marginal return:</strong>
+                            share of an additional CAD of gross wage kept
+                            before and after income tax, computed point to
+                            point (no sliding window: Canada has no banded
+                            contribution-base lookup table liable to create
+                            artificial rounding noise).
+                        </li>
+                    </ul>
+
+                    <h3>8. Lab Index</h3>
+
+                    <p>
+                        The Lab Index measures the wage efficiency of labour
+                        cost, independent of income tax. Lab-E = 100 × net
+                        wage before income tax / employer cost, Lab-B = 100
+                        − Lab-E. No targeted, degressive employer relief is
+                        modeled for Canada: the Lab-R indicator does not
+                        apply here.
+                    </p>
+
+                    <h3>9. Scenario limitations</h3>
+
+                    <ul class="method-note">
+                        <li>
+                            Canada has no national minimum wage: this
+                            module's reference wage is Ontario's minimum
+                            wage, applied uniformly across all
+                            jurisdictions.
+                        </li>
+
+                        <li>
+                            The workers' compensation rate
+                            (CNESST/WSIB/WorkSafeBC/etc.) is a uniform
+                            national illustrative rate of 1.00%, since each
+                            jurisdiction tariffs by industry sector with no
+                            published national average.
+                        </li>
+
+                        <li>
+                            Ontario's Employer Health Tax (EHT) and Quebec's
+                            Health Services Fund contribution (FSS) are both,
+                            in reality, graduated by the employer's total
+                            payroll; this module uses the full rate
+                            applicable to a standard large employer, without
+                            modeling the small-employer exemption/reduced
+                            rate.
+                        </li>
+
+                        <li>
+                            Only Ontario has an explicitly modeled
+                            provincial surtax and personal health premium
+                            for 2026; no other province or territory has an
+                            equivalent mechanism this tax year.
+                        </li>
+
+                        <li>
+                            Manitoba's linear Basic Personal Amount reduction
+                            (between CAD 200,000 and 400,000 of net income)
+                            only bites at the very top of that province's
+                            wage grid, and remains a minor model refinement
+                            rather than a salient feature at this module's
+                            wage levels.
+                        </li>
+
+                        <li>
+                            The reference profile is a single, childless,
+                            standard full-time contributing employee: no
+                            personal tax credit other than the Basic
+                            Personal Amount is modeled (no spousal credit,
+                            dependent credit, GST/HST credit, working income
+                            tax benefit, etc.).
+                        </li>
+                    </ul>
+
+                    <h3>10. Sources</h3>
+
+                    <p class="method-note">
+                        Canada Revenue Agency (CRA) — federal and
+                        provincial/territorial tax rates, 2026 Basic
+                        Personal Amount; Employment and Social Development
+                        Canada (ESDC) — Employment Insurance rates and
+                        maximums, 2026; Retraite Quebec — Quebec Pension
+                        Plan parameters, 2026; Revenu Quebec — Quebec
+                        Parental Insurance Plan and Health Services Fund;
+                        provincial and territorial ministries of finance;
+                        TaxTips.ca (an aggregator cross-checked against
+                        official sources for each jurisdiction); Statistics
+                        Canada — population estimates by province and
+                        territory, 2025; World Bank — PPP conversion factor
+                        used in the Comparison module. See
+                        canada_sources_2026.json for the full citation
+                        detail, jurisdiction by jurisdiction, including
+                        confidence levels.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

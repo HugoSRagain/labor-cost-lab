@@ -1,0 +1,35 @@
+{
+  "country": "Canada",
+  "version": "2026-01",
+  "general_sources": [
+    {"name": "Agence du revenu du Canada (ARC) -- Taux d'imposition federaux et montant personnel de base 2026", "url": "https://www.canada.ca/fr/agence-revenu.html"},
+    {"name": "Agence du revenu du Canada (ARC) -- Taux d'imposition provinciaux et territoriaux 2026", "url": "https://www.canada.ca/fr/agence-revenu.html"},
+    {"name": "Emploi et Developpement social Canada (EDSC) -- Assurance-emploi, taux et maximums 2026", "url": "https://www.canada.ca/fr/emploi-developpement-social.html"},
+    {"name": "Retraite Quebec -- Regime de rentes du Quebec, parametres 2026", "url": "https://www.rrq.gouv.qc.ca/"},
+    {"name": "Revenu Quebec -- Regime quebecois d'assurance parentale et Fonds des services de sante", "url": "https://www.revenuquebec.ca/"},
+    {"name": "Statistique Canada -- Estimations de la population par province et territoire, 2025", "url": "https://www.statcan.gc.ca/"},
+    {"name": "Banque mondiale -- Indicateur de parite de pouvoir d'achat PA.NUS.PRVT.PP (2024)", "url": "https://api.worldbank.org/v2/country/CAN/indicator/PA.NUS.PRVT.PP"},
+    {"name": "TaxTips.ca -- Compilation des baremes provinciaux et territoriaux 2026 (agregateur verifie contre les sources officielles pour chaque juridiction)", "url": "https://www.taxtips.ca/"}
+  ],
+  "ppp_conversion_factor_2024": 1.240903,
+  "provinces_territories": {
+    "ON": {"name": "Ontario", "population_2025": 16103890, "minimum_wage_hourly_cad": 17.60, "bracket_source": "Ministere des Finances de l'Ontario", "surtax_and_health_premium_source": "Ministere des Finances de l'Ontario"},
+    "QC": {"name": "Quebec", "population_2025": 9016222, "minimum_wage_hourly_cad": 16.60, "bracket_source": "Revenu Quebec"},
+    "BC": {"name": "Colombie-Britannique", "population_2025": 5646420, "minimum_wage_hourly_cad": 18.25, "bracket_source": "Ministere des Finances de la Colombie-Britannique"},
+    "AB": {"name": "Alberta", "population_2025": 5057077, "minimum_wage_hourly_cad": 15.00, "bracket_source": "Tax and Revenue Administration, Alberta"},
+    "MB": {"name": "Manitoba", "population_2025": 1503865, "minimum_wage_hourly_cad": 16.00, "bracket_source": "Ministere des Finances du Manitoba", "note": "Montant personnel de base gele a 15 780 CAD, reduit lineairement a zero entre 200 000 et 400 000 CAD de revenu net."},
+    "SK": {"name": "Saskatchewan", "population_2025": 1266092, "minimum_wage_hourly_cad": 15.35, "bracket_source": "Ministere des Finances de la Saskatchewan"},
+    "NS": {"name": "Nouvelle-Ecosse", "population_2025": 1090852, "minimum_wage_hourly_cad": 16.75, "bracket_source": "Ministere des Finances de la Nouvelle-Ecosse"},
+    "NB": {"name": "Nouveau-Brunswick", "population_2025": 866497, "minimum_wage_hourly_cad": 15.90, "bracket_source": "TaxTips.ca (taxtips.ca/taxrates/nb.htm), verifie le 2026-08-30", "note": "Bareme complet a 4 tranches (9,4% / 14,0% / 16,0% / 19,5%), MPB 13 664 CAD."},
+    "NL": {"name": "Terre-Neuve-et-Labrador", "population_2025": 547910, "minimum_wage_hourly_cad": 16.35, "bracket_source": "TaxTips.ca (taxtips.ca/taxrates/nl.htm), verifie le 2026-08-30", "note": "Bareme complet a 7 tranches, taux marginal superieur 21,3%, MPB 13 094 CAD. Une premiere recherche avait rapporte des chiffres differents (seuils 44 062 CAD, taux superieur 21,80%, MPB 11 188 CAD) probablement issus d'une source moins a jour ou d'une confusion avec un autre exercice fiscal; les chiffres retenus ici proviennent d'une verification directe et complete de TaxTips.ca, qui cite explicitement le facteur d'indexation propre a Terre-Neuve-et-Labrador (1,1% pour 2026) et est interne coherente sur les 7 tranches."},
+    "PE": {"name": "Ile-du-Prince-Edouard", "population_2025": 181715, "minimum_wage_hourly_cad": 17.00, "bracket_source": "Ministere des Finances de l'Ile-du-Prince-Edouard", "note": "La surtaxe historique de l'Ile-du-Prince-Edouard a ete abolie a compter de 2024 et n'est donc pas modelisee pour 2026."},
+    "YT": {"name": "Yukon", "population_2025": 48493, "minimum_wage_hourly_cad": 18.51, "bracket_source": "Ministere des Finances du Yukon", "note": "Montant personnel de base reproduit exactement la structure federale a deux paliers (memes montants et seuils, au taux du Yukon)."},
+    "NT": {"name": "Territoires du Nord-Ouest", "population_2025": 45808, "minimum_wage_hourly_cad": 16.95, "bracket_source": "Ministere des Finances des Territoires du Nord-Ouest"},
+    "NU": {"name": "Nunavut", "population_2025": 42215, "minimum_wage_hourly_cad": 19.75, "bracket_source": "Ministere des Finances du Nunavut", "note": "MPB retenu a 19 659 CAD (source TaxTips.ca, plus directement sourcee) plutot que 19 274 CAD rapporte par une recherche initiale moins precise."}
+  ],
+  "notes": [
+    "Le Quebec differe structurellement de toutes les autres juridictions : regime de pensions propre (RRQ au lieu du RPC, taux de base plus eleve), regime d'assurance parentale propre (RQAP, en plus d'un taux d'assurance-emploi reduit), abattement fiscal federal de 16,5%, et cotisation employeur au Fonds des services de sante (FSS) au lieu de l'impot-sante des employeurs ontarien.",
+    "Seule l'Ontario a une surtaxe provinciale et une prime-sante personnelle modelisees pour 2026; les 12 autres juridictions n'ont pas de mecanisme equivalent identifie pour cette annee fiscale.",
+    "Le taux d'assurance contre les accidents du travail (CNESST/WSIB/WorkSafeBC/etc.) est modelise comme un taux illustratif national uniforme de 1,00%, chaque juridiction tarifant en realite par secteur d'activite sans moyenne nationale publiee -- convention identique a celle deja utilisee pour l'INAIL italien et l'assurance accidents du travail japonaise."
+  ]
+}

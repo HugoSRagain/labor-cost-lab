@@ -1,237 +1,463 @@
 {
-    "module_name": "Cross-Country Labour Cost Comparison",
-    "version": "2026-01",
-    "countries": ["France", "Germany", "Belgium", "Switzerland", "Netherlands", "United Kingdom", "Ireland", "Spain", "Sweden", "Italy", "United States", "China", "Japan"],
-    "methodology": [
-        "Comparison axis: absolute wage levels converted via purchasing power parity (PPP), not wages re-indexed to each country's own minimum wage.",
-        "PPP is applied individually to all 4 countries (including Switzerland), following the same logic as the OECD 'Taxing Wages' cross-country comparisons.",
-        "For each harmonized wage point (expressed in international dollars), the point is converted into each country's local currency using that country's own PPP factor, then each country's existing per-wage compute function is called directly on that local-currency wage. Values are not obtained by interpolating pre-generated national datasets.",
-        "The PPP indicator used is the household/private final consumption expenditure PPP conversion factor (not the GDP-based PPP), because the comparison is about the purchasing power of a wage for a household, not about aggregate output.",
-        "Switzerland does not have a single national wage-tax schedule: withholding tax is set at cantonal level. Switzerland's reference case is therefore a population-weighted average across all 26 cantons, rather than a single reference canton, in order to represent the country as a whole."
-    ],
-    "harmonized_wage_grid": {
-        "unit": "international dollars per month (private consumption PPP basis)",
-        "min_intl_usd": 2000,
-        "max_intl_usd": 12000,
-        "step_intl_usd": 500,
-        "note": "The lower bound (2,000 intl $) is set below all four countries' own minimum/reference wage floors once converted to international dollars, so that the lowest wage grids (close to and below each country's minimum wage) remain visible. Each row carries a 'below_minimum_wage' flag (and the corresponding 'national_minimum_wage_monthly_local' reference value) indicating whether that country's wage at that harmonized point falls below its own legal minimum/reference wage; such points are hypothetical for that country."
+  "module_name": "Cross-Country Labour Cost Comparison",
+  "version": "2026-01",
+  "countries": [
+    "France",
+    "Germany",
+    "Belgium",
+    "Switzerland",
+    "Netherlands",
+    "United Kingdom",
+    "Ireland",
+    "Spain",
+    "Sweden",
+    "Italy",
+    "United States",
+    "China",
+    "Japan",
+    "Canada"
+  ],
+  "methodology": [
+    "Comparison axis: absolute wage levels converted via purchasing power parity (PPP), not wages re-indexed to each country's own minimum wage.",
+    "PPP is applied individually to all 4 countries (including Switzerland), following the same logic as the OECD 'Taxing Wages' cross-country comparisons.",
+    "For each harmonized wage point (expressed in international dollars), the point is converted into each country's local currency using that country's own PPP factor, then each country's existing per-wage compute function is called directly on that local-currency wage. Values are not obtained by interpolating pre-generated national datasets.",
+    "The PPP indicator used is the household/private final consumption expenditure PPP conversion factor (not the GDP-based PPP), because the comparison is about the purchasing power of a wage for a household, not about aggregate output.",
+    "Switzerland does not have a single national wage-tax schedule: withholding tax is set at cantonal level. Switzerland's reference case is therefore a population-weighted average across all 26 cantons, rather than a single reference canton, in order to represent the country as a whole."
+  ],
+  "harmonized_wage_grid": {
+    "unit": "international dollars per month (private consumption PPP basis)",
+    "min_intl_usd": 2000,
+    "max_intl_usd": 12000,
+    "step_intl_usd": 500,
+    "note": "The lower bound (2,000 intl $) is set below all four countries' own minimum/reference wage floors once converted to international dollars, so that the lowest wage grids (close to and below each country's minimum wage) remain visible. Each row carries a 'below_minimum_wage' flag (and the corresponding 'national_minimum_wage_monthly_local' reference value) indicating whether that country's wage at that harmonized point falls below its own legal minimum/reference wage; such points are hypothetical for that country."
+  },
+  "national_minimum_wage_floors_intl_usd": {
+    "note": "Each country's own minimum/reference wage, converted to international dollars at the PPP factors above, for reference. Rows in the dataset below these levels are flagged 'below_minimum_wage' for that country.",
+    "FR": {
+      "value_local": 1867.02,
+      "currency": "EUR",
+      "value_intl_usd": 2604.2,
+      "source": "SMIC brut mensuel, config/scenarios.yml"
     },
-    "national_minimum_wage_floors_intl_usd": {
-        "note": "Each country's own minimum/reference wage, converted to international dollars at the PPP factors above, for reference. Rows in the dataset below these levels are flagged 'below_minimum_wage' for that country.",
-        "FR": {"value_local": 1867.02, "currency": "EUR", "value_intl_usd": 2604.2, "source": "SMIC brut mensuel, config/scenarios.yml"},
-        "CH": {"value_local": 3000, "currency": "CHF", "value_intl_usd": 2709.5, "source": "gross_monthly_min_chf, docs/data/switzerland/switzerland_parameters_2026.json"},
-        "BE": {"value_local": 2189.81, "currency": "EUR", "value_intl_usd": 2911.4, "source": "GGMMI / RMMMG, docs/data/belgium/belgium_parameters_2026.json"},
-        "DE": {"value_local": 2409.33, "currency": "EUR", "value_intl_usd": 3434.3, "source": "Statutory minimum wage x monthly hours convention, analysis/germany parameters"},
-        "NL": {"value_local": 2338.44, "currency": "EUR", "value_intl_usd": 3151.7, "source": "Wettelijk minimumloon (WML), 14.99 EUR/h x 36h/week (CBS full-time convention), docs/data/netherlands/netherlands_parameters_2026.json"},
-        "UK": {"value_local": 2065.38, "currency": "GBP", "value_intl_usd": 3025.1, "source": "National Living Wage (21+), 12.71 GBP/h x 37.5h/week (most commonly cited UK full-time benchmark), docs/data/uk/uk_parameters_2026.json"},
-        "IE": {"value_local": 2391.35, "currency": "EUR", "value_intl_usd": 2711.4, "source": "National Minimum Wage (20+), 14.15 EUR/h x 39h/week (most commonly cited Irish full-time benchmark), docs/data/ireland/ireland_parameters_2026.json"},
-        "ES": {"value_local": 1424.50, "currency": "EUR", "value_intl_usd": 2421.0, "source": "Salario Minimo Interprofesional (SMI) 2026, 1,221 EUR/month x 14 payments, prorated over 12 months, docs/data/spain/spain_parameters_2026.json"},
-        "SE": {"value_local": 34470, "currency": "SEK", "value_intl_usd": 4019.8, "source": "Sweden has no statutory minimum wage; this is the Migrationsverket work-permit wage floor (90% of the SCB median salary), used as this module's reference wage by convention, docs/data/sweden/sweden_parameters_2026.json"},
-        "IT": {"value_local": 2314.56, "currency": "EUR", "value_intl_usd": 3702.4, "source": "Italy has no statutory minimum wage; this is the CCNL Commercio Livello 3 minimo tabellare (1,983.91 EUR x 14 payments / 12), used as this module's reference wage by convention, docs/data/italy/italy_parameters_2026.json"},
-        "US": {"value_local": 1256.67, "currency": "USD", "value_intl_usd": 1256.67, "source": "Federal Minimum Wage (7.25 USD/hour x 40h/week, unchanged since 24 July 2009), docs/data/usa/usa_parameters_2026.json; many states/cities set substantially higher minimums"},
-        "CN": {"value_local": 2740, "currency": "RMB", "value_intl_usd": 771.7, "source": "China has no national minimum wage; this is Shanghai's own monthly minimum wage, used as this module's reference wage by convention, docs/data/china/china_parameters_2026.json"},
-        "JP": {"value_local": 212506.67, "currency": "JPY", "value_intl_usd": 2138.22, "source": "Japan has no national minimum wage; this is Tokyo's own monthly minimum wage equivalent (1,226 JPY/hour x 40h/week), used as this module's reference wage by convention, docs/data/japan/japan_parameters_2026.json"}
+    "CH": {
+      "value_local": 3000,
+      "currency": "CHF",
+      "value_intl_usd": 2709.5,
+      "source": "gross_monthly_min_chf, docs/data/switzerland/switzerland_parameters_2026.json"
     },
-    "ppp_conversion_factors": {
-        "basis": "Household (private) final consumption expenditure PPP conversion factor, LCU per international dollar",
-        "source": "World Bank International Comparison Program (ICP)",
-        "indicator_code": "PA.NUS.PRVT.PP",
-        "reference_year": 2024,
-        "retrieved_via": "World Bank API (api.worldbank.org)",
-        "values": {
-            "FR": 0.716934,
-            "DE": 0.701547,
-            "BE": 0.752163,
-            "CH": 1.107209,
-            "NL": 0.74195,
-            "UK": 0.682739,
-            "IE": 0.88195,
-            "ES": 0.588481,
-            "SE": 8.577614,
-            "IT": 0.625157,
-            "US": 1.0,
-            "CN": 3.55078934957358,
-            "JP": 99.384798
-        }
+    "BE": {
+      "value_local": 2189.81,
+      "currency": "EUR",
+      "value_intl_usd": 2911.4,
+      "source": "GGMMI / RMMMG, docs/data/belgium/belgium_parameters_2026.json"
     },
-    "reference_profiles": {
-        "FR": {
-            "profile_id": "non_cadre__standard__lt50__standard__full_time",
-            "description": "Non-executive employee, outside Alsace-Moselle, firm with fewer than 50 employees, standard AT/MP rate, full-time. Income tax is the actual tax due by a single, childless taxpayer (1 part de quotient familial), computed via the true progressive income-tax bareme (marginal brackets, see notes below), not a withholding-tax proxy.",
-            "compute_source": "scripts/build_dataset_mon_entreprise.py (Mon-entreprise / Publicodes engine + compute_progressive_income_tax), grid: docs/data/france/france_income_tax_2026.json"
-        },
-        "DE": {
-            "profile_id": "germany__public_health__childless__outside_saxony",
-            "description": "Public health insurance, childless, outside Saxony.",
-            "compute_source": "analysis/germany/build_germany_dataset.py"
-        },
-        "BE": {
-            "profile_id": "belgium__standard_private_sector",
-            "description": "Standard private-sector employee (only profile currently modeled for Belgium).",
-            "compute_source": "analysis/belgium/build_belgium_dataset.py"
-        },
-        "CH": {
-            "profile_id": "switzerland__population_weighted_average_26_cantons__single_no_child_standard_lpp",
-            "description": "Population-weighted average across all 26 cantons, tariff A0N (single, no child, no church tax where available), standardized LPP/BVG and accident insurance assumptions.",
-            "compute_source": "analysis/switzerland/swiss_social_contributions_2026.py and analysis/switzerland/swiss_withholding_tax_2026.py, aggregated across cantons"
-        },
-        "NL": {
-            "profile_id": "netherlands__standard_permanent_contract",
-            "description": "Permanent contract (WW low rate), large employer (Aof high rate), single, childless, below AOW age. No separate employee social-security contribution: AOW/Anw/Wlz national insurance is bundled into the Box 1 wage-tax rate (loonheffing).",
-            "compute_source": "analysis/netherlands/build_netherlands_dataset.py and analysis/netherlands/loonheffing_2026.py"
-        },
-        "UK": {
-            "profile_id": "uk__population_weighted_average_ruk_scotland",
-            "description": "Population-weighted average of rUK (England/Wales/Northern Ireland) and Scotland income-tax regimes, standard employee, full-time, standard tax code, auto-enrolled in a workplace pension at the statutory minimum rates (employee 5%, employer 3% of qualifying earnings). National Insurance and the workplace pension are not devolved and are identical in both regions.",
-            "compute_source": "analysis/uk/build_uk_dataset.py and analysis/uk/paye_ni_2026.py, aggregated across rUK and Scotland"
-        },
-        "IE": {
-            "profile_id": "ireland__standard_employee",
-            "description": "Standard, single, childless employee, full-time, PRSI Class A, January-September 2026 rates.",
-            "compute_source": "analysis/ireland/build_ireland_dataset.py and analysis/ireland/paye_usc_prsi_2026.py"
-        },
-        "ES": {
-            "profile_id": "spain__population_weighted_average_16_regions",
-            "description": "Population-weighted average across 16 comunidades autonomas (Madrid, Andalucia, Aragon, Asturias, Baleares, Canarias, Cantabria, Castilla-La Mancha, Castilla y Leon, Cataluna, Extremadura, Galicia, Murcia, La Rioja, Comunidad Valenciana, Ceuta/Melilla), standard single childless employee, full-time, Seguridad Social Regimen General. Navarra and Pais Vasco excluded (foral tax systems).",
-            "compute_source": "analysis/spain/build_spain_dataset.py and analysis/spain/irpf_seguridad_social_2026.py, aggregated across 16 regions"
-        },
-        "SE": {
-            "profile_id": "sweden__standard_employee_stockholm",
-            "description": "Standard, single, childless employee, Stockholm kommun as the reference municipality (kommunalskatt 30.55%). No separate visible employee contribution: the 7% allman pensionsavgift is fully offset by an equal skattereduktion across this module's entire wage range, so 'employee_contributions' is 0 by construction, mirroring how the Netherlands' bundled loonheffing is handled.",
-            "compute_source": "analysis/sweden/build_sweden_dataset.py and analysis/sweden/swedish_tax_2026.py"
-        },
-        "IT": {
-            "profile_id": "italy__standard_employee_roma_lazio",
-            "description": "Standard, single, childless private-sector employee, open-ended contract, firm with more than 50 employees, Roma/Lazio as the reference region and municipality (national IRPEF plus the Lazio addizionale regionale and Roma addizionale comunale, both tiered-flat surcharges on the whole taxable income). employer_cost includes the TFR (trattamento di fine rapporto) deferred severance accrual (~6.91% of gross annual pay), a personnel cost under standard Italian payroll accounting that is not available to the employee as current net pay.",
-            "compute_source": "analysis/italy/build_italy_dataset.py and analysis/italy/italian_payroll_2026.py"
-        },
-        "US": {
-            "profile_id": "usa__population_weighted_average_50_states_dc__single_no_child",
-            "description": "Population-weighted average across all 50 states and the District of Columbia (2024 Census Bureau estimates), single, childless employee, federal filing status only. Federal income tax, FICA (Social Security + Medicare + Additional Medicare Tax) and FUTA are identical nationwide; state income tax (9 states have none), State Unemployment Insurance and any state-mandated payroll deduction (SDI/PFML/TDI in California, Colorado, Connecticut, Delaware, DC, Massachusetts, Maine, Minnesota, New Jersey, New York, Oregon, Rhode Island, Washington) vary by state.",
-            "compute_source": "analysis/usa/build_usa_dataset.py and analysis/usa/us_payroll_2026.py, aggregated across 50 states + DC"
-        },
-        "CN": {
-            "profile_id": "china__population_weighted_average_31_provinces__single_no_child",
-            "description": "Population-weighted average across all 31 mainland provinces, municipalities and autonomous regions (2024 official population estimates), single, childless employee, standard formal employment, work-injury Tier 1. Individual income tax is identical nationwide; social-insurance contribution-base floors/caps, some contribution rates (e.g. Guangdong's unemployment-insurance split), and the housing-fund contribution base vary by province. The housing-fund contribution rate itself is a discretionary employer choice nationally and is modelled with one uniform illustrative rate (7%).",
-            "compute_source": "analysis/china/build_china_dataset.py and analysis/china/china_payroll_2026.py, aggregated across 31 provinces"
-        },
-        "JP": {
-            "profile_id": "japan__population_weighted_average_47_prefectures__single_no_child",
-            "description": "Population-weighted average across all 47 prefectures (2025 official population estimates), single, childless employee under 40, standard formal employment, workers' accident insurance class 94. National income tax and resident tax are identical nationwide (though the two levies use genuinely different basic-deduction schedules since a 2026 tax reform); only the Kyokai Kenpo health-insurance premium rate (9.21%-10.55%) varies by prefecture.",
-            "compute_source": "analysis/japan/build_japan_dataset.py and analysis/japan/japan_payroll_2026.py, aggregated across 47 prefectures"
-        }
+    "DE": {
+      "value_local": 2409.33,
+      "currency": "EUR",
+      "value_intl_usd": 3434.3,
+      "source": "Statutory minimum wage x monthly hours convention, analysis/germany parameters"
     },
-    "switzerland_canton_population_weights": {
-        "source": "Swiss Federal Statistical Office (BFS), STAT-TAB px-x-0103010000_101",
-        "url": "https://www.pxweb.bfs.admin.ch/pxweb/fr/px-x-0103010000_101/px-x-0103010000_101/px-x-0103010000_101.px",
-        "reference_year": 2024,
-        "population_type": "Population r\u00e9sidante permanente",
-        "retrieved": "2026-08-04",
-        "total_population": 9051029,
-        "cantons": [
-            {"code": "ZH", "population": 1620020},
-            {"code": "BE", "population": 1071216},
-            {"code": "LU", "population": 437944},
-            {"code": "UR", "population": 38275},
-            {"code": "SZ", "population": 168931},
-            {"code": "OW", "population": 39662},
-            {"code": "NW", "population": 45345},
-            {"code": "GL", "population": 42371},
-            {"code": "ZG", "population": 133739},
-            {"code": "FR", "population": 346674},
-            {"code": "SO", "population": 289792},
-            {"code": "BS", "population": 201384},
-            {"code": "BL", "population": 301323},
-            {"code": "SH", "population": 88667},
-            {"code": "AR", "population": 56705},
-            {"code": "AI", "population": 16733},
-            {"code": "SG", "population": 540036},
-            {"code": "GR", "population": 206138},
-            {"code": "AG", "population": 735808},
-            {"code": "TG", "population": 299509},
-            {"code": "TI", "population": 358903},
-            {"code": "VD", "population": 855106},
-            {"code": "VS", "population": 371288},
-            {"code": "NE", "population": 179518},
-            {"code": "GE", "population": 531102},
-            {"code": "JU", "population": 74840}
-        ]
+    "NL": {
+      "value_local": 2338.44,
+      "currency": "EUR",
+      "value_intl_usd": 3151.7,
+      "source": "Wettelijk minimumloon (WML), 14.99 EUR/h x 36h/week (CBS full-time convention), docs/data/netherlands/netherlands_parameters_2026.json"
     },
-    "uk_region_population_weights": {
-        "source": "Office for National Statistics (UK total, mid-2024) and National Records of Scotland (Scotland, mid-2024)",
-        "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/bulletins/annualmidyearpopulationestimates/mid2024",
-        "reference_year": 2024,
-        "retrieved": "2026-08-06",
-        "total_population": 69281400,
-        "regions": [
-            {"code": "scotland", "population": 5546900},
-            {"code": "ruk", "population": 63734500}
-        ],
-        "note": "rUK (England, Wales and Northern Ireland combined) population is derived as UK total minus Scotland, since only the rUK/Scotland split matters for income-tax devolution -- England, Wales and Northern Ireland all share the same rUK income-tax bands."
+    "UK": {
+      "value_local": 2065.38,
+      "currency": "GBP",
+      "value_intl_usd": 3025.1,
+      "source": "National Living Wage (21+), 12.71 GBP/h x 37.5h/week (most commonly cited UK full-time benchmark), docs/data/uk/uk_parameters_2026.json"
     },
-    "es_region_population_weights": {
-        "source": "INE (Instituto Nacional de Estadistica), Cifras oficiales de poblacion, 1 January 2025",
-        "url": "https://ine.es/jaxiT3/Datos.htm?t=67988",
-        "reference_year": 2025,
-        "retrieved": "2026-08-06",
-        "total_population": 46202100,
-        "regions": [
-            {"code": "madrid", "population": 7113886},
-            {"code": "andalucia", "population": 8676713},
-            {"code": "aragon", "population": 1364621},
-            {"code": "asturias", "population": 1015128},
-            {"code": "baleares", "population": 1249844},
-            {"code": "canarias", "population": 2258866},
-            {"code": "cantabria", "population": 593623},
-            {"code": "castilla_la_mancha", "population": 2126378},
-            {"code": "castilla_y_leon", "population": 2401221},
-            {"code": "cataluna", "population": 8124126},
-            {"code": "extremadura", "population": 1053345},
-            {"code": "galicia", "population": 2714741},
-            {"code": "murcia", "population": 1586989},
-            {"code": "la_rioja", "population": 326803},
-            {"code": "comunidad_valenciana", "population": 5425182},
-            {"code": "ceuta_melilla", "population": 170634}
-        ],
-        "excluded_regions_population": {
-            "navarra": 683854,
-            "pais_vasco": 2242343
-        },
-        "note": "Navarra and Pais Vasco are excluded from the weighting base (separate foral tax systems, out of scope); the 16 modeled regions' populations sum to the total_population figure above. See docs/data/spain/spain_parameters_2026.json for the full per-region source citations."
+    "IE": {
+      "value_local": 2391.35,
+      "currency": "EUR",
+      "value_intl_usd": 2711.4,
+      "source": "National Minimum Wage (20+), 14.15 EUR/h x 39h/week (most commonly cited Irish full-time benchmark), docs/data/ireland/ireland_parameters_2026.json"
     },
-    "us_state_population_weights": {
-        "source": "US Census Bureau, Annual Estimates of the Resident Population (NST-EST2024-POP)",
-        "url": "https://www2.census.gov/programs-surveys/popest/tables/2020-2024/state/totals/NST-EST2024-POP.xlsx",
-        "reference_year": 2024,
-        "retrieved": "2026-08-28",
-        "note": "Population weights for all 50 states and the District of Columbia are stored in analysis/usa/us_payroll_2026.py (STATE_DATA_2026, 'population' field) rather than duplicated here, to avoid drift between the two files."
+    "ES": {
+      "value_local": 1424.5,
+      "currency": "EUR",
+      "value_intl_usd": 2421.0,
+      "source": "Salario Minimo Interprofesional (SMI) 2026, 1,221 EUR/month x 14 payments, prorated over 12 months, docs/data/spain/spain_parameters_2026.json"
     },
-    "cn_province_population_weights": {
-        "source": "National Bureau of Statistics of China and provincial statistical bureaus, aggregated",
-        "reference_year": 2024,
-        "retrieved": "2026-08-29",
-        "note": "Population weights for all 31 mainland provinces/municipalities/autonomous regions are stored in analysis/china/china_payroll_2026.py (PROVINCE_DATA_2026, 'population' field) rather than duplicated here, to avoid drift between the two files."
+    "SE": {
+      "value_local": 34470,
+      "currency": "SEK",
+      "value_intl_usd": 4019.8,
+      "source": "Sweden has no statutory minimum wage; this is the Migrationsverket work-permit wage floor (90% of the SCB median salary), used as this module's reference wage by convention, docs/data/sweden/sweden_parameters_2026.json"
     },
-    "jp_prefecture_population_weights": {
-        "source": "Statistics Bureau of Japan (Soumusho Tokei-kyoku), aggregated",
-        "reference_year": 2025,
-        "retrieved": "2026-08-30",
-        "note": "Population weights for all 47 prefectures are stored in analysis/japan/japan_payroll_2026.py (PREFECTURE_DATA_2026, 'population' field) rather than duplicated here, to avoid drift between the two files."
+    "IT": {
+      "value_local": 2314.56,
+      "currency": "EUR",
+      "value_intl_usd": 3702.4,
+      "source": "Italy has no statutory minimum wage; this is the CCNL Commercio Livello 3 minimo tabellare (1,983.91 EUR x 14 payments / 12), used as this module's reference wage by convention, docs/data/italy/italy_parameters_2026.json"
     },
-    "notes": [
-        "Germany, Belgium, Switzerland and the Netherlands' 'net after income tax' figures include a mandatory wage withholding tax computed directly from the wage (Lohnsteuer, pr\u00e9compte professionnel, impot a la source, loonheffing), which does not require household-specific information beyond the modeled reference profile.",
-        "The Netherlands has no separate employee social-security contribution line: AOW/Anw/Wlz national-insurance premiums are bundled into the Box 1 wage-tax rate. Its 'employee_contributions_monthly' figure is therefore 0 by construction, and the full payroll deduction (income tax + national insurance combined, 'loonheffing') appears under the income-tax figure -- this does not mean Dutch employees pay no social insurance.",
-        "France's 'net after income tax' figure is the actual income tax due by a single, childless reference taxpayer (1 part de quotient familial), computed via the true progressive income-tax bar\u00e8me (marginal brackets), applied to the Mon-entreprise engine's 'net imposable' tax base (annualized, less the standard 10% deduction for professional expenses). This is directly analogous to the other three countries' actual mandatory tax liabilities for a single/childless reference profile. Note that most French employees are withheld at a personalized 'pr\u00e9l\u00e8vement \u00e0 la source' rate set by the DGFiP from their full household's tax situation (which can differ from a single/childless taxpayer's liability); the withheld amount is only an advance on the definitively-due tax computed here.",
-        "The non-personalized 'taux neutre' (grille des taux par d\u00e9faut, article 204 H CGI, BOFiP BOI-BAREME-000037) -- an earlier candidate proxy based on the monthly withholding mechanism rather than actual tax liability -- was evaluated and rejected as a comparison basis because it does not represent any specific taxpayer's real tax burden; it is kept in docs/data/france/france_income_tax_2026.json for reference only.",
-        "See docs/data/france/france_income_tax_2026.json for the full progressive bar\u00e8me, standard-deduction parameters, methodology notes and sources.",
-        "The United Kingdom's 'employee_contributions' and 'employer_contributions' figures include both Class 1 National Insurance and the statutory-minimum automatic-enrolment workplace pension (employee 5%, employer 3% of qualifying earnings), not income tax alone -- income tax (PAYE) is reported separately, as for the other countries. Income tax is a population-weighted average of the rUK (England/Wales/Northern Ireland) and Scotland devolved bands (see 'uk_region_population_weights'), mirroring how Switzerland's cantons are aggregated; National Insurance and the workplace pension are not devolved and are identical in both regions.",
-        "Ireland's 'income_tax_or_withholding_tax' figure bundles PAYE income tax and the Universal Social Charge (USC), since USC is a separate tax on income rather than a social contribution; 'employee_contributions' and 'employer_contributions' are PRSI Class A only, using the January-September 2026 rates (a further rate increase scheduled for 1 October 2026 is not modeled).",
-        "Spain's income tax (IRPF) is a population-weighted average across 16 comunidades autonomas (see 'es_region_population_weights'), mirroring how Switzerland's cantons are aggregated; Navarra and Pais Vasco are excluded (separate foral tax systems). 'employee_contributions' and 'employer_contributions' are Seguridad Social Regimen General only, national and identical across all regions.",
-        "Sweden has no statutory minimum wage and no single universal collective agreement (the Ghent/Nordic model: roughly 700 sector-level agreements negotiated by employers and unions cover about 90% of employees). This module uses the Migrationsverket work-permit wage floor (90% of the SCB median salary, 34,470 SEK/month for decisions from 1 June 2026) as its reference wage by convention -- an official, dated figure, but not a legal minimum or a negotiated collective-bargaining floor. Sweden's 'employee_contributions' is 0 by construction: the 7% allman pensionsavgift is fully offset by an equal skattereduktion (capped at total tax due) across this module's entire wage range, so the entire employee-side deduction is reported under 'income_tax_or_withholding_tax'. Only Stockholm kommun (30.55% combined kommunalskatt) is modeled as the reference municipality; the national range is 28.93%-35.65%.",
-        "Italy has no statutory minimum wage either -- one of five EU countries (with Austria, Denmark, Finland and Sweden) relying exclusively on sector-level collective bargaining (CCNL), which covers over 80% of private-sector employees. This module uses the CCNL Commercio Livello 3 minimo tabellare (EUR 1,983.91/month, paid over 14 installments, prorated to EUR 2,314.56/month over 12 months) as its reference wage by convention -- a methodological choice, not a legal minimum. Italy's 'employer_cost' includes the TFR (trattamento di fine rapporto) deferred severance accrual (~6.91% of gross annual pay), a personnel cost under standard Italian payroll accounting that is not available to the employee as current net pay, unlike every other country in this comparison. Income tax bundles national IRPEF with the Lazio addizionale regionale and Roma addizionale comunale, both tiered-flat surcharges (the whole taxable income is taxed at one rate once a threshold is crossed, not a marginal bracket) rather than progressive brackets.",
-        "The United States is the only genuinely federal system in this comparison: a uniform federal income tax and FICA/FUTA payroll taxes apply everywhere, PLUS each of the 50 states' (and DC's) own income tax (9 states have none), State Unemployment Insurance, and in 13 jurisdictions a state-mandated payroll deduction analogous to social insurance (State Disability Insurance in California and New York, Paid Family and Medical Leave in Colorado/Massachusetts/Maine/Minnesota/Oregon/Washington/DC, Temporary Disability Insurance in Rhode Island/Hawaii, Delaware's new-for-2026 Paid Leave, and New Jersey's combined UI/DI/FLI). This module aggregates all 50 states + DC with a population-weighted average (see 'us_state_population_weights'), mirroring how Switzerland's cantons, the UK's devolved regions and Spain's comunidades autonomas are aggregated. The reference wage is the federal minimum wage (USD 7.25/hour, unchanged since 2009); many states and cities set substantially higher minimum wages of their own. The US dollar's own PPP conversion factor is exactly 1.0 by construction (the international dollar is benchmarked to US prices).",
-        "China's individual income tax is entirely national (a uniform 7-bracket annual schedule and a fixed RMB 60,000/year basic deduction), unlike every other multi-region country in this comparison -- what varies by province is the social-insurance contribution-base floor and cap (typically 60%-300% of the province's own prior-year average wage), a handful of contribution rates that genuinely differ by province (Guangdong's unemployment-insurance split is 0.8% employer / 0.2% employee rather than the more common 0.5%/0.5%), and the Housing Provident Fund (住房公积金) contribution base -- its rate is a discretionary employer choice nationally (5%-12% band) and is modelled with one uniform illustrative rate (7%). This module aggregates all 31 mainland provinces/municipalities/autonomous regions with a population-weighted average (see 'cn_province_population_weights'). China has no national minimum wage; the reference wage used is Shanghai's own monthly minimum wage (RMB 2,740), a methodological convention. In most provinces the social-insurance contribution-base floor exceeds this reference wage, so at low harmonized wage points contributions are computed on that higher floor rather than actual gross pay -- a genuine structural feature of China's system.",
-        "Japan's national income tax and resident tax (juminzei) are both uniform nationwide, but genuinely use two different basic-deduction schedules following a 2026 tax reform that substantially raised the income-tax basic deduction (up to JPY 1,040,000) while leaving the resident-tax basic deduction unchanged (a flat JPY 430,000) -- a real, growing divergence between the two levies. Employee pension, employment and workers' accident insurance rates are also uniform nationally; the ONLY prefecture-specific rate is the Kyokai Kenpo health-insurance premium (9.21%-10.55% across the 47 prefectures for 2026). This module aggregates all 47 prefectures with a population-weighted average (see 'jp_prefecture_population_weights'). Japan has no national minimum wage; the reference wage used is Tokyo's own minimum wage (JPY 1,226/hour), a methodological convention, mirroring China's Shanghai and the US's federal-minimum-wage conventions.",
-        "All amounts are also cross-country comparable in international dollars (PPP) in addition to local currency."
+    "US": {
+      "value_local": 1256.67,
+      "currency": "USD",
+      "value_intl_usd": 1256.67,
+      "source": "Federal Minimum Wage (7.25 USD/hour x 40h/week, unchanged since 24 July 2009), docs/data/usa/usa_parameters_2026.json; many states/cities set substantially higher minimums"
+    },
+    "CN": {
+      "value_local": 2740,
+      "currency": "RMB",
+      "value_intl_usd": 771.7,
+      "source": "China has no national minimum wage; this is Shanghai's own monthly minimum wage, used as this module's reference wage by convention, docs/data/china/china_parameters_2026.json"
+    },
+    "JP": {
+      "value_local": 212506.67,
+      "currency": "JPY",
+      "value_intl_usd": 2138.22,
+      "source": "Japan has no national minimum wage; this is Tokyo's own monthly minimum wage equivalent (1,226 JPY/hour x 40h/week), used as this module's reference wage by convention, docs/data/japan/japan_parameters_2026.json"
+    },
+    "CA": {
+      "value_local": 3050.67,
+      "currency": "CAD",
+      "value_intl_usd": 2458.4,
+      "source": "Canada has no national minimum wage; this is Ontario's own minimum wage equivalent (17.60 CAD/hour x 40h/week), used as this module's reference wage by convention, docs/data/canada/canada_parameters_2026.json"
+    }
+  },
+  "ppp_conversion_factors": {
+    "basis": "Household (private) final consumption expenditure PPP conversion factor, LCU per international dollar",
+    "source": "World Bank International Comparison Program (ICP)",
+    "indicator_code": "PA.NUS.PRVT.PP",
+    "reference_year": 2024,
+    "retrieved_via": "World Bank API (api.worldbank.org)",
+    "values": {
+      "FR": 0.716934,
+      "DE": 0.701547,
+      "BE": 0.752163,
+      "CH": 1.107209,
+      "NL": 0.74195,
+      "UK": 0.682739,
+      "IE": 0.88195,
+      "ES": 0.588481,
+      "SE": 8.577614,
+      "IT": 0.625157,
+      "US": 1.0,
+      "CN": 3.55078934957358,
+      "JP": 99.384798,
+      "CA": 1.240903
+    }
+  },
+  "reference_profiles": {
+    "FR": {
+      "profile_id": "non_cadre__standard__lt50__standard__full_time",
+      "description": "Non-executive employee, outside Alsace-Moselle, firm with fewer than 50 employees, standard AT/MP rate, full-time. Income tax is the actual tax due by a single, childless taxpayer (1 part de quotient familial), computed via the true progressive income-tax bareme (marginal brackets, see notes below), not a withholding-tax proxy.",
+      "compute_source": "scripts/build_dataset_mon_entreprise.py (Mon-entreprise / Publicodes engine + compute_progressive_income_tax), grid: docs/data/france/france_income_tax_2026.json"
+    },
+    "DE": {
+      "profile_id": "germany__public_health__childless__outside_saxony",
+      "description": "Public health insurance, childless, outside Saxony.",
+      "compute_source": "analysis/germany/build_germany_dataset.py"
+    },
+    "BE": {
+      "profile_id": "belgium__standard_private_sector",
+      "description": "Standard private-sector employee (only profile currently modeled for Belgium).",
+      "compute_source": "analysis/belgium/build_belgium_dataset.py"
+    },
+    "CH": {
+      "profile_id": "switzerland__population_weighted_average_26_cantons__single_no_child_standard_lpp",
+      "description": "Population-weighted average across all 26 cantons, tariff A0N (single, no child, no church tax where available), standardized LPP/BVG and accident insurance assumptions.",
+      "compute_source": "analysis/switzerland/swiss_social_contributions_2026.py and analysis/switzerland/swiss_withholding_tax_2026.py, aggregated across cantons"
+    },
+    "NL": {
+      "profile_id": "netherlands__standard_permanent_contract",
+      "description": "Permanent contract (WW low rate), large employer (Aof high rate), single, childless, below AOW age. No separate employee social-security contribution: AOW/Anw/Wlz national insurance is bundled into the Box 1 wage-tax rate (loonheffing).",
+      "compute_source": "analysis/netherlands/build_netherlands_dataset.py and analysis/netherlands/loonheffing_2026.py"
+    },
+    "UK": {
+      "profile_id": "uk__population_weighted_average_ruk_scotland",
+      "description": "Population-weighted average of rUK (England/Wales/Northern Ireland) and Scotland income-tax regimes, standard employee, full-time, standard tax code, auto-enrolled in a workplace pension at the statutory minimum rates (employee 5%, employer 3% of qualifying earnings). National Insurance and the workplace pension are not devolved and are identical in both regions.",
+      "compute_source": "analysis/uk/build_uk_dataset.py and analysis/uk/paye_ni_2026.py, aggregated across rUK and Scotland"
+    },
+    "IE": {
+      "profile_id": "ireland__standard_employee",
+      "description": "Standard, single, childless employee, full-time, PRSI Class A, January-September 2026 rates.",
+      "compute_source": "analysis/ireland/build_ireland_dataset.py and analysis/ireland/paye_usc_prsi_2026.py"
+    },
+    "ES": {
+      "profile_id": "spain__population_weighted_average_16_regions",
+      "description": "Population-weighted average across 16 comunidades autonomas (Madrid, Andalucia, Aragon, Asturias, Baleares, Canarias, Cantabria, Castilla-La Mancha, Castilla y Leon, Cataluna, Extremadura, Galicia, Murcia, La Rioja, Comunidad Valenciana, Ceuta/Melilla), standard single childless employee, full-time, Seguridad Social Regimen General. Navarra and Pais Vasco excluded (foral tax systems).",
+      "compute_source": "analysis/spain/build_spain_dataset.py and analysis/spain/irpf_seguridad_social_2026.py, aggregated across 16 regions"
+    },
+    "SE": {
+      "profile_id": "sweden__standard_employee_stockholm",
+      "description": "Standard, single, childless employee, Stockholm kommun as the reference municipality (kommunalskatt 30.55%). No separate visible employee contribution: the 7% allman pensionsavgift is fully offset by an equal skattereduktion across this module's entire wage range, so 'employee_contributions' is 0 by construction, mirroring how the Netherlands' bundled loonheffing is handled.",
+      "compute_source": "analysis/sweden/build_sweden_dataset.py and analysis/sweden/swedish_tax_2026.py"
+    },
+    "IT": {
+      "profile_id": "italy__standard_employee_roma_lazio",
+      "description": "Standard, single, childless private-sector employee, open-ended contract, firm with more than 50 employees, Roma/Lazio as the reference region and municipality (national IRPEF plus the Lazio addizionale regionale and Roma addizionale comunale, both tiered-flat surcharges on the whole taxable income). employer_cost includes the TFR (trattamento di fine rapporto) deferred severance accrual (~6.91% of gross annual pay), a personnel cost under standard Italian payroll accounting that is not available to the employee as current net pay.",
+      "compute_source": "analysis/italy/build_italy_dataset.py and analysis/italy/italian_payroll_2026.py"
+    },
+    "US": {
+      "profile_id": "usa__population_weighted_average_50_states_dc__single_no_child",
+      "description": "Population-weighted average across all 50 states and the District of Columbia (2024 Census Bureau estimates), single, childless employee, federal filing status only. Federal income tax, FICA (Social Security + Medicare + Additional Medicare Tax) and FUTA are identical nationwide; state income tax (9 states have none), State Unemployment Insurance and any state-mandated payroll deduction (SDI/PFML/TDI in California, Colorado, Connecticut, Delaware, DC, Massachusetts, Maine, Minnesota, New Jersey, New York, Oregon, Rhode Island, Washington) vary by state.",
+      "compute_source": "analysis/usa/build_usa_dataset.py and analysis/usa/us_payroll_2026.py, aggregated across 50 states + DC"
+    },
+    "CN": {
+      "profile_id": "china__population_weighted_average_31_provinces__single_no_child",
+      "description": "Population-weighted average across all 31 mainland provinces, municipalities and autonomous regions (2024 official population estimates), single, childless employee, standard formal employment, work-injury Tier 1. Individual income tax is identical nationwide; social-insurance contribution-base floors/caps, some contribution rates (e.g. Guangdong's unemployment-insurance split), and the housing-fund contribution base vary by province. The housing-fund contribution rate itself is a discretionary employer choice nationally and is modelled with one uniform illustrative rate (7%).",
+      "compute_source": "analysis/china/build_china_dataset.py and analysis/china/china_payroll_2026.py, aggregated across 31 provinces"
+    },
+    "JP": {
+      "profile_id": "japan__population_weighted_average_47_prefectures__single_no_child",
+      "description": "Population-weighted average across all 47 prefectures (2025 official population estimates), single, childless employee under 40, standard formal employment, workers' accident insurance class 94. National income tax and resident tax are identical nationwide (though the two levies use genuinely different basic-deduction schedules since a 2026 tax reform); only the Kyokai Kenpo health-insurance premium rate (9.21%-10.55%) varies by prefecture.",
+      "compute_source": "analysis/japan/build_japan_dataset.py and analysis/japan/japan_payroll_2026.py, aggregated across 47 prefectures"
+    }
+  },
+  "switzerland_canton_population_weights": {
+    "source": "Swiss Federal Statistical Office (BFS), STAT-TAB px-x-0103010000_101",
+    "url": "https://www.pxweb.bfs.admin.ch/pxweb/fr/px-x-0103010000_101/px-x-0103010000_101/px-x-0103010000_101.px",
+    "reference_year": 2024,
+    "population_type": "Population résidante permanente",
+    "retrieved": "2026-08-04",
+    "total_population": 9051029,
+    "cantons": [
+      {
+        "code": "ZH",
+        "population": 1620020
+      },
+      {
+        "code": "BE",
+        "population": 1071216
+      },
+      {
+        "code": "LU",
+        "population": 437944
+      },
+      {
+        "code": "UR",
+        "population": 38275
+      },
+      {
+        "code": "SZ",
+        "population": 168931
+      },
+      {
+        "code": "OW",
+        "population": 39662
+      },
+      {
+        "code": "NW",
+        "population": 45345
+      },
+      {
+        "code": "GL",
+        "population": 42371
+      },
+      {
+        "code": "ZG",
+        "population": 133739
+      },
+      {
+        "code": "FR",
+        "population": 346674
+      },
+      {
+        "code": "SO",
+        "population": 289792
+      },
+      {
+        "code": "BS",
+        "population": 201384
+      },
+      {
+        "code": "BL",
+        "population": 301323
+      },
+      {
+        "code": "SH",
+        "population": 88667
+      },
+      {
+        "code": "AR",
+        "population": 56705
+      },
+      {
+        "code": "AI",
+        "population": 16733
+      },
+      {
+        "code": "SG",
+        "population": 540036
+      },
+      {
+        "code": "GR",
+        "population": 206138
+      },
+      {
+        "code": "AG",
+        "population": 735808
+      },
+      {
+        "code": "TG",
+        "population": 299509
+      },
+      {
+        "code": "TI",
+        "population": 358903
+      },
+      {
+        "code": "VD",
+        "population": 855106
+      },
+      {
+        "code": "VS",
+        "population": 371288
+      },
+      {
+        "code": "NE",
+        "population": 179518
+      },
+      {
+        "code": "GE",
+        "population": 531102
+      },
+      {
+        "code": "JU",
+        "population": 74840
+      }
     ]
+  },
+  "uk_region_population_weights": {
+    "source": "Office for National Statistics (UK total, mid-2024) and National Records of Scotland (Scotland, mid-2024)",
+    "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/bulletins/annualmidyearpopulationestimates/mid2024",
+    "reference_year": 2024,
+    "retrieved": "2026-08-06",
+    "total_population": 69281400,
+    "regions": [
+      {
+        "code": "scotland",
+        "population": 5546900
+      },
+      {
+        "code": "ruk",
+        "population": 63734500
+      }
+    ],
+    "note": "rUK (England, Wales and Northern Ireland combined) population is derived as UK total minus Scotland, since only the rUK/Scotland split matters for income-tax devolution -- England, Wales and Northern Ireland all share the same rUK income-tax bands."
+  },
+  "es_region_population_weights": {
+    "source": "INE (Instituto Nacional de Estadistica), Cifras oficiales de poblacion, 1 January 2025",
+    "url": "https://ine.es/jaxiT3/Datos.htm?t=67988",
+    "reference_year": 2025,
+    "retrieved": "2026-08-06",
+    "total_population": 46202100,
+    "regions": [
+      {
+        "code": "madrid",
+        "population": 7113886
+      },
+      {
+        "code": "andalucia",
+        "population": 8676713
+      },
+      {
+        "code": "aragon",
+        "population": 1364621
+      },
+      {
+        "code": "asturias",
+        "population": 1015128
+      },
+      {
+        "code": "baleares",
+        "population": 1249844
+      },
+      {
+        "code": "canarias",
+        "population": 2258866
+      },
+      {
+        "code": "cantabria",
+        "population": 593623
+      },
+      {
+        "code": "castilla_la_mancha",
+        "population": 2126378
+      },
+      {
+        "code": "castilla_y_leon",
+        "population": 2401221
+      },
+      {
+        "code": "cataluna",
+        "population": 8124126
+      },
+      {
+        "code": "extremadura",
+        "population": 1053345
+      },
+      {
+        "code": "galicia",
+        "population": 2714741
+      },
+      {
+        "code": "murcia",
+        "population": 1586989
+      },
+      {
+        "code": "la_rioja",
+        "population": 326803
+      },
+      {
+        "code": "comunidad_valenciana",
+        "population": 5425182
+      },
+      {
+        "code": "ceuta_melilla",
+        "population": 170634
+      }
+    ],
+    "excluded_regions_population": {
+      "navarra": 683854,
+      "pais_vasco": 2242343
+    },
+    "note": "Navarra and Pais Vasco are excluded from the weighting base (separate foral tax systems, out of scope); the 16 modeled regions' populations sum to the total_population figure above. See docs/data/spain/spain_parameters_2026.json for the full per-region source citations."
+  },
+  "us_state_population_weights": {
+    "source": "US Census Bureau, Annual Estimates of the Resident Population (NST-EST2024-POP)",
+    "url": "https://www2.census.gov/programs-surveys/popest/tables/2020-2024/state/totals/NST-EST2024-POP.xlsx",
+    "reference_year": 2024,
+    "retrieved": "2026-08-28",
+    "note": "Population weights for all 50 states and the District of Columbia are stored in analysis/usa/us_payroll_2026.py (STATE_DATA_2026, 'population' field) rather than duplicated here, to avoid drift between the two files."
+  },
+  "cn_province_population_weights": {
+    "source": "National Bureau of Statistics of China and provincial statistical bureaus, aggregated",
+    "reference_year": 2024,
+    "retrieved": "2026-08-29",
+    "note": "Population weights for all 31 mainland provinces/municipalities/autonomous regions are stored in analysis/china/china_payroll_2026.py (PROVINCE_DATA_2026, 'population' field) rather than duplicated here, to avoid drift between the two files."
+  },
+  "jp_prefecture_population_weights": {
+    "source": "Statistics Bureau of Japan (Soumusho Tokei-kyoku), aggregated",
+    "reference_year": 2025,
+    "retrieved": "2026-08-30",
+    "note": "Population weights for all 47 prefectures are stored in analysis/japan/japan_payroll_2026.py (PREFECTURE_DATA_2026, 'population' field) rather than duplicated here, to avoid drift between the two files."
+  },
+  "notes": [
+    "Germany, Belgium, Switzerland and the Netherlands' 'net after income tax' figures include a mandatory wage withholding tax computed directly from the wage (Lohnsteuer, précompte professionnel, impot a la source, loonheffing), which does not require household-specific information beyond the modeled reference profile.",
+    "The Netherlands has no separate employee social-security contribution line: AOW/Anw/Wlz national-insurance premiums are bundled into the Box 1 wage-tax rate. Its 'employee_contributions_monthly' figure is therefore 0 by construction, and the full payroll deduction (income tax + national insurance combined, 'loonheffing') appears under the income-tax figure -- this does not mean Dutch employees pay no social insurance.",
+    "France's 'net after income tax' figure is the actual income tax due by a single, childless reference taxpayer (1 part de quotient familial), computed via the true progressive income-tax barème (marginal brackets), applied to the Mon-entreprise engine's 'net imposable' tax base (annualized, less the standard 10% deduction for professional expenses). This is directly analogous to the other three countries' actual mandatory tax liabilities for a single/childless reference profile. Note that most French employees are withheld at a personalized 'prélèvement à la source' rate set by the DGFiP from their full household's tax situation (which can differ from a single/childless taxpayer's liability); the withheld amount is only an advance on the definitively-due tax computed here.",
+    "The non-personalized 'taux neutre' (grille des taux par défaut, article 204 H CGI, BOFiP BOI-BAREME-000037) -- an earlier candidate proxy based on the monthly withholding mechanism rather than actual tax liability -- was evaluated and rejected as a comparison basis because it does not represent any specific taxpayer's real tax burden; it is kept in docs/data/france/france_income_tax_2026.json for reference only.",
+    "See docs/data/france/france_income_tax_2026.json for the full progressive barème, standard-deduction parameters, methodology notes and sources.",
+    "The United Kingdom's 'employee_contributions' and 'employer_contributions' figures include both Class 1 National Insurance and the statutory-minimum automatic-enrolment workplace pension (employee 5%, employer 3% of qualifying earnings), not income tax alone -- income tax (PAYE) is reported separately, as for the other countries. Income tax is a population-weighted average of the rUK (England/Wales/Northern Ireland) and Scotland devolved bands (see 'uk_region_population_weights'), mirroring how Switzerland's cantons are aggregated; National Insurance and the workplace pension are not devolved and are identical in both regions.",
+    "Ireland's 'income_tax_or_withholding_tax' figure bundles PAYE income tax and the Universal Social Charge (USC), since USC is a separate tax on income rather than a social contribution; 'employee_contributions' and 'employer_contributions' are PRSI Class A only, using the January-September 2026 rates (a further rate increase scheduled for 1 October 2026 is not modeled).",
+    "Spain's income tax (IRPF) is a population-weighted average across 16 comunidades autonomas (see 'es_region_population_weights'), mirroring how Switzerland's cantons are aggregated; Navarra and Pais Vasco are excluded (separate foral tax systems). 'employee_contributions' and 'employer_contributions' are Seguridad Social Regimen General only, national and identical across all regions.",
+    "Sweden has no statutory minimum wage and no single universal collective agreement (the Ghent/Nordic model: roughly 700 sector-level agreements negotiated by employers and unions cover about 90% of employees). This module uses the Migrationsverket work-permit wage floor (90% of the SCB median salary, 34,470 SEK/month for decisions from 1 June 2026) as its reference wage by convention -- an official, dated figure, but not a legal minimum or a negotiated collective-bargaining floor. Sweden's 'employee_contributions' is 0 by construction: the 7% allman pensionsavgift is fully offset by an equal skattereduktion (capped at total tax due) across this module's entire wage range, so the entire employee-side deduction is reported under 'income_tax_or_withholding_tax'. Only Stockholm kommun (30.55% combined kommunalskatt) is modeled as the reference municipality; the national range is 28.93%-35.65%.",
+    "Italy has no statutory minimum wage either -- one of five EU countries (with Austria, Denmark, Finland and Sweden) relying exclusively on sector-level collective bargaining (CCNL), which covers over 80% of private-sector employees. This module uses the CCNL Commercio Livello 3 minimo tabellare (EUR 1,983.91/month, paid over 14 installments, prorated to EUR 2,314.56/month over 12 months) as its reference wage by convention -- a methodological choice, not a legal minimum. Italy's 'employer_cost' includes the TFR (trattamento di fine rapporto) deferred severance accrual (~6.91% of gross annual pay), a personnel cost under standard Italian payroll accounting that is not available to the employee as current net pay, unlike every other country in this comparison. Income tax bundles national IRPEF with the Lazio addizionale regionale and Roma addizionale comunale, both tiered-flat surcharges (the whole taxable income is taxed at one rate once a threshold is crossed, not a marginal bracket) rather than progressive brackets.",
+    "The United States is the only genuinely federal system in this comparison: a uniform federal income tax and FICA/FUTA payroll taxes apply everywhere, PLUS each of the 50 states' (and DC's) own income tax (9 states have none), State Unemployment Insurance, and in 13 jurisdictions a state-mandated payroll deduction analogous to social insurance (State Disability Insurance in California and New York, Paid Family and Medical Leave in Colorado/Massachusetts/Maine/Minnesota/Oregon/Washington/DC, Temporary Disability Insurance in Rhode Island/Hawaii, Delaware's new-for-2026 Paid Leave, and New Jersey's combined UI/DI/FLI). This module aggregates all 50 states + DC with a population-weighted average (see 'us_state_population_weights'), mirroring how Switzerland's cantons, the UK's devolved regions and Spain's comunidades autonomas are aggregated. The reference wage is the federal minimum wage (USD 7.25/hour, unchanged since 2009); many states and cities set substantially higher minimum wages of their own. The US dollar's own PPP conversion factor is exactly 1.0 by construction (the international dollar is benchmarked to US prices).",
+    "China's individual income tax is entirely national (a uniform 7-bracket annual schedule and a fixed RMB 60,000/year basic deduction), unlike every other multi-region country in this comparison -- what varies by province is the social-insurance contribution-base floor and cap (typically 60%-300% of the province's own prior-year average wage), a handful of contribution rates that genuinely differ by province (Guangdong's unemployment-insurance split is 0.8% employer / 0.2% employee rather than the more common 0.5%/0.5%), and the Housing Provident Fund (住房公积金) contribution base -- its rate is a discretionary employer choice nationally (5%-12% band) and is modelled with one uniform illustrative rate (7%). This module aggregates all 31 mainland provinces/municipalities/autonomous regions with a population-weighted average (see 'cn_province_population_weights'). China has no national minimum wage; the reference wage used is Shanghai's own monthly minimum wage (RMB 2,740), a methodological convention. In most provinces the social-insurance contribution-base floor exceeds this reference wage, so at low harmonized wage points contributions are computed on that higher floor rather than actual gross pay -- a genuine structural feature of China's system.",
+    "Japan's national income tax and resident tax (juminzei) are both uniform nationwide, but genuinely use two different basic-deduction schedules following a 2026 tax reform that substantially raised the income-tax basic deduction (up to JPY 1,040,000) while leaving the resident-tax basic deduction unchanged (a flat JPY 430,000) -- a real, growing divergence between the two levies. Employee pension, employment and workers' accident insurance rates are also uniform nationally; the ONLY prefecture-specific rate is the Kyokai Kenpo health-insurance premium (9.21%-10.55% across the 47 prefectures for 2026). This module aggregates all 47 prefectures with a population-weighted average (see 'jp_prefecture_population_weights'). Japan has no national minimum wage; the reference wage used is Tokyo's own minimum wage (JPY 1,226/hour), a methodological convention, mirroring China's Shanghai and the US's federal-minimum-wage conventions.",
+    "All amounts are also cross-country comparable in international dollars (PPP) in addition to local currency.",
+    "Canada: employee_contributions, employer_contributions and income_tax_or_withholding_tax are a population-weighted average across all 10 provinces and 3 territories (2025 Statistics Canada estimates). Federal income tax, CPP/CPP2 (or QPP/QPP2 in Quebec) and Employment Insurance are set nationally but interact with each jurisdiction's own income-tax bracket schedule and basic personal amount. Quebec is structurally distinct: its own pension plan (QPP, higher rate than CPP), its own parental-insurance regime (QPIP, in addition to a reduced EI rate), a 16.5% federal tax abatement, and the Fonds des services de sante employer levy instead of Ontario's Employer Health Tax. The reference wage is Ontario's own minimum wage (CAD 17.60/hour), used as a methodological convention in the absence of a national minimum wage."
+  ],
+  "ca_province_population_weights": {
+    "source": "Statistics Canada, aggregated",
+    "reference_year": 2025,
+    "retrieved": "2026-08-30",
+    "note": "Population weights for all 10 provinces and 3 territories are stored in analysis/canada/canada_payroll_2026.py (PROVINCE_DATA_2026, 'population' field) rather than duplicated here, to avoid drift between the two files."
+  }
 }

@@ -169,6 +169,7 @@ sys.path.insert(0, str(ROOT_DIR / "analysis" / "italy"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "usa"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "china"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "japan"))
+sys.path.insert(0, str(ROOT_DIR / "analysis" / "canada"))
 
 import pandas as pd  # noqa: E402
 
@@ -246,6 +247,11 @@ from china_payroll_2026 import (  # noqa: E402
 from japan_payroll_2026 import (  # noqa: E402
     compute_japan_payroll_2026,
     PREFECTURE_DATA_2026 as JP_PREFECTURE_DATA_2026,
+)
+
+from canada_payroll_2026 import (  # noqa: E402
+    compute_canada_payroll_2026,
+    PROVINCE_DATA_2026 as CA_PROVINCE_DATA_2026,
 )
 
 
@@ -1395,6 +1401,111 @@ def compute_japan_row(
     return row
 
 
+def compute_canada_row(
+    wage_point_intl_usd: float,
+    ppp_factor: float,
+    province_weights: Dict[str, float],
+    wage_reference_monthly_cad: float,
+) -> Dict[str, Any]:
+    gross_local_cad = wage_point_intl_usd * ppp_factor
+
+    weighted_sums = {
+        "employee_contrib": 0.0,
+        "employer_contrib": 0.0,
+        "net_before_tax": 0.0,
+        "income_tax": 0.0,
+        "net_after_tax": 0.0,
+        "employer_cost": 0.0,
+    }
+
+    for province_code, weight in province_weights.items():
+        result = compute_canada_payroll_2026(gross_local_cad, province_code)
+
+        employee_contrib = result["employee_contributions_monthly_cad"]
+        employer_contrib = result["employer_contributions_monthly_cad"]
+        income_tax = result["income_tax_monthly_cad"]
+        net_before_tax = gross_local_cad - employee_contrib
+        net_after_tax = net_before_tax - income_tax
+        employer_cost = gross_local_cad + employer_contrib
+
+        weighted_sums["employee_contrib"] += weight * employee_contrib
+        weighted_sums["employer_contrib"] += weight * employer_contrib
+        weighted_sums["net_before_tax"] += weight * net_before_tax
+        weighted_sums["income_tax"] += weight * income_tax
+        weighted_sums["net_after_tax"] += weight * net_after_tax
+        weighted_sums["employer_cost"] += weight * employer_cost
+
+    employer_cost = weighted_sums["employer_cost"]
+    net_before_income_tax = weighted_sums["net_before_tax"]
+    net_after_income_tax = weighted_sums["net_after_tax"]
+    income_tax = weighted_sums["income_tax"]
+
+    row = base_row(
+        country="Canada",
+        country_code="CA",
+        currency_code="CAD",
+        reference_profile_id="canada__population_weighted_average_13_provinces_territories__single_no_child",
+        reference_profile_description=(
+            "Population-weighted average across all 10 provinces and 3 "
+            "territories (2025 official population estimates), single, "
+            "childless employee, standard formal employment, large-employer "
+            "assumption for Ontario's EHT and Quebec's FSS."
+        ),
+        harmonized_wage_point_intl_usd=wage_point_intl_usd,
+        ppp_factor=ppp_factor,
+    )
+
+    row.update(
+        {
+            "gross_monthly_local": round_money(gross_local_cad),
+            "gross_monthly_intl_usd": round_money(gross_local_cad / ppp_factor),
+            "employee_contributions_monthly_local": round_money(weighted_sums["employee_contrib"]),
+            "employee_contributions_monthly_intl_usd": round_money(weighted_sums["employee_contrib"] / ppp_factor),
+            "employer_contributions_monthly_local": round_money(weighted_sums["employer_contrib"]),
+            "employer_contributions_monthly_intl_usd": round_money(weighted_sums["employer_contrib"] / ppp_factor),
+            "net_before_income_tax_monthly_local": round_money(net_before_income_tax),
+            "net_before_income_tax_monthly_intl_usd": round_money(net_before_income_tax / ppp_factor),
+            "income_tax_or_withholding_tax_monthly_local": round_money(income_tax),
+            "income_tax_or_withholding_tax_monthly_intl_usd": round_money(income_tax / ppp_factor),
+            "net_after_income_tax_monthly_local": round_money(net_after_income_tax),
+            "net_after_income_tax_monthly_intl_usd": round_money(net_after_income_tax / ppp_factor),
+            "employer_cost_monthly_local": round_money(employer_cost),
+            "employer_cost_monthly_intl_usd": round_money(employer_cost / ppp_factor),
+            "social_wedge_before_income_tax_rate": round(
+                (employer_cost - net_before_income_tax) / employer_cost, 6
+            ) if employer_cost else None,
+            "total_wedge_after_income_tax_rate": round(
+                (employer_cost - net_after_income_tax) / employer_cost, 6
+            ) if employer_cost else None,
+            "cost_to_net_before_income_tax_ratio": round(employer_cost / net_before_income_tax, 6)
+            if net_before_income_tax else None,
+            "cost_to_net_after_income_tax_ratio": round(employer_cost / net_after_income_tax, 6)
+            if net_after_income_tax else None,
+            "income_tax_modeled": True,
+            "aggregation_method": "population_weighted_average_13_provinces_territories",
+            "below_minimum_wage": bool(gross_local_cad < wage_reference_monthly_cad),
+            "national_minimum_wage_monthly_local": round_money(wage_reference_monthly_cad),
+            "note": (
+                "Canada has no national minimum wage; the reference wage is "
+                "Ontario's own minimum wage (CAD 17.60/hour), used as a "
+                "methodological convention. Federal income tax, CPP/CPP2 "
+                "(QPP/QPP2 in Quebec) and Employment Insurance are "
+                "nationally-set but interact with each province/territory's "
+                "own income-tax bracket schedule and basic personal amount; "
+                "employee_contributions, employer_contributions and "
+                "income_tax_or_withholding_tax are a population-weighted "
+                "average across all 13 jurisdictions. Quebec differs "
+                "structurally (own pension plan at a higher rate, own "
+                "parental-insurance regime, reduced EI rate, 16.5% federal "
+                "tax abatement, Fonds des services de sante employer levy "
+                "instead of Ontario's Employer Health Tax)."
+            ),
+        }
+    )
+
+    return row
+
+
 def compute_spain_row(
     wage_point_intl_usd: float,
     ppp_factor: float,
@@ -1637,6 +1748,14 @@ def build_dataset() -> pd.DataFrame:
     }
     jp_wage_reference_monthly_jpy = 1226.0 * 40.0 * 52.0 / 12.0
 
+    # --- Canada setup ---
+    ca_total_population = sum(province["population"] for province in CA_PROVINCE_DATA_2026.values())
+    ca_province_weights = {
+        code: province["population"] / ca_total_population
+        for code, province in CA_PROVINCE_DATA_2026.items()
+    }
+    ca_wage_reference_monthly_cad = 17.60 * 40.0 * 52.0 / 12.0
+
     rows: List[Dict[str, Any]] = []
 
     for wage_point in wage_grid:
@@ -1762,6 +1881,15 @@ def build_dataset() -> pd.DataFrame:
                 ppp_values["JP"],
                 jp_prefecture_weights,
                 jp_wage_reference_monthly_jpy,
+            )
+        )
+
+        rows.append(
+            compute_canada_row(
+                wage_point,
+                ppp_values["CA"],
+                ca_province_weights,
+                ca_wage_reference_monthly_cad,
             )
         )
 

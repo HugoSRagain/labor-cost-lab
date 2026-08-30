@@ -786,6 +786,7 @@
                             <button type="button" role="tab" aria-selected="false" data-zone="europe" onclick="setCountry('se', this)">Sweden</button>
                             <button type="button" role="tab" aria-selected="false" data-zone="europe" onclick="setCountry('it', this)">Italy</button>
                             <button type="button" role="tab" aria-selected="false" data-zone="america" style="display:none" onclick="setCountry('us', this)">United States</button>
+                            <button type="button" role="tab" aria-selected="false" data-zone="america" style="display:none" onclick="setCountry('ca', this)">Canada</button>
                             <button type="button" role="tab" aria-selected="false" data-zone="asia" style="display:none" onclick="setCountry('cn', this)">China</button>
                             <button type="button" role="tab" aria-selected="false" data-zone="asia" style="display:none" onclick="setCountry('jp', this)">Japan</button>
                         </div>
@@ -1169,6 +1170,38 @@
                     </div>
                 </a>
 
+                <a class="mod" data-zone="america" href="./countries/canada/index.html">
+                    <div>
+                        <div class="mod-name">Canada</div>
+                        <div class="mod-tags">
+                            <span class="tag live" data-i18n="status.available">Disponible</span>
+                            <span class="tag" data-i18n="status.prototype">Prototype</span>
+                            <span class="tag">Federal + 13 Provinces/Territories</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="mod-desc" data-i18n="module.canada.text">
+                            Module socio-fiscal 2026 : impôt fédéral sur le
+                            revenu, RPC/RPC2, assurance-emploi, combinés aux
+                            10 provinces et 3 territoires (barème provincial
+                            propre, montant personnel de base propre). Le
+                            Québec s'écarte structurellement (RRQ, RQAP,
+                            abattement fédéral de 16,5 %).
+                        </p>
+                        <div class="minibar" aria-hidden="true">
+                            <span class="m-emp" style="width:9%"></span>
+                            <span class="m-sal" style="width:6%"></span>
+                            <span class="m-tax" style="width:10%"></span>
+                            <span class="m-net" style="width:75%"></span>
+                        </div>
+                    </div>
+                    <div class="mod-net">
+                        <b>75</b>
+                        <span data-i18n="module.netshare">net / 100</span>
+                        <span class="mod-go" data-i18n="module.open">Ouvrir →</span>
+                    </div>
+                </a>
+
                 <a class="mod" data-zone="asia" href="./countries/china/index.html">
                     <div>
                         <div class="mod-name">China</div>
@@ -1247,14 +1280,14 @@
                     </div>
                     <div>
                         <p class="mod-desc" data-i18n="module.comparison.text">
-                            Met en regard les 13 modules nationaux sur une grille de
+                            Met en regard les 14 modules nationaux sur une grille de
                             salaires harmonisée en dollars internationaux (PPA), pour
                             comparer coût employeur, salaire net et prélèvements
                             obligatoires à niveau de vie équivalent.
                         </p>
                     </div>
                     <div class="mod-net">
-                        <b>13</b>
+                        <b>14</b>
                         <span data-i18n="module.comparison.count">pays comparés</span>
                         <span class="mod-go" data-i18n="module.open">Ouvrir →</span>
                     </div>
@@ -1449,8 +1482,9 @@
                 "module.usa.text": "Module socio-fiscal 2026 : impôt fédéral sur le revenu, FICA (Social Security, Medicare), FUTA, combinés aux 50 États et au District de Columbia (impôt d'État, SUI, dispositifs type SDI/PFML). Sélecteur des 51 juridictions.",
                 "module.china.text": "Module socio-fiscal 2026 : impôt sur le revenu (IIT) national, combiné aux cinq assurances sociales et au fonds de logement des 31 provinces, municipalités et régions autonomes. Le plancher de cotisation, indexé sur le salaire moyen local, dépasse largement le salaire de référence dans la plupart des provinces.",
                 "module.japan.text": "Module socio-fiscal 2026 : impôt national sur le revenu et taxe d'habitation, désormais assis sur deux barèmes de déduction de base réellement différents depuis la réforme fiscale 2026, combinés aux cotisations sociales des 47 préfectures (seul le taux d'assurance maladie Kyokai Kenpo varie). Cotisations assises sur une rémunération mensuelle standard par palier, non sur le salaire réel.",
+                "module.canada.text": "Module socio-fiscal 2026 : impôt fédéral sur le revenu, RPC/RPC2, assurance-emploi, combinés aux 10 provinces et 3 territoires (barème provincial propre, montant personnel de base propre). Le Québec s'écarte structurellement (RRQ, RQAP, abattement fédéral de 16,5 %).",
                 "module.comparison.name": "Comparaison",
-                "module.comparison.text": "Met en regard les 13 modules nationaux sur une grille de salaires harmonisée en dollars internationaux (PPA), pour comparer coût employeur, salaire net et prélèvements obligatoires à niveau de vie équivalent.",
+                "module.comparison.text": "Met en regard les 14 modules nationaux sur une grille de salaires harmonisée en dollars internationaux (PPA), pour comparer coût employeur, salaire net et prélèvements obligatoires à niveau de vie équivalent.",
                 "module.comparison.count": "pays comparés",
                 "module.open": "Ouvrir →",
                 "module.netshare": "net / 100",
@@ -1485,7 +1519,7 @@
                 "data.block4.title": "Code ouvert",
                 "data.block4.text": "Scripts de construction des jeux de données et interface web reproductible.",
                 "side.status.modules.label": "Modules accessibles",
-		"side.status.modules.value": "France · Allemagne · Belgique · Suisse · Pays-Bas · Royaume-Uni · Irlande · Espagne · Suède · Italie · États-Unis · Chine · Japon",
+		"side.status.modules.value": "France · Allemagne · Belgique · Suisse · Pays-Bas · Royaume-Uni · Irlande · Espagne · Suède · Italie · États-Unis · Chine · Japon · Canada",
                 "side.status.year.label": "Année réglementaire",
                 "side.status.output.label": "Sorties principales",
                 "side.status.output.value": "coût employeur · net · coins socio-fiscaux",
@@ -1527,8 +1561,9 @@
                 "module.usa.text": "2026 socio-fiscal module: federal income tax, FICA (Social Security, Medicare), FUTA, combined with each of the 50 states and the District of Columbia (state income tax, SUI, SDI/PFML-type schemes). Selector for all 51 jurisdictions.",
                 "module.china.text": "2026 socio-fiscal module: national individual income tax (IIT), combined with the five social insurances and the housing provident fund of 31 provinces, municipalities and autonomous regions. The contribution-base floor, indexed to the local average wage, substantially exceeds the reference wage in most provinces.",
                 "module.japan.text": "2026 socio-fiscal module: national income tax and resident tax, now based on two genuinely different basic-deduction schedules since the 2026 tax reform, combined with the social-insurance contributions of 47 prefectures (only the Kyokai Kenpo health-insurance rate varies). Contributions are based on a banded standard monthly remuneration, not actual salary.",
+                "module.canada.text": "2026 socio-fiscal module: federal income tax, CPP/CPP2, Employment Insurance, combined with each of the 10 provinces and 3 territories (own provincial bracket schedule, own basic personal amount). Quebec is structurally distinct (QPP, QPIP, a 16.5% federal tax abatement).",
                 "module.comparison.name": "Comparison",
-                "module.comparison.text": "Compares the 13 national modules on a wage grid harmonised in international dollars (PPP), to compare employer cost, net wage, and statutory levies at an equivalent standard of living.",
+                "module.comparison.text": "Compares the 14 national modules on a wage grid harmonised in international dollars (PPP), to compare employer cost, net wage, and statutory levies at an equivalent standard of living.",
                 "module.comparison.count": "countries compared",
                 "module.open": "Open →",
                 "module.netshare": "net / 100",
@@ -1563,7 +1598,7 @@
                 "data.block4.title": "Open code",
                 "data.block4.text": "Dataset-building scripts and a reproducible hosted web interface.",
                 "side.status.modules.label": "Available modules",
-		"side.status.modules.value": "France · Germany · Belgium · Switzerland · Netherlands · United Kingdom · Ireland · Spain · Sweden · Italy · United States · China · Japan",
+		"side.status.modules.value": "France · Germany · Belgium · Switzerland · Netherlands · United Kingdom · Ireland · Spain · Sweden · Italy · United States · China · Japan · Canada",
                 "side.status.year.label": "Regulatory year",
                 "side.status.output.label": "Main outputs",
                 "side.status.output.value": "employer cost · net · socio-fiscal wedges",
@@ -1660,6 +1695,12 @@
                 sal: { v: 13, fr: "Cotisations salariales (assurance maladie, retraite, assurance emploi)", en: "Employee contributions (health insurance, pension, employment insurance)" },
                 tax: { v: 4, fr: "Impôt sur le revenu (national + taxe d'habitation)", en: "Income tax (national income tax + resident tax)" },
                 net: { v: 69, fr: "Salaire net après impôt", en: "Net wage after tax" }
+            },
+            ca: {
+                emp: { v: 9, fr: "Cotisations patronales (RPC/RRQ, assurance-emploi, impôt-santé/FSS)", en: "Employer contributions (CPP/QPP, Employment Insurance, health tax/FSS)" },
+                sal: { v: 6, fr: "Cotisations salariales (RPC/RRQ, assurance-emploi, RQAP au Québec)", en: "Employee contributions (CPP/QPP, Employment Insurance, QPIP in Quebec)" },
+                tax: { v: 10, fr: "Impôt sur le revenu (fédéral + provincial)", en: "Income tax (federal + provincial)" },
+                net: { v: 75, fr: "Salaire net après impôt", en: "Net wage after tax" }
             }
         };
 
