@@ -1,7 +1,7 @@
 {
     "module_name": "Cross-Country Labour Cost Comparison",
     "version": "2026-01",
-    "countries_covered": ["France", "Germany", "Belgium", "Switzerland", "Netherlands", "United Kingdom", "Ireland", "Spain", "Sweden", "Italy", "United States"],
+    "countries_covered": ["France", "Germany", "Belgium", "Switzerland", "Netherlands", "United Kingdom", "Ireland", "Spain", "Sweden", "Italy", "United States", "China"],
     "sources": [
         {
             "id": "worldbank_icp_private_consumption_ppp",
@@ -260,6 +260,32 @@
             "status": "official"
         },
         {
+            "id": "china_iit_law_and_provincial_si_hpf_2026",
+            "institution": "国家税务总局 State Taxation Administration; 31 provincial/municipal 人力资源和社会保障厅/局, 医疗保障局 and 住房公积金管理中心",
+            "institution_fr": "Administration fiscale d'Etat chinoise ; administrations provinciales des ressources humaines, de la securite sociale, de la garantie medicale et du fonds de logement",
+            "title": "Individual Income Tax law and brackets (national); social insurance and Housing Provident Fund contribution bases/rates, 31 provinces, 2025-2026",
+            "url": "https://www.chinatax.gov.cn/",
+            "reference_year": 2026,
+            "retrieved": "2026-08-29",
+            "used_for": [
+                "China's national income tax layer and each of the 31 provinces' social-insurance/housing-fund layer"
+            ],
+            "status": "official_aggregated",
+            "note": "Full per-province citations and confidence flags in docs/data/china/china_sources_2026.json."
+        },
+        {
+            "id": "china_province_population_2024",
+            "institution": "National Bureau of Statistics of China",
+            "institution_fr": "Bureau national des statistiques de Chine",
+            "title": "2024 year-end resident population by province",
+            "reference_year": 2024,
+            "retrieved": "2026-08-29",
+            "used_for": [
+                "Population weights for the 31-province population-weighted average, mirroring the Swiss canton weighting approach"
+            ],
+            "status": "official_aggregated"
+        },
+        {
             "id": "inps_circolare_6_2026",
             "institution": "INPS (Istituto Nazionale della Previdenza Sociale)",
             "institution_fr": "INPS (institut national de la prevoyance sociale italien)",
@@ -310,6 +336,7 @@
         "Spain's reference profile uses the Comunidad de Madrid regional IRPF scale; the other 16 comunidades autonomas each set their own regional scale and are not modelled. Employee/employer contribution figures are Seguridad Social Regimen General only. See docs/data/spain/spain_sources_2026.json for the full rate schedule and sources.",
         "Sweden has no statutory minimum wage; the reference wage used is the Migrationsverket work-permit wage floor (90% of the SCB median salary). The allman pensionsavgift (7% employee pension contribution) is fully offset by an equal skattereduktion across this module's wage range, so employee_contributions is 0 by construction and the full payroll tax liability appears under income_tax_or_withholding_tax. Only Stockholm kommun is modelled. See docs/data/sweden/sweden_sources_2026.json for the full rate schedule and sources.",
         "Italy has no statutory minimum wage either; the reference wage used is the CCNL Commercio Livello 3 minimo tabellare (a methodological choice, not a legal minimum), prorated from its 14-installment payment schedule. employer_cost includes the TFR deferred severance accrual (~6.91% of gross annual pay), a personnel cost that is not available to the employee as current net pay. Income tax bundles national IRPEF with the Lazio addizionale regionale and Roma addizionale comunale, both tiered-flat (not marginal) surcharges. See docs/data/italy/italy_sources_2026.json for the full rate schedule and sources.",
-        "The United States is aggregated as a population-weighted average across all 50 states and DC, mirroring the Swiss canton/UK region/Spanish region approach; federal income tax, FICA and FUTA are uniform nationwide while state income tax (9 states have none), SUI and any state-mandated payroll deduction (SDI/PFML/TDI in 13 jurisdictions) vary by state. The reference wage is the federal minimum wage (USD 7.25/hour). See docs/data/usa/usa_sources_2026.json for the full per-state rate schedule and sources."
+        "The United States is aggregated as a population-weighted average across all 50 states and DC, mirroring the Swiss canton/UK region/Spanish region approach; federal income tax, FICA and FUTA are uniform nationwide while state income tax (9 states have none), SUI and any state-mandated payroll deduction (SDI/PFML/TDI in 13 jurisdictions) vary by state. The reference wage is the federal minimum wage (USD 7.25/hour). See docs/data/usa/usa_sources_2026.json for the full per-state rate schedule and sources.",
+        "China is aggregated as a population-weighted average across all 31 mainland provinces/municipalities/autonomous regions; individual income tax is uniform nationwide while the social-insurance contribution-base floor/cap, some contribution rates, and the housing-fund contribution base vary by province (the housing-fund rate itself is a discretionary employer choice, modelled with one uniform illustrative 7% rate). The reference wage is Shanghai's own minimum wage (RMB 2,740/month), a methodological convention since China has no national minimum wage. See docs/data/china/china_sources_2026.json for the full per-province rate schedule and sources."
     ]
 }

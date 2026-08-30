@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>China Labour Cost Lab</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+    <link rel="stylesheet" href="../../assets/style.css?v=28">
+    <script defer src="../../assets/i18n_common.js?v=3"></script>
+    <script defer src="./assets/china_app.js?v=1"></script>
+</head>
+
+<body>
+    <div class="global-project-banner">
+        <a href="../../index.html">
+            ← Labor Cost Lab
+        </a>
+
+        <span>
+            China module · Available socio-fiscal version
+        </span>
+    </div>
+
+    <div class="language-section active" id="section-fr">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · Module Chine
+                </p>
+
+                <h1>China Labour Cost Lab</h1>
+
+                <p>
+                    Module de simulation du coût du travail en Chine continentale :
+                    un impôt sur le revenu (IIT) entièrement national se combine
+                    à des cotisations sociales et à un fonds de logement dont la
+                    base de cotisation, le plancher et parfois le taux varient
+                    selon la province, sélectionnable individuellement parmi les
+                    31 provinces, municipalités et régions autonomes, dans les
+                    onglets Simulation, Indice du Lab et Données.
+                </p>
+
+                <p class="author-line">
+                    Par Hugo Spring-Ragain, Économiste, CEDS Paris
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchChinaLanguage()">
+                    English
+                </button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>Chine · module socio-fiscal 2026</h2>
+
+                <p>
+                    <strong>Point d'attention méthodologique majeur : dans la
+                    plupart des provinces, le plancher de cotisation sociale est
+                    indexé sur le salaire MOYEN local, et non sur le salaire
+                    minimum — il dépasse donc largement le salaire minimum de
+                    référence de ce module.</strong> À Shanghai par exemple, le
+                    plancher de cotisation est de 7 460 RMB/mois, contre un
+                    salaire minimum de 2 740 RMB/mois — près de 3 fois plus élevé.
+                    Conséquence directe et volontairement conservée par ce
+                    module : aux points bas de la grille de salaire (0,80x à
+                    2,00x le salaire de référence), les cotisations sociales et
+                    le fonds de logement sont calculés sur ce plancher plus élevé,
+                    et non sur le salaire brut effectif du salarié — ce qui
+                    produit des taux de cotisation apparents très élevés,
+                    parfois supérieurs à 70-90 % du salaire brut côté employeur.
+                    <strong>Ce n'est pas une erreur de calcul : c'est un trait
+                    réel et distinctif du système chinois</strong>, expliqué en
+                    détail ci-dessous, dans l'onglet Méthodologie, et signalé
+                    directement sur le graphique des taux effectifs.
+                </p>
+
+                <p class="method-note">
+                    La Chine n'a pas de salaire minimum national : ce module
+                    retient par convention le salaire minimum de Shanghai
+                    (2 740 RMB/mois, en vigueur au 1er juillet 2025) comme
+                    salaire de référence 1,0x commun aux 31 provinces — la même
+                    logique que le salaire minimum fédéral américain appliqué
+                    uniformément aux 50 États dans ce Lab, ou que les repères
+                    uniques retenus pour la Suède et l'Italie. L'impôt sur le
+                    revenu (个人所得税, IIT) est, lui, entièrement national et
+                    identique dans les 31 provinces : seules les cotisations
+                    sociales et le fonds de logement varient selon la province
+                    sélectionnée — un contraste structurel avec les États-Unis,
+                    où impôt sur le revenu ET cotisations sociales varient
+                    toutes deux selon l'État.
+                </p>
+            </section>
+
+            <nav class="tabs" aria-label="Navigation Chine">
+                <button class="tab-button active" data-tab="simulation" onclick="showChinaTab('fr', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showChinaTab('fr', 'flcl-index')">
+                    Indice du Lab
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showChinaTab('fr', 'data')">
+                    Données
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showChinaTab('fr', 'methodology')">
+                    Méthodologie
+                </button>
+            </nav>
+
+            <section id="tab-fr-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="china-waterfall-title-fr">
+                        Du salaire net au coût employeur
+                    </h3>
+
+                    <p class="chart-subtitle" id="china-waterfall-subtitle-fr">
+                        Décomposition du passage du salaire net après impôt au
+                        coût employeur total, en 4 segments fixes (identiques
+                        quelle que soit la province sélectionnée) : impôt sur
+                        le revenu (national), cotisations salariales, puis
+                        cotisations patronales.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="china-province-select-fr">
+                                Province de référence
+                            </label>
+
+                            <select id="china-province-select-fr">
+                            </select>
+                        </div>
+
+                        <div class="selector-field">
+                            <label for="china-waterfall-multiple-fr">
+                                Point de salaire sélectionné
+                            </label>
+
+                            <select id="china-waterfall-multiple-fr">
+                                <option value="0.80">0,80 salaire de référence</option>
+                                <option value="1.00" selected>1,00 salaire de référence</option>
+                                <option value="1.25">1,25 salaire de référence</option>
+                                <option value="1.50">1,50 salaire de référence</option>
+                                <option value="2.00">2,00 salaires de référence</option>
+                                <option value="2.50">2,50 salaires de référence</option>
+                                <option value="3.00">3,00 salaires de référence</option>
+                                <option value="4.00">4,00 salaires de référence</option>
+                                <option value="5.00">5,00 salaires de référence</option>
+                                <option value="6.00">6,00 salaires de référence</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-china-waterfall-fr"
+                        class="plotly-chart"
+                        aria-label="Décomposition du coût du travail en Chine"
+                    ></div>
+
+                    <p class="method-note">
+                        La structure du graphique (4 segments) est
+                        volontairement identique pour les 31 provinces, afin de
+                        rester comparable d'une province à l'autre. L'impôt
+                        affiché est le même quelle que soit la province (IIT
+                        national) ; les cotisations salariales et patronales
+                        varient selon la province sélectionnée. Le graphique
+                        « Décomposition des cinq assurances et du fonds de
+                        logement » ci-dessous détaille chaque ligne de
+                        cotisation.
+                    </p>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Graphiques complémentaires</h2>
+
+                    <p>
+                        Les graphiques suivants détaillent les salaires, les
+                        taux effectifs, la décomposition des cinq assurances et
+                        du fonds de logement, le coin socio-fiscal et le
+                        rendement marginal du salaire brut, pour la province
+                        sélectionnée ci-dessus.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Coût employeur, salaire brut et salaires nets</h3>
+
+                        <p class="chart-subtitle">
+                            Comparaison du salaire brut, du salaire net avant
+                            impôt, du salaire net après impôt et du coût
+                            employeur selon le multiple du salaire de référence.
+                        </p>
+
+                        <div
+                            id="chart-china-cost-fr"
+                            class="plotly-chart"
+                            aria-label="Coût du travail en Chine"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Taux effectifs de prélèvement</h3>
+
+                        <p class="chart-subtitle">
+                            Taux salarié et taux employeur (cinq assurances +
+                            fonds de logement), et taux d'imposition effectif
+                            (IIT national). La zone ombrée signale les points
+                            de salaire où le plancher de cotisation (indexé sur
+                            le salaire moyen local) dépasse le salaire brut
+                            effectif : les cotisations y sont calculées sur ce
+                            plancher, d'où des taux apparents très élevés — un
+                            trait réel du système, pas une erreur.
+                        </p>
+
+                        <div
+                            id="chart-china-rates-fr"
+                            class="plotly-chart"
+                            aria-label="Taux de prélèvement en Chine"
+                        ></div>
+
+                        <p class="method-note">
+                            <strong>Lecture du pic à bas salaire :</strong> le
+                            plancher de cotisation sociale est indexé sur le
+                            salaire moyen local (60 %-300 % selon les
+                            provinces), pas sur le salaire minimum. Il est
+                            donc structurellement supérieur au salaire de
+                            référence de ce module dans la plupart des
+                            provinces — à Shanghai, 7 460 RMB/mois de plancher
+                            contre 2 740 RMB/mois de salaire minimum. Aux
+                            multiples bas de la grille, les cotisations
+                            salariales et patronales sont calculées sur ce
+                            plancher plus élevé, non sur le salaire brut
+                            effectif, d'où des taux de cotisation apparents
+                            pouvant dépasser 70-90 % côté employeur. Voir
+                            l'onglet Méthodologie, section 3.
+                        </p>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Décomposition des cinq assurances et du fonds de logement (五险一金)</h3>
+
+                        <p class="chart-subtitle">
+                            Retraite, maladie (fusionnée avec la maternité),
+                            chômage et accident du travail (employeur
+                            uniquement), et fonds de logement (公积金), côté
+                            salarié et employeur. La ligne pointillée est le
+                            total (impôt sur le revenu + cotisations salariales
+                            + cotisations patronales).
+                        </p>
+
+                        <div
+                            id="chart-china-breakdown-fr"
+                            class="plotly-chart"
+                            aria-label="Décomposition des cinq assurances et du fonds de logement en Chine"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Coin social et coin socio-fiscal</h3>
+
+                        <p class="chart-subtitle">
+                            Comparaison du coin social avant impôt et du coin
+                            socio-fiscal après impôt sur le revenu, et ratios
+                            coût employeur / net.
+                        </p>
+
+                        <div
+                            id="chart-china-wedge-fr"
+                            class="plotly-chart"
+                            aria-label="Coin social et socio-fiscal chinois"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Rendement marginal d'une hausse de salaire brut</h3>
+
+                        <p class="chart-subtitle">
+                            Part d'un RMB supplémentaire de salaire brut
+                            conservée avant et après impôt sur le revenu, et
+                            effet marginal du système socio-fiscal.
+                        </p>
+
+                        <div
+                            id="chart-china-marginal-fr"
+                            class="plotly-chart"
+                            aria-label="Rendement socio-fiscal d'une hausse de salaire brut en Chine"
+                        ></div>
+
+                        <p class="method-note">
+                            Les points d'inflexion correspondent aux tranches
+                            de l'IIT national et, le cas échéant, au plancher
+                            et au plafond de la base de cotisation de la
+                            province sélectionnée.
+                        </p>
+                    </div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Indicateurs clés</h2>
+
+                    <p>
+                        Les indicateurs ci-dessous sont calculés au salaire de
+                        référence (multiple = 1) pour la province sélectionnée.
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="china-metrics-fr">
+                    <article class="metric-card">
+                        <span class="metric-label">Salaire brut de référence</span>
+                        <strong id="metric-china-reference-wage-fr">—</strong>
+                        <span class="metric-note">Salaire minimum de Shanghai, 2 740 RMB/mois</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Taux d'imposition effectif</span>
+                        <strong id="metric-china-income-tax-rate-fr">—</strong>
+                        <span class="metric-note">IIT national / brut</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Taux employeur effectif</span>
+                        <strong id="metric-china-employer-rate-fr">—</strong>
+                        <span class="metric-note">Cinq assurances + fonds de logement</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Ratio coût / net au salaire de référence</span>
+                        <strong id="metric-china-cost-to-net-fr">—</strong>
+                        <span class="metric-note">Après impôt sur le revenu</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-fr-flcl-index" class="tab-content">
+                <section class="chart-card">
+                    <h2>Indice du Lab</h2>
+                    <p class="chart-subtitle">
+                        Indicateurs d'efficacité salariale du coût du travail.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="china-flcl-province-select-fr">
+                                Province
+                            </label>
+
+                            <select id="china-flcl-province-select-fr">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-E</span>
+                            <strong id="china-flcl-e-value-fr">—</strong>
+                            <span class="metric-note" id="china-flcl-e-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-B</span>
+                            <strong id="china-flcl-b-value-fr">—</strong>
+                            <span class="metric-note" id="china-flcl-b-caption-fr"></span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Transmission marginale</span>
+                            <strong id="china-flcl-transmission-value-fr">—</strong>
+                            <span class="metric-note" id="china-flcl-transmission-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Captation marginale</span>
+                            <strong id="china-flcl-capture-value-fr">—</strong>
+                            <span class="metric-note" id="china-flcl-capture-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Progressivité implicite</span>
+                            <strong id="china-flcl-progressivity-value-fr">—</strong>
+                            <span class="metric-note" id="china-flcl-progressivity-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Soutien bas salaires</span>
+                            <strong id="china-flcl-support-value-fr">—</strong>
+                            <span class="metric-note" id="china-flcl-support-caption-fr"></span>
+                        </div>
+                    </div>
+
+                    <p class="method-note" style="margin-top: 16px;">
+                        Aucun allègement employeur ciblé et dégressif n'est
+                        modélisé pour la Chine : l'indicateur Lab-R ne
+                        s'applique donc pas ici. Le Lab-E chinois est
+                        structurellement bas aux multiples les plus bas de la
+                        grille dans la plupart des provinces, en raison de
+                        l'effet de plancher de cotisation décrit en tête de
+                        module ; il se rapproche des niveaux observés dans les
+                        autres pays du Lab une fois le plancher de cotisation
+                        dépassé par le salaire brut effectif.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Indice du Lab</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × salaire net avant impôt / coût employeur.
+                        </p>
+                        <div id="chart-china-flcl-e-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Transmission marginale</h3>
+                        <p class="chart-subtitle">
+                            Part d'un RMB supplémentaire de coût employeur allant au salarié net.
+                        </p>
+                        <div id="chart-china-flcl-marginal-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Progressivité implicite</h3>
+                        <p class="chart-subtitle">
+                            Variation de Lab-E lorsque le niveau de salaire augmente.
+                        </p>
+                        <div id="chart-china-flcl-progressivity-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Destination marginale d'un RMB supplémentaire de coût employeur</h3>
+                        <p class="chart-subtitle">
+                            Répartition marginale entre salaire net, cotisations salariales et cotisations patronales.
+                        </p>
+                        <div id="chart-china-flcl-destination-fr" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-fr-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Données</h3>
+
+                    <p class="chart-subtitle">
+                        Le jeu de données chinois peut être téléchargé au
+                        format CSV. Il contient l'ensemble des points de
+                        salaire simulés pour les 31 provinces, municipalités et
+                        régions autonomes (521 points de salaire chacune) :
+                        salaire brut, impôt sur le revenu national, cotisations
+                        des cinq assurances et du fonds de logement (détail par
+                        composante), coût employeur et indicateurs de coin
+                        socio-fiscal.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/china/china_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Télécharger le jeu de données Chine
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/china/china_parameters_2026.json"
+                            download
+                        >
+                            Télécharger les paramètres 2026
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/china/china_sources_2026.json"
+                            download
+                        >
+                            Télécharger les sources 2026
+                        </a>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Données du profil standard</h3>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="china-data-province-select-fr">
+                                Province
+                            </label>
+
+                            <select id="china-data-province-select-fr">
+                            </select>
+                        </div>
+                    </div>
+
+                    <p
+                        class="chart-subtitle"
+                        id="china-data-caption-fr"
+                    >
+                        Salarié standard (Shanghai)
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Multiple</th>
+                                    <th>Salaire brut (RMB)</th>
+                                    <th>Net avant impôt (RMB)</th>
+                                    <th>Impôt sur le revenu (RMB)</th>
+                                    <th>Net après impôt (RMB)</th>
+                                    <th>Coût employeur (RMB)</th>
+                                    <th>Cotisations salariales (RMB)</th>
+                                    <th>Cotisations patronales (RMB)</th>
+                                    <th>Coin social (RMB)</th>
+                                    <th>Coin socio-fiscal (RMB)</th>
+                                    <th>Taux employeur</th>
+                                    <th>Coût / net après impôt</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="china-data-table-body-fr">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="chart-subtitle" style="margin-top: 10px;">
+                        Impôt sur le revenu = IIT national, identique dans les
+                        31 provinces. Cotisations salariales et patronales
+                        regroupent les cinq assurances sociales (retraite,
+                        maladie, chômage, accident du travail) et le fonds de
+                        logement (公积金) de la province sélectionnée. Voir
+                        l'onglet Méthodologie.
+                    </p>
+                </div>
+            </section>
+
+            <section id="tab-fr-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Méthodologie</h2>
+
+                    <p>
+                        Le module Chine repose sur une simulation
+                        réglementaire du coût du travail pour un salarié
+                        standard, célibataire sans enfant, en emploi formel
+                        standard (accident du travail Tier 1), dans la province,
+                        municipalité ou région autonome sélectionnée parmi les
+                        31 divisions continentales modélisées (Hong Kong, Macao
+                        et Taïwan sont hors périmètre : juridictions fiscales
+                        distinctes). Aucune des six déductions complémentaires
+                        spéciales (专项附加扣除) ne s'applique à ce profil de
+                        référence.
+                    </p>
+
+                    <h3>1. Le salaire de référence : le salaire minimum de Shanghai</h3>
+
+                    <p>
+                        La Chine n'a pas de salaire minimum national : chaque
+                        province fixe le sien. Ce module retient, par
+                        convention, le salaire minimum de Shanghai (2 740
+                        RMB/mois, en vigueur au 1er juillet 2025 — la référence
+                        de place financière la plus couramment utilisée dans
+                        les comparaisons internationales de paie) comme repère
+                        de référence 1,0x commun aux 31 provinces — la même
+                        logique que le salaire minimum fédéral américain
+                        appliqué uniformément aux 50 États dans ce Lab, ou que
+                        les repères uniques retenus pour la Suède et l'Italie
+                        en l'absence de salaire minimum légal. Ce n'est ni une
+                        moyenne nationale, ni un minimum légal commun à toutes
+                        les provinces : chaque province conserve son propre
+                        salaire minimum, documenté dans china_parameters_2026.json.
+                    </p>
+
+                    <h3>2. L'impôt sur le revenu (个人所得税, IIT) : entièrement national</h3>
+
+                    <p>
+                        Contrairement à toutes les autres couches de ce module,
+                        le barème de l'IIT, la déduction de base et les six
+                        déductions complémentaires spéciales sont fixés par la
+                        loi nationale et s'appliquent à l'identique dans les 31
+                        provinces : barème progressif annuel à 7 tranches
+                        (3 % / 10 % / 20 % / 25 % / 30 % / 35 % / 45 %, seuils
+                        inchangés depuis 2019) et déduction de base de 60 000
+                        RMB/an (5 000 RMB/mois, 基本减除费用).
+                    </p>
+
+                    <p>
+                        En pratique, l'employeur retient l'impôt chaque mois
+                        selon la méthode de retenue cumulative (累计预扣法,
+                        annonces n° 56 et 61 de 2018 de l'Administration
+                        fiscale d'État) : chaque mois, l'impôt est calculé sur
+                        le revenu cumulé depuis janvier, ce qui fait que la
+                        retenue mensuelle nominale démarre basse et augmente au
+                        fil de l'année, même à salaire constant, avant de
+                        converger vers l'impôt annuel réel (régularisé lors de
+                        la déclaration annuelle de mars à juin l'année
+                        suivante). Pour un salarié standard à employeur unique,
+                        salaire constant et sans déduction complémentaire
+                        spécifique — le profil retenu par ce module — ce
+                        mécanisme converge très précisément vers le même
+                        résultat que l'application directe du barème annuel
+                        divisé par 12 : c'est cette valeur mensuelle équivalente
+                        en régime établi que ce module publie, plutôt que de
+                        reproduire la montée en charge mois par mois observée
+                        sur un bulletin de paie réel.
+                    </p>
+
+                    <h3>3. Les cotisations sociales et le fonds de logement : cadre national, paramètres provinciaux — et l'effet de plancher</h3>
+
+                    <p>
+                        Retraite (养老保险), assurance maladie (医疗保险, la
+                        maternité 生育保险 étant désormais fusionnée dans la
+                        gestion du fonds maladie dans toutes les provinces
+                        étudiées), chômage (失业保险) et accident du travail
+                        (工伤保险, employeur uniquement) sont collectées dans
+                        chaque province, mais chaque province fixe elle-même le
+                        plancher et le plafond de la base de cotisation
+                        (缴费基数下限/上限, généralement 60 %-300 % du salaire
+                        moyen local de l'année précédente, réactualisé chaque
+                        année le plus souvent en juillet), et, pour un nombre
+                        significatif de provinces, certains TAUX de cotisation
+                        diffèrent réellement d'une province à l'autre.
+                    </p>
+
+                    <p>
+                        <strong>Point méthodologique majeur : le plancher de
+                        cotisation, indexé sur le salaire MOYEN local et non
+                        sur le salaire minimum, dépasse largement le salaire
+                        minimum dans la plupart des provinces étudiées</strong>
+                        (à Shanghai par exemple, plancher de cotisation 7 460
+                        RMB/mois contre un salaire minimum de 2 740 RMB/mois).
+                        Conséquence directe et délibérément conservée par ce
+                        module : aux points de la grille de salaire proches ou
+                        en dessous du salaire de référence (0,80x à environ
+                        2,00x), les cotisations sont calculées sur ce plancher
+                        plus élevé, et non sur le salaire brut effectif — ce
+                        qui donne des taux de cotisation apparents très élevés
+                        (parfois supérieurs à 70-90 % du salaire brut côté
+                        employeur) aux multiples les plus bas de la grille. Ce
+                        n'est pas une erreur de modélisation : c'est un trait
+                        réel et distinctif du système chinois.
+                    </p>
+
+                    <p class="method-note">
+                        Écarts de taux confirmés entre provinces (voir
+                        china_sources_2026.json pour le détail complet) : la
+                        répartition de l'assurance chômage du Guangdong est de
+                        0,8 % employeur / 0,2 % salarié, contre 0,5 %/0,5 %
+                        ailleurs ; le Hunan (0,6 %), le Hainan (0,15 %), le
+                        Chongqing (0,3 %) et le Tibet (0,1 %) fixent chacun leur
+                        propre taux accident du travail de palier 1 au lieu du
+                        taux national par défaut de 0,2 % ; le taux retraite
+                        employeur de la Mongolie-Intérieure est rapporté à
+                        19 % au lieu de 16 %, à confiance moyenne (recoupement
+                        par une seule source). Un nombre limité de provinces
+                        (Hebei, Mongolie-Intérieure, Liaoning, Fujian, Shaanxi,
+                        Gansu, Guizhou) utilisent en outre une base de
+                        cotisation maladie distincte de la base
+                        retraite/chômage/accident du travail, modélisée
+                        explicitement lorsqu'elle est confirmée.
+                    </p>
+
+                    <h3>4. Le fonds de logement (住房公积金) : un taux illustratif de 7 %</h3>
+
+                    <p>
+                        Le taux du fonds de logement est, au niveau national,
+                        un choix discrétionnaire de l'employeur dans une
+                        fourchette de 5 % à 12 % (l'employeur et le salarié
+                        doivent cotiser au même taux) — ce n'est pas un taux
+                        imposé par chaque province. Ce module retient un taux
+                        illustratif unique de 7 % (le taux le plus fréquemment
+                        cité comme choix courant des employeurs privés dans les
+                        provinces étudiées), de la même manière que ce projet
+                        retient déjà un taux illustratif unique pour
+                        l'assurance accidents du travail italienne (INAIL).
+                        Seuls le plancher et le plafond de la base de
+                        cotisation du fonds de logement, eux réellement publiés
+                        par chaque province, sont modélisés province par
+                        province.
+                    </p>
+
+                    <h3>5. Indicateurs produits</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Net avant impôt :</strong>
+                            salaire brut diminué des cotisations salariales
+                            (retraite, maladie, chômage, fonds de logement de
+                            la province sélectionnée).
+                        </li>
+
+                        <li>
+                            <strong>Net après impôt :</strong>
+                            net avant impôt diminué de l'IIT mensuel équivalent
+                            (national, identique dans les 31 provinces).
+                        </li>
+
+                        <li>
+                            <strong>Coût employeur :</strong>
+                            salaire brut augmenté des cotisations patronales
+                            (retraite, maladie, chômage, accident du travail,
+                            fonds de logement de la province sélectionnée).
+                        </li>
+
+                        <li>
+                            <strong>Coin social :</strong>
+                            différence entre le coût employeur et le net avant
+                            impôt.
+                        </li>
+
+                        <li>
+                            <strong>Coin socio-fiscal :</strong>
+                            différence entre le coût employeur et le net après
+                            impôt.
+                        </li>
+
+                        <li>
+                            <strong>Rendement marginal :</strong>
+                            part d'un RMB supplémentaire de salaire brut
+                            conservée avant et après IIT.
+                        </li>
+                    </ul>
+
+                    <h3>6. Indice du Lab</h3>
+
+                    <p>
+                        L'Indice du Lab mesure l'efficacité salariale du coût
+                        du travail, indépendamment de l'impôt sur le revenu.
+                        Lab-E = 100 × salaire net avant impôt / coût employeur,
+                        Lab-B = 100 − Lab-E. Aucun allègement employeur ciblé
+                        et dégressif n'est modélisé pour la Chine : l'indicateur
+                        Lab-R ne s'applique donc pas ici.
+                    </p>
+
+                    <h3>7. Limites du scénario</h3>
+
+                    <ul class="method-note">
+                        <li>
+                            La Chine n'a pas de salaire minimum national : le
+                            salaire de référence 1,0x de ce module est le
+                            salaire minimum de Shanghai, un choix
+                            méthodologique, pas une moyenne nationale ni un
+                            minimum légal commun à toutes les provinces.
+                        </li>
+
+                        <li>
+                            Le taux du fonds de logement (住房公积金, 5 %-12 %
+                            national) est un choix discrétionnaire de
+                            l'employeur : ce module retient un taux illustratif
+                            unique de 7 % pour toutes les provinces, et non le
+                            taux réellement pratiqué par chaque employeur.
+                        </li>
+
+                        <li>
+                            Le plancher de cotisation sociale, indexé sur le
+                            salaire moyen local, dépasse le salaire minimum de
+                            référence dans la plupart des provinces : aux bas
+                            niveaux de la grille de salaire, les cotisations
+                            sont donc calculées sur ce plancher plus élevé que
+                            le salaire brut effectif — un trait réel du
+                            système, pas une erreur.
+                        </li>
+
+                        <li>
+                            Seul le profil célibataire sans enfant, sans prêt
+                            immobilier, sans loyer déclaré et sans parent à
+                            charge est modélisé : aucune des six déductions
+                            complémentaires spéciales (专项附加扣除) ne
+                            s'applique.
+                        </li>
+
+                        <li>
+                            La méthode de retenue cumulative mensuelle
+                            (累计预扣法) n'est pas reproduite mois par mois : ce
+                            module publie l'équivalent mensuel de l'impôt
+                            annuel établi, pas la montée en charge réelle
+                            observée sur un bulletin de paie au cours de
+                            l'année.
+                        </li>
+
+                        <li>
+                            Guangdong est modélisé via Canton (Guangzhou), la
+                            capitale provinciale ; Shenzhen, dans la même
+                            province, a son propre taux retraite dépendant du
+                            statut de résidence (hukou), sa propre base de
+                            cotisation maladie et son propre salaire minimum,
+                            non modélisés séparément.
+                        </li>
+
+                        <li>
+                            Plusieurs taux ou plafonds restent en confiance
+                            moyenne faute de source officielle directement
+                            vérifiable dans le cadre de cette recherche,
+                            notamment : le taux retraite employeur de la
+                            Mongolie-Intérieure (19 %), plusieurs taux du
+                            Yunnan et du Qinghai, et le caractère temporaire de
+                            certains taux réduits (assurance maladie de Canton
+                            et du Guangxi, assurance chômage et accident du
+                            travail du Guangxi). Voir china_sources_2026.json
+                            pour le détail province par province.
+                        </li>
+
+                        <li>
+                            L'impôt foncier, les taxes locales additionnelles
+                            et les avantages en nature ne sont pas modélisés.
+                        </li>
+                    </ul>
+
+                    <h3>8. Sources</h3>
+
+                    <p class="method-note">
+                        Loi sur l'impôt sur le revenu des personnes physiques
+                        (révision 2018) et son règlement d'application ;
+                        Administration fiscale d'État (国家税务总局), annonces
+                        n° 56 et 61 de 2018 (méthode de retenue cumulative) ;
+                        bureaux provinciaux et municipaux des ressources
+                        humaines et de la sécurité sociale (人力资源和社会保障厅/局),
+                        bureaux de la garantie médicale (医疗保障局) et centres
+                        de gestion du fonds de logement (住房公积金管理中心) de
+                        chacune des 31 provinces, municipalités et régions
+                        autonomes ; Bureau national des statistiques de Chine
+                        (国家统计局) pour la population provinciale ; Banque
+                        mondiale (Programme de comparaison internationale) pour
+                        le facteur de conversion PPA utilisé dans le module
+                        Comparaison. Voir china_sources_2026.json pour le
+                        détail complet des citations, province par province, y
+                        compris les niveaux de confiance.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="language-section" id="section-en">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · China module
+                </p>
+
+                <h1>China Labour Cost Lab</h1>
+
+                <p>
+                    Simulation module for mainland Chinese labour costs: a
+                    fully national individual income tax (IIT) combines with
+                    social-insurance contributions and a housing provident
+                    fund whose contribution base, floor, and sometimes rate
+                    vary by province, individually selectable among 31
+                    provinces, municipalities and autonomous regions, in the
+                    Simulation, Lab Index and Data tabs.
+                </p>
+
+                <p class="author-line">
+                    By Hugo Spring-Ragain, Economist, CEDS Paris
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchChinaLanguage()">
+                    Français
+                </button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>China · 2026 socio-fiscal module</h2>
+
+                <p>
+                    <strong>Major methodological note: in most provinces, the
+                    social-insurance contribution-base floor is indexed to the
+                    local AVERAGE wage, not the minimum wage — so it
+                    substantially exceeds this module's reference wage.</strong>
+                    In Shanghai, for example, the contribution-base floor is
+                    RMB 7,460/month, versus a minimum wage of RMB 2,740/month —
+                    nearly 3 times higher. A direct and deliberately preserved
+                    consequence: at the low end of the wage grid (0.80x to
+                    2.00x the reference wage), social-insurance and
+                    housing-fund contributions are computed on this higher
+                    floor rather than on the employee's actual gross pay —
+                    producing strikingly high apparent contribution rates,
+                    sometimes exceeding 70-90% of gross pay on the employer
+                    side. <strong>This is not a calculation error: it is a
+                    genuine, distinctive feature of the Chinese system</strong>,
+                    explained in detail below, in the Methodology tab, and
+                    flagged directly on the effective-rate chart.
+                </p>
+
+                <p class="method-note">
+                    China has no national minimum wage: this module uses
+                    Shanghai's own monthly minimum wage (RMB 2,740/month,
+                    effective 1 July 2025) as its common 1.0x reference wage
+                    across all 31 provinces — the same convention used for the
+                    US federal minimum wage applied uniformly across 50
+                    states in this Lab, or the single reference wages used for
+                    Sweden and Italy. Individual income tax (个人所得税, IIT)
+                    is, by contrast, entirely national and identical across
+                    all 31 provinces: only social-insurance contributions and
+                    the housing fund vary by the selected province — a
+                    structural contrast with the United States, where BOTH
+                    income tax AND social contributions vary by state.
+                </p>
+            </section>
+
+            <nav class="tabs" aria-label="China navigation">
+                <button class="tab-button active" data-tab="simulation" onclick="showChinaTab('en', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showChinaTab('en', 'flcl-index')">
+                    Lab Index
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showChinaTab('en', 'data')">
+                    Data
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showChinaTab('en', 'methodology')">
+                    Methodology
+                </button>
+            </nav>
+
+            <section id="tab-en-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="china-waterfall-title-en">
+                        From net wage to employer cost
+                    </h3>
+
+                    <p class="chart-subtitle" id="china-waterfall-subtitle-en">
+                        Breakdown of the path from net wage after tax to total
+                        employer cost, in 4 fixed segments (identical
+                        regardless of the selected province): income tax
+                        (national), employee contributions, then employer
+                        contributions.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="china-province-select-en">
+                                Reference province
+                            </label>
+
+                            <select id="china-province-select-en">
+                            </select>
+                        </div>
+
+                        <div class="selector-field">
+                            <label for="china-waterfall-multiple-en">
+                                Selected wage point
+                            </label>
+
+                            <select id="china-waterfall-multiple-en">
+                                <option value="0.80">0.80 reference wage</option>
+                                <option value="1.00" selected>1.00 reference wage</option>
+                                <option value="1.25">1.25 reference wages</option>
+                                <option value="1.50">1.50 reference wages</option>
+                                <option value="2.00">2.00 reference wages</option>
+                                <option value="2.50">2.50 reference wages</option>
+                                <option value="3.00">3.00 reference wages</option>
+                                <option value="4.00">4.00 reference wages</option>
+                                <option value="5.00">5.00 reference wages</option>
+                                <option value="6.00">6.00 reference wages</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-china-waterfall-en"
+                        class="plotly-chart"
+                        aria-label="Breakdown of labour cost in China"
+                    ></div>
+
+                    <p class="method-note">
+                        The chart structure (4 segments) is deliberately
+                        identical across all 31 provinces, to remain
+                        comparable from province to province. The tax amount
+                        shown is the same regardless of province (national
+                        IIT); employee and employer contributions vary by the
+                        selected province. The "Five insurances and housing
+                        fund breakdown" chart below details each contribution
+                        line.
+                    </p>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Additional charts</h2>
+
+                    <p>
+                        The charts below detail wages, effective rates, the
+                        five-insurances-and-housing-fund breakdown, the
+                        socio-fiscal wedge, and the marginal return on a
+                        gross-wage increase, for the province selected above.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Employer cost, gross wage and net wages</h3>
+
+                        <p class="chart-subtitle">
+                            Comparison of the gross wage, net wage before tax,
+                            net wage after tax, and employer cost across the
+                            multiple of the reference wage.
+                        </p>
+
+                        <div
+                            id="chart-china-cost-en"
+                            class="plotly-chart"
+                            aria-label="Labour cost in China"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Effective levy rates</h3>
+
+                        <p class="chart-subtitle">
+                            Employee rate and employer rate (five insurances +
+                            housing fund), and effective income tax rate
+                            (national IIT). The shaded region flags wage
+                            points where the contribution-base floor (indexed
+                            to the local average wage) exceeds actual gross
+                            pay: contributions are computed on that floor
+                            there, producing very high apparent rates — a
+                            genuine feature of the system, not an error.
+                        </p>
+
+                        <div
+                            id="chart-china-rates-en"
+                            class="plotly-chart"
+                            aria-label="Levy rates in China"
+                        ></div>
+
+                        <p class="method-note">
+                            <strong>Reading the low-wage spike:</strong> the
+                            social-insurance contribution-base floor is
+                            indexed to the local average wage (60%-300%
+                            depending on the province), not the minimum wage.
+                            It is therefore structurally higher than this
+                            module's reference wage in most provinces — in
+                            Shanghai, a RMB 7,460/month floor versus a RMB
+                            2,740/month minimum wage. At the low end of the
+                            grid, employee and employer contributions are
+                            computed on this higher floor rather than on
+                            actual gross pay, producing apparent contribution
+                            rates that can exceed 70-90% on the employer side.
+                            See the Methodology tab, section 3.
+                        </p>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Five insurances and housing fund breakdown (五险一金)</h3>
+
+                        <p class="chart-subtitle">
+                            Pension, medical (merged with maternity), and
+                            unemployment insurance, plus work-injury insurance
+                            (employer only), and the housing provident fund
+                            (公积金), on both the employee and employer side.
+                            The dotted line is the total (income tax +
+                            employee contributions + employer contributions).
+                        </p>
+
+                        <div
+                            id="chart-china-breakdown-en"
+                            class="plotly-chart"
+                            aria-label="Five insurances and housing fund breakdown in China"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Social wedge and total socio-fiscal wedge</h3>
+
+                        <p class="chart-subtitle">
+                            Comparison of the social wedge before tax and the
+                            total socio-fiscal wedge after income tax, and
+                            cost/net ratios.
+                        </p>
+
+                        <div
+                            id="chart-china-wedge-en"
+                            class="plotly-chart"
+                            aria-label="Social and socio-fiscal wedge in China"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Marginal return on a gross-wage increase</h3>
+
+                        <p class="chart-subtitle">
+                            Share of an additional RMB of gross wage kept
+                            before and after income tax, and the marginal
+                            effect of the socio-fiscal system.
+                        </p>
+
+                        <div
+                            id="chart-china-marginal-en"
+                            class="plotly-chart"
+                            aria-label="Socio-fiscal return on a gross-wage increase in China"
+                        ></div>
+
+                        <p class="method-note">
+                            The inflection points correspond to the national
+                            IIT brackets and, where applicable, the selected
+                            province's own contribution-base floor and cap.
+                        </p>
+                    </div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Key indicators</h2>
+
+                    <p>
+                        The indicators below are computed at the reference
+                        wage (multiple = 1) for the selected province.
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="china-metrics-en">
+                    <article class="metric-card">
+                        <span class="metric-label">Reference gross wage</span>
+                        <strong id="metric-china-reference-wage-en">—</strong>
+                        <span class="metric-note">Shanghai minimum wage, RMB 2,740/month</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Effective income tax rate</span>
+                        <strong id="metric-china-income-tax-rate-en">—</strong>
+                        <span class="metric-note">National IIT / gross</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Effective employer rate</span>
+                        <strong id="metric-china-employer-rate-en">—</strong>
+                        <span class="metric-note">Five insurances + housing fund</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Cost / net ratio at the reference wage</span>
+                        <strong id="metric-china-cost-to-net-en">—</strong>
+                        <span class="metric-note">After income tax</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-en-flcl-index" class="tab-content">
+                <section class="chart-card">
+                    <h2>Lab Index</h2>
+                    <p class="chart-subtitle">
+                        Labour cost efficiency indicators.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="china-flcl-province-select-en">
+                                Province
+                            </label>
+
+                            <select id="china-flcl-province-select-en">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-E</span>
+                            <strong id="china-flcl-e-value-en">—</strong>
+                            <span class="metric-note" id="china-flcl-e-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-B</span>
+                            <strong id="china-flcl-b-value-en">—</strong>
+                            <span class="metric-note" id="china-flcl-b-caption-en"></span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Marginal transmission</span>
+                            <strong id="china-flcl-transmission-value-en">—</strong>
+                            <span class="metric-note" id="china-flcl-transmission-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Marginal capture</span>
+                            <strong id="china-flcl-capture-value-en">—</strong>
+                            <span class="metric-note" id="china-flcl-capture-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Implicit progressivity</span>
+                            <strong id="china-flcl-progressivity-value-en">—</strong>
+                            <span class="metric-note" id="china-flcl-progressivity-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Low-wage support</span>
+                            <strong id="china-flcl-support-value-en">—</strong>
+                            <span class="metric-note" id="china-flcl-support-caption-en"></span>
+                        </div>
+                    </div>
+
+                    <p class="method-note" style="margin-top: 16px;">
+                        No targeted, degressive employer relief is modeled for
+                        China: the Lab-R indicator does not apply here. The
+                        Chinese Lab-E is structurally low at the lowest points
+                        of the grid in most provinces, because of the
+                        contribution-base floor effect described at the top
+                        of this module; it converges toward levels seen in
+                        other Lab countries once actual gross pay exceeds the
+                        contribution-base floor.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Lab Index</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × net wage before income tax / employer cost.
+                        </p>
+                        <div id="chart-china-flcl-e-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal transmission</h3>
+                        <p class="chart-subtitle">
+                            Share of one additional RMB of employer cost reaching net wage.
+                        </p>
+                        <div id="chart-china-flcl-marginal-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Implicit progressivity</h3>
+                        <p class="chart-subtitle">
+                            Change in Lab-E when the wage level increases.
+                        </p>
+                        <div id="chart-china-flcl-progressivity-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal destination of one additional RMB of employer cost</h3>
+                        <p class="chart-subtitle">
+                            Marginal split between net wage, employee contributions and employer contributions.
+                        </p>
+                        <div id="chart-china-flcl-destination-en" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-en-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Data</h3>
+
+                    <p class="chart-subtitle">
+                        The China dataset can be downloaded as a CSV file. It
+                        contains every simulated wage point for all 31
+                        provinces, municipalities and autonomous regions (521
+                        wage points each): gross wage, national income tax,
+                        contributions for the five insurances and the housing
+                        fund (component detail), employer cost, and
+                        socio-fiscal wedge indicators.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/china/china_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Download the China dataset
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/china/china_parameters_2026.json"
+                            download
+                        >
+                            Download the 2026 parameters
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/china/china_sources_2026.json"
+                            download
+                        >
+                            Download the 2026 sources
+                        </a>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Data for the standard profile</h3>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="china-data-province-select-en">
+                                Province
+                            </label>
+
+                            <select id="china-data-province-select-en">
+                            </select>
+                        </div>
+                    </div>
+
+                    <p
+                        class="chart-subtitle"
+                        id="china-data-caption-en"
+                    >
+                        Standard employee (Shanghai)
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Multiple</th>
+                                    <th>Gross wage (RMB)</th>
+                                    <th>Net before tax (RMB)</th>
+                                    <th>Income tax (RMB)</th>
+                                    <th>Net after tax (RMB)</th>
+                                    <th>Employer cost (RMB)</th>
+                                    <th>Employee contributions (RMB)</th>
+                                    <th>Employer contributions (RMB)</th>
+                                    <th>Social wedge (RMB)</th>
+                                    <th>Total socio-fiscal wedge (RMB)</th>
+                                    <th>Employer rate</th>
+                                    <th>Cost / net after tax</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="china-data-table-body-en">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="chart-subtitle" style="margin-top: 10px;">
+                        Income tax = national IIT, identical across all 31
+                        provinces. Employee and employer contributions combine
+                        the five social insurances (pension, medical,
+                        unemployment, work injury) and the housing provident
+                        fund (公积金) of the selected province. See the
+                        Methodology tab.
+                    </p>
+                </div>
+            </section>
+
+            <section id="tab-en-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Methodology</h2>
+
+                    <p>
+                        The China module relies on a regulatory simulation of
+                        labour cost for a standard employee, single, childless,
+                        in standard formal employment (work-injury Tier 1), in
+                        the province, municipality or autonomous region
+                        selected among the 31 modeled mainland divisions (Hong
+                        Kong, Macau and Taiwan are out of scope: different tax
+                        jurisdictions). None of the six special additional
+                        deductions (专项附加扣除) apply to this reference
+                        profile.
+                    </p>
+
+                    <h3>1. The reference wage: Shanghai's minimum wage</h3>
+
+                    <p>
+                        China has no national minimum wage: each province sets
+                        its own. This module uses, by convention, Shanghai's
+                        monthly minimum wage (RMB 2,740/month, effective 1 July
+                        2025 — the most commonly used financial-hub reference
+                        in cross-country payroll comparisons) as its common
+                        1.0x reference wage across all 31 provinces — the same
+                        convention used for the US federal minimum wage
+                        applied uniformly across 50 states in this Lab, or the
+                        single reference wages used for Sweden and Italy in
+                        the absence of a statutory minimum wage. This is
+                        neither a national average nor a legal minimum common
+                        to all provinces: every province retains its own
+                        minimum wage, documented in china_parameters_2026.json.
+                    </p>
+
+                    <h3>2. Individual income tax (个人所得税, IIT): entirely national</h3>
+
+                    <p>
+                        Unlike every other layer of this module, the IIT
+                        bracket table, the basic deduction, and the six
+                        special additional deductions are set by national law
+                        and apply identically across all 31 provinces: an
+                        annual progressive 7-bracket schedule (3% / 10% / 20%
+                        / 25% / 30% / 35% / 45%, thresholds unchanged since
+                        2019) and a basic deduction of RMB 60,000/year (RMB
+                        5,000/month, 基本减除费用).
+                    </p>
+
+                    <p>
+                        In practice, employers withhold IIT monthly using the
+                        cumulative withholding method (累计预扣法, State
+                        Taxation Administration Announcements 2018 No. 56/61):
+                        each month's withholding is computed on year-to-date
+                        cumulative income, so nominal monthly withholding
+                        starts low and rises through the year even at a
+                        constant salary, before converging to the true annual
+                        liability (settled at the annual reconciliation held
+                        March-June the following year). For a standard
+                        single-employer, constant-salary, no-special-deduction
+                        reference profile — exactly this module's scope — this
+                        mechanism converges very closely to the same result as
+                        simply applying the annual bracket table to annual
+                        taxable income and dividing by 12: this module reports
+                        that simplified, settled-annual-equivalent monthly
+                        figure rather than reproducing the month-by-month ramp
+                        seen on a real payslip.
+                    </p>
+
+                    <h3>3. Social insurance and the housing fund: a national framework, provincial parameters — and the contribution-base floor effect</h3>
+
+                    <p>
+                        Pension (养老保险), medical insurance (医疗保险, with
+                        maternity insurance 生育保险 now merged into medical
+                        fund administration in every province researched),
+                        unemployment insurance (失业保险) and work-injury
+                        insurance (工伤保险, employer-only) are collected in
+                        every province, but each province separately sets the
+                        contribution base floor and cap (缴费基数下限/上限,
+                        typically 60%-300% of the province's own prior-year
+                        average wage, reset annually — usually each July), and,
+                        in a meaningful number of provinces, the contribution
+                        rates themselves genuinely differ from one province to
+                        another.
+                    </p>
+
+                    <p>
+                        <strong>Major methodological point: the
+                        contribution-base floor, indexed to the local AVERAGE
+                        wage rather than the minimum wage, substantially
+                        exceeds the minimum wage in most provinces
+                        researched</strong> (in Shanghai, for example, a
+                        contribution-base floor of RMB 7,460/month versus a
+                        minimum wage of RMB 2,740/month). A direct and
+                        deliberately preserved consequence: at wage-grid
+                        points at or near the reference wage (0.80x to roughly
+                        2.00x), contributions are computed on this higher
+                        floor rather than on actual gross pay — producing very
+                        high apparent contribution rates (sometimes exceeding
+                        70-90% of gross pay on the employer side) at the
+                        lowest points of the grid. This is not a modeling
+                        error: it is a genuine, distinctive feature of the
+                        Chinese system.
+                    </p>
+
+                    <p class="method-note">
+                        Confirmed provincial rate deviations (see
+                        china_sources_2026.json for full detail): Guangdong's
+                        unemployment-insurance split is 0.8% employer / 0.2%
+                        employee, versus 0.5%/0.5% elsewhere; Hunan (0.6%),
+                        Hainan (0.15%), Chongqing (0.3%) and Tibet (0.1%) each
+                        set their own work-injury Tier-1 rate instead of the
+                        0.2% national default; Inner Mongolia's pension
+                        employer rate is reported at 19% instead of 16%,
+                        medium confidence (single-source cross-check). A
+                        handful of provinces (Hebei, Inner Mongolia, Liaoning,
+                        Fujian, Shaanxi, Gansu, Guizhou) additionally use a
+                        separate contribution base for medical insurance than
+                        for pension/unemployment/work-injury, modeled
+                        explicitly where confirmed.
+                    </p>
+
+                    <h3>4. The housing provident fund (住房公积金): a 7% illustrative rate</h3>
+
+                    <p>
+                        The housing fund's contribution rate is, nationally,
+                        an employer's own discretionary choice within a
+                        5%-12% band (employer and employee must contribute the
+                        same rate) — not a province-mandated figure. This
+                        module uses a single illustrative rate of 7% (the rate
+                        most frequently cited as the typical private-employer
+                        choice in the provinces researched), consistent with
+                        how this project already uses one uniform illustrative
+                        rate for a similarly discretionary item (Italy's INAIL
+                        workplace-injury-insurance rate). Only the fund's
+                        contribution base floor and cap, which unlike the rate
+                        ARE genuinely published province-specific figures, are
+                        modeled province by province.
+                    </p>
+
+                    <h3>5. Indicators produced</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Net before tax:</strong>
+                            gross wage reduced by employee contributions
+                            (pension, medical, unemployment, housing fund of
+                            the selected province).
+                        </li>
+
+                        <li>
+                            <strong>Net after tax:</strong>
+                            net before tax reduced by the equivalent monthly
+                            IIT (national, identical across all 31 provinces).
+                        </li>
+
+                        <li>
+                            <strong>Employer cost:</strong>
+                            gross wage increased by employer contributions
+                            (pension, medical, unemployment, work injury,
+                            housing fund of the selected province).
+                        </li>
+
+                        <li>
+                            <strong>Social wedge:</strong>
+                            difference between employer cost and net wage
+                            before tax.
+                        </li>
+
+                        <li>
+                            <strong>Total socio-fiscal wedge:</strong>
+                            difference between employer cost and net wage
+                            after tax.
+                        </li>
+
+                        <li>
+                            <strong>Marginal return:</strong>
+                            share of an additional RMB of gross wage kept
+                            before and after IIT.
+                        </li>
+                    </ul>
+
+                    <h3>6. Lab Index</h3>
+
+                    <p>
+                        The Lab Index measures the wage efficiency of labour
+                        cost, independent of income tax. Lab-E = 100 × net
+                        wage before income tax / employer cost, Lab-B = 100 −
+                        Lab-E. No targeted, degressive employer relief is
+                        modeled for China: the Lab-R indicator does not apply
+                        here.
+                    </p>
+
+                    <h3>7. Scenario limitations</h3>
+
+                    <ul class="method-note">
+                        <li>
+                            China has no national minimum wage: this module's
+                            1.0x reference wage is Shanghai's minimum wage, a
+                            methodological choice, not a national average nor
+                            a legal minimum common to all provinces.
+                        </li>
+
+                        <li>
+                            The housing provident fund rate (住房公积金,
+                            national 5%-12% band) is an employer's
+                            discretionary choice: this module uses a single
+                            illustrative rate of 7% for all provinces, not the
+                            rate actually used by each employer.
+                        </li>
+
+                        <li>
+                            The social-insurance contribution-base floor,
+                            indexed to the local average wage, exceeds the
+                            reference minimum wage in most provinces: at the
+                            low end of the wage grid, contributions are
+                            therefore computed on this higher floor rather
+                            than actual gross pay — a genuine feature of the
+                            system, not an error.
+                        </li>
+
+                        <li>
+                            Only the single, childless profile with no
+                            mortgage, no declared rent and no dependent
+                            parents is modeled: none of the six special
+                            additional deductions (专项附加扣除) apply.
+                        </li>
+
+                        <li>
+                            The monthly cumulative withholding method
+                            (累计预扣法) is not reproduced month by month: this
+                            module publishes the monthly equivalent of the
+                            settled annual tax, not the actual ramp-up
+                            observed on a real payslip over the course of the
+                            year.
+                        </li>
+
+                        <li>
+                            Guangdong is modeled via Guangzhou, the provincial
+                            capital; Shenzhen, in the same province, has its
+                            own hukou-dependent pension rate, its own medical
+                            contribution base, and its own minimum wage, not
+                            modeled separately.
+                        </li>
+
+                        <li>
+                            Several rates or caps remain medium confidence for
+                            lack of a directly verifiable official source
+                            within the scope of this research, notably: Inner
+                            Mongolia's pension employer rate (19%), several
+                            Yunnan and Qinghai rates, and whether certain
+                            reduced rates remain temporary (Guangzhou's and
+                            Guangxi's medical insurance, Guangxi's unemployment
+                            and work-injury insurance). See
+                            china_sources_2026.json for province-by-province
+                            detail.
+                        </li>
+
+                        <li>
+                            Property tax, additional local taxes, and benefits
+                            in kind are not modeled.
+                        </li>
+                    </ul>
+
+                    <h3>8. Sources</h3>
+
+                    <p class="method-note">
+                        Individual Income Tax Law (2018 revision) and its
+                        implementing regulations; State Taxation Administration
+                        (国家税务总局), 2018 Announcements No. 56 and 61
+                        (cumulative withholding method); each of the 31
+                        provinces', municipalities' and autonomous regions'
+                        own Human Resources and Social Security bureaus
+                        (人力资源和社会保障厅/局), Medical Security bureaus
+                        (医疗保障局) and Housing Provident Fund management
+                        centers (住房公积金管理中心); China's National Bureau
+                        of Statistics (国家统计局) for provincial population;
+                        World Bank (International Comparison Program) for the
+                        PPP conversion factor used in the Comparison module.
+                        See china_sources_2026.json for the full citation
+                        detail, province by province, including confidence
+                        levels.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

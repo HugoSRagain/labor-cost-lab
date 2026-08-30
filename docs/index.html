@@ -290,6 +290,36 @@
         .country-switch button:hover { color: var(--green); }
         .country-switch button.active { background: var(--ink); color: var(--paper); }
 
+        .zone-switch {
+            display: inline-flex;
+            border: 1px solid var(--green);
+            border-radius: 2px;
+            overflow: hidden;
+            background: var(--paper);
+            margin-bottom: 10px;
+        }
+
+        .zone-switch button {
+            border: 0;
+            border-left: 1px solid var(--green);
+            padding: 6px 16px;
+            background: transparent;
+            color: var(--green);
+            font-family: var(--mono);
+            font-size: 0.74rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .zone-switch button:first-child { border-left: 0; }
+        .zone-switch button:hover { background: rgba(30, 122, 74, 0.08); }
+        .zone-switch button.active { background: var(--green); color: var(--paper); }
+
+        #modules-zone-switch { margin-bottom: 22px; }
+        .mod-first-visible { border-top: 1px solid var(--ink) !important; }
+
         .bar {
             display: flex;
             width: 100%;
@@ -738,18 +768,25 @@
                             <span class="decomp-base" data-i18n="decomp.base">Base : coût employeur = 100</span>
                         </div>
 
+                        <div class="zone-switch" role="tablist" aria-label="Zone géographique" id="hero-zone-switch">
+                            <button type="button" role="tab" class="active" aria-selected="true" data-zone="europe" onclick="setHeroZone('europe', this)" data-i18n="zone.europe">Europe</button>
+                            <button type="button" role="tab" aria-selected="false" data-zone="america" onclick="setHeroZone('america', this)" data-i18n="zone.america">Amérique</button>
+                            <button type="button" role="tab" aria-selected="false" data-zone="asia" onclick="setHeroZone('asia', this)" data-i18n="zone.asia">Asie</button>
+                        </div>
+
                         <div class="country-switch" role="tablist" aria-label="Pays">
-                            <button class="active" type="button" role="tab" aria-selected="true" onclick="setCountry('fr', this)">France</button>
-                            <button type="button" role="tab" aria-selected="false" onclick="setCountry('de', this)">Germany</button>
-                            <button type="button" role="tab" aria-selected="false" onclick="setCountry('be', this)">Belgium</button>
-    			    <button type="button" role="tab" aria-selected="false" onclick="setCountry('ch', this)">Switzerland</button>
-                            <button type="button" role="tab" aria-selected="false" onclick="setCountry('nl', this)">Netherlands</button>
-                            <button type="button" role="tab" aria-selected="false" onclick="setCountry('uk', this)">United Kingdom</button>
-                            <button type="button" role="tab" aria-selected="false" onclick="setCountry('ie', this)">Ireland</button>
-                            <button type="button" role="tab" aria-selected="false" onclick="setCountry('es', this)">Spain</button>
-                            <button type="button" role="tab" aria-selected="false" onclick="setCountry('se', this)">Sweden</button>
-                            <button type="button" role="tab" aria-selected="false" onclick="setCountry('it', this)">Italy</button>
-                            <button type="button" role="tab" aria-selected="false" onclick="setCountry('us', this)">United States</button>
+                            <button class="active" type="button" role="tab" aria-selected="true" data-zone="europe" onclick="setCountry('fr', this)">France</button>
+                            <button type="button" role="tab" aria-selected="false" data-zone="europe" onclick="setCountry('de', this)">Germany</button>
+                            <button type="button" role="tab" aria-selected="false" data-zone="europe" onclick="setCountry('be', this)">Belgium</button>
+    			    <button type="button" role="tab" aria-selected="false" data-zone="europe" onclick="setCountry('ch', this)">Switzerland</button>
+                            <button type="button" role="tab" aria-selected="false" data-zone="europe" onclick="setCountry('nl', this)">Netherlands</button>
+                            <button type="button" role="tab" aria-selected="false" data-zone="europe" onclick="setCountry('uk', this)">United Kingdom</button>
+                            <button type="button" role="tab" aria-selected="false" data-zone="europe" onclick="setCountry('ie', this)">Ireland</button>
+                            <button type="button" role="tab" aria-selected="false" data-zone="europe" onclick="setCountry('es', this)">Spain</button>
+                            <button type="button" role="tab" aria-selected="false" data-zone="europe" onclick="setCountry('se', this)">Sweden</button>
+                            <button type="button" role="tab" aria-selected="false" data-zone="europe" onclick="setCountry('it', this)">Italy</button>
+                            <button type="button" role="tab" aria-selected="false" data-zone="america" style="display:none" onclick="setCountry('us', this)">United States</button>
+                            <button type="button" role="tab" aria-selected="false" data-zone="asia" style="display:none" onclick="setCountry('cn', this)">China</button>
                         </div>
                     </div>
 
@@ -803,7 +840,13 @@
                     Part nette du coût employeur · calculée au salaire minimum de référence
                 </p>
 
-                <a class="mod" href="./countries/france/index.html">
+                <div class="zone-switch" role="tablist" aria-label="Zone géographique" id="modules-zone-switch">
+                    <button type="button" role="tab" class="active" aria-selected="true" data-zone="europe" onclick="setModuleZone('europe', this)" data-i18n="zone.europe">Europe</button>
+                    <button type="button" role="tab" aria-selected="false" data-zone="america" onclick="setModuleZone('america', this)" data-i18n="zone.america">Amérique</button>
+                    <button type="button" role="tab" aria-selected="false" data-zone="asia" onclick="setModuleZone('asia', this)" data-i18n="zone.asia">Asie</button>
+                </div>
+
+                <a class="mod" data-zone="europe" href="./countries/france/index.html">
                     <div>
                         <div class="mod-name">France</div>
                         <div class="mod-tags">
@@ -831,7 +874,7 @@
                     </div>
                 </a>
 
-                <a class="mod" href="./countries/germany/index.html">
+                <a class="mod" data-zone="europe" href="./countries/germany/index.html">
                     <div>
                         <div class="mod-name">Germany</div>
                         <div class="mod-tags">
@@ -858,7 +901,7 @@
                     </div>
                 </a>
 
-                <a class="mod" href="./countries/belgium/index.html">
+                <a class="mod" data-zone="europe" href="./countries/belgium/index.html">
                     <div>
                         <div class="mod-name">Belgium</div>
                         <div class="mod-tags">
@@ -884,7 +927,7 @@
                         <span class="mod-go" data-i18n="module.open">Ouvrir →</span>
                     </div>
                 </a>
-                <a class="mod" href="./countries/switzerland/index.html">
+                <a class="mod" data-zone="europe" href="./countries/switzerland/index.html">
                     <div>
                         <div class="mod-name">Switzerland</div>
                         <div class="mod-tags">
@@ -900,20 +943,20 @@
                             pour les 26 cantons suisses.
                         </p>
                         <div class="minibar" aria-hidden="true">
-                                <span class="m-emp" style="width:8%"></span>
-    				<span class="m-sal" style="width:8%"></span>
-    				<span class="m-tax" style="width:2%"></span>
-    				<span class="m-net" style="width:82%"></span>
+                                <span class="m-emp" style="width:9%"></span>
+    				<span class="m-sal" style="width:9%"></span>
+    				<span class="m-tax" style="width:5%"></span>
+    				<span class="m-net" style="width:77%"></span>
                         </div>
                     </div>
                     <div class="mod-net">
-                        <b>82</b>
+                        <b>77</b>
                         <span data-i18n="module.netshare">net / 100</span>
                         <span class="mod-go" data-i18n="module.open">Ouvrir →</span>
                     </div>
                 </a>
 
-                <a class="mod" href="./countries/netherlands/index.html">
+                <a class="mod" data-zone="europe" href="./countries/netherlands/index.html">
                     <div>
                         <div class="mod-name">Netherlands</div>
                         <div class="mod-tags">
@@ -942,7 +985,7 @@
                     </div>
                 </a>
 
-                <a class="mod" href="./countries/uk/index.html">
+                <a class="mod" data-zone="europe" href="./countries/uk/index.html">
                     <div>
                         <div class="mod-name">United Kingdom</div>
                         <div class="mod-tags">
@@ -971,7 +1014,7 @@
                     </div>
                 </a>
 
-                <a class="mod" href="./countries/ireland/index.html">
+                <a class="mod" data-zone="europe" href="./countries/ireland/index.html">
                     <div>
                         <div class="mod-name">Ireland</div>
                         <div class="mod-tags">
@@ -1000,7 +1043,7 @@
                     </div>
                 </a>
 
-                <a class="mod" href="./countries/spain/index.html">
+                <a class="mod" data-zone="europe" href="./countries/spain/index.html">
                     <div>
                         <div class="mod-name">Spain</div>
                         <div class="mod-tags">
@@ -1029,7 +1072,7 @@
                     </div>
                 </a>
 
-                <a class="mod" href="./countries/sweden/index.html">
+                <a class="mod" data-zone="europe" href="./countries/sweden/index.html">
                     <div>
                         <div class="mod-name">Sweden</div>
                         <div class="mod-tags">
@@ -1061,7 +1104,7 @@
                     </div>
                 </a>
 
-                <a class="mod" href="./countries/italy/index.html">
+                <a class="mod" data-zone="europe" href="./countries/italy/index.html">
                     <div>
                         <div class="mod-name">Italy</div>
                         <div class="mod-tags">
@@ -1094,7 +1137,7 @@
                     </div>
                 </a>
 
-                <a class="mod" href="./countries/usa/index.html">
+                <a class="mod" data-zone="america" href="./countries/usa/index.html">
                     <div>
                         <div class="mod-name">United States</div>
                         <div class="mod-tags">
@@ -1125,6 +1168,39 @@
                     </div>
                 </a>
 
+                <a class="mod" data-zone="asia" href="./countries/china/index.html">
+                    <div>
+                        <div class="mod-name">China</div>
+                        <div class="mod-tags">
+                            <span class="tag live" data-i18n="status.available">Disponible</span>
+                            <span class="tag" data-i18n="status.prototype">Prototype</span>
+                            <span class="tag">IIT + 31 Provinces</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="mod-desc" data-i18n="module.china.text">
+                            Module socio-fiscal 2026 : impôt sur le revenu
+                            (IIT) national, combiné aux cinq assurances
+                            sociales et au fonds de logement des 31 provinces,
+                            municipalités et régions autonomes. Le plancher de
+                            cotisation, indexé sur le salaire moyen local,
+                            dépasse largement le salaire de référence dans la
+                            plupart des provinces.
+                        </p>
+                        <div class="minibar" aria-hidden="true">
+                            <span class="m-emp" style="width:33%"></span>
+                            <span class="m-sal" style="width:17%"></span>
+                            <span class="m-tax" style="width:0%"></span>
+                            <span class="m-net" style="width:50%"></span>
+                        </div>
+                    </div>
+                    <div class="mod-net">
+                        <b>50</b>
+                        <span data-i18n="module.netshare">net / 100</span>
+                        <span class="mod-go" data-i18n="module.open">Ouvrir →</span>
+                    </div>
+                </a>
+
                 <a class="mod" href="./countries/comparison/index.html">
                     <div>
                         <div class="mod-name" data-i18n="module.comparison.name">Comparaison</div>
@@ -1135,14 +1211,14 @@
                     </div>
                     <div>
                         <p class="mod-desc" data-i18n="module.comparison.text">
-                            Met en regard les 11 modules nationaux sur une grille de
+                            Met en regard les 12 modules nationaux sur une grille de
                             salaires harmonisée en dollars internationaux (PPA), pour
                             comparer coût employeur, salaire net et prélèvements
                             obligatoires à niveau de vie équivalent.
                         </p>
                     </div>
                     <div class="mod-net">
-                        <b>11</b>
+                        <b>12</b>
                         <span data-i18n="module.comparison.count">pays comparés</span>
                         <span class="mod-go" data-i18n="module.open">Ouvrir →</span>
                     </div>
@@ -1318,6 +1394,9 @@
                 "decomp.title": "Du coût employeur au salaire net",
                 "decomp.base": "Base : coût employeur = 100",
                 "decomp.caption": "Valeurs calculées au salaire minimum de référence de chaque pays, à partir des modules nationaux",
+                "zone.europe": "Europe",
+                "zone.america": "Amérique",
+                "zone.asia": "Asie",
                 "modules.title": "Modules nationaux",
                 "modules.intro": "Même logique pour chaque pays : partir d'un salaire de référence, appliquer les règles sociales et fiscales, restituer une grille comparable. Les barres ci-dessous donnent la part du coût employeur perçue en net.",
                 "compare.note": "Part nette du coût employeur · calculée au salaire minimum de référence",
@@ -1332,8 +1411,9 @@
                 "module.sweden.text": "Module socio-fiscal 2026 : arbetsgivaravgifter (taux plat de 31,42 %, sans plafond), kommunalskatt, statlig inkomstskatt, grundavdrag et jobbskatteavdrag. Pas de salaire minimum légal : salaire de référence conventionnel (seuil Migrationsverket).",
                 "module.italy.text": "Module socio-fiscal 2026 : cotisations INPS (avec plafond de cotisation et cotisation additionnelle de 1 %), TFR (indemnité de départ différée), IRPEF, addizionale regionale et addizionale comunale. Pas de salaire minimum légal : salaire de référence conventionnel (CCNL Commercio).",
                 "module.usa.text": "Module socio-fiscal 2026 : impôt fédéral sur le revenu, FICA (Social Security, Medicare), FUTA, combinés aux 50 États et au District de Columbia (impôt d'État, SUI, dispositifs type SDI/PFML). Sélecteur des 51 juridictions.",
+                "module.china.text": "Module socio-fiscal 2026 : impôt sur le revenu (IIT) national, combiné aux cinq assurances sociales et au fonds de logement des 31 provinces, municipalités et régions autonomes. Le plancher de cotisation, indexé sur le salaire moyen local, dépasse largement le salaire de référence dans la plupart des provinces.",
                 "module.comparison.name": "Comparaison",
-                "module.comparison.text": "Met en regard les 11 modules nationaux sur une grille de salaires harmonisée en dollars internationaux (PPA), pour comparer coût employeur, salaire net et prélèvements obligatoires à niveau de vie équivalent.",
+                "module.comparison.text": "Met en regard les 12 modules nationaux sur une grille de salaires harmonisée en dollars internationaux (PPA), pour comparer coût employeur, salaire net et prélèvements obligatoires à niveau de vie équivalent.",
                 "module.comparison.count": "pays comparés",
                 "module.open": "Ouvrir →",
                 "module.netshare": "net / 100",
@@ -1368,7 +1448,7 @@
                 "data.block4.title": "Code ouvert",
                 "data.block4.text": "Scripts de construction des jeux de données et interface web reproductible.",
                 "side.status.modules.label": "Modules accessibles",
-		"side.status.modules.value": "France · Allemagne · Belgique · Suisse · Pays-Bas · Royaume-Uni · Irlande · Espagne · Suède · Italie · États-Unis",
+		"side.status.modules.value": "France · Allemagne · Belgique · Suisse · Pays-Bas · Royaume-Uni · Irlande · Espagne · Suède · Italie · États-Unis · Chine",
                 "side.status.year.label": "Année réglementaire",
                 "side.status.output.label": "Sorties principales",
                 "side.status.output.value": "coût employeur · net · coins socio-fiscaux",
@@ -1391,6 +1471,9 @@
                 "decomp.title": "From employer cost to net wage",
                 "decomp.base": "Base: employer cost = 100",
                 "decomp.caption": "Values computed at each country's own reference minimum wage, from the national modules",
+                "zone.europe": "Europe",
+                "zone.america": "Americas",
+                "zone.asia": "Asia",
                 "modules.title": "National modules",
                 "modules.intro": "Same logic for every country: start from a reference wage, apply social and fiscal rules, publish a comparable grid. The bars below show the share of employer cost received as net pay.",
                 "compare.note": "Net share of employer cost · computed at the reference minimum wage",
@@ -1405,8 +1488,9 @@
                 "module.sweden.text": "2026 socio-fiscal module: arbetsgivaravgifter (a flat 31.42% rate with no ceiling), kommunalskatt, statlig inkomstskatt, grundavdrag and jobbskatteavdrag. No statutory minimum wage: a conventional reference wage (the Migrationsverket threshold) is used instead.",
                 "module.italy.text": "2026 socio-fiscal module: INPS contributions (with a contribution ceiling and an additional 1% contribution), TFR (deferred severance accrual), IRPEF, addizionale regionale and addizionale comunale. No statutory minimum wage: a conventional reference wage (CCNL Commercio) is used instead.",
                 "module.usa.text": "2026 socio-fiscal module: federal income tax, FICA (Social Security, Medicare), FUTA, combined with each of the 50 states and the District of Columbia (state income tax, SUI, SDI/PFML-type schemes). Selector for all 51 jurisdictions.",
+                "module.china.text": "2026 socio-fiscal module: national individual income tax (IIT), combined with the five social insurances and the housing provident fund of 31 provinces, municipalities and autonomous regions. The contribution-base floor, indexed to the local average wage, substantially exceeds the reference wage in most provinces.",
                 "module.comparison.name": "Comparison",
-                "module.comparison.text": "Compares the 11 national modules on a wage grid harmonised in international dollars (PPP), to compare employer cost, net wage, and statutory levies at an equivalent standard of living.",
+                "module.comparison.text": "Compares the 12 national modules on a wage grid harmonised in international dollars (PPP), to compare employer cost, net wage, and statutory levies at an equivalent standard of living.",
                 "module.comparison.count": "countries compared",
                 "module.open": "Open →",
                 "module.netshare": "net / 100",
@@ -1441,7 +1525,7 @@
                 "data.block4.title": "Open code",
                 "data.block4.text": "Dataset-building scripts and a reproducible hosted web interface.",
                 "side.status.modules.label": "Available modules",
-		"side.status.modules.value": "France · Germany · Belgium · Switzerland · Netherlands · United Kingdom · Ireland · Spain · Sweden · Italy · United States",
+		"side.status.modules.value": "France · Germany · Belgium · Switzerland · Netherlands · United Kingdom · Ireland · Spain · Sweden · Italy · United States · China",
                 "side.status.year.label": "Regulatory year",
                 "side.status.output.label": "Main outputs",
                 "side.status.output.value": "employer cost · net · socio-fiscal wedges",
@@ -1480,10 +1564,10 @@
                 net: { v: 76, fr: "Salaire net", en: "Net wage" }
             },
             ch: {
-                    emp: { v: 8, fr: "Cotisations employeur, LPP et accident", en: "Employer contributions, pension and accident insurance" },
-    		    sal: { v: 8, fr: "Cotisations salarié, LPP et accident", en: "Employee contributions, pension and accident insurance" },
-    		    tax: { v: 2, fr: "Impôt à la source", en: "Withholding tax" },
-    		    net: { v: 82, fr: "Salaire net après impôt", en: "Net wage after tax" }
+                    emp: { v: 9, fr: "Cotisations employeur, LPP et accident", en: "Employer contributions, pension and accident insurance" },
+    		    sal: { v: 9, fr: "Cotisations salarié, LPP et accident", en: "Employee contributions, pension and accident insurance" },
+    		    tax: { v: 5, fr: "Impôt à la source", en: "Withholding tax" },
+    		    net: { v: 77, fr: "Salaire net après impôt", en: "Net wage after tax" }
             },
             nl: {
                 emp: { v: 16, fr: "Cotisations employeur (WW, Aof, Zvw, Wko, Whk)", en: "Employer contributions (WW, Aof, Zvw, Wko, Whk)" },
@@ -1526,6 +1610,12 @@
                 sal: { v: 7, fr: "Cotisations salarié (FICA)", en: "Employee contributions (FICA)" },
                 tax: { v: 1, fr: "Impôt sur le revenu (fédéral + État, très faible au salaire minimum fédéral)", en: "Income tax (federal + state, unusually low at the federal minimum wage)" },
                 net: { v: 83, fr: "Salaire net après impôt", en: "Net wage after tax" }
+            },
+            cn: {
+                emp: { v: 33, fr: "Cotisations patronales (calculées sur un plancher de cotisation souvent bien supérieur au salaire minimum)", en: "Employer contributions (calculated on a contribution-base floor often well above the minimum wage)" },
+                sal: { v: 17, fr: "Cotisations salariales (retraite, maladie, chômage, fonds de logement)", en: "Employee contributions (pension, medical, unemployment, housing fund)" },
+                tax: { v: 0, fr: "Impôt sur le revenu (IIT national, nul au salaire de référence après abattement de base)", en: "Income tax (national IIT, zero at the reference wage after the basic deduction)" },
+                net: { v: 50, fr: "Salaire net disponible", en: "Disposable net wage" }
             }
         };
 
@@ -1576,9 +1666,53 @@
             renderDecomp();
         }
 
+        function setHeroZone(zone, btn) {
+            document.querySelectorAll("#hero-zone-switch button").forEach(b => {
+                b.classList.remove("active");
+                b.setAttribute("aria-selected", "false");
+            });
+            if (btn) { btn.classList.add("active"); btn.setAttribute("aria-selected", "true"); }
+
+            const countryButtons = document.querySelectorAll(".country-switch button");
+            let activeStillVisible = false;
+
+            countryButtons.forEach(b => {
+                const visible = b.getAttribute("data-zone") === zone;
+                b.style.display = visible ? "" : "none";
+                if (visible && b.classList.contains("active")) activeStillVisible = true;
+            });
+
+            if (!activeStillVisible) {
+                const firstInZone = document.querySelector(".country-switch button[data-zone=\"" + zone + "\"]");
+                if (firstInZone) firstInZone.click();
+            }
+        }
+
+        function setModuleZone(zone, btn) {
+            document.querySelectorAll("#modules-zone-switch button").forEach(b => {
+                b.classList.remove("active");
+                b.setAttribute("aria-selected", "false");
+            });
+            if (btn) { btn.classList.add("active"); btn.setAttribute("aria-selected", "true"); }
+
+            const mods = document.querySelectorAll("a.mod");
+            let firstVisible = null;
+
+            mods.forEach(m => {
+                m.classList.remove("mod-first-visible");
+                const modZone = m.getAttribute("data-zone");
+                const visible = !modZone || modZone === zone;
+                m.style.display = visible ? "" : "none";
+                if (visible && !firstVisible) firstVisible = m;
+            });
+
+            if (firstVisible) firstVisible.classList.add("mod-first-visible");
+        }
+
         let stored = "fr";
         try { stored = localStorage.getItem("labor-cost-lab-language") || "fr"; } catch (e) {}
         setLanguage(stored);
+        setModuleZone("europe", document.querySelector("#modules-zone-switch button[data-zone=\"europe\"]"));
 
         // reveal the decomposition bar once painted
         window.addEventListener("load", () => {

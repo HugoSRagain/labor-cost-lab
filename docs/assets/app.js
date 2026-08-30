@@ -1917,11 +1917,19 @@ function computeFlclIndicators(row) {
     const employerCost = num(row.employer_cost_monthly_eur);
     const rgdu = num(row.rgdu_monthly_eur);
 
-    const flclE = employerCost > 0 ? 100 * net / employerCost : 0;
+    // Round to 2 decimal places to suppress rounding noise from the
+    // underlying net/employer-cost series, which otherwise gets amplified
+    // into a false sawtooth once the chart auto-scales to this indicator's
+    // narrow real range (same fix family as computeSwedenFlclIndicators /
+    // computeIrelandFlclIndicators / computeSpainFlclIndicators). 2dp is
+    // still finer than the 1dp shown in the UI.
+    const rawFlclE = employerCost > 0 ? 100 * net / employerCost : 0;
+    const flclE = Math.round(rawFlclE * 100) / 100;
     const flclB = 100 - flclE;
 
     const costWithoutRgdu = employerCost + rgdu;
-    const flclEWithoutRgdu = costWithoutRgdu > 0 ? 100 * net / costWithoutRgdu : 0;
+    const rawFlclEWithoutRgdu = costWithoutRgdu > 0 ? 100 * net / costWithoutRgdu : 0;
+    const flclEWithoutRgdu = Math.round(rawFlclEWithoutRgdu * 100) / 100;
     const flclR = flclE - flclEWithoutRgdu;
 
     return {
@@ -1975,12 +1983,7 @@ function renderFlclEfficiencyChart(data, lang) {
     const traces = [
         {
             x: data.map(d => getFlclSmicMultiple(d)),
-            y: data.map(d => {
-                const net = num(d.net_monthly_eur);
-                const employerCost = num(d.employer_cost_monthly_eur);
-
-                return employerCost > 0 ? 100 * net / employerCost : 0;
-            }),
+            y: data.map(d => computeFlclIndicators(d).flclE),
             mode: "lines",
             name: t.flcl_e,
             line: {

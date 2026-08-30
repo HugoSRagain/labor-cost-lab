@@ -939,7 +939,15 @@ function computeIrelandFlclIndicators(row) {
     const net = ieNum(row.net_before_income_tax_monthly_eur);
     const employerCost = ieNum(row.employer_cost_monthly_eur);
 
-    const flclE = employerCost > 0 ? 100 * net / employerCost : 0;
+    // Round to 2 decimal places to suppress rounding noise from the
+    // underlying net/employer-cost series (stored with sub-cent precision in
+    // the source grid), which otherwise gets amplified into a false sawtooth
+    // once the chart auto-scales to this indicator's narrow real range (same
+    // fix family as computeSwedenFlclIndicators; a coarser rounding step is
+    // needed here because the noise floor in Ireland's source data is larger
+    // than Sweden's). 2dp is still finer than the 1dp shown in the UI.
+    const rawFlclE = employerCost > 0 ? 100 * net / employerCost : 0;
+    const flclE = Math.round(rawFlclE * 100) / 100;
     const flclB = 100 - flclE;
 
     return {

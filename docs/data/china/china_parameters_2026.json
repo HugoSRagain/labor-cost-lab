@@ -1,0 +1,84 @@
+{
+    "country": "China",
+    "country_code": "CN",
+    "version": "2026-01",
+    "effective_from": "2026-01-01",
+    "status": "prototype_v1",
+    "currency": "RMB",
+    "wage_reference": {
+        "name": "Salaire minimum de Shanghai (référence conventionnelle)",
+        "gross_monthly_rmb": 2740.0,
+        "source": "Bureau des ressources humaines et de la sécurité sociale de Shanghai, en vigueur au 1er juillet 2025",
+        "note": "La Chine n'a pas de salaire minimum national : chaque province/municipalité fixe le sien. Ce module retient, par convention, le salaire minimum de Shanghai (2 740 RMB/mois) comme repere de reference 1,0x commun a toutes les provinces -- la meme logique que le salaire minimum federal americain applique uniformement aux 50 Etats dans ce projet, ou que le repere unique retenu pour la Suede et l'Italie. Ce n'est ni une moyenne nationale ni un minimum legal commun ; chaque province conserve son propre salaire minimum, documente dans le tableau ci-dessous."
+    },
+    "grid": {
+        "min_multiple": 0.80,
+        "max_multiple": 6.00,
+        "step": 0.01
+    },
+    "note_on_data_source": "Les parametres complets par province (bases de cotisation, taux, salaire minimum) sont la source de verite unique dans analysis/china/china_payroll_2026.py (dictionnaire PROVINCE_DATA_2026), afin d'eviter toute duplication susceptible de diverger. Ce fichier JSON documente le niveau national et une synthese par province ; voir china_sources_2026.json pour les citations completes.",
+    "national_2026": {
+        "iit_brackets_annual": [
+            {"upper_bound_rmb": 36000, "rate": 0.03},
+            {"upper_bound_rmb": 144000, "rate": 0.10},
+            {"upper_bound_rmb": 300000, "rate": 0.20},
+            {"upper_bound_rmb": 420000, "rate": 0.25},
+            {"upper_bound_rmb": 660000, "rate": 0.30},
+            {"upper_bound_rmb": 960000, "rate": 0.35},
+            {"upper_bound_rmb": null, "rate": 0.45}
+        ],
+        "basic_deduction_annual_rmb": 60000,
+        "source": "Loi sur l'impot sur le revenu des personnes physiques (revision 2018, en vigueur depuis le 1er janvier 2019) ; bareme inchange depuis",
+        "note_cumulative_withholding": "En pratique, l'employeur retient l'impot chaque mois selon la methode de retenue cumulative (累计预扣法, annonces n. 56 et 61 de 2018 de l'Administration fiscale d'Etat) : chaque mois, l'impot est calcule sur le revenu cumule depuis janvier, ce qui fait que la retenue mensuelle nominale demarre basse et augmente au fil de l'annee, meme a salaire constant, avant de converger vers l'impot annuel reel (regularise lors de la declaration annuelle de mars a juin l'annee suivante). Pour un salarie standard a employeur unique, salaire constant et sans deduction complementaire specifique -- le profil retenu par ce module -- ce mecanisme converge tres precisement vers le meme resultat que l'application directe du bareme annuel divise par 12 : c'est cette valeur mensuelle equivalente en regime etabli que ce module publie, plutot que de reproduire la montee en charge mois par mois.",
+        "special_additional_deductions_note": "Les six deductions complementaires speciales (专项附加扣除 : education des enfants, formation continue, maladie grave, interets d'emprunt ou loyer du logement, prise en charge des parents ages, garde d'enfant de moins de 3 ans) ne s'appliquent a aucune d'entre elles pour un salarie celibataire sans enfant, sans pret immobilier ni parent a charge -- le profil de reference retenu par ce module. Non modelisees."
+    },
+    "social_insurance_and_housing_fund": {
+        "note": "Les cinq assurances sociales (retraite, maladie+maternite fusionnee, chomage, accident du travail) et le fonds de logement (公积金) sont collectes dans chaque province, mais chaque province fixe elle-meme le plancher et le plafond de la base de cotisation (缴费基数下限/上限, generalement 60%-300% du salaire moyen local de l'annee precedente, reactualise chaque annee le plus souvent en juillet), et, pour un nombre significatif de provinces, certains TAUX de cotisation different reellement d'une province a l'autre (par exemple la repartition employeur/salarie de l'assurance chomage du Guangdong, 0,8%/0,2%, contre 0,5%/0,5% ailleurs ; le taux accident du travail propre au Hunan, a Hainan et a Chongqing ; le taux retraite employeur de la Mongolie-Interieure, rapporte a 19% au lieu de 16%).",
+        "housing_fund_rate_convention": "Le taux du fonds de logement (住房公积金) est, au niveau national, un choix discretionnaire de l'employeur dans une fourchette de 5% a 12% (l'employeur et le salarie doivent cotiser au meme taux) -- ce n'est pas un taux impose par chaque province. Ce module retient un taux illustratif unique de 7% (le taux le plus frequemment cite comme choix courant des employeurs prives dans les provinces etudiees), de la meme maniere que ce projet retient deja un taux illustratif unique pour l'assurance accidents du travail italienne (INAIL). Seuls le plancher et le plafond de la base de cotisation du fonds de logement, eux reellement publies par chaque province, sont modelises province par province.",
+        "structural_note": "Point methodologique majeur : le plancher de cotisation sociale, indexe sur le salaire MOYEN local (et non sur le salaire minimum), depasse largement le salaire minimum dans la plupart des provinces etudiees (a Shanghai par exemple, plancher de cotisation 7 460 RMB/mois contre un salaire minimum de 2 740 RMB/mois). Consequence directe et deliberement conservee par ce module : aux points de la grille de salaire proches ou en dessous du salaire minimum de reference, les cotisations sont calculees sur ce plancher plus eleve, et non sur le salaire brut effectif -- ce qui donne des taux de cotisation apparents tres eleves (parfois superieurs a 70-90% du salaire brut cote employeur) aux multiples les plus bas de la grille. Ce n'est pas une erreur de modelisation : c'est un trait reel et distinctif du systeme chinois, documente comme tel dans la Methodologie du module."
+    },
+    "provinces": [
+        {"code": "BJ", "name_fr": "Pékin", "min_wage_rmb": 2540, "pension_employer_rate": 0.16, "note": "Base de cotisation unifiee 7 162-35 811 RMB"},
+        {"code": "TJ", "name_fr": "Tianjin", "min_wage_rmb": 2510, "pension_employer_rate": 0.16},
+        {"code": "HE", "name_fr": "Hebei (Shijiazhuang)", "min_wage_rmb": 2380, "pension_employer_rate": 0.16},
+        {"code": "SX", "name_fr": "Shanxi (Taiyuan)", "min_wage_rmb": 2150, "pension_employer_rate": 0.16},
+        {"code": "NM", "name_fr": "Mongolie-Interieure (Hohhot)", "min_wage_rmb": 2380, "pension_employer_rate": 0.19, "note": "Taux retraite employeur superieur au taux national usuel de 16%, confiance moyenne"},
+        {"code": "LN", "name_fr": "Liaoning (Shenyang)", "min_wage_rmb": 2230, "pension_employer_rate": 0.16},
+        {"code": "JL", "name_fr": "Jilin (Changchun)", "min_wage_rmb": 2230, "pension_employer_rate": 0.16},
+        {"code": "HL", "name_fr": "Heilongjiang (Harbin)", "min_wage_rmb": 2270, "pension_employer_rate": 0.16},
+        {"code": "SH", "name_fr": "Shanghai", "min_wage_rmb": 2740, "pension_employer_rate": 0.16, "note": "Salaire de reference du module"},
+        {"code": "JS", "name_fr": "Jiangsu (Nankin)", "min_wage_rmb": 2660, "pension_employer_rate": 0.16},
+        {"code": "ZJ", "name_fr": "Zhejiang (Hangzhou)", "min_wage_rmb": 2660, "pension_employer_rate": 0.16},
+        {"code": "AH", "name_fr": "Anhui (Hefei)", "min_wage_rmb": 2320, "pension_employer_rate": 0.16},
+        {"code": "FJ", "name_fr": "Fujian (Fuzhou)", "min_wage_rmb": 2195, "pension_employer_rate": 0.16},
+        {"code": "JX", "name_fr": "Jiangxi (Nanchang)", "min_wage_rmb": 2240, "pension_employer_rate": 0.16},
+        {"code": "SD", "name_fr": "Shandong (Jinan)", "min_wage_rmb": 2400, "pension_employer_rate": 0.16},
+        {"code": "HA", "name_fr": "Henan (Zhengzhou)", "min_wage_rmb": 2350, "pension_employer_rate": 0.16},
+        {"code": "HB", "name_fr": "Hubei (Wuhan)", "min_wage_rmb": 2400, "pension_employer_rate": 0.16},
+        {"code": "HN", "name_fr": "Hunan (Changsha)", "min_wage_rmb": 2200, "pension_employer_rate": 0.16, "note": "Taux accident du travail propre (0,6% au lieu de 0,2%)"},
+        {"code": "GD", "name_fr": "Guangdong (Canton)", "min_wage_rmb": 2500, "pension_employer_rate": 0.16, "note": "Repartition assurance chomage propre (0,8%/0,2%)"},
+        {"code": "GX", "name_fr": "Guangxi (Nanning)", "min_wage_rmb": 2200, "pension_employer_rate": 0.16},
+        {"code": "HI_CN", "name_fr": "Hainan (Haikou)", "min_wage_rmb": 2250, "pension_employer_rate": 0.16, "note": "Taux accident du travail reduit (0,15%)"},
+        {"code": "CQ", "name_fr": "Chongqing", "min_wage_rmb": 2330, "pension_employer_rate": 0.16, "note": "Taux accident du travail propre (0,3%)"},
+        {"code": "SC", "name_fr": "Sichuan (Chengdu)", "min_wage_rmb": 2330, "pension_employer_rate": 0.16},
+        {"code": "GZ", "name_fr": "Guizhou (Guiyang)", "min_wage_rmb": 2130, "pension_employer_rate": 0.16},
+        {"code": "YN", "name_fr": "Yunnan (Kunming)", "min_wage_rmb": 2070, "pension_employer_rate": 0.16, "note": "Confiance moyenne sur plusieurs taux"},
+        {"code": "XZ", "name_fr": "Tibet (Lhassa)", "min_wage_rmb": 2360, "pension_employer_rate": 0.16, "note": "Taux accident du travail reduit (0,1%)"},
+        {"code": "SN", "name_fr": "Shaanxi (Xi'an)", "min_wage_rmb": 2376, "pension_employer_rate": 0.16},
+        {"code": "GS", "name_fr": "Gansu (Lanzhou)", "min_wage_rmb": 2200, "pension_employer_rate": 0.16},
+        {"code": "QH", "name_fr": "Qinghai (Xining)", "min_wage_rmb": 2080, "pension_employer_rate": 0.16, "note": "Province la moins documentee ; taux de cotisation non confirmes officiellement, hypothese de taux national standard"},
+        {"code": "NX", "name_fr": "Ningxia (Yinchuan)", "min_wage_rmb": 2235, "pension_employer_rate": 0.16},
+        {"code": "XJ", "name_fr": "Xinjiang (Urumqi)", "min_wage_rmb": 2070, "pension_employer_rate": 0.16}
+    ],
+    "profiles_note": "Chaque province/municipalite/region autonome constitue un profil distinct (province_code), sur le modele du selecteur de cantons suisses ou d'Etats americains. Le module Comparaison agrege les 31 divisions par ponderation demographique (population 2024, estimations officielles chinoises).",
+    "limits": [
+        "La Chine n'a pas de salaire minimum national : le salaire de reference 1,0x de ce module est le salaire minimum de Shanghai, un choix methodologique, pas une moyenne nationale ni un minimum legal commun a toutes les provinces.",
+        "Le taux du fonds de logement (住房公积金, 5%-12% national) est un choix discretionnaire de l'employeur : ce module retient un taux illustratif unique de 7% pour toutes les provinces, et non le taux reellement pratique par chaque employeur.",
+        "Le plancher de cotisation sociale, indexe sur le salaire moyen local, depasse le salaire minimum de reference dans la plupart des provinces : aux bas niveaux de la grille de salaire, les cotisations sont donc calculees sur ce plancher plus eleve que le salaire brut effectif -- un trait reel du systeme, pas une erreur.",
+        "Seul le profil celibataire sans enfant, sans pret immobilier, sans loyer declare et sans parent a charge est modelise : aucune des six deductions complementaires speciales (专项附加扣除) ne s'applique.",
+        "La methode de retenue cumulative mensuelle (累计预扣法) n'est pas reproduite mois par mois : ce module publie l'equivalent mensuel de l'impot annuel etabli, pas la montee en charge reelle observee sur un bulletin de paie au cours de l'annee.",
+        "Guangdong est modelise via Canton (Guangzhou), la capitale provinciale ; Shenzhen, dans la meme province, a son propre taux retraite dependant du statut de residence (hukou), sa propre base de cotisation maladie et son propre salaire minimum, non modelises separement.",
+        "Plusieurs taux ou plafonds restent en confiance moyenne faute de source officielle directement verifiable dans le cadre de cette recherche, notamment : le taux retraite employeur de la Mongolie-Interieure (19%), plusieurs taux du Yunnan et du Qinghai, et le caractere temporaire de certains taux reduits (assurance maladie de Canton et du Guangxi, assurance chomage et accident du travail du Guangxi). Voir china_sources_2026.json pour le detail province par province.",
+        "L'impot foncier, les taxes locales additionnelles et les avantages en nature ne sont pas modelises."
+    ]
+}

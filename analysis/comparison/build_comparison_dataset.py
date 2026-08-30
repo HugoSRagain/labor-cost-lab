@@ -1,6 +1,6 @@
 """
 Labor Cost Lab
-Cross-country comparison dataset builder (France, Germany, Belgium, Switzerland, Netherlands, United Kingdom, Ireland, Spain, Sweden, Italy, United States).
+Cross-country comparison dataset builder (France, Germany, Belgium, Switzerland, Netherlands, United Kingdom, Ireland, Spain, Sweden, Italy, United States, China).
 
 Methodology
 -----------
@@ -41,6 +41,13 @@ local-currency wage:
                  approach. Federal income tax, FICA and FUTA are identical
                  nationwide; state income tax (9 states have none), SUI and
                  any state-mandated payroll deduction vary by state.
+    China:       analysis/china/china_payroll_2026.py (compute_china_payroll_2026),
+                 computed for all 31 mainland provinces/municipalities/
+                 autonomous regions and aggregated with a population-weighted
+                 average (2024 official population estimates). Individual
+                 income tax is identical nationwide; social-insurance
+                 contribution-base floors/caps, some contribution rates, and
+                 the housing-fund contribution base vary by province.
 
 Important note on the United Kingdom: income tax is a population-weighted
 average of the rUK (England/Wales/Northern Ireland) and Scotland devolved
@@ -154,6 +161,7 @@ sys.path.insert(0, str(ROOT_DIR / "analysis" / "spain"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "sweden"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "italy"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "usa"))
+sys.path.insert(0, str(ROOT_DIR / "analysis" / "china"))
 
 import pandas as pd  # noqa: E402
 
@@ -221,6 +229,11 @@ from build_italy_dataset import (  # noqa: E402
 from us_payroll_2026 import (  # noqa: E402
     compute_us_payroll_2026,
     STATE_DATA_2026 as US_STATE_DATA_2026,
+)
+
+from china_payroll_2026 import (  # noqa: E402
+    compute_china_payroll_2026,
+    PROVINCE_DATA_2026 as CN_PROVINCE_DATA_2026,
 )
 
 
@@ -1162,6 +1175,111 @@ def compute_usa_row(
     return row
 
 
+def compute_china_row(
+    wage_point_intl_usd: float,
+    ppp_factor: float,
+    province_weights: Dict[str, float],
+    wage_reference_monthly_rmb: float,
+) -> Dict[str, Any]:
+    gross_local_rmb = wage_point_intl_usd * ppp_factor
+
+    weighted_sums = {
+        "employee_contrib": 0.0,
+        "employer_contrib": 0.0,
+        "net_before_tax": 0.0,
+        "income_tax": 0.0,
+        "net_after_tax": 0.0,
+        "employer_cost": 0.0,
+    }
+
+    for province_code, weight in province_weights.items():
+        result = compute_china_payroll_2026(gross_local_rmb, province_code)
+
+        employee_contrib = result["employee_contributions_monthly_rmb"]
+        employer_contrib = result["employer_contributions_monthly_rmb"]
+        income_tax = result["iit_monthly_rmb"]
+        net_before_tax = gross_local_rmb - employee_contrib
+        net_after_tax = net_before_tax - income_tax
+        employer_cost = gross_local_rmb + employer_contrib
+
+        weighted_sums["employee_contrib"] += weight * employee_contrib
+        weighted_sums["employer_contrib"] += weight * employer_contrib
+        weighted_sums["net_before_tax"] += weight * net_before_tax
+        weighted_sums["income_tax"] += weight * income_tax
+        weighted_sums["net_after_tax"] += weight * net_after_tax
+        weighted_sums["employer_cost"] += weight * employer_cost
+
+    employer_cost = weighted_sums["employer_cost"]
+    net_before_income_tax = weighted_sums["net_before_tax"]
+    net_after_income_tax = weighted_sums["net_after_tax"]
+    income_tax = weighted_sums["income_tax"]
+
+    row = base_row(
+        country="China",
+        country_code="CN",
+        currency_code="RMB",
+        reference_profile_id="china__population_weighted_average_31_provinces__single_no_child",
+        reference_profile_description=(
+            "Population-weighted average across all 31 mainland provinces, "
+            "municipalities and autonomous regions (2024 official "
+            "population estimates), single, childless employee, standard "
+            "formal employment, work-injury Tier 1."
+        ),
+        harmonized_wage_point_intl_usd=wage_point_intl_usd,
+        ppp_factor=ppp_factor,
+    )
+
+    row.update(
+        {
+            "gross_monthly_local": round_money(gross_local_rmb),
+            "gross_monthly_intl_usd": round_money(gross_local_rmb / ppp_factor),
+            "employee_contributions_monthly_local": round_money(weighted_sums["employee_contrib"]),
+            "employee_contributions_monthly_intl_usd": round_money(weighted_sums["employee_contrib"] / ppp_factor),
+            "employer_contributions_monthly_local": round_money(weighted_sums["employer_contrib"]),
+            "employer_contributions_monthly_intl_usd": round_money(weighted_sums["employer_contrib"] / ppp_factor),
+            "net_before_income_tax_monthly_local": round_money(net_before_income_tax),
+            "net_before_income_tax_monthly_intl_usd": round_money(net_before_income_tax / ppp_factor),
+            "income_tax_or_withholding_tax_monthly_local": round_money(income_tax),
+            "income_tax_or_withholding_tax_monthly_intl_usd": round_money(income_tax / ppp_factor),
+            "net_after_income_tax_monthly_local": round_money(net_after_income_tax),
+            "net_after_income_tax_monthly_intl_usd": round_money(net_after_income_tax / ppp_factor),
+            "employer_cost_monthly_local": round_money(employer_cost),
+            "employer_cost_monthly_intl_usd": round_money(employer_cost / ppp_factor),
+            "social_wedge_before_income_tax_rate": round(
+                (employer_cost - net_before_income_tax) / employer_cost, 6
+            ) if employer_cost else None,
+            "total_wedge_after_income_tax_rate": round(
+                (employer_cost - net_after_income_tax) / employer_cost, 6
+            ) if employer_cost else None,
+            "cost_to_net_before_income_tax_ratio": round(employer_cost / net_before_income_tax, 6)
+            if net_before_income_tax else None,
+            "cost_to_net_after_income_tax_ratio": round(employer_cost / net_after_income_tax, 6)
+            if net_after_income_tax else None,
+            "income_tax_modeled": True,
+            "aggregation_method": "population_weighted_average_31_provinces",
+            "below_minimum_wage": bool(gross_local_rmb < wage_reference_monthly_rmb),
+            "national_minimum_wage_monthly_local": round_money(wage_reference_monthly_rmb),
+            "note": (
+                "China has no national minimum wage; the reference wage is "
+                "Shanghai's own monthly minimum wage (RMB 2,740), used as a "
+                "methodological convention. Individual income tax is "
+                "identical nationwide; employee_contributions, "
+                "employer_contributions and the underlying social-insurance/"
+                "housing-fund figures are a population-weighted average of "
+                "each of the 31 provinces' own contribution-base floor/cap "
+                "and rates. In most provinces the social-insurance "
+                "contribution-base floor (indexed to the local average "
+                "wage) exceeds this reference wage, so contributions at low "
+                "wage points are computed on that higher floor rather than "
+                "actual gross pay -- a genuine structural feature of "
+                "China's system, not a modelling artefact."
+            ),
+        }
+    )
+
+    return row
+
+
 def compute_spain_row(
     wage_point_intl_usd: float,
     ppp_factor: float,
@@ -1388,6 +1506,14 @@ def build_dataset() -> pd.DataFrame:
     }
     us_wage_reference_monthly_usd = 7.25 * 40.0 * 52.0 / 12.0
 
+    # --- China setup ---
+    cn_total_population = sum(province["population"] for province in CN_PROVINCE_DATA_2026.values())
+    cn_province_weights = {
+        code: province["population"] / cn_total_population
+        for code, province in CN_PROVINCE_DATA_2026.items()
+    }
+    cn_wage_reference_monthly_rmb = 2740.0
+
     rows: List[Dict[str, Any]] = []
 
     for wage_point in wage_grid:
@@ -1495,6 +1621,15 @@ def build_dataset() -> pd.DataFrame:
                 ppp_values["US"],
                 us_state_weights,
                 us_wage_reference_monthly_usd,
+            )
+        )
+
+        rows.append(
+            compute_china_row(
+                wage_point,
+                ppp_values["CN"],
+                cn_province_weights,
+                cn_wage_reference_monthly_rmb,
             )
         )
 

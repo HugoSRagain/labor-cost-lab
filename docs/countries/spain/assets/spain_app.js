@@ -952,7 +952,14 @@ function computeSpainFlclIndicators(row) {
     const net = esNum(row.net_before_income_tax_monthly_eur);
     const employerCost = esNum(row.employer_cost_monthly_eur);
 
-    const flclE = employerCost > 0 ? 100 * net / employerCost : 0;
+    // Round to 2 decimal places to suppress rounding noise from the
+    // underlying net/employer-cost series (most visible in the flat region
+    // around the social-security contribution base cap), which otherwise
+    // gets amplified into a false sawtooth once the chart auto-scales to
+    // this indicator's narrow real range (same fix family as
+    // computeSwedenFlclIndicators / computeIrelandFlclIndicators).
+    const rawFlclE = employerCost > 0 ? 100 * net / employerCost : 0;
+    const flclE = Math.round(rawFlclE * 100) / 100;
     const flclB = 100 - flclE;
 
     return {

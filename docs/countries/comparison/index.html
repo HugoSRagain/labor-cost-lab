@@ -141,7 +141,7 @@
     </style>
 
     <script defer src="../../assets/i18n_common.js?v=3"></script>
-    <script defer src="./assets/comparison_app.js?v=10"></script>
+    <script defer src="./assets/comparison_app.js?v=11"></script>
 </head>
 
 <body>
@@ -165,9 +165,9 @@
                 <h1>Comparaison internationale du coût du travail</h1>
 
                 <p>
-                    Ce module met en regard les onze modules nationaux (France,
+                    Ce module met en regard les douze modules nationaux (France,
                     Allemagne, Belgique, Suisse, Pays-Bas, Royaume-Uni, Irlande,
-                    Espagne, Suède, Italie, États-Unis) sur
+                    Espagne, Suède, Italie, États-Unis, Chine) sur
                     une grille de salaires harmonisée, exprimée en dollars internationaux
                     (parité de pouvoir d'achat), afin de comparer des niveaux de
                     vie équivalents plutôt que des salaires nominaux.
@@ -219,7 +219,7 @@
                         class="chart-subtitle"
                         id="comparison-metrics-subtitle-fr"
                     >
-                        Valeurs des 11 pays au point de salaire harmonisé
+                        Valeurs des 12 pays au point de salaire harmonisé
                         sélectionné, exprimées en dollars internationaux (PPA).
                     </p>
 
@@ -300,6 +300,12 @@
                             <strong id="metric-comparison-us-net-fr">—</strong>
                             <span class="metric-note">Net avant impôt, intl $</span>
                         </article>
+
+                        <article class="metric-card">
+                            <span class="metric-label">Chine</span>
+                            <strong id="metric-comparison-cn-net-fr">—</strong>
+                            <span class="metric-note">Net avant impôt, intl $</span>
+                        </article>
                     </section>
                 </div>
 
@@ -307,7 +313,7 @@
                     <h2>Graphiques comparatifs</h2>
 
                     <p>
-                        Les graphiques suivants comparent les 11 pays sur toute la
+                        Les graphiques suivants comparent les 12 pays sur toute la
                         grille de salaires harmonisée, en dollars internationaux
                         (PPA). Chaque courbe est calculée directement par le
                         moteur du module national correspondant.
@@ -320,7 +326,7 @@
 
                         <p class="chart-subtitle">
                             Salaire net de cotisations sociales, comparable entre
-                            les 11 pays.
+                            les 12 pays.
                         </p>
 
                         <div
@@ -521,6 +527,7 @@
                                     <th>Suède</th>
                                     <th>Italie</th>
                                     <th>États-Unis</th>
+                                    <th>Chine</th>
                                 </tr>
                             </thead>
 
@@ -549,8 +556,8 @@
                         Ce module ne redéfinit aucun paramètre national : il
                         réutilise directement les moteurs de calcul des modules
                         France, Allemagne, Belgique, Suisse, Pays-Bas,
-                        Royaume-Uni, Irlande, Espagne, Suède, Italie et
-                        États-Unis, à des points de salaire communs.
+                        Royaume-Uni, Irlande, Espagne, Suède, Italie,
+                        États-Unis et Chine, à des points de salaire communs.
                     </p>
 
                     <h3>1. Grille de salaires harmonisée</h3>
@@ -559,14 +566,16 @@
                         21 points de salaire, de 2 000 à 12 000 dollars
                         internationaux mensuels par pas de 500. La borne basse est
                         volontairement fixée sous le plancher de salaire minimum
-                        (ou de référence) des 11 pays, une fois converti en dollars
+                        (ou de référence) des 12 pays, une fois converti en dollars
                         internationaux, afin que les grilles de salaire les plus
                         basses restent visibles. Les points de salaire inférieurs
                         au minimum légal d'un pays sont signalés par un
                         astérisque (*) dans l'onglet Données : ils représentent
                         un salaire hypothétique pour ce pays à ce point de la
                         grille. Les seuils 2024/2026 convertis en dollars
-                        internationaux sont : États-Unis (salaire minimum
+                        internationaux sont : Chine (salaire minimum de
+                        Shanghai, non un salaire minimum national, voir la
+                        section 14) environ 772, États-Unis (salaire minimum
                         fédéral) environ 1 257, Espagne (SMI) environ 2 421,
                         France (SMIC) environ 2 604, Suisse environ 2 710,
                         Irlande (National Minimum Wage) environ 2 711, Belgique
@@ -577,10 +586,12 @@
                         voir la section 11) environ 4 020, Italie (CCNL
                         Commercio, non un salaire minimum légal, voir la
                         section 12) environ 3 702. Le salaire minimum fédéral
-                        américain, à environ 1 257 dollars internationaux, est
-                        déjà inférieur à la borne basse de la grille (2 000) :
+                        américain, à environ 1 257 dollars internationaux, et le
+                        salaire minimum de Shanghai retenu pour la Chine, à
+                        environ 772 dollars internationaux, sont tous deux déjà
+                        inférieurs à la borne basse de la grille (2 000) :
                         aucun point de cette grille harmonisée n'est donc
-                        hypothétique pour les États-Unis.
+                        hypothétique pour les États-Unis ou pour la Chine.
                     </p>
 
                     <h3>2. Conversion par parité de pouvoir d'achat</h3>
@@ -592,7 +603,7 @@
                         ménages (Banque mondiale, Programme de comparaison
                         internationale, indicateur PA.NUS.PRVT.PP, année de
                         référence 2024). Ce facteur est appliqué individuellement
-                        aux 11 pays, y compris la Suisse, selon la même logique que
+                        aux 12 pays, y compris la Suisse, selon la même logique que
                         les comparaisons « Taxing Wages » de l'OCDE. Le facteur de
                         conversion PPA du dollar américain vaut exactement 1,0 par
                         construction (le dollar international est étalonné sur les
@@ -651,7 +662,14 @@
                         d'État (absent dans 9 États), assurance chômage
                         d'État et dispositif d'État obligatoire additionnel
                         (SDI/PFML/TDI dans 13 juridictions) variables selon
-                        l'État.
+                        l'État. Chine : moyenne pondérée par la population des
+                        31 provinces, municipalités et régions autonomes,
+                        salarié célibataire sans enfant, emploi formel standard
+                        (accident du travail palier 1) ; impôt sur le revenu
+                        (IIT) national et identique partout ; bases de
+                        cotisation, planchers et parfois taux des cinq
+                        assurances sociales et du fonds de logement variables
+                        selon la province.
                     </p>
 
                     <h3>5. Agrégation cantonale suisse</h3>
@@ -919,7 +937,54 @@
                         du module États-Unis pour le détail complet.
                     </p>
 
-                    <h3>14. Lab-E</h3>
+                    <h3>14. Salaire de référence, cotisations et impôt sur le revenu en Chine</h3>
+
+                    <p>
+                        La Chine n'a pas de salaire minimum national : chaque
+                        province fixe le sien. Ce module retient, par
+                        convention, le salaire minimum de Shanghai (2 740
+                        RMB/mois, en vigueur au 1er juillet 2025) comme salaire
+                        de référence 1,0x commun aux 31 provinces, municipalités
+                        et régions autonomes modélisées — la même logique que
+                        le salaire minimum fédéral américain appliqué
+                        uniformément aux 50 États, ou que les repères uniques
+                        retenus pour la Suède et l'Italie. L'impôt sur le
+                        revenu (个人所得税, IIT) est, lui, entièrement national :
+                        barème progressif à 7 tranches (3 % à 45 %) et
+                        déduction de base de 60 000 RMB/an, identiques dans les
+                        31 provinces.
+                    </p>
+
+                    <p>
+                        Les indicateurs « cotisations salarié » et « cotisations
+                        employeur » de la Chine regroupent les cinq assurances
+                        sociales (retraite, maladie fusionnée avec la
+                        maternité, chômage, accident du travail — employeur
+                        uniquement) et le fonds de logement (住房公积金, taux
+                        illustratif unique de 7 %, un choix discrétionnaire de
+                        l'employeur au niveau national) de la province
+                        sélectionnée par ce module pour son agrégation
+                        pondérée par la population. <strong>Point
+                        méthodologique majeur, propre à la Chine parmi les 12
+                        pays de cette comparaison : le plancher de cotisation
+                        sociale est indexé sur le salaire MOYEN local, et non
+                        sur le salaire minimum</strong> — il dépasse donc
+                        largement le salaire de référence de ce module dans la
+                        plupart des provinces (à Shanghai, 7 460 RMB/mois de
+                        plancher contre 2 740 RMB/mois de salaire minimum).
+                        Conséquence directe et volontairement conservée par ce
+                        module : aux points bas de la grille harmonisée, les
+                        cotisations chinoises sont calculées sur ce plancher
+                        plus élevé, et non sur le salaire brut effectif — d'où
+                        des taux de cotisation apparents très élevés,
+                        parfois supérieurs à 70-90 % côté employeur. Ce n'est
+                        pas une erreur : c'est un trait réel et distinctif du
+                        système chinois. Le facteur de conversion PPA du RMB
+                        vaut 3,55078934957358. Voir l'onglet Méthodologie du
+                        module Chine pour le détail complet.
+                    </p>
+
+                    <h3>15. Lab-E</h3>
 
                     <p>
                         L'indicateur Lab-E (100 × net avant impôt / coût employeur)
@@ -959,10 +1024,20 @@
                         et des seuils d'imposition de la plupart des États), et non par
                         un artefact de présentation comparable aux Pays-Bas (voir la
                         section 13 ci-dessus et l'onglet Méthodologie du module
-                        États-Unis).
+                        États-Unis). Le Lab-E chinois, enfin, est
+                        structurellement le plus bas de la comparaison aux
+                        multiples les plus bas de la grille, dans la plupart
+                        des provinces — pour une raison distincte des trois
+                        précédentes : le plancher de cotisation sociale, indexé
+                        sur le salaire moyen local, dépasse le salaire de
+                        référence chinois lui-même, si bien que les
+                        cotisations y sont réellement calculées sur ce plancher
+                        plus élevé plutôt que sur le salaire brut effectif (voir
+                        la section 14 ci-dessus et l'onglet Méthodologie du
+                        module Chine).
                     </p>
 
-                    <h3>15. Limites</h3>
+                    <h3>16. Limites</h3>
 
                     <p class="method-note">
                         Le calcul de l'impôt sur le revenu suppose un salarié
@@ -995,12 +1070,12 @@
                 <h1>Cross-country comparison of labour costs</h1>
 
                 <p>
-                    This module compares the eleven national modules (France,
+                    This module compares the twelve national modules (France,
                     Germany, Belgium, Switzerland, Netherlands, United Kingdom,
-                    Ireland, Spain, Sweden, Italy, United States) on a harmonized
-                    wage grid, expressed in international dollars (purchasing
-                    power parity), to compare equivalent standards of living
-                    rather than nominal wages.
+                    Ireland, Spain, Sweden, Italy, United States, China) on a
+                    harmonized wage grid, expressed in international dollars
+                    (purchasing power parity), to compare equivalent standards
+                    of living rather than nominal wages.
                 </p>
 
                 <p class="author-line">
@@ -1049,7 +1124,7 @@
                         class="chart-subtitle"
                         id="comparison-metrics-subtitle-en"
                     >
-                        Values for the 11 countries at the selected harmonized
+                        Values for the 12 countries at the selected harmonized
                         wage point, expressed in international dollars (PPP).
                     </p>
 
@@ -1130,6 +1205,12 @@
                             <strong id="metric-comparison-us-net-en">—</strong>
                             <span class="metric-note">Net before tax, intl $</span>
                         </article>
+
+                        <article class="metric-card">
+                            <span class="metric-label">China</span>
+                            <strong id="metric-comparison-cn-net-en">—</strong>
+                            <span class="metric-note">Net before tax, intl $</span>
+                        </article>
                     </section>
                 </div>
 
@@ -1137,7 +1218,7 @@
                     <h2>Comparative charts</h2>
 
                     <p>
-                        The charts below compare the 11 countries across the
+                        The charts below compare the 12 countries across the
                         whole harmonized wage grid, in international dollars
                         (PPP). Each curve is computed directly by the matching
                         national module's engine.
@@ -1150,7 +1231,7 @@
 
                         <p class="chart-subtitle">
                             Wage net of social contributions, comparable
-                            across the 11 countries.
+                            across the 12 countries.
                         </p>
 
                         <div
@@ -1353,6 +1434,7 @@
                                     <th>Sweden</th>
                                     <th>Italy</th>
                                     <th>United States</th>
+                                    <th>China</th>
                                 </tr>
                             </thead>
 
@@ -1381,8 +1463,9 @@
                         This module does not redefine any national parameter:
                         it directly reuses the calculation engines of the
                         France, Germany, Belgium, Switzerland, Netherlands,
-                        United Kingdom, Ireland, Spain, Sweden, Italy and
-                        United States modules, at common wage points.
+                        United Kingdom, Ireland, Spain, Sweden, Italy,
+                        United States and China modules, at common wage
+                        points.
                     </p>
 
                     <h3>1. Harmonized wage grid</h3>
@@ -1391,14 +1474,16 @@
                         21 wage points, from 2,000 to 12,000 international
                         dollars per month in steps of 500. The lower bound is
                         deliberately set below the minimum (or reference) wage
-                        floor of the 11 countries, once converted to
+                        floor of the 12 countries, once converted to
                         international dollars, so that the lowest wage ranges
                         remain visible. Wage points below a country's legal
                         minimum are flagged with an asterisk (*) in the Data
                         tab: they represent a hypothetical wage for that
                         country at this point of the grid. The 2024/2026
                         thresholds converted to international dollars are:
-                        United States (federal minimum wage) about 1,257,
+                        China (Shanghai's minimum wage, not a national minimum
+                        wage, see section 14) about 772, United States
+                        (federal minimum wage) about 1,257,
                         Spain (SMI) about 2,421, France (SMIC) about 2,604,
                         Switzerland about 2,710, Ireland (National Minimum
                         Wage) about 2,711, Belgium (RMMMG) about 2,911, United
@@ -1408,10 +1493,12 @@
                         minimum wage, see section 12) about 3,702, Sweden
                         (Migrationsverket threshold, not a statutory minimum
                         wage, see section 11) about 4,020. The US federal
-                        minimum wage, at about 1,257 international dollars, is
-                        already below the grid's lower bound (2,000): no point
-                        of this harmonized grid is therefore hypothetical for
-                        the United States.
+                        minimum wage, at about 1,257 international dollars,
+                        and China's Shanghai-based reference wage, at about
+                        772 international dollars, are both already below the
+                        grid's lower bound (2,000): no point of this
+                        harmonized grid is therefore hypothetical for the
+                        United States or for China.
                     </p>
 
                     <h3>2. Conversion by purchasing power parity</h3>
@@ -1422,7 +1509,7 @@
                         private-consumption purchasing-power-parity conversion
                         factor (World Bank, International Comparison Program,
                         indicator PA.NUS.PRVT.PP, 2024 reference year). This
-                        factor is applied individually to the 11 countries,
+                        factor is applied individually to the 12 countries,
                         including Switzerland, following the same logic as the
                         OECD's "Taxing Wages" comparisons. The US dollar's own
                         PPP conversion factor is exactly 1.0 by construction
@@ -1482,7 +1569,14 @@
                         everywhere; state income tax (absent in 9 states),
                         State Unemployment Insurance, and an additional
                         mandatory state scheme (SDI/PFML/TDI in 13
-                        jurisdictions) varying by state.
+                        jurisdictions) varying by state. China:
+                        population-weighted average across the 31 provinces,
+                        municipalities and autonomous regions, single,
+                        childless employee, standard formal employment
+                        (work-injury Tier 1); individual income tax (IIT) is
+                        national and identical everywhere; contribution bases,
+                        floors, and sometimes rates for the five social
+                        insurances and the housing fund vary by province.
                     </p>
 
                     <h3>5. Swiss cantonal aggregation</h3>
@@ -1739,7 +1833,51 @@
                         full detail.
                     </p>
 
-                    <h3>14. Lab-E</h3>
+                    <h3>14. Reference wage, contributions and income tax in China</h3>
+
+                    <p>
+                        China has no national minimum wage: each province sets
+                        its own. This module uses, by convention, Shanghai's
+                        monthly minimum wage (RMB 2,740/month, effective 1
+                        July 2025) as its 1.0x reference wage across all 31
+                        modeled provinces, municipalities and autonomous
+                        regions -- the same convention used for the US federal
+                        minimum wage applied uniformly across 50 states, or
+                        the single reference wages used for Sweden and Italy.
+                        Individual income tax (个人所得税, IIT), by contrast,
+                        is entirely national: a progressive 7-bracket schedule
+                        (3% to 45%) and a basic deduction of RMB 60,000/year,
+                        identical across all 31 provinces.
+                    </p>
+
+                    <p>
+                        China's "employee contributions" and "employer
+                        contributions" indicators combine the five social
+                        insurances (pension, medical merged with maternity,
+                        unemployment, work injury -- employer only) and the
+                        housing provident fund (住房公积金, a single
+                        illustrative rate of 7%, a nationally discretionary
+                        employer choice) of the province selected by this
+                        module's population-weighted aggregation. <strong>A
+                        major methodological point, unique to China among the
+                        12 countries in this comparison: the social-insurance
+                        contribution-base floor is indexed to the local
+                        AVERAGE wage, not the minimum wage</strong> -- so it
+                        substantially exceeds this module's reference wage in
+                        most provinces (in Shanghai, a RMB 7,460/month floor
+                        versus a RMB 2,740/month minimum wage). A direct and
+                        deliberately preserved consequence: at the low end of
+                        the harmonized grid, Chinese contributions are
+                        computed on this higher floor rather than on actual
+                        gross pay -- producing very high apparent contribution
+                        rates, sometimes exceeding 70-90% on the employer
+                        side. This is not an error: it is a genuine,
+                        distinctive feature of the Chinese system. The RMB's
+                        own PPP conversion factor is 3.55078934957358. See the
+                        China module's Methodology tab for full detail.
+                    </p>
+
+                    <h3>15. Lab-E</h3>
 
                     <p>
                         The Lab-E indicator (100 × net before tax / employer cost)
@@ -1774,9 +1912,18 @@
                         standard deduction and most states' own income-tax thresholds),
                         not a presentation artifact comparable to the Netherlands (see
                         section 13 above and the United States module's Methodology tab).
+                        China's Lab-E, finally, is structurally the lowest in the
+                        comparison at the low end of the grid, in most provinces
+                        -- for a reason distinct from the three above: the
+                        social-insurance contribution-base floor, indexed to
+                        the local average wage, exceeds China's own reference
+                        wage, so contributions there are genuinely computed on
+                        that higher floor rather than on actual gross pay (see
+                        section 14 above and the China module's Methodology
+                        tab).
                     </p>
 
-                    <h3>15. Limits</h3>
+                    <h3>16. Limits</h3>
 
                     <p class="method-note">
                         The income-tax calculation assumes a single, childless
