@@ -1106,8 +1106,13 @@ function computeCanadaFlclIndicators(row) {
     // is a defensive convention rather than a fix for an observed issue
     // (verified directly from the CSV: Ontario and Quebec each show only 1
     // real sign-flip in their marginal Lab-E delta across the full grid).
+    // Uses the Sweden/Japan 4-decimal precision (not the coarser 2-decimal
+    // convention used elsewhere): this value's delta is also divided by a
+    // ~0.01 grid step in the progressivity chart, so a 2-decimal rounding
+    // step gets amplified ~100x into a false integer-snapped staircase --
+    // confirmed directly against the unrounded CSV values, which are smooth.
     const rawFlclE = employerCost > 0 ? 100 * net / employerCost : 0;
-    const flclE = Math.round(rawFlclE * 100) / 100;
+    const flclE = Math.round(rawFlclE * 10000) / 10000;
     const flclB = 100 - flclE;
 
     return {
