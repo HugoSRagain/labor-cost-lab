@@ -1,7 +1,7 @@
 {
     "module_name": "Cross-Country Labour Cost Comparison",
     "version": "2026-01",
-    "countries": ["France", "Germany", "Belgium", "Switzerland", "Netherlands", "United Kingdom", "Ireland", "Spain", "Sweden", "Italy", "United States", "China"],
+    "countries": ["France", "Germany", "Belgium", "Switzerland", "Netherlands", "United Kingdom", "Ireland", "Spain", "Sweden", "Italy", "United States", "China", "Japan"],
     "methodology": [
         "Comparison axis: absolute wage levels converted via purchasing power parity (PPP), not wages re-indexed to each country's own minimum wage.",
         "PPP is applied individually to all 4 countries (including Switzerland), following the same logic as the OECD 'Taxing Wages' cross-country comparisons.",
@@ -29,7 +29,8 @@
         "SE": {"value_local": 34470, "currency": "SEK", "value_intl_usd": 4019.8, "source": "Sweden has no statutory minimum wage; this is the Migrationsverket work-permit wage floor (90% of the SCB median salary), used as this module's reference wage by convention, docs/data/sweden/sweden_parameters_2026.json"},
         "IT": {"value_local": 2314.56, "currency": "EUR", "value_intl_usd": 3702.4, "source": "Italy has no statutory minimum wage; this is the CCNL Commercio Livello 3 minimo tabellare (1,983.91 EUR x 14 payments / 12), used as this module's reference wage by convention, docs/data/italy/italy_parameters_2026.json"},
         "US": {"value_local": 1256.67, "currency": "USD", "value_intl_usd": 1256.67, "source": "Federal Minimum Wage (7.25 USD/hour x 40h/week, unchanged since 24 July 2009), docs/data/usa/usa_parameters_2026.json; many states/cities set substantially higher minimums"},
-        "CN": {"value_local": 2740, "currency": "RMB", "value_intl_usd": 771.7, "source": "China has no national minimum wage; this is Shanghai's own monthly minimum wage, used as this module's reference wage by convention, docs/data/china/china_parameters_2026.json"}
+        "CN": {"value_local": 2740, "currency": "RMB", "value_intl_usd": 771.7, "source": "China has no national minimum wage; this is Shanghai's own monthly minimum wage, used as this module's reference wage by convention, docs/data/china/china_parameters_2026.json"},
+        "JP": {"value_local": 212506.67, "currency": "JPY", "value_intl_usd": 2138.22, "source": "Japan has no national minimum wage; this is Tokyo's own monthly minimum wage equivalent (1,226 JPY/hour x 40h/week), used as this module's reference wage by convention, docs/data/japan/japan_parameters_2026.json"}
     },
     "ppp_conversion_factors": {
         "basis": "Household (private) final consumption expenditure PPP conversion factor, LCU per international dollar",
@@ -49,7 +50,8 @@
             "SE": 8.577614,
             "IT": 0.625157,
             "US": 1.0,
-            "CN": 3.55078934957358
+            "CN": 3.55078934957358,
+            "JP": 99.384798
         }
     },
     "reference_profiles": {
@@ -112,6 +114,11 @@
             "profile_id": "china__population_weighted_average_31_provinces__single_no_child",
             "description": "Population-weighted average across all 31 mainland provinces, municipalities and autonomous regions (2024 official population estimates), single, childless employee, standard formal employment, work-injury Tier 1. Individual income tax is identical nationwide; social-insurance contribution-base floors/caps, some contribution rates (e.g. Guangdong's unemployment-insurance split), and the housing-fund contribution base vary by province. The housing-fund contribution rate itself is a discretionary employer choice nationally and is modelled with one uniform illustrative rate (7%).",
             "compute_source": "analysis/china/build_china_dataset.py and analysis/china/china_payroll_2026.py, aggregated across 31 provinces"
+        },
+        "JP": {
+            "profile_id": "japan__population_weighted_average_47_prefectures__single_no_child",
+            "description": "Population-weighted average across all 47 prefectures (2025 official population estimates), single, childless employee under 40, standard formal employment, workers' accident insurance class 94. National income tax and resident tax are identical nationwide (though the two levies use genuinely different basic-deduction schedules since a 2026 tax reform); only the Kyokai Kenpo health-insurance premium rate (9.21%-10.55%) varies by prefecture.",
+            "compute_source": "analysis/japan/build_japan_dataset.py and analysis/japan/japan_payroll_2026.py, aggregated across 47 prefectures"
         }
     },
     "switzerland_canton_population_weights": {
@@ -205,6 +212,12 @@
         "retrieved": "2026-08-29",
         "note": "Population weights for all 31 mainland provinces/municipalities/autonomous regions are stored in analysis/china/china_payroll_2026.py (PROVINCE_DATA_2026, 'population' field) rather than duplicated here, to avoid drift between the two files."
     },
+    "jp_prefecture_population_weights": {
+        "source": "Statistics Bureau of Japan (Soumusho Tokei-kyoku), aggregated",
+        "reference_year": 2025,
+        "retrieved": "2026-08-30",
+        "note": "Population weights for all 47 prefectures are stored in analysis/japan/japan_payroll_2026.py (PREFECTURE_DATA_2026, 'population' field) rather than duplicated here, to avoid drift between the two files."
+    },
     "notes": [
         "Germany, Belgium, Switzerland and the Netherlands' 'net after income tax' figures include a mandatory wage withholding tax computed directly from the wage (Lohnsteuer, pr\u00e9compte professionnel, impot a la source, loonheffing), which does not require household-specific information beyond the modeled reference profile.",
         "The Netherlands has no separate employee social-security contribution line: AOW/Anw/Wlz national-insurance premiums are bundled into the Box 1 wage-tax rate. Its 'employee_contributions_monthly' figure is therefore 0 by construction, and the full payroll deduction (income tax + national insurance combined, 'loonheffing') appears under the income-tax figure -- this does not mean Dutch employees pay no social insurance.",
@@ -218,6 +231,7 @@
         "Italy has no statutory minimum wage either -- one of five EU countries (with Austria, Denmark, Finland and Sweden) relying exclusively on sector-level collective bargaining (CCNL), which covers over 80% of private-sector employees. This module uses the CCNL Commercio Livello 3 minimo tabellare (EUR 1,983.91/month, paid over 14 installments, prorated to EUR 2,314.56/month over 12 months) as its reference wage by convention -- a methodological choice, not a legal minimum. Italy's 'employer_cost' includes the TFR (trattamento di fine rapporto) deferred severance accrual (~6.91% of gross annual pay), a personnel cost under standard Italian payroll accounting that is not available to the employee as current net pay, unlike every other country in this comparison. Income tax bundles national IRPEF with the Lazio addizionale regionale and Roma addizionale comunale, both tiered-flat surcharges (the whole taxable income is taxed at one rate once a threshold is crossed, not a marginal bracket) rather than progressive brackets.",
         "The United States is the only genuinely federal system in this comparison: a uniform federal income tax and FICA/FUTA payroll taxes apply everywhere, PLUS each of the 50 states' (and DC's) own income tax (9 states have none), State Unemployment Insurance, and in 13 jurisdictions a state-mandated payroll deduction analogous to social insurance (State Disability Insurance in California and New York, Paid Family and Medical Leave in Colorado/Massachusetts/Maine/Minnesota/Oregon/Washington/DC, Temporary Disability Insurance in Rhode Island/Hawaii, Delaware's new-for-2026 Paid Leave, and New Jersey's combined UI/DI/FLI). This module aggregates all 50 states + DC with a population-weighted average (see 'us_state_population_weights'), mirroring how Switzerland's cantons, the UK's devolved regions and Spain's comunidades autonomas are aggregated. The reference wage is the federal minimum wage (USD 7.25/hour, unchanged since 2009); many states and cities set substantially higher minimum wages of their own. The US dollar's own PPP conversion factor is exactly 1.0 by construction (the international dollar is benchmarked to US prices).",
         "China's individual income tax is entirely national (a uniform 7-bracket annual schedule and a fixed RMB 60,000/year basic deduction), unlike every other multi-region country in this comparison -- what varies by province is the social-insurance contribution-base floor and cap (typically 60%-300% of the province's own prior-year average wage), a handful of contribution rates that genuinely differ by province (Guangdong's unemployment-insurance split is 0.8% employer / 0.2% employee rather than the more common 0.5%/0.5%), and the Housing Provident Fund (住房公积金) contribution base -- its rate is a discretionary employer choice nationally (5%-12% band) and is modelled with one uniform illustrative rate (7%). This module aggregates all 31 mainland provinces/municipalities/autonomous regions with a population-weighted average (see 'cn_province_population_weights'). China has no national minimum wage; the reference wage used is Shanghai's own monthly minimum wage (RMB 2,740), a methodological convention. In most provinces the social-insurance contribution-base floor exceeds this reference wage, so at low harmonized wage points contributions are computed on that higher floor rather than actual gross pay -- a genuine structural feature of China's system.",
+        "Japan's national income tax and resident tax (juminzei) are both uniform nationwide, but genuinely use two different basic-deduction schedules following a 2026 tax reform that substantially raised the income-tax basic deduction (up to JPY 1,040,000) while leaving the resident-tax basic deduction unchanged (a flat JPY 430,000) -- a real, growing divergence between the two levies. Employee pension, employment and workers' accident insurance rates are also uniform nationally; the ONLY prefecture-specific rate is the Kyokai Kenpo health-insurance premium (9.21%-10.55% across the 47 prefectures for 2026). This module aggregates all 47 prefectures with a population-weighted average (see 'jp_prefecture_population_weights'). Japan has no national minimum wage; the reference wage used is Tokyo's own minimum wage (JPY 1,226/hour), a methodological convention, mirroring China's Shanghai and the US's federal-minimum-wage conventions.",
         "All amounts are also cross-country comparable in international dollars (PPP) in addition to local currency."
     ]
 }

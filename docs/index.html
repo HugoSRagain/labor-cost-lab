@@ -787,6 +787,7 @@
                             <button type="button" role="tab" aria-selected="false" data-zone="europe" onclick="setCountry('it', this)">Italy</button>
                             <button type="button" role="tab" aria-selected="false" data-zone="america" style="display:none" onclick="setCountry('us', this)">United States</button>
                             <button type="button" role="tab" aria-selected="false" data-zone="asia" style="display:none" onclick="setCountry('cn', this)">China</button>
+                            <button type="button" role="tab" aria-selected="false" data-zone="asia" style="display:none" onclick="setCountry('jp', this)">Japan</button>
                         </div>
                     </div>
 
@@ -1201,6 +1202,41 @@
                     </div>
                 </a>
 
+                <a class="mod" data-zone="asia" href="./countries/japan/index.html">
+                    <div>
+                        <div class="mod-name">Japan</div>
+                        <div class="mod-tags">
+                            <span class="tag live" data-i18n="status.available">Disponible</span>
+                            <span class="tag" data-i18n="status.prototype">Prototype</span>
+                            <span class="tag">47 Préfectures</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="mod-desc" data-i18n="module.japan.text">
+                            Module socio-fiscal 2026 : impôt national sur le
+                            revenu et taxe d'habitation, désormais assis sur
+                            deux barèmes de déduction de base réellement
+                            différents depuis la réforme fiscale 2026,
+                            combinés aux cotisations sociales des 47
+                            préfectures (seul le taux d'assurance maladie
+                            Kyokai Kenpo varie). Cotisations assises sur une
+                            rémunération mensuelle standard par palier, non
+                            sur le salaire réel.
+                        </p>
+                        <div class="minibar" aria-hidden="true">
+                            <span class="m-emp" style="width:14%"></span>
+                            <span class="m-sal" style="width:13%"></span>
+                            <span class="m-tax" style="width:4%"></span>
+                            <span class="m-net" style="width:69%"></span>
+                        </div>
+                    </div>
+                    <div class="mod-net">
+                        <b>69</b>
+                        <span data-i18n="module.netshare">net / 100</span>
+                        <span class="mod-go" data-i18n="module.open">Ouvrir →</span>
+                    </div>
+                </a>
+
                 <a class="mod" href="./countries/comparison/index.html">
                     <div>
                         <div class="mod-name" data-i18n="module.comparison.name">Comparaison</div>
@@ -1211,14 +1247,14 @@
                     </div>
                     <div>
                         <p class="mod-desc" data-i18n="module.comparison.text">
-                            Met en regard les 12 modules nationaux sur une grille de
+                            Met en regard les 13 modules nationaux sur une grille de
                             salaires harmonisée en dollars internationaux (PPA), pour
                             comparer coût employeur, salaire net et prélèvements
                             obligatoires à niveau de vie équivalent.
                         </p>
                     </div>
                     <div class="mod-net">
-                        <b>12</b>
+                        <b>13</b>
                         <span data-i18n="module.comparison.count">pays comparés</span>
                         <span class="mod-go" data-i18n="module.open">Ouvrir →</span>
                     </div>
@@ -1412,8 +1448,9 @@
                 "module.italy.text": "Module socio-fiscal 2026 : cotisations INPS (avec plafond de cotisation et cotisation additionnelle de 1 %), TFR (indemnité de départ différée), IRPEF, addizionale regionale et addizionale comunale. Pas de salaire minimum légal : salaire de référence conventionnel (CCNL Commercio).",
                 "module.usa.text": "Module socio-fiscal 2026 : impôt fédéral sur le revenu, FICA (Social Security, Medicare), FUTA, combinés aux 50 États et au District de Columbia (impôt d'État, SUI, dispositifs type SDI/PFML). Sélecteur des 51 juridictions.",
                 "module.china.text": "Module socio-fiscal 2026 : impôt sur le revenu (IIT) national, combiné aux cinq assurances sociales et au fonds de logement des 31 provinces, municipalités et régions autonomes. Le plancher de cotisation, indexé sur le salaire moyen local, dépasse largement le salaire de référence dans la plupart des provinces.",
+                "module.japan.text": "Module socio-fiscal 2026 : impôt national sur le revenu et taxe d'habitation, désormais assis sur deux barèmes de déduction de base réellement différents depuis la réforme fiscale 2026, combinés aux cotisations sociales des 47 préfectures (seul le taux d'assurance maladie Kyokai Kenpo varie). Cotisations assises sur une rémunération mensuelle standard par palier, non sur le salaire réel.",
                 "module.comparison.name": "Comparaison",
-                "module.comparison.text": "Met en regard les 12 modules nationaux sur une grille de salaires harmonisée en dollars internationaux (PPA), pour comparer coût employeur, salaire net et prélèvements obligatoires à niveau de vie équivalent.",
+                "module.comparison.text": "Met en regard les 13 modules nationaux sur une grille de salaires harmonisée en dollars internationaux (PPA), pour comparer coût employeur, salaire net et prélèvements obligatoires à niveau de vie équivalent.",
                 "module.comparison.count": "pays comparés",
                 "module.open": "Ouvrir →",
                 "module.netshare": "net / 100",
@@ -1448,7 +1485,7 @@
                 "data.block4.title": "Code ouvert",
                 "data.block4.text": "Scripts de construction des jeux de données et interface web reproductible.",
                 "side.status.modules.label": "Modules accessibles",
-		"side.status.modules.value": "France · Allemagne · Belgique · Suisse · Pays-Bas · Royaume-Uni · Irlande · Espagne · Suède · Italie · États-Unis · Chine",
+		"side.status.modules.value": "France · Allemagne · Belgique · Suisse · Pays-Bas · Royaume-Uni · Irlande · Espagne · Suède · Italie · États-Unis · Chine · Japon",
                 "side.status.year.label": "Année réglementaire",
                 "side.status.output.label": "Sorties principales",
                 "side.status.output.value": "coût employeur · net · coins socio-fiscaux",
@@ -1489,8 +1526,9 @@
                 "module.italy.text": "2026 socio-fiscal module: INPS contributions (with a contribution ceiling and an additional 1% contribution), TFR (deferred severance accrual), IRPEF, addizionale regionale and addizionale comunale. No statutory minimum wage: a conventional reference wage (CCNL Commercio) is used instead.",
                 "module.usa.text": "2026 socio-fiscal module: federal income tax, FICA (Social Security, Medicare), FUTA, combined with each of the 50 states and the District of Columbia (state income tax, SUI, SDI/PFML-type schemes). Selector for all 51 jurisdictions.",
                 "module.china.text": "2026 socio-fiscal module: national individual income tax (IIT), combined with the five social insurances and the housing provident fund of 31 provinces, municipalities and autonomous regions. The contribution-base floor, indexed to the local average wage, substantially exceeds the reference wage in most provinces.",
+                "module.japan.text": "2026 socio-fiscal module: national income tax and resident tax, now based on two genuinely different basic-deduction schedules since the 2026 tax reform, combined with the social-insurance contributions of 47 prefectures (only the Kyokai Kenpo health-insurance rate varies). Contributions are based on a banded standard monthly remuneration, not actual salary.",
                 "module.comparison.name": "Comparison",
-                "module.comparison.text": "Compares the 12 national modules on a wage grid harmonised in international dollars (PPP), to compare employer cost, net wage, and statutory levies at an equivalent standard of living.",
+                "module.comparison.text": "Compares the 13 national modules on a wage grid harmonised in international dollars (PPP), to compare employer cost, net wage, and statutory levies at an equivalent standard of living.",
                 "module.comparison.count": "countries compared",
                 "module.open": "Open →",
                 "module.netshare": "net / 100",
@@ -1525,7 +1563,7 @@
                 "data.block4.title": "Open code",
                 "data.block4.text": "Dataset-building scripts and a reproducible hosted web interface.",
                 "side.status.modules.label": "Available modules",
-		"side.status.modules.value": "France · Germany · Belgium · Switzerland · Netherlands · United Kingdom · Ireland · Spain · Sweden · Italy · United States · China",
+		"side.status.modules.value": "France · Germany · Belgium · Switzerland · Netherlands · United Kingdom · Ireland · Spain · Sweden · Italy · United States · China · Japan",
                 "side.status.year.label": "Regulatory year",
                 "side.status.output.label": "Main outputs",
                 "side.status.output.value": "employer cost · net · socio-fiscal wedges",
@@ -1616,6 +1654,12 @@
                 sal: { v: 17, fr: "Cotisations salariales (retraite, maladie, chômage, fonds de logement)", en: "Employee contributions (pension, medical, unemployment, housing fund)" },
                 tax: { v: 0, fr: "Impôt sur le revenu (IIT national, nul au salaire de référence après abattement de base)", en: "Income tax (national IIT, zero at the reference wage after the basic deduction)" },
                 net: { v: 50, fr: "Salaire net disponible", en: "Disposable net wage" }
+            },
+            jp: {
+                emp: { v: 14, fr: "Cotisations patronales (assurances sociales, assises sur une rémunération mensuelle standard par palier)", en: "Employer contributions (social insurance, based on a banded standard monthly remuneration)" },
+                sal: { v: 13, fr: "Cotisations salariales (assurance maladie, retraite, assurance emploi)", en: "Employee contributions (health insurance, pension, employment insurance)" },
+                tax: { v: 4, fr: "Impôt sur le revenu (national + taxe d'habitation)", en: "Income tax (national income tax + resident tax)" },
+                net: { v: 69, fr: "Salaire net après impôt", en: "Net wage after tax" }
             }
         };
 

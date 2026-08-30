@@ -1,7 +1,7 @@
 {
     "module_name": "Cross-Country Labour Cost Comparison",
     "version": "2026-01",
-    "countries_covered": ["France", "Germany", "Belgium", "Switzerland", "Netherlands", "United Kingdom", "Ireland", "Spain", "Sweden", "Italy", "United States", "China"],
+    "countries_covered": ["France", "Germany", "Belgium", "Switzerland", "Netherlands", "United Kingdom", "Ireland", "Spain", "Sweden", "Italy", "United States", "China", "Japan"],
     "sources": [
         {
             "id": "worldbank_icp_private_consumption_ppp",
@@ -286,6 +286,32 @@
             "status": "official_aggregated"
         },
         {
+            "id": "japan_nta_nenkin_kyokai_kenpo_mhlw_2026",
+            "institution": "国税庁 National Tax Agency; 日本年金機構 Japan Pension Service; 全国健康保険協会 Kyokai Kenpo; 厚生労働省 MHLW",
+            "institution_fr": "Administration fiscale nationale, Service japonais des pensions, Kyokai Kenpo, ministere de la Sante du Travail et des Affaires sociales",
+            "title": "National income tax brackets and 2026 basic-deduction reform; resident tax; employee pension standard-remuneration bands; Kyokai Kenpo prefecture health-insurance rates; employment and workers' accident insurance",
+            "url": "https://www.nta.go.jp/",
+            "reference_year": 2026,
+            "retrieved": "2026-08-30",
+            "used_for": [
+                "Japan's national income-tax/resident-tax layer and each of the 47 prefectures' Kyokai Kenpo health-insurance layer"
+            ],
+            "status": "official_aggregated",
+            "note": "Full citations and confidence flags in docs/data/japan/japan_sources_2026.json."
+        },
+        {
+            "id": "japan_prefecture_population_2025",
+            "institution": "Statistics Bureau of Japan",
+            "institution_fr": "Bureau des statistiques du Japon",
+            "title": "2025 estimated population by prefecture",
+            "reference_year": 2025,
+            "retrieved": "2026-08-30",
+            "used_for": [
+                "Population weights for the 47-prefecture population-weighted average, mirroring the Swiss canton weighting approach"
+            ],
+            "status": "official_aggregated"
+        },
+        {
             "id": "inps_circolare_6_2026",
             "institution": "INPS (Istituto Nazionale della Previdenza Sociale)",
             "institution_fr": "INPS (institut national de la prevoyance sociale italien)",
@@ -337,6 +363,7 @@
         "Sweden has no statutory minimum wage; the reference wage used is the Migrationsverket work-permit wage floor (90% of the SCB median salary). The allman pensionsavgift (7% employee pension contribution) is fully offset by an equal skattereduktion across this module's wage range, so employee_contributions is 0 by construction and the full payroll tax liability appears under income_tax_or_withholding_tax. Only Stockholm kommun is modelled. See docs/data/sweden/sweden_sources_2026.json for the full rate schedule and sources.",
         "Italy has no statutory minimum wage either; the reference wage used is the CCNL Commercio Livello 3 minimo tabellare (a methodological choice, not a legal minimum), prorated from its 14-installment payment schedule. employer_cost includes the TFR deferred severance accrual (~6.91% of gross annual pay), a personnel cost that is not available to the employee as current net pay. Income tax bundles national IRPEF with the Lazio addizionale regionale and Roma addizionale comunale, both tiered-flat (not marginal) surcharges. See docs/data/italy/italy_sources_2026.json for the full rate schedule and sources.",
         "The United States is aggregated as a population-weighted average across all 50 states and DC, mirroring the Swiss canton/UK region/Spanish region approach; federal income tax, FICA and FUTA are uniform nationwide while state income tax (9 states have none), SUI and any state-mandated payroll deduction (SDI/PFML/TDI in 13 jurisdictions) vary by state. The reference wage is the federal minimum wage (USD 7.25/hour). See docs/data/usa/usa_sources_2026.json for the full per-state rate schedule and sources.",
-        "China is aggregated as a population-weighted average across all 31 mainland provinces/municipalities/autonomous regions; individual income tax is uniform nationwide while the social-insurance contribution-base floor/cap, some contribution rates, and the housing-fund contribution base vary by province (the housing-fund rate itself is a discretionary employer choice, modelled with one uniform illustrative 7% rate). The reference wage is Shanghai's own minimum wage (RMB 2,740/month), a methodological convention since China has no national minimum wage. See docs/data/china/china_sources_2026.json for the full per-province rate schedule and sources."
+        "China is aggregated as a population-weighted average across all 31 mainland provinces/municipalities/autonomous regions; individual income tax is uniform nationwide while the social-insurance contribution-base floor/cap, some contribution rates, and the housing-fund contribution base vary by province (the housing-fund rate itself is a discretionary employer choice, modelled with one uniform illustrative 7% rate). The reference wage is Shanghai's own minimum wage (RMB 2,740/month), a methodological convention since China has no national minimum wage. See docs/data/china/china_sources_2026.json for the full per-province rate schedule and sources.",
+        "Japan is aggregated as a population-weighted average across all 47 prefectures; national income tax and resident tax are uniform nationwide (though using two different basic-deduction schedules since a 2026 reform) while only the Kyokai Kenpo health-insurance premium rate (9.21%-10.55%) varies by prefecture. The reference wage is Tokyo's own minimum wage (JPY 1,226/hour), a methodological convention since Japan has no national minimum wage. See docs/data/japan/japan_sources_2026.json for the full per-prefecture rate schedule and sources."
     ]
 }

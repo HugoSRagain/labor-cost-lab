@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Japan Labour Cost Lab</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+    <link rel="stylesheet" href="../../assets/style.css?v=28">
+    <script defer src="../../assets/i18n_common.js?v=3"></script>
+    <script defer src="./assets/japan_app.js?v=2"></script>
+</head>
+
+<body>
+    <div class="global-project-banner">
+        <a href="../../index.html">
+            ← Labor Cost Lab
+        </a>
+
+        <span>
+            Japan module · Available socio-fiscal version
+        </span>
+    </div>
+
+    <div class="language-section active" id="section-fr">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · Module Japon
+                </p>
+
+                <h1>Japan Labour Cost Lab</h1>
+
+                <p>
+                    Module de simulation du coût du travail au Japon : un
+                    impôt national sur le revenu et une taxe d'habitation
+                    (impôt communal/préfectoral) s'appliquent tous deux à la
+                    même assiette mais suivent, depuis la réforme fiscale
+                    2026, deux barèmes de déduction de base réellement
+                    différents ; les cotisations sociales (retraite, maladie,
+                    assurance emploi, accidents du travail) sont assises sur
+                    une rémunération mensuelle standard par palier plutôt que
+                    sur le salaire réel. Préfecture sélectionnable
+                    individuellement parmi les 47, dans les onglets
+                    Simulation, Indice du Lab et Données.
+                </p>
+
+                <p class="author-line">
+                    Par Hugo Spring-Ragain, Économiste, CEDS Paris
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchJapanLanguage()">
+                    English
+                </button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>Japon · module socio-fiscal 2026</h2>
+
+                <p>
+                    <strong>Deux traits distinctifs majeurs de ce module.</strong>
+                    D'une part, la réforme fiscale 2026 (annoncée en décembre
+                    2025) a relevé la déduction de base de l'impôt NATIONAL
+                    sur le revenu jusqu'à 1 040 000 yens, tandis que la
+                    déduction de base de la taxe d'habitation (juminzei) reste
+                    inchangée à 430 000 yens — un écart pouvant atteindre
+                    610 000 yens aux bas niveaux de revenu. Conséquence
+                    concrète : la taxe d'habitation représente désormais
+                    souvent une part PLUS importante du total impôt sur le
+                    revenu qu'avant la réforme, un renversement récent et
+                    distinctif du système fiscal japonais, détaillé dans
+                    l'onglet Méthodologie et visible directement sur le
+                    graphique dédié « impôt national / taxe d'habitation »
+                    ci-dessous. D'autre part, contrairement à tous les autres
+                    pays de ce Lab, les cotisations d'assurance maladie et de
+                    retraite salariée ne sont PAS calculées comme un
+                    pourcentage lisse du salaire réel : elles sont assises sur
+                    une « rémunération mensuelle standard » (標準報酬月額)
+                    lue dans une table par paliers, ce qui crée de petits
+                    effets de seuil réels et attendus sur les graphiques de
+                    taux — ce n'est pas du bruit de calcul.
+                </p>
+
+                <p class="method-note">
+                    Le Japon n'a pas de salaire minimum national : ce module
+                    retient par convention le salaire minimum de Tokyo (le
+                    plus élevé du pays, capitale économique), converti en
+                    équivalent mensuel plein temps (1 226 x 40h/semaine x
+                    52/12 = 212 506,67 yens/mois), appliqué uniformément aux
+                    47 préfectures — la même logique que le salaire minimum
+                    fédéral américain ou le salaire minimum de Shanghai
+                    retenus ailleurs dans ce projet. Seul le taux d'assurance
+                    maladie Kyokai Kenpo (9,21 %-10,55 %) varie réellement
+                    selon la préfecture sélectionnée ; les taux de retraite,
+                    d'assurance emploi et d'accidents du travail sont
+                    nationaux et identiques partout.
+                </p>
+            </section>
+
+            <nav class="tabs" aria-label="Navigation Japon">
+                <button class="tab-button active" data-tab="simulation" onclick="showJapanTab('fr', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showJapanTab('fr', 'flcl-index')">
+                    Indice du Lab
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showJapanTab('fr', 'data')">
+                    Données
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showJapanTab('fr', 'methodology')">
+                    Méthodologie
+                </button>
+            </nav>
+
+            <section id="tab-fr-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="japan-waterfall-title-fr">
+                        Du salaire net au coût employeur
+                    </h3>
+
+                    <p class="chart-subtitle" id="japan-waterfall-subtitle-fr">
+                        Décomposition du passage du salaire net après impôt au
+                        coût employeur total, en 4 segments fixes (identiques
+                        quelle que soit la préfecture sélectionnée) : impôt
+                        sur le revenu (national + taxe d'habitation),
+                        cotisations salariales, puis cotisations patronales.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="japan-prefecture-select-fr">
+                                Préfecture de référence
+                            </label>
+
+                            <select id="japan-prefecture-select-fr">
+                            </select>
+                        </div>
+
+                        <div class="selector-field">
+                            <label for="japan-waterfall-multiple-fr">
+                                Point de salaire sélectionné
+                            </label>
+
+                            <select id="japan-waterfall-multiple-fr">
+                                <option value="0.80">0,80 salaire de référence</option>
+                                <option value="1.00" selected>1,00 salaire de référence</option>
+                                <option value="1.25">1,25 salaire de référence</option>
+                                <option value="1.50">1,50 salaire de référence</option>
+                                <option value="2.00">2,00 salaires de référence</option>
+                                <option value="2.50">2,50 salaires de référence</option>
+                                <option value="3.00">3,00 salaires de référence</option>
+                                <option value="4.00">4,00 salaires de référence</option>
+                                <option value="5.00">5,00 salaires de référence</option>
+                                <option value="6.00">6,00 salaires de référence</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-japan-waterfall-fr"
+                        class="plotly-chart"
+                        aria-label="Décomposition du coût du travail au Japon"
+                    ></div>
+
+                    <p class="method-note">
+                        La structure du graphique (4 segments) est
+                        volontairement identique pour les 47 préfectures. Les
+                        cotisations salariales et patronales varient selon la
+                        préfecture sélectionnée (via le taux Kyokai Kenpo) ;
+                        l'impôt sur le revenu affiché regroupe l'impôt
+                        national et la taxe d'habitation, tous deux identiques
+                        partout au Japon. Le graphique « Impôt national /
+                        taxe d'habitation » ci-dessous détaille ce
+                        regroupement.
+                    </p>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Graphiques complémentaires</h2>
+
+                    <p>
+                        Les graphiques suivants détaillent les salaires, les
+                        taux effectifs, la décomposition des assurances
+                        sociales (shakai hoken), le partage impôt national /
+                        taxe d'habitation, le coin socio-fiscal et le
+                        rendement marginal du salaire brut, pour la
+                        préfecture sélectionnée ci-dessus.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Coût employeur, salaire brut et salaires nets</h3>
+
+                        <p class="chart-subtitle">
+                            Comparaison du salaire brut, du salaire net avant
+                            impôt, du salaire net après impôt et du coût
+                            employeur selon le multiple du salaire de référence.
+                        </p>
+
+                        <div
+                            id="chart-japan-cost-fr"
+                            class="plotly-chart"
+                            aria-label="Coût du travail au Japon"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Taux effectifs de prélèvement</h3>
+
+                        <p class="chart-subtitle">
+                            Taux salarié et taux employeur (assurances
+                            sociales), et taux d'imposition effectif (impôt
+                            national + taxe d'habitation).
+                        </p>
+
+                        <div
+                            id="chart-japan-rates-fr"
+                            class="plotly-chart"
+                            aria-label="Taux de prélèvement au Japon"
+                        ></div>
+
+                        <p class="method-note">
+                            <strong>Lecture des petits paliers visibles sur
+                            les courbes de taux salarié/employeur :</strong>
+                            les cotisations d'assurance maladie et de retraite
+                            salariée sont assises sur une « rémunération
+                            mensuelle standard » (標準報酬月額) lue dans une
+                            table par paliers (50 paliers pour l'assurance
+                            maladie, de 58 000 à 1 390 000 yens ; 32 paliers
+                            pour la retraite, de 88 000 à 650 000 yens), et non
+                            sur le salaire réel directement. Ces petits sauts
+                            sont réels et attendus à chaque changement de
+                            palier — ce ne sont pas des artefacts de calcul.
+                            Voir l'onglet Méthodologie, section 5.
+                        </p>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Décomposition des assurances sociales (社会保険, shakai hoken)</h3>
+
+                        <p class="chart-subtitle">
+                            Assurance maladie Kyokai Kenpo, cotisation de
+                            soutien aux enfants et à la famille, retraite
+                            salariée, cotisation enfants/garde d'enfants
+                            (employeur uniquement), assurance emploi et
+                            assurance accidents du travail (employeur
+                            uniquement), côté salarié et employeur. La ligne
+                            pointillée est le total (impôt sur le revenu +
+                            cotisations salariales + cotisations patronales).
+                        </p>
+
+                        <div
+                            id="chart-japan-breakdown-fr"
+                            class="plotly-chart"
+                            aria-label="Décomposition des assurances sociales au Japon"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Impôt national sur le revenu vs taxe d'habitation</h3>
+
+                        <p class="chart-subtitle">
+                            Décomposition de l'impôt sur le revenu regroupé
+                            (utilisé partout ailleurs dans ce module) entre
+                            l'impôt national (shotokuzei) et la taxe
+                            d'habitation (juminzei). Depuis la réforme fiscale
+                            2026, ces deux prélèvements suivent des barèmes de
+                            déduction de base réellement différents (voir
+                            l'onglet Méthodologie, section 2) : la taxe
+                            d'habitation dépasse désormais fréquemment l'impôt
+                            national aux niveaux de revenu bas et moyens.
+                        </p>
+
+                        <div
+                            id="chart-japan-tax-split-fr"
+                            class="plotly-chart"
+                            aria-label="Impôt national contre taxe d'habitation au Japon"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Coin social et coin socio-fiscal</h3>
+
+                        <p class="chart-subtitle">
+                            Comparaison du coin social avant impôt et du coin
+                            socio-fiscal après impôt sur le revenu, et ratios
+                            coût employeur / net.
+                        </p>
+
+                        <div
+                            id="chart-japan-wedge-fr"
+                            class="plotly-chart"
+                            aria-label="Coin social et socio-fiscal japonais"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Rendement marginal d'une hausse de salaire brut</h3>
+
+                        <p class="chart-subtitle">
+                            Part d'un yen supplémentaire de salaire brut
+                            conservée avant et après impôt sur le revenu, et
+                            effet marginal du système socio-fiscal.
+                        </p>
+
+                        <div
+                            id="chart-japan-marginal-fr"
+                            class="plotly-chart"
+                            aria-label="Rendement socio-fiscal d'une hausse de salaire brut au Japon"
+                        ></div>
+
+                        <p class="method-note">
+                            Les points d'inflexion correspondent aux tranches
+                            du barème national et, ponctuellement, aux
+                            changements de palier de rémunération mensuelle
+                            standard (assurance maladie et retraite).
+                        </p>
+                    </div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Indicateurs clés</h2>
+
+                    <p>
+                        Les indicateurs ci-dessous sont calculés au salaire de
+                        référence (multiple = 1) pour la préfecture
+                        sélectionnée.
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="japan-metrics-fr">
+                    <article class="metric-card">
+                        <span class="metric-label">Salaire brut de référence</span>
+                        <strong id="metric-japan-reference-wage-fr">—</strong>
+                        <span class="metric-note">Salaire minimum de Tokyo, ¥212 507/mois</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Taux d'imposition effectif</span>
+                        <strong id="metric-japan-income-tax-rate-fr">—</strong>
+                        <span class="metric-note">Impôt national + taxe d'habitation / brut</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Taux employeur effectif</span>
+                        <strong id="metric-japan-employer-rate-fr">—</strong>
+                        <span class="metric-note">Assurances sociales</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Ratio coût / net au salaire de référence</span>
+                        <strong id="metric-japan-cost-to-net-fr">—</strong>
+                        <span class="metric-note">Après impôt sur le revenu</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Part de la taxe d'habitation</span>
+                        <strong id="metric-japan-resident-tax-share-fr">—</strong>
+                        <span class="metric-note">Dans le total impôt national + taxe d'habitation</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-fr-flcl-index" class="tab-content">
+                <section class="chart-card">
+                    <h2>Indice du Lab</h2>
+                    <p class="chart-subtitle">
+                        Indicateurs d'efficacité salariale du coût du travail.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="japan-flcl-prefecture-select-fr">
+                                Préfecture
+                            </label>
+
+                            <select id="japan-flcl-prefecture-select-fr">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-E</span>
+                            <strong id="japan-flcl-e-value-fr">—</strong>
+                            <span class="metric-note" id="japan-flcl-e-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-B</span>
+                            <strong id="japan-flcl-b-value-fr">—</strong>
+                            <span class="metric-note" id="japan-flcl-b-caption-fr"></span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Transmission marginale</span>
+                            <strong id="japan-flcl-transmission-value-fr">—</strong>
+                            <span class="metric-note" id="japan-flcl-transmission-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Captation marginale</span>
+                            <strong id="japan-flcl-capture-value-fr">—</strong>
+                            <span class="metric-note" id="japan-flcl-capture-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Progressivité implicite</span>
+                            <strong id="japan-flcl-progressivity-value-fr">—</strong>
+                            <span class="metric-note" id="japan-flcl-progressivity-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Soutien bas salaires</span>
+                            <strong id="japan-flcl-support-value-fr">—</strong>
+                            <span class="metric-note" id="japan-flcl-support-caption-fr"></span>
+                        </div>
+                    </div>
+
+                    <p class="method-note" style="margin-top: 16px;">
+                        Aucun allègement employeur ciblé et dégressif n'est
+                        modélisé pour le Japon : l'indicateur Lab-R ne
+                        s'applique donc pas ici. Le Lab-E japonais peut
+                        présenter de petits sauts locaux liés aux changements
+                        de palier de rémunération mensuelle standard (voir
+                        l'onglet Méthodologie, section 5) : des effets réels,
+                        pas du bruit de calcul.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Indice du Lab</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × salaire net avant impôt / coût employeur.
+                        </p>
+                        <div id="chart-japan-flcl-e-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Transmission marginale</h3>
+                        <p class="chart-subtitle">
+                            Part d'un yen supplémentaire de coût employeur allant au salarié net.
+                        </p>
+                        <div id="chart-japan-flcl-marginal-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Progressivité implicite</h3>
+                        <p class="chart-subtitle">
+                            Variation de Lab-E lorsque le niveau de salaire augmente.
+                        </p>
+                        <div id="chart-japan-flcl-progressivity-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Destination marginale d'un yen supplémentaire de coût employeur</h3>
+                        <p class="chart-subtitle">
+                            Répartition marginale entre salaire net, cotisations salariales et cotisations patronales.
+                        </p>
+                        <div id="chart-japan-flcl-destination-fr" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-fr-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Données</h3>
+
+                    <p class="chart-subtitle">
+                        Le jeu de données japonais peut être téléchargé au
+                        format CSV. Il contient l'ensemble des points de
+                        salaire simulés pour les 47 préfectures (521 points de
+                        salaire chacune) : salaire brut, impôt national sur le
+                        revenu, taxe d'habitation, cotisations d'assurances
+                        sociales (détail par composante), coût employeur et
+                        indicateurs de coin socio-fiscal.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/japan/japan_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Télécharger le jeu de données Japon
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/japan/japan_parameters_2026.json"
+                            download
+                        >
+                            Télécharger les paramètres 2026
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/japan/japan_sources_2026.json"
+                            download
+                        >
+                            Télécharger les sources 2026
+                        </a>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Données du profil standard</h3>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="japan-data-prefecture-select-fr">
+                                Préfecture
+                            </label>
+
+                            <select id="japan-data-prefecture-select-fr">
+                            </select>
+                        </div>
+                    </div>
+
+                    <p
+                        class="chart-subtitle"
+                        id="japan-data-caption-fr"
+                    >
+                        Salarié standard (Tokyo)
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Multiple</th>
+                                    <th>Salaire brut (¥)</th>
+                                    <th>Net avant impôt (¥)</th>
+                                    <th>Impôt sur le revenu (¥)</th>
+                                    <th>Net après impôt (¥)</th>
+                                    <th>Coût employeur (¥)</th>
+                                    <th>Cotisations salariales (¥)</th>
+                                    <th>Cotisations patronales (¥)</th>
+                                    <th>Coin social (¥)</th>
+                                    <th>Coin socio-fiscal (¥)</th>
+                                    <th>Taux employeur</th>
+                                    <th>Coût / net après impôt</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="japan-data-table-body-fr">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="chart-subtitle" style="margin-top: 10px;">
+                        Impôt sur le revenu = impôt national (shotokuzei) +
+                        taxe d'habitation (juminzei), identiques dans les 47
+                        préfectures. Cotisations salariales et patronales
+                        regroupent les assurances sociales (maladie Kyokai
+                        Kenpo, soutien aux enfants et à la famille, retraite
+                        salariée, cotisation enfants/garde d'enfants,
+                        assurance emploi, accidents du travail) de la
+                        préfecture sélectionnée. Voir l'onglet Méthodologie.
+                    </p>
+                </div>
+            </section>
+
+            <section id="tab-fr-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Méthodologie</h2>
+
+                    <p>
+                        Le module Japon repose sur une simulation
+                        réglementaire du coût du travail pour un salarié
+                        standard, célibataire sans enfant, âgé de moins de 40
+                        ans (donc non soumis à la cotisation dépendance),
+                        en emploi formel standard (accident du travail classe
+                        94, « autres activités diverses »), dans la préfecture
+                        sélectionnée parmi les 47 préfectures japonaises.
+                    </p>
+
+                    <h3>1. Le salaire de référence : le salaire minimum de Tokyo</h3>
+
+                    <p>
+                        Le Japon n'a pas de salaire minimum national : chacune
+                        des 47 préfectures fixe le sien (de 1 023 à 1 226
+                        yens/heure). Ce module retient, par convention, le
+                        salaire minimum de Tokyo (1 226 yens/heure, en vigueur
+                        depuis le 3 octobre 2025 — le plus élevé du pays,
+                        capitale économique), converti en équivalent mensuel
+                        plein temps (1 226 x 40h/semaine x 52/12 = 212 506,67
+                        yens/mois), appliqué uniformément à toutes les
+                        préfectures — la même logique que le salaire minimum
+                        fédéral américain appliqué uniformément aux 50 États
+                        dans ce Lab, ou que le salaire minimum de Shanghai
+                        retenu pour la Chine. Ce n'est ni une moyenne
+                        nationale, ni un minimum légal commun à toutes les
+                        préfectures.
+                    </p>
+
+                    <h3>2. Impôt national sur le revenu et taxe d'habitation : deux barèmes de déduction désormais réellement différents</h3>
+
+                    <p>
+                        L'impôt national sur le revenu (所得税, shotokuzei) et
+                        la taxe d'habitation (住民税, juminzei) s'appliquent
+                        tous deux à la même assiette de revenu d'emploi
+                        (après déduction pour revenu d'emploi), mais suivent
+                        chacun leur propre barème. L'impôt national utilise un
+                        barème progressif national à 7 tranches (5 % / 10 % /
+                        20 % / 23 % / 33 % / 40 % / 45 %), majoré d'une
+                        surtaxe de reconstruction de 2,1 % pour l'année
+                        fiscale 2026. La taxe d'habitation applique un taux
+                        combiné forfaitaire de 10 % (4 % préfectoral + 6 %
+                        municipal), plus un prélèvement forfaitaire annuel de
+                        5 000 yens (均等割).
+                    </p>
+
+                    <p>
+                        <strong>Point méthodologique majeur : la réforme
+                        fiscale reiwa 8 (annoncée en décembre 2025, appliquée
+                        intégralement à l'année fiscale 2026) a relevé la
+                        déduction de base de l'impôt NATIONAL sur le revenu
+                        (kiso kojo) jusqu'à 1 040 000 yens (dégressive selon le
+                        revenu : 1 040 000 yens jusqu'à 3 360 000 yens de
+                        revenu, 670 000 yens jusqu'à 6 550 000 yens, 620 000
+                        yens au-delà), tandis que la déduction de base de la
+                        taxe d'habitation reste inchangée à 430 000 yens</strong>
+                        — un écart pouvant atteindre 610 000 yens aux plus bas
+                        niveaux de revenu, qui n'existait pas avant la réforme
+                        (l'ancienne déduction de base nationale était de
+                        580 000 yens, proche de celle de la taxe
+                        d'habitation). Conséquence directe : à assiette de
+                        revenu identique, la taxe d'habitation impose
+                        désormais une base taxable substantiellement plus
+                        large que l'impôt national, si bien qu'elle peut
+                        représenter une part plus importante du total impôt
+                        sur le revenu qu'avant la réforme — un renversement
+                        récent et distinctif du système fiscal japonais,
+                        visible sur le graphique « Impôt national sur le
+                        revenu vs taxe d'habitation » de l'onglet Simulation.
+                        La déduction pour revenu d'emploi (給与所得控除) a
+                        également été relevée par la même réforme (plancher de
+                        650 000 à 740 000 yens, désormais étendu jusqu'à
+                        2 200 000 yens de salaire brut) ; elle est, elle,
+                        commune aux deux impôts.
+                    </p>
+
+                    <p class="method-note">
+                        En pratique, l'employeur retient l'impôt national
+                        mensuellement via les tables de retenue à la source de
+                        l'Administration fiscale nationale (NTA), avec une
+                        régularisation de fin d'année (年末調整, nenmatsu
+                        chosei) en décembre qui ajuste au montant annuel réel.
+                        La taxe d'habitation, elle, est en réalité assise sur
+                        le revenu de l'ANNÉE PRÉCÉDENTE. Comme pour tous les
+                        autres modules de ce projet face à un mécanisme
+                        d'acompte mensuel, ce module applique directement les
+                        barèmes annuels au salaire annualisé et divise par 12,
+                        plutôt que de reproduire mois par mois la montée en
+                        charge réelle ou le décalage d'une année sur l'autre.
+                    </p>
+
+                    <h3>3. Cotisations sociales nationales : retraite, assurance emploi, accidents du travail</h3>
+
+                    <p>
+                        La retraite salariée (厚生年金保険, kosei nenkin) est
+                        prélevée à un taux total national de 18,3 % (9,15 %
+                        salarié / 9,15 % employeur, inchangé depuis 2017),
+                        assis sur une rémunération mensuelle standard par
+                        palier (32 paliers, de 88 000 à 650 000 yens). Une
+                        cotisation employeur uniquement pour les enfants et la
+                        famille (子ども・子育て拠出金, 0,36 %) est prélevée sur
+                        la même base retraite. L'assurance emploi (雇用保険) est
+                        prélevée à un taux national de 13,5 pour mille (5 pour
+                        mille salarié / 8,5 pour mille employeur pour une
+                        activité générale), assise directement sur le salaire
+                        réel. L'assurance accidents du travail (労災保険,
+                        employeur uniquement) est retenue au taux illustratif
+                        de 0,30 % (classe 94, « autres activités diverses »,
+                        le profil de bureau/services générique), assise sur le
+                        salaire réel.
+                    </p>
+
+                    <h3>4. Assurance maladie Kyokai Kenpo : le seul taux réellement spécifique à chaque préfecture</h3>
+
+                    <p>
+                        L'assurance maladie (協会けんぽ, Kyokai Kenpo /
+                        Zenkyoren) est le SEUL prélèvement réellement
+                        spécifique à chaque préfecture de ce module : chacune
+                        des 47 préfectures a son propre taux de prime pour
+                        2026, de 9,21 % (Niigata, le plus bas) à 10,55 %
+                        (Saga, le plus élevé), partagé 50/50 entre salarié et
+                        employeur, assis sur une rémunération mensuelle
+                        standard par palier plus large que celle de la
+                        retraite (50 paliers, de 58 000 à 1 390 000 yens). Une
+                        nouvelle cotisation nationale de soutien aux enfants
+                        et à la famille (子ども・子育て支援金, 0,23 %,
+                        partagée 50/50) est prélevée sur la même base à
+                        compter d'avril 2026 ; ce module l'applique sur
+                        l'ensemble de l'année fiscale par simplification.
+                    </p>
+
+                    <h3>5. La rémunération mensuelle standard par palier (標準報酬月額, hyōjun hōshū getsugaku)</h3>
+
+                    <p>
+                        <strong>Point méthodologique distinctif du Japon parmi
+                        tous les pays de ce Lab : les cotisations d'assurance
+                        maladie et de retraite salariée ne sont pas calculées
+                        comme un pourcentage lisse du salaire réel.</strong>
+                        Le salaire réel du salarié est arrondi (« classé »)
+                        dans l'un des paliers d'une table officielle — 50
+                        paliers pour l'assurance maladie (de 58 000 à 1 390 000
+                        yens), 32 paliers pour la retraite (de 88 000 à
+                        650 000 yens) — et c'est le montant représentatif de
+                        ce palier, non le salaire réel, qui sert de base de
+                        calcul aux deux cotisations. Cela crée de petits
+                        effets de seuil réels à chaque changement de palier,
+                        visibles sur les graphiques de taux effectifs et sur
+                        l'Indice du Lab de ce module : ils sont fidèlement
+                        reproduits, pas lissés, et ne doivent pas être
+                        confondus avec du bruit de calcul.
+                    </p>
+
+                    <h3>6. Indicateurs produits</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Net avant impôt :</strong>
+                            salaire brut diminué des cotisations salariales
+                            (assurance maladie, soutien enfants et famille,
+                            retraite, assurance emploi de la préfecture
+                            sélectionnée).
+                        </li>
+
+                        <li>
+                            <strong>Net après impôt :</strong>
+                            net avant impôt diminué de l'impôt mensuel
+                            équivalent regroupant impôt national et taxe
+                            d'habitation (tous deux identiques dans les 47
+                            préfectures).
+                        </li>
+
+                        <li>
+                            <strong>Coût employeur :</strong>
+                            salaire brut augmenté des cotisations patronales
+                            (assurance maladie, soutien enfants et famille,
+                            retraite, cotisation enfants/garde d'enfants,
+                            assurance emploi, accidents du travail de la
+                            préfecture sélectionnée).
+                        </li>
+
+                        <li>
+                            <strong>Coin social :</strong>
+                            différence entre le coût employeur et le net avant
+                            impôt.
+                        </li>
+
+                        <li>
+                            <strong>Coin socio-fiscal :</strong>
+                            différence entre le coût employeur et le net après
+                            impôt.
+                        </li>
+
+                        <li>
+                            <strong>Rendement marginal :</strong>
+                            part d'un yen supplémentaire de salaire brut
+                            conservée avant et après impôt sur le revenu.
+                        </li>
+                    </ul>
+
+                    <h3>7. Indice du Lab</h3>
+
+                    <p>
+                        L'Indice du Lab mesure l'efficacité salariale du coût
+                        du travail, indépendamment de l'impôt sur le revenu.
+                        Lab-E = 100 × salaire net avant impôt / coût employeur,
+                        Lab-B = 100 − Lab-E. Aucun allègement employeur ciblé
+                        et dégressif n'est modélisé pour le Japon : l'indicateur
+                        Lab-R ne s'applique donc pas ici.
+                    </p>
+
+                    <h3>8. Limites du scénario</h3>
+
+                    <ul class="method-note">
+                        <li>
+                            Le Japon n'a pas de salaire minimum national : le
+                            salaire de référence 1,0x de ce module est le
+                            salaire minimum de Tokyo, un choix méthodologique,
+                            pas une moyenne nationale ni un minimum légal
+                            commun à toutes les préfectures.
+                        </li>
+
+                        <li>
+                            Seul un profil célibataire sans enfant, sans autre
+                            revenu, âgé de moins de 40 ans (donc non soumis à
+                            la cotisation dépendance) est modélisé.
+                        </li>
+
+                        <li>
+                            La taxe d'habitation (juminzei) est en réalité
+                            assise sur le revenu de l'année précédente ; ce
+                            module retient un revenu de la même année pour un
+                            profil en régime établi, comme tous les autres
+                            modules de ce projet.
+                        </li>
+
+                        <li>
+                            Le taux d'assurance accidents du travail (rousai
+                            hoken, 0,30 %) est illustratif, retenu pour un
+                            profil d'employeur de bureau/services générique
+                            (classe 94) ; les taux réels varient de 0,15 % à
+                            11,0 % selon la branche d'activité.
+                        </li>
+
+                        <li>
+                            La cotisation de soutien aux enfants et à la
+                            famille (0,23 %), légalement due seulement à
+                            compter d'avril 2026, est appliquée par ce module
+                            sur l'ensemble de l'année fiscale par
+                            simplification.
+                        </li>
+
+                        <li>
+                            Le mécanisme mensuel de retenue à la source
+                            (gensen choshu) n'est pas reproduit mois par mois :
+                            ce module publie l'équivalent mensuel de l'impôt
+                            annuel établi lors de la régularisation de fin
+                            d'année (nenmatsu chosei) de décembre.
+                        </li>
+
+                        <li>
+                            Les cotisations sociales d'assurance maladie et de
+                            pension sont assises sur une rémunération
+                            mensuelle standard par palier (hyojun hoshu
+                            getsugaku), qui crée de petits effets de seuil
+                            réels à chaque changement de palier — reproduits
+                            fidèlement, pas lissés.
+                        </li>
+
+                        <li>
+                            Seul un employeur de type entreprise générale
+                            (jimusho ippan) est modélisé pour l'assurance
+                            emploi et les accidents du travail ; l'agriculture,
+                            la sylviculture, la pêche et le BTP ont des taux
+                            différents, non modélisés.
+                        </li>
+                    </ul>
+
+                    <h3>9. Sources</h3>
+
+                    <p class="method-note">
+                        Administration fiscale nationale (NTA), barème et
+                        réforme fiscale reiwa 8 (2026) ; Ministère des
+                        Affaires intérieures et des Communications
+                        (Soumusho/MIC) pour la taxe d'habitation ; Service
+                        japonais des pensions (Nihon Nenkin Kiko) pour la
+                        table des paliers de retraite ; Association japonaise
+                        d'assurance santé (Kyokai Kenpo / Zenkyoren) pour les
+                        47 taux préfectoraux et la table des paliers
+                        d'assurance maladie ; Ministère de la Santé, du
+                        Travail et des Affaires sociales (MHLW) pour
+                        l'assurance emploi, les accidents du travail et le
+                        salaire minimum de Tokyo ; Bureau des statistiques du
+                        Japon (Soumusho Tokei-kyoku) pour la population
+                        préfectorale ; Banque mondiale (Programme de
+                        comparaison internationale) pour le facteur de
+                        conversion PPA utilisé dans le module Comparaison.
+                        Voir japan_sources_2026.json pour le détail complet
+                        des citations, y compris pour les 47 préfectures.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="language-section" id="section-en">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · Japan module
+                </p>
+
+                <h1>Japan Labour Cost Lab</h1>
+
+                <p>
+                    Simulation module for Japanese labour costs: a national
+                    income tax and a resident tax (prefectural/municipal
+                    levy) both apply to the same income base but, since the
+                    2026 tax reform, follow two genuinely different
+                    basic-deduction schedules; social-insurance contributions
+                    (pension, health, employment, workers' accident) are
+                    based on a banded standard monthly remuneration rather
+                    than actual salary. Individually selectable among 47
+                    prefectures, in the Simulation, Lab Index and Data tabs.
+                </p>
+
+                <p class="author-line">
+                    By Hugo Spring-Ragain, Economist, CEDS Paris
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchJapanLanguage()">
+                    Français
+                </button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>Japan · 2026 socio-fiscal module</h2>
+
+                <p>
+                    <strong>Two major distinctive features of this module.</strong>
+                    First, the 2026 tax reform (announced December 2025)
+                    raised the NATIONAL income tax's basic deduction to up to
+                    JPY 1,040,000, while the resident tax's (juminzei) basic
+                    deduction stayed flat at JPY 430,000 — a gap of up to JPY
+                    610,000 at low income levels. The practical consequence:
+                    resident tax now frequently makes up a LARGER share of
+                    total income tax than it did before the reform, a recent
+                    and distinctive reversal in the Japanese tax system,
+                    detailed in the Methodology tab and shown directly on the
+                    dedicated "national income tax / resident tax" chart
+                    below. Second, unlike every other country in this Lab,
+                    health-insurance and employee-pension contributions are
+                    NOT computed as a smooth percentage of actual salary:
+                    they are based on a "standard monthly remuneration"
+                    (標準報酬月額) looked up from a banded table, which
+                    creates small, real, and expected step effects on the
+                    rate charts — this is not calculation noise.
+                </p>
+
+                <p class="method-note">
+                    Japan has no national minimum wage: this module uses, by
+                    convention, Tokyo's own minimum wage (the country's
+                    highest, its economic capital), converted into a
+                    full-time monthly equivalent (1,226 x 40h/week x 52/12 =
+                    212,506.67 yen/month), applied uniformly across all 47
+                    prefectures — the same convention used for the US federal
+                    minimum wage or Shanghai's minimum wage elsewhere in this
+                    project. Only the Kyokai Kenpo health-insurance rate
+                    (9.21%-10.55%) genuinely varies by the selected
+                    prefecture; pension, employment-insurance and
+                    workers'-accident-insurance rates are national and
+                    identical everywhere.
+                </p>
+            </section>
+
+            <nav class="tabs" aria-label="Japan navigation">
+                <button class="tab-button active" data-tab="simulation" onclick="showJapanTab('en', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showJapanTab('en', 'flcl-index')">
+                    Lab Index
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showJapanTab('en', 'data')">
+                    Data
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showJapanTab('en', 'methodology')">
+                    Methodology
+                </button>
+            </nav>
+
+            <section id="tab-en-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="japan-waterfall-title-en">
+                        From net wage to employer cost
+                    </h3>
+
+                    <p class="chart-subtitle" id="japan-waterfall-subtitle-en">
+                        Breakdown of the path from net wage after tax to total
+                        employer cost, in 4 fixed segments (identical
+                        regardless of the selected prefecture): income tax
+                        (national income tax + resident tax), employee
+                        contributions, then employer contributions.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="japan-prefecture-select-en">
+                                Reference prefecture
+                            </label>
+
+                            <select id="japan-prefecture-select-en">
+                            </select>
+                        </div>
+
+                        <div class="selector-field">
+                            <label for="japan-waterfall-multiple-en">
+                                Selected wage point
+                            </label>
+
+                            <select id="japan-waterfall-multiple-en">
+                                <option value="0.80">0.80 reference wage</option>
+                                <option value="1.00" selected>1.00 reference wage</option>
+                                <option value="1.25">1.25 reference wages</option>
+                                <option value="1.50">1.50 reference wages</option>
+                                <option value="2.00">2.00 reference wages</option>
+                                <option value="2.50">2.50 reference wages</option>
+                                <option value="3.00">3.00 reference wages</option>
+                                <option value="4.00">4.00 reference wages</option>
+                                <option value="5.00">5.00 reference wages</option>
+                                <option value="6.00">6.00 reference wages</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-japan-waterfall-en"
+                        class="plotly-chart"
+                        aria-label="Breakdown of labour cost in Japan"
+                    ></div>
+
+                    <p class="method-note">
+                        The chart structure (4 segments) is deliberately
+                        identical across all 47 prefectures. Employee and
+                        employer contributions vary by the selected
+                        prefecture (via the Kyokai Kenpo rate); the income tax
+                        shown bundles national income tax and resident tax,
+                        both identical everywhere in Japan. The "National
+                        income tax / resident tax" chart below details this
+                        bundle.
+                    </p>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Additional charts</h2>
+
+                    <p>
+                        The charts below detail wages, effective rates, the
+                        social-insurance (shakai hoken) breakdown, the
+                        national-income-tax/resident-tax split, the
+                        socio-fiscal wedge, and the marginal return on a
+                        gross-wage increase, for the prefecture selected
+                        above.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Employer cost, gross wage and net wages</h3>
+
+                        <p class="chart-subtitle">
+                            Comparison of the gross wage, net wage before tax,
+                            net wage after tax, and employer cost across the
+                            multiple of the reference wage.
+                        </p>
+
+                        <div
+                            id="chart-japan-cost-en"
+                            class="plotly-chart"
+                            aria-label="Labour cost in Japan"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Effective levy rates</h3>
+
+                        <p class="chart-subtitle">
+                            Employee rate and employer rate (social
+                            insurance), and effective income tax rate
+                            (national income tax + resident tax).
+                        </p>
+
+                        <div
+                            id="chart-japan-rates-en"
+                            class="plotly-chart"
+                            aria-label="Levy rates in Japan"
+                        ></div>
+
+                        <p class="method-note">
+                            <strong>Reading the small steps visible on the
+                            employee/employer rate curves:</strong>
+                            health-insurance and employee-pension
+                            contributions are based on a "standard monthly
+                            remuneration" (標準報酬月額) looked up from a
+                            banded table (50 grades for health insurance, from
+                            JPY 58,000 to JPY 1,390,000; 32 grades for
+                            pension, from JPY 88,000 to JPY 650,000), rather
+                            than actual salary directly. These small jumps are
+                            genuine and expected at each band boundary — they
+                            are not calculation artifacts. See the
+                            Methodology tab, section 5.
+                        </p>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Social insurance breakdown (社会保険, shakai hoken)</h3>
+
+                        <p class="chart-subtitle">
+                            Kyokai Kenpo health insurance, child-support money,
+                            employee pension, child/childcare contribution
+                            (employer only), employment insurance, and
+                            workers' accident insurance (employer only), on
+                            both the employee and employer side. The dotted
+                            line is the total (income tax + employee
+                            contributions + employer contributions).
+                        </p>
+
+                        <div
+                            id="chart-japan-breakdown-en"
+                            class="plotly-chart"
+                            aria-label="Social insurance breakdown in Japan"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>National income tax vs resident tax</h3>
+
+                        <p class="chart-subtitle">
+                            Breakdown of the bundled income-tax figure (used
+                            everywhere else in this module) between national
+                            income tax (shotokuzei) and resident tax
+                            (juminzei). Since the 2026 tax reform, these two
+                            levies follow genuinely different basic-deduction
+                            schedules (see the Methodology tab, section 2):
+                            resident tax now frequently exceeds national
+                            income tax at low and middle income levels.
+                        </p>
+
+                        <div
+                            id="chart-japan-tax-split-en"
+                            class="plotly-chart"
+                            aria-label="National income tax versus resident tax in Japan"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Social wedge and total socio-fiscal wedge</h3>
+
+                        <p class="chart-subtitle">
+                            Comparison of the social wedge before tax and the
+                            total socio-fiscal wedge after income tax, and
+                            cost/net ratios.
+                        </p>
+
+                        <div
+                            id="chart-japan-wedge-en"
+                            class="plotly-chart"
+                            aria-label="Social and socio-fiscal wedge in Japan"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Marginal return on a gross-wage increase</h3>
+
+                        <p class="chart-subtitle">
+                            Share of an additional yen of gross wage kept
+                            before and after income tax, and the marginal
+                            effect of the socio-fiscal system.
+                        </p>
+
+                        <div
+                            id="chart-japan-marginal-en"
+                            class="plotly-chart"
+                            aria-label="Socio-fiscal return on a gross-wage increase in Japan"
+                        ></div>
+
+                        <p class="method-note">
+                            The inflection points correspond to the national
+                            bracket schedule and, occasionally, to standard
+                            monthly remuneration band boundaries (health
+                            insurance and pension).
+                        </p>
+                    </div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Key indicators</h2>
+
+                    <p>
+                        The indicators below are computed at the reference
+                        wage (multiple = 1) for the selected prefecture.
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="japan-metrics-en">
+                    <article class="metric-card">
+                        <span class="metric-label">Reference gross wage</span>
+                        <strong id="metric-japan-reference-wage-en">—</strong>
+                        <span class="metric-note">Tokyo minimum wage, ¥212,507/month</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Effective income tax rate</span>
+                        <strong id="metric-japan-income-tax-rate-en">—</strong>
+                        <span class="metric-note">National income tax + resident tax / gross</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Effective employer rate</span>
+                        <strong id="metric-japan-employer-rate-en">—</strong>
+                        <span class="metric-note">Social insurance</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Cost / net ratio at the reference wage</span>
+                        <strong id="metric-japan-cost-to-net-en">—</strong>
+                        <span class="metric-note">After income tax</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Resident tax share</span>
+                        <strong id="metric-japan-resident-tax-share-en">—</strong>
+                        <span class="metric-note">Of total national income tax + resident tax</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-en-flcl-index" class="tab-content">
+                <section class="chart-card">
+                    <h2>Lab Index</h2>
+                    <p class="chart-subtitle">
+                        Labour cost efficiency indicators.
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="japan-flcl-prefecture-select-en">
+                                Prefecture
+                            </label>
+
+                            <select id="japan-flcl-prefecture-select-en">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-E</span>
+                            <strong id="japan-flcl-e-value-en">—</strong>
+                            <span class="metric-note" id="japan-flcl-e-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-B</span>
+                            <strong id="japan-flcl-b-value-en">—</strong>
+                            <span class="metric-note" id="japan-flcl-b-caption-en"></span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Marginal transmission</span>
+                            <strong id="japan-flcl-transmission-value-en">—</strong>
+                            <span class="metric-note" id="japan-flcl-transmission-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Marginal capture</span>
+                            <strong id="japan-flcl-capture-value-en">—</strong>
+                            <span class="metric-note" id="japan-flcl-capture-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Implicit progressivity</span>
+                            <strong id="japan-flcl-progressivity-value-en">—</strong>
+                            <span class="metric-note" id="japan-flcl-progressivity-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Low-wage support</span>
+                            <strong id="japan-flcl-support-value-en">—</strong>
+                            <span class="metric-note" id="japan-flcl-support-caption-en"></span>
+                        </div>
+                    </div>
+
+                    <p class="method-note" style="margin-top: 16px;">
+                        No targeted, degressive employer relief is modeled for
+                        Japan: the Lab-R indicator does not apply here. The
+                        Japanese Lab-E can show small local jumps tied to
+                        standard-monthly-remuneration band boundaries (see the
+                        Methodology tab, section 5): genuine effects, not
+                        calculation noise.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Lab Index</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × net wage before income tax / employer cost.
+                        </p>
+                        <div id="chart-japan-flcl-e-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal transmission</h3>
+                        <p class="chart-subtitle">
+                            Share of one additional yen of employer cost reaching net wage.
+                        </p>
+                        <div id="chart-japan-flcl-marginal-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Implicit progressivity</h3>
+                        <p class="chart-subtitle">
+                            Change in Lab-E when the wage level increases.
+                        </p>
+                        <div id="chart-japan-flcl-progressivity-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal destination of one additional yen of employer cost</h3>
+                        <p class="chart-subtitle">
+                            Marginal split between net wage, employee contributions and employer contributions.
+                        </p>
+                        <div id="chart-japan-flcl-destination-en" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-en-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Data</h3>
+
+                    <p class="chart-subtitle">
+                        The Japan dataset can be downloaded as a CSV file. It
+                        contains every simulated wage point for all 47
+                        prefectures (521 wage points each): gross wage,
+                        national income tax, resident tax, social-insurance
+                        contributions (component detail), employer cost, and
+                        socio-fiscal wedge indicators.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/japan/japan_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Download the Japan dataset
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/japan/japan_parameters_2026.json"
+                            download
+                        >
+                            Download the 2026 parameters
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/japan/japan_sources_2026.json"
+                            download
+                        >
+                            Download the 2026 sources
+                        </a>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Data for the standard profile</h3>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="japan-data-prefecture-select-en">
+                                Prefecture
+                            </label>
+
+                            <select id="japan-data-prefecture-select-en">
+                            </select>
+                        </div>
+                    </div>
+
+                    <p
+                        class="chart-subtitle"
+                        id="japan-data-caption-en"
+                    >
+                        Standard employee (Tokyo)
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Multiple</th>
+                                    <th>Gross wage (¥)</th>
+                                    <th>Net before tax (¥)</th>
+                                    <th>Income tax (¥)</th>
+                                    <th>Net after tax (¥)</th>
+                                    <th>Employer cost (¥)</th>
+                                    <th>Employee contributions (¥)</th>
+                                    <th>Employer contributions (¥)</th>
+                                    <th>Social wedge (¥)</th>
+                                    <th>Total socio-fiscal wedge (¥)</th>
+                                    <th>Employer rate</th>
+                                    <th>Cost / net after tax</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="japan-data-table-body-en">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="chart-subtitle" style="margin-top: 10px;">
+                        Income tax = national income tax (shotokuzei) +
+                        resident tax (juminzei), identical across all 47
+                        prefectures. Employee and employer contributions
+                        combine the social insurances (Kyokai Kenpo health
+                        insurance, child-support money, employee pension,
+                        child/childcare contribution, employment insurance,
+                        workers' accident insurance) of the selected
+                        prefecture. See the Methodology tab.
+                    </p>
+                </div>
+            </section>
+
+            <section id="tab-en-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Methodology</h2>
+
+                    <p>
+                        The Japan module relies on a regulatory simulation of
+                        labour cost for a standard employee, single,
+                        childless, under age 40 (so not subject to the
+                        long-term-care-insurance surcharge), in standard
+                        formal employment (work-injury class 94, "other
+                        businesses"), in the prefecture selected among
+                        Japan's 47 prefectures.
+                    </p>
+
+                    <h3>1. The reference wage: Tokyo's minimum wage</h3>
+
+                    <p>
+                        Japan has no national minimum wage: each of the 47
+                        prefectures sets its own (from JPY 1,023 to JPY 1,226
+                        per hour). This module uses, by convention, Tokyo's
+                        minimum wage (JPY 1,226/hour, effective 3 October 2025
+                        — the country's highest, its economic capital),
+                        converted into a full-time monthly equivalent
+                        (1,226 x 40h/week x 52/12 = JPY 212,506.67/month),
+                        applied uniformly across all prefectures — the same
+                        convention used for the US federal minimum wage
+                        applied uniformly across 50 states in this Lab, or
+                        Shanghai's minimum wage used for China. This is
+                        neither a national average nor a legal minimum common
+                        to all prefectures.
+                    </p>
+
+                    <h3>2. National income tax and resident tax: two genuinely different deduction schedules now</h3>
+
+                    <p>
+                        National income tax (所得税, shotokuzei) and resident
+                        tax (住民税, juminzei) both apply to the same
+                        employment-income base (after the employment income
+                        deduction), but each follows its own schedule.
+                        National income tax uses a national progressive
+                        7-bracket schedule (5% / 10% / 20% / 23% / 33% / 40% /
+                        45%), plus a 2.1% reconstruction surtax for the 2026
+                        tax year. Resident tax applies a flat combined rate of
+                        10% (4% prefectural + 6% municipal), plus a flat
+                        annual per-capita levy of JPY 5,000 (均等割).
+                    </p>
+
+                    <p>
+                        <strong>Major methodological point: the reiwa 8 tax
+                        reform (announced December 2025, applied in full to
+                        the 2026 tax year) raised the NATIONAL income tax's
+                        basic deduction (kiso kojo) to up to JPY 1,040,000
+                        (tiered by income: JPY 1,040,000 up to JPY 3,360,000
+                        of income, JPY 670,000 up to JPY 6,550,000, JPY
+                        620,000 beyond), while the resident tax's basic
+                        deduction stayed flat at JPY 430,000</strong> — a gap
+                        of up to JPY 610,000 at the lowest income levels,
+                        which did not exist before the reform (the old
+                        national basic deduction was JPY 580,000, close to
+                        the resident tax's). A direct consequence: for the
+                        same income base, resident tax now taxes a
+                        substantially larger base than national income tax,
+                        so it can now make up a larger share of total income
+                        tax than it did before the reform — a recent and
+                        distinctive reversal in the Japanese tax system,
+                        visible on the "National income tax vs resident tax"
+                        chart in the Simulation tab. The employment income
+                        deduction (給与所得控除) was also raised by the same
+                        reform (floor raised from JPY 650,000 to JPY 740,000,
+                        now extended up to JPY 2,200,000 of gross salary); it
+                        is, however, shared by both taxes.
+                    </p>
+
+                    <p class="method-note">
+                        In practice, employers withhold national income tax
+                        monthly using the National Tax Agency's (NTA)
+                        withholding tables, reconciled at the December
+                        year-end adjustment (年末調整, nenmatsu chosei) to the
+                        true annual liability. Resident tax, meanwhile, is
+                        actually assessed on the PRIOR year's income. As with
+                        every other module in this project facing a monthly
+                        withholding-versus-annual-settlement gap, this module
+                        applies the annual schedules directly to annualized
+                        salary and divides by 12, rather than reproducing the
+                        month-by-month ramp-up or the one-year lag.
+                    </p>
+
+                    <h3>3. National social-insurance contributions: pension, employment insurance, workers' accident insurance</h3>
+
+                    <p>
+                        Employee pension insurance (厚生年金保険, kosei
+                        nenkin) is levied at a national total rate of 18.3%
+                        (9.15% employee / 9.15% employer, unchanged since
+                        2017), based on a banded standard monthly remuneration
+                        (32 grades, from JPY 88,000 to JPY 650,000). An
+                        employer-only child/childcare contribution
+                        (子ども・子育て拠出金, 0.36%) is levied on the same
+                        pension base. Employment insurance (雇用保険) is
+                        levied at a national rate of 13.5 per mille (5 per
+                        mille employee / 8.5 per mille employer for a general
+                        business), based directly on actual salary. Workers'
+                        accident insurance (労災保険, employer only) is
+                        withheld at the illustrative rate of 0.30% (class 94,
+                        "other businesses", the generic office/services
+                        profile), based on actual salary.
+                    </p>
+
+                    <h3>4. Kyokai Kenpo health insurance: the only genuinely prefecture-specific rate</h3>
+
+                    <p>
+                        Health insurance (協会けんぽ, Kyokai Kenpo / Zenkyoren)
+                        is the ONLY levy in this module that genuinely varies
+                        by prefecture: each of the 47 prefectures has its own
+                        2026 premium rate, from 9.21% (Niigata, the lowest) to
+                        10.55% (Saga, the highest), split 50/50 between
+                        employee and employer, based on a wider banded
+                        standard monthly remuneration than pension's (50
+                        grades, from JPY 58,000 to JPY 1,390,000). A new
+                        national child-support-and-family contribution
+                        (子ども・子育て支援金, 0.23%, split 50/50) is levied on
+                        the same base from April 2026; this module applies it
+                        across the full tax year as a simplification.
+                    </p>
+
+                    <h3>5. Standard monthly remuneration banding (標準報酬月額, hyōjun hōshū getsugaku)</h3>
+
+                    <p>
+                        <strong>A methodological feature distinctive to Japan
+                        among every country in this Lab: health-insurance and
+                        employee-pension contributions are not computed as a
+                        smooth percentage of actual salary.</strong> An
+                        employee's actual salary is rounded ("graded") into
+                        one of the bands of an official table — 50 grades for
+                        health insurance (from JPY 58,000 to JPY 1,390,000),
+                        32 grades for pension (from JPY 88,000 to JPY
+                        650,000) — and it is the band's own representative
+                        amount, not actual salary, that serves as the
+                        contribution base for both levies. This creates
+                        small, real step effects at each band boundary,
+                        visible on this module's effective-rate charts and
+                        Lab Index: they are faithfully reproduced, not
+                        smoothed, and should not be mistaken for calculation
+                        noise.
+                    </p>
+
+                    <h3>6. Indicators produced</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Net before tax:</strong>
+                            gross wage reduced by employee contributions
+                            (health insurance, child-support money, pension,
+                            employment insurance of the selected prefecture).
+                        </li>
+
+                        <li>
+                            <strong>Net after tax:</strong>
+                            net before tax reduced by the equivalent monthly
+                            income tax, bundling national income tax and
+                            resident tax (both identical across all 47
+                            prefectures).
+                        </li>
+
+                        <li>
+                            <strong>Employer cost:</strong>
+                            gross wage increased by employer contributions
+                            (health insurance, child-support money, pension,
+                            child/childcare contribution, employment
+                            insurance, workers' accident insurance of the
+                            selected prefecture).
+                        </li>
+
+                        <li>
+                            <strong>Social wedge:</strong>
+                            difference between employer cost and net wage
+                            before tax.
+                        </li>
+
+                        <li>
+                            <strong>Total socio-fiscal wedge:</strong>
+                            difference between employer cost and net wage
+                            after tax.
+                        </li>
+
+                        <li>
+                            <strong>Marginal return:</strong>
+                            share of an additional yen of gross wage kept
+                            before and after income tax.
+                        </li>
+                    </ul>
+
+                    <h3>7. Lab Index</h3>
+
+                    <p>
+                        The Lab Index measures the wage efficiency of labour
+                        cost, independent of income tax. Lab-E = 100 × net
+                        wage before income tax / employer cost, Lab-B = 100 −
+                        Lab-E. No targeted, degressive employer relief is
+                        modeled for Japan: the Lab-R indicator does not apply
+                        here.
+                    </p>
+
+                    <h3>8. Scenario limitations</h3>
+
+                    <ul class="method-note">
+                        <li>
+                            Japan has no national minimum wage: this module's
+                            1.0x reference wage is Tokyo's minimum wage, a
+                            methodological choice, not a national average nor
+                            a legal minimum common to all prefectures.
+                        </li>
+
+                        <li>
+                            Only a single, childless taxpayer with no other
+                            income, under age 40 (and therefore not subject
+                            to the long-term-care-insurance surcharge) is
+                            modeled.
+                        </li>
+
+                        <li>
+                            Resident tax (juminzei) is actually assessed on
+                            the PRIOR year's income; this module uses
+                            same-year income for a steady-state reference
+                            profile, as in every other module in this
+                            project.
+                        </li>
+
+                        <li>
+                            The workers' accident insurance rate (rousai
+                            hoken, 0.30%) is illustrative, chosen for a
+                            generic office/services employer profile (class
+                            94); real rates range from 0.15% to 11.0%
+                            depending on the industry.
+                        </li>
+
+                        <li>
+                            The child-support and family contribution (0.23%),
+                            legally due only from April 2026, is applied by
+                            this module across the full tax year as a
+                            simplification.
+                        </li>
+
+                        <li>
+                            The monthly withholding mechanism (gensen choshu)
+                            is not reproduced month by month: this module
+                            publishes the monthly equivalent of the annual tax
+                            established at the December year-end adjustment
+                            (nenmatsu chosei).
+                        </li>
+
+                        <li>
+                            Health-insurance and pension social-insurance
+                            contributions are based on a banded standard
+                            monthly remuneration (hyojun hoshu getsugaku),
+                            which creates small, real step effects at each
+                            band boundary — faithfully reproduced, not
+                            smoothed.
+                        </li>
+
+                        <li>
+                            Only a general-business-type employer (jimusho
+                            ippan) is modeled for employment insurance and
+                            workers' accident insurance; agriculture,
+                            forestry, fisheries and construction have
+                            different rates, not modeled.
+                        </li>
+                    </ul>
+
+                    <h3>9. Sources</h3>
+
+                    <p class="method-note">
+                        National Tax Agency (NTA), reiwa 8 (2026) bracket
+                        schedule and tax reform; Ministry of Internal Affairs
+                        and Communications (Soumusho/MIC) for resident tax;
+                        Japan Pension Service (Nihon Nenkin Kiko) for the
+                        pension band table; Japan Health Insurance
+                        Association (Kyokai Kenpo / Zenkyoren) for all 47
+                        prefectural rates and the health-insurance band table;
+                        Ministry of Health, Labour and Welfare (MHLW) for
+                        employment insurance, workers' accident insurance and
+                        Tokyo's minimum wage; Statistics Bureau of Japan
+                        (Soumusho Tokei-kyoku) for prefectural population;
+                        World Bank (International Comparison Program) for the
+                        PPP conversion factor used in the Comparison module.
+                        See japan_sources_2026.json for the full citation
+                        detail, including for all 47 prefectures.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

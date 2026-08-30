@@ -1,0 +1,107 @@
+{
+    "country": "Japan",
+    "country_code": "JP",
+    "version": "2026-01",
+    "effective_from": "2026-01-01",
+    "status": "prototype_v1",
+    "currency": "JPY",
+    "wage_reference": {
+        "name": "Salaire minimum de Tokyo (référence conventionnelle)",
+        "gross_monthly_jpy": 212506.6667,
+        "hourly_rate_jpy": 1226,
+        "weekly_hours": 40,
+        "source": "Ministere de la Sante, du Travail et des Affaires sociales (MHLW), en vigueur au 3 octobre 2025",
+        "note": "Le Japon n'a pas de salaire minimum national : chacune des 47 prefectures fixe le sien (de 1023 a 1226 yens/heure). Ce module retient par convention le salaire minimum de Tokyo (le plus eleve du pays, capitale economique), converti en equivalent mensuel plein temps (1226 x 40h/semaine x 52/12 = 212 506,67 yens/mois), applique uniformement a toutes les prefectures -- la meme logique que le salaire minimum federal americain ou le salaire minimum de Shanghai retenus ailleurs dans ce projet."
+    },
+    "grid": {
+        "min_multiple": 0.80,
+        "max_multiple": 6.00,
+        "step": 0.01
+    },
+    "note_on_data_source": "Les parametres complets par prefecture (taux Kyokai Kenpo, salaire minimum) sont la source de verite unique dans analysis/japan/japan_payroll_2026.py (dictionnaire PREFECTURE_DATA_2026), afin d'eviter toute duplication susceptible de diverger. Ce fichier JSON documente le niveau national ; voir japan_sources_2026.json pour les citations completes.",
+    "national_income_tax_2026": {
+        "iit_brackets_annual": [
+            {"upper_bound_jpy": 1950000, "rate": 0.05},
+            {"upper_bound_jpy": 3300000, "rate": 0.10},
+            {"upper_bound_jpy": 6950000, "rate": 0.20},
+            {"upper_bound_jpy": 9000000, "rate": 0.23},
+            {"upper_bound_jpy": 18000000, "rate": 0.33},
+            {"upper_bound_jpy": 40000000, "rate": 0.40},
+            {"upper_bound_jpy": null, "rate": 0.45}
+        ],
+        "reconstruction_surtax_rate": 0.021,
+        "source": "Administration fiscale nationale (NTA), bareme de l'annee fiscale reiwa 8 (2026)",
+        "note": "Bareme national inchange depuis plusieurs annees ; la surtaxe de reconstruction de 2,1 % s'applique sur l'impot ainsi calcule pour l'annee fiscale 2026 (elle passera a 1,1 % a partir de 2027)."
+    },
+    "employment_income_deduction_2026": {
+        "note": "Deduction pour revenu d'emploi (kyuyo shotoku kojo), appliquee au salaire brut annuel avant la deduction de base. Reforme fiscale reiwa 8 (annoncee decembre 2025, appliquee integralement a l'annee fiscale 2026 via la regularisation de fin d'annee de decembre) : deduction plancher relevee de 650 000 a 740 000 yens, ce plancher etant desormais etendu jusqu'a 2 200 000 yens de salaire brut (au-dela, la formule standard du bareme national s'applique, et coincide exactement avec 740 000 yens de deduction au point de jonction de 2 200 000 yens). Voir analysis/japan/japan_payroll_2026.py pour la formule complete."
+    },
+    "basic_deductions_2026": {
+        "income_tax_basic_deduction": {
+            "note": "Deduction de base de l'impot national sur le revenu (kiso kojo), degressive par palier de revenu total : 1 040 000 yens jusqu'a 3 360 000 yens de revenu, 670 000 yens jusqu'a 6 550 000 yens, 620 000 yens au-dela (jusqu'a 23 500 000 yens). Relevee significativement par la reforme fiscale reiwa 8 (auparavant 580 000 yens)."
+        },
+        "resident_tax_basic_deduction": {
+            "amount_jpy": 430000,
+            "note": "Deduction de base de la taxe d'habitation (juminzei), forfaitaire, NON relevee par la reforme reiwa 8 -- un ecart croissant et desormais substantiel avec la deduction de l'impot national sur le revenu (jusqu'a 610 000 yens d'ecart au bas de l'echelle des revenus). Ce module modelise deux baremes de deduction distincts pour les deux impots, et non un bareme partage."
+        }
+    },
+    "resident_tax_2026": {
+        "combined_rate": 0.10,
+        "per_capita_levy_annual_jpy": 5000,
+        "source": "Ministere des Affaires interieures et des Communications (MIC/Soumusho)",
+        "note": "Taux standard combine (4 % prefectoral + 6 % municipal), fixe par la loi nationale et applique par la quasi-totalite des municipalites japonaises (quelques exceptions locales par majoration d'ordonnance, non modelisees). Prelevement forfaitaire annuel de 5 000 yens (1 000 prefectoral + 3 000 municipal + 1 000 taxe nationale pour l'environnement forestier). Simplification methodologique : la taxe d'habitation est en realite assise sur le revenu de l'annee PRECEDENTE (juminzei 2026 = revenu 2025) ; ce module retient, comme tous les autres modules du projet, un revenu de la meme annee pour un profil de reference en regime etabli."
+    },
+    "social_insurance_2026": {
+        "employee_pension_insurance": {
+            "total_rate": 0.183,
+            "split": "50/50",
+            "source": "Service japonais des pensions (Nenkin Kiko), taux inchange depuis septembre 2017",
+            "note": "Assis sur une remuneration mensuelle standard par palier (hyojun hoshu getsugaku, 32 paliers de 88 000 a 650 000 yens), et non sur le salaire reel directement -- voir analysis/japan/japan_payroll_2026.py pour la table complete des paliers, verifiee mot pour mot contre le document officiel du Service des pensions."
+        },
+        "child_childcare_contribution": {
+            "rate": 0.0036,
+            "employer_only": true,
+            "source": "Service japonais des pensions, taux en vigueur a compter du 1er avril 2026",
+            "note": "Cotisation employeur uniquement (kodomo kosodate kyoshutsukin), assise sur la meme base que la pension."
+        },
+        "employment_insurance": {
+            "employee_rate": 0.005,
+            "employer_rate": 0.0085,
+            "source": "Ministere de la Sante, du Travail et des Affaires sociales (MHLW), annee fiscale reiwa 8 (avril 2026-mars 2027), secteur d'activite general",
+            "note": "Taux national, assis directement sur le salaire reel (pas de palier). Taux plus eleves pour l'agriculture/sylviculture/peche et le BTP, non modelises."
+        },
+        "workers_accident_insurance": {
+            "employer_rate_illustrative": 0.003,
+            "employer_only": true,
+            "source": "MHLW, bareme des taux par branche (categorie 94, « autres activites diverses »)",
+            "note": "Taux illustratif retenu pour un profil d'employeur de bureau/services generique (classe 94, deuxieme taux le plus bas du bareme national a 54 branches, de 0,15 % a 11,0 %). Assis sur le salaire reel."
+        },
+        "kyokai_kenpo_health_insurance": {
+            "national_range_2026": {"min": 0.0921, "max": 0.1055},
+            "split": "50/50",
+            "source": "Association japonaise d'assurance sante (Kyokai Kenpo / Zenkyoren), bareme des 47 prefectures, en vigueur a compter de la paie de mars 2026 (versement avril 2026)",
+            "note": "Seul taux reellement specifique a chaque prefecture. Assis sur la meme structure de paliers par remuneration mensuelle standard que la pension, mais avec une echelle plus large (50 paliers de 58 000 a 1 390 000 yens). Voir analysis/japan/japan_payroll_2026.py pour la table complete des paliers et le taux de chacune des 47 prefectures."
+        },
+        "child_support_money": {
+            "rate": 0.0023,
+            "split": "50/50",
+            "source": "Agence pour les enfants et les familles (Kodomo Katei Cho), taux en vigueur a compter de la paie d'avril 2026 (versement mai 2026)",
+            "note": "Nouvelle cotisation nationale assise sur la meme base que l'assurance maladie. Ce module l'applique sur l'ensemble de l'annee fiscale 2026 par simplification, bien qu'elle ne soit legalement due qu'a partir d'avril 2026."
+        },
+        "long_term_care_insurance_not_modeled": {
+            "national_rate": 0.0162,
+            "note": "Non modelisee : s'applique uniquement aux assures ages de 40 a 64 ans (kaigo hoken dai-2-go hihokensha) ; le profil de reference de ce module est suppose avoir moins de 40 ans."
+        }
+    },
+    "profiles_note": "Chaque prefecture constitue un profil distinct (prefecture_code), sur le modele du selecteur de cantons suisses, d'Etats americains ou de provinces chinoises. Le module Comparaison agrege les 47 prefectures par ponderation demographique (population 2025, estimations officielles japonaises).",
+    "limits": [
+        "Le Japon n'a pas de salaire minimum national : le salaire de reference 1,0x de ce module est le salaire minimum de Tokyo, un choix methodologique, pas une moyenne nationale ni un minimum legal commun a toutes les prefectures.",
+        "Seul un profil celibataire sans enfant, sans autre revenu, age de moins de 40 ans (donc non soumis a la cotisation dependance) est modelise.",
+        "La taxe d'habitation (juminzei) est en realite assise sur le revenu de l'annee precedente ; ce module retient un revenu de la meme annee pour un profil en regime etabli, comme tous les autres modules de ce projet.",
+        "Le taux d'assurance accidents du travail (rousai hoken, 0,30 %) est illustratif, retenu pour un profil d'employeur de bureau/services generique (classe 94) ; les taux reels varient de 0,15 % a 11,0 % selon la branche d'activite.",
+        "La cotisation de soutien aux enfants et a la famille (0,23 %), legalement due seulement a compter d'avril 2026, est appliquee par ce module sur l'ensemble de l'annee fiscale par simplification.",
+        "Le mecanisme mensuel de retenue a la source (gensen choshu) n'est pas reproduit mois par mois : ce module publie l'equivalent mensuel de l'impot annuel etabli lors de la regularisation de fin d'annee (nenmatsu chosei) de decembre.",
+        "Les cotisations sociales d'assurance maladie et de pension sont assises sur une remuneration mensuelle standard par palier (hyojun hoshu getsugaku), qui cree de petits effets de seuil reels a chaque changement de palier -- reproduits fidelement, pas lisses.",
+        "Seul un employeur de type entreprise generale (jimusho ippan) est modelise pour l'assurance emploi et les accidents du travail ; l'agriculture, la sylviculture, la peche et le BTP ont des taux differents, non modelises."
+    ]
+}

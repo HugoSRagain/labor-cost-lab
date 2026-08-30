@@ -141,7 +141,7 @@
     </style>
 
     <script defer src="../../assets/i18n_common.js?v=3"></script>
-    <script defer src="./assets/comparison_app.js?v=11"></script>
+    <script defer src="./assets/comparison_app.js?v=12"></script>
 </head>
 
 <body>
@@ -165,9 +165,9 @@
                 <h1>Comparaison internationale du coût du travail</h1>
 
                 <p>
-                    Ce module met en regard les douze modules nationaux (France,
+                    Ce module met en regard les treize modules nationaux (France,
                     Allemagne, Belgique, Suisse, Pays-Bas, Royaume-Uni, Irlande,
-                    Espagne, Suède, Italie, États-Unis, Chine) sur
+                    Espagne, Suède, Italie, États-Unis, Chine, Japon) sur
                     une grille de salaires harmonisée, exprimée en dollars internationaux
                     (parité de pouvoir d'achat), afin de comparer des niveaux de
                     vie équivalents plutôt que des salaires nominaux.
@@ -219,7 +219,7 @@
                         class="chart-subtitle"
                         id="comparison-metrics-subtitle-fr"
                     >
-                        Valeurs des 12 pays au point de salaire harmonisé
+                        Valeurs des 13 pays au point de salaire harmonisé
                         sélectionné, exprimées en dollars internationaux (PPA).
                     </p>
 
@@ -306,6 +306,12 @@
                             <strong id="metric-comparison-cn-net-fr">—</strong>
                             <span class="metric-note">Net avant impôt, intl $</span>
                         </article>
+
+                        <article class="metric-card">
+                            <span class="metric-label">Japon</span>
+                            <strong id="metric-comparison-jp-net-fr">—</strong>
+                            <span class="metric-note">Net avant impôt, intl $</span>
+                        </article>
                     </section>
                 </div>
 
@@ -313,7 +319,7 @@
                     <h2>Graphiques comparatifs</h2>
 
                     <p>
-                        Les graphiques suivants comparent les 12 pays sur toute la
+                        Les graphiques suivants comparent les 13 pays sur toute la
                         grille de salaires harmonisée, en dollars internationaux
                         (PPA). Chaque courbe est calculée directement par le
                         moteur du module national correspondant.
@@ -326,7 +332,7 @@
 
                         <p class="chart-subtitle">
                             Salaire net de cotisations sociales, comparable entre
-                            les 12 pays.
+                            les 13 pays.
                         </p>
 
                         <div
@@ -528,6 +534,7 @@
                                     <th>Italie</th>
                                     <th>États-Unis</th>
                                     <th>Chine</th>
+                                    <th>Japon</th>
                                 </tr>
                             </thead>
 
@@ -557,7 +564,8 @@
                         réutilise directement les moteurs de calcul des modules
                         France, Allemagne, Belgique, Suisse, Pays-Bas,
                         Royaume-Uni, Irlande, Espagne, Suède, Italie,
-                        États-Unis et Chine, à des points de salaire communs.
+                        États-Unis, Chine et Japon, à des points de salaire
+                        communs.
                     </p>
 
                     <h3>1. Grille de salaires harmonisée</h3>
@@ -566,7 +574,7 @@
                         21 points de salaire, de 2 000 à 12 000 dollars
                         internationaux mensuels par pas de 500. La borne basse est
                         volontairement fixée sous le plancher de salaire minimum
-                        (ou de référence) des 12 pays, une fois converti en dollars
+                        (ou de référence) des 13 pays, une fois converti en dollars
                         internationaux, afin que les grilles de salaire les plus
                         basses restent visibles. Les points de salaire inférieurs
                         au minimum légal d'un pays sont signalés par un
@@ -576,7 +584,9 @@
                         internationaux sont : Chine (salaire minimum de
                         Shanghai, non un salaire minimum national, voir la
                         section 14) environ 772, États-Unis (salaire minimum
-                        fédéral) environ 1 257, Espagne (SMI) environ 2 421,
+                        fédéral) environ 1 257, Japon (salaire minimum de
+                        Tokyo, non un salaire minimum national, voir la
+                        section 15) environ 2 138, Espagne (SMI) environ 2 421,
                         France (SMIC) environ 2 604, Suisse environ 2 710,
                         Irlande (National Minimum Wage) environ 2 711, Belgique
                         (RMMMG) environ 2 911, Royaume-Uni (National Living
@@ -603,7 +613,7 @@
                         ménages (Banque mondiale, Programme de comparaison
                         internationale, indicateur PA.NUS.PRVT.PP, année de
                         référence 2024). Ce facteur est appliqué individuellement
-                        aux 12 pays, y compris la Suisse, selon la même logique que
+                        aux 13 pays, y compris la Suisse, selon la même logique que
                         les comparaisons « Taxing Wages » de l'OCDE. Le facteur de
                         conversion PPA du dollar américain vaut exactement 1,0 par
                         construction (le dollar international est étalonné sur les
@@ -669,7 +679,18 @@
                         (IIT) national et identique partout ; bases de
                         cotisation, planchers et parfois taux des cinq
                         assurances sociales et du fonds de logement variables
-                        selon la province.
+                        selon la province. Japon : moyenne pondérée par la
+                        population des 47 préfectures, salarié célibataire
+                        sans enfant, âgé de moins de 40 ans, emploi formel
+                        standard (accident du travail classe 94) ; impôt
+                        national sur le revenu et taxe d'habitation, tous deux
+                        nationaux et identiques partout mais suivant deux
+                        barèmes de déduction de base réellement différents
+                        depuis la réforme fiscale 2026 ; cotisations de
+                        retraite, d'assurance emploi et d'accidents du travail
+                        nationales et identiques partout ; seul le taux
+                        d'assurance maladie Kyokai Kenpo varie selon la
+                        préfecture.
                     </p>
 
                     <h3>5. Agrégation cantonale suisse</h3>
@@ -984,7 +1005,37 @@
                         module Chine pour le détail complet.
                     </p>
 
-                    <h3>15. Lab-E</h3>
+                    <h3>15. Salaire de référence, cotisations et impôt sur le revenu au Japon</h3>
+
+                    <p>
+                        L'impôt national sur le revenu et la taxe d'habitation
+                        (juminzei) japonais sont tous deux uniformes à
+                        l'échelle nationale, mais suivent réellement deux
+                        barèmes de déduction de base différents depuis une
+                        réforme fiscale 2026 qui a substantiellement relevé la
+                        déduction de base de l'impôt sur le revenu (jusqu'à
+                        1 040 000 yens) tout en laissant inchangée la
+                        déduction de base de la taxe d'habitation (430 000
+                        yens forfaitaires) — un écart réel et croissant entre
+                        les deux prélèvements. Les taux de retraite salariée,
+                        d'assurance emploi et d'assurance accidents du travail
+                        sont également uniformes à l'échelle nationale ; le
+                        SEUL taux spécifique à chaque préfecture est la prime
+                        d'assurance maladie Kyokai Kenpo (9,21 %-10,55 % selon
+                        les 47 préfectures pour 2026). Ce module agrège les 47
+                        préfectures par une moyenne pondérée par la population
+                        (voir « jp_prefecture_population_weights »). Le Japon
+                        n'a pas de salaire minimum national ; le salaire de
+                        référence retenu est le salaire minimum de Tokyo
+                        (1 226 yens/heure), une convention méthodologique, sur
+                        le modèle des conventions retenues pour Shanghai
+                        (Chine) et le salaire minimum fédéral (États-Unis). Le
+                        facteur de conversion PPA du yen vaut 99,384798. Voir
+                        l'onglet Méthodologie du module Japon pour le détail
+                        complet.
+                    </p>
+
+                    <h3>16. Lab-E</h3>
 
                     <p>
                         L'indicateur Lab-E (100 × net avant impôt / coût employeur)
@@ -1034,10 +1085,16 @@
                         cotisations y sont réellement calculées sur ce plancher
                         plus élevé plutôt que sur le salaire brut effectif (voir
                         la section 14 ci-dessus et l'onglet Méthodologie du
-                        module Chine).
+                        module Chine). Le Lab-E japonais, enfin, peut présenter
+                        de petits sauts locaux non liés aux tranches
+                        d'imposition mais aux changements de palier de la
+                        rémunération mensuelle standard (assurance maladie et
+                        retraite) : des effets de seuil réels, pas du bruit de
+                        calcul (voir la section 15 ci-dessus et l'onglet
+                        Méthodologie du module Japon).
                     </p>
 
-                    <h3>16. Limites</h3>
+                    <h3>17. Limites</h3>
 
                     <p class="method-note">
                         Le calcul de l'impôt sur le revenu suppose un salarié
@@ -1070,9 +1127,9 @@
                 <h1>Cross-country comparison of labour costs</h1>
 
                 <p>
-                    This module compares the twelve national modules (France,
+                    This module compares the thirteen national modules (France,
                     Germany, Belgium, Switzerland, Netherlands, United Kingdom,
-                    Ireland, Spain, Sweden, Italy, United States, China) on a
+                    Ireland, Spain, Sweden, Italy, United States, China, Japan) on a
                     harmonized wage grid, expressed in international dollars
                     (purchasing power parity), to compare equivalent standards
                     of living rather than nominal wages.
@@ -1124,7 +1181,7 @@
                         class="chart-subtitle"
                         id="comparison-metrics-subtitle-en"
                     >
-                        Values for the 12 countries at the selected harmonized
+                        Values for the 13 countries at the selected harmonized
                         wage point, expressed in international dollars (PPP).
                     </p>
 
@@ -1211,6 +1268,12 @@
                             <strong id="metric-comparison-cn-net-en">—</strong>
                             <span class="metric-note">Net before tax, intl $</span>
                         </article>
+
+                        <article class="metric-card">
+                            <span class="metric-label">Japan</span>
+                            <strong id="metric-comparison-jp-net-en">—</strong>
+                            <span class="metric-note">Net before tax, intl $</span>
+                        </article>
                     </section>
                 </div>
 
@@ -1218,7 +1281,7 @@
                     <h2>Comparative charts</h2>
 
                     <p>
-                        The charts below compare the 12 countries across the
+                        The charts below compare the 13 countries across the
                         whole harmonized wage grid, in international dollars
                         (PPP). Each curve is computed directly by the matching
                         national module's engine.
@@ -1231,7 +1294,7 @@
 
                         <p class="chart-subtitle">
                             Wage net of social contributions, comparable
-                            across the 12 countries.
+                            across the 13 countries.
                         </p>
 
                         <div
@@ -1435,6 +1498,7 @@
                                     <th>Italy</th>
                                     <th>United States</th>
                                     <th>China</th>
+                                    <th>Japan</th>
                                 </tr>
                             </thead>
 
@@ -1464,7 +1528,7 @@
                         it directly reuses the calculation engines of the
                         France, Germany, Belgium, Switzerland, Netherlands,
                         United Kingdom, Ireland, Spain, Sweden, Italy,
-                        United States and China modules, at common wage
+                        United States, China and Japan modules, at common wage
                         points.
                     </p>
 
@@ -1474,7 +1538,7 @@
                         21 wage points, from 2,000 to 12,000 international
                         dollars per month in steps of 500. The lower bound is
                         deliberately set below the minimum (or reference) wage
-                        floor of the 12 countries, once converted to
+                        floor of the 13 countries, once converted to
                         international dollars, so that the lowest wage ranges
                         remain visible. Wage points below a country's legal
                         minimum are flagged with an asterisk (*) in the Data
@@ -1483,7 +1547,9 @@
                         thresholds converted to international dollars are:
                         China (Shanghai's minimum wage, not a national minimum
                         wage, see section 14) about 772, United States
-                        (federal minimum wage) about 1,257,
+                        (federal minimum wage) about 1,257, Japan (Tokyo's
+                        minimum wage, not a national minimum wage, see section
+                        15) about 2,138,
                         Spain (SMI) about 2,421, France (SMIC) about 2,604,
                         Switzerland about 2,710, Ireland (National Minimum
                         Wage) about 2,711, Belgium (RMMMG) about 2,911, United
@@ -1509,7 +1575,7 @@
                         private-consumption purchasing-power-parity conversion
                         factor (World Bank, International Comparison Program,
                         indicator PA.NUS.PRVT.PP, 2024 reference year). This
-                        factor is applied individually to the 12 countries,
+                        factor is applied individually to the 13 countries,
                         including Switzerland, following the same logic as the
                         OECD's "Taxing Wages" comparisons. The US dollar's own
                         PPP conversion factor is exactly 1.0 by construction
@@ -1577,6 +1643,16 @@
                         national and identical everywhere; contribution bases,
                         floors, and sometimes rates for the five social
                         insurances and the housing fund vary by province.
+                        Japan: population-weighted average across the 47
+                        prefectures, single, childless employee under age 40,
+                        standard formal employment (work-injury class 94);
+                        national income tax and resident tax, both national
+                        and identical everywhere but following two genuinely
+                        different basic-deduction schedules since the 2026 tax
+                        reform; pension, employment-insurance and
+                        workers'-accident-insurance contributions national and
+                        identical everywhere; only the Kyokai Kenpo
+                        health-insurance rate varies by prefecture.
                     </p>
 
                     <h3>5. Swiss cantonal aggregation</h3>
@@ -1877,7 +1953,35 @@
                         China module's Methodology tab for full detail.
                     </p>
 
-                    <h3>15. Lab-E</h3>
+                    <h3>15. Reference wage, contributions and income tax in Japan</h3>
+
+                    <p>
+                        Japan's national income tax and resident tax
+                        (juminzei) are both uniform nationwide, but genuinely
+                        follow two different basic-deduction schedules
+                        following a 2026 tax reform that substantially raised
+                        the national income tax's basic deduction (up to JPY
+                        1,040,000) while leaving the resident tax's basic
+                        deduction unchanged (a flat JPY 430,000) -- a real and
+                        growing divergence between the two levies. Employee
+                        pension, employment-insurance and
+                        workers'-accident-insurance rates are also uniform
+                        nationally; the ONLY prefecture-specific rate is the
+                        Kyokai Kenpo health-insurance premium (9.21%-10.55%
+                        across the 47 prefectures for 2026). This module
+                        aggregates all 47 prefectures with a
+                        population-weighted average (see
+                        "jp_prefecture_population_weights"). Japan has no
+                        national minimum wage; the reference wage used is
+                        Tokyo's own minimum wage (JPY 1,226/hour), a
+                        methodological convention, mirroring the conventions
+                        used for Shanghai (China) and the federal minimum wage
+                        (United States). The yen's own PPP conversion factor
+                        is 99.384798. See the Japan module's Methodology tab
+                        for full detail.
+                    </p>
+
+                    <h3>16. Lab-E</h3>
 
                     <p>
                         The Lab-E indicator (100 × net before tax / employer cost)
@@ -1920,10 +2024,15 @@
                         wage, so contributions there are genuinely computed on
                         that higher floor rather than on actual gross pay (see
                         section 14 above and the China module's Methodology
-                        tab).
+                        tab). Japan's Lab-E, lastly, can show small local
+                        jumps unrelated to tax brackets but tied to
+                        standard-monthly-remuneration band boundaries (health
+                        insurance and pension): genuine step effects, not
+                        calculation noise (see section 15 above and the Japan
+                        module's Methodology tab).
                     </p>
 
-                    <h3>16. Limits</h3>
+                    <h3>17. Limits</h3>
 
                     <p class="method-note">
                         The income-tax calculation assumes a single, childless

@@ -1,0 +1,109 @@
+{
+    "country": "Japan",
+    "country_code": "JP",
+    "version": "2026",
+    "status": "source_audit",
+    "sources": {
+        "nta_iit_brackets_2026": {
+            "label": "Bareme national de l'impot sur le revenu, annee fiscale reiwa 8 (2026)",
+            "value": "7 tranches (5/10/20/23/33/40/45%), surtaxe de reconstruction de 2,1%",
+            "source_name": "Administration fiscale nationale (NTA), 令和8年分所得税の税額表等",
+            "source_type": "official",
+            "url": "https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/shinkoku/pdf/r08/zeigakuhyo.pdf",
+            "confidence": "high"
+        },
+        "nta_basic_deduction_reform_2026": {
+            "label": "Reforme fiscale reiwa 8 : relevement de la deduction de base et de la deduction pour revenu d'emploi",
+            "value": "Deduction de base 1 040 000/670 000/620 000 yens par palier de revenu ; deduction pour revenu d'emploi, plancher relevee a 740 000 yens jusqu'a 2 200 000 yens de salaire brut",
+            "source_name": "NTA, source premaire directement lue : source-officielle-alleges (源泉所得税の改正のあらまし, 令和8年4月) et Q&A associee",
+            "source_type": "official",
+            "url": "https://www.nta.go.jp/publication/pamph/gensen/2026kaisei.pdf",
+            "confidence": "high",
+            "note": "Une premiere synthese de recherche avait rapporte un bareme de deduction de base perime (950 000/880 000/680 000/630 000/580 000 yens, correspondant a l'ancien dispositif de 2024 avant sa modification) ; resolu en lisant directement le document officiel de la NTA, qui presente les deux baremes (avant/apres reforme) cote a cote."
+        },
+        "mic_resident_tax_2026": {
+            "label": "Taux et deduction de base de la taxe d'habitation (juminzei), 2026",
+            "value": "Taux standard combine 10% (4% prefectoral + 6% municipal), deduction de base 430 000 yens (non relevee par la reforme reiwa 8), prelevement forfaitaire de 5 000 yens/an",
+            "source_name": "Ministere des Affaires interieures et des Communications (Soumusho) ; confirme par une notice municipale explicite (Tamba-Sasayama) indiquant l'absence de changement de la deduction de base de la taxe d'habitation pour reiwa 8",
+            "source_type": "official",
+            "url": "https://www.soumu.go.jp/main_content/001005155.pdf",
+            "confidence": "high"
+        },
+        "nenkin_kiko_pension_bands_2026": {
+            "label": "Bareme des cotisations de retraite salariee (kosei nenkin), paliers de remuneration mensuelle standard, annee reiwa 8",
+            "value": "Taux total 18,3% (9,15%/9,15%) ; 32 paliers de 88 000 a 650 000 yens ; cotisation employeur pour les enfants et la famille de 0,36% a compter d'avril 2026",
+            "source_name": "Service japonais des pensions (Nihon Nenkin Kiko), 令和8年度版保険料額表",
+            "source_type": "official",
+            "url": "https://www.nenkin.go.jp/service/kounen/hokenryo/ryogaku/ryogakuhyo/20200825.files/R08ryougaku.pdf",
+            "confidence": "high",
+            "note": "Table des 32 paliers extraite et verifiee ligne par ligne directement depuis le PDF officiel."
+        },
+        "kyokai_kenpo_prefecture_rates_2026": {
+            "label": "Taux d'assurance maladie Kyokai Kenpo par prefecture, en vigueur a compter de la paie de mars 2026",
+            "value": "47 taux distincts, de 9,21% (Niigata) a 10,55% (Saga) ; cotisation nationale de soutien aux enfants et a la famille de 0,23% a compter d'avril 2026 ; 50 paliers de remuneration mensuelle standard de 58 000 a 1 390 000 yens",
+            "source_name": "Association japonaise d'assurance sante (Zenkoku Kenko Hoken Kyokai / Kyokai Kenpo)",
+            "source_type": "official",
+            "url": "https://www.kyoukaikenpo.or.jp/about/business/insurance_rate/rate_prefectures/r08/index.html",
+            "confidence": "high",
+            "note": "Table complete des 47 prefectures et des 50 paliers verifiee directement depuis le document officiel de la succursale de Tokyo (qui reproduit le bareme national des paliers, seul le taux appliquant varie par prefecture)."
+        },
+        "mhlw_employment_insurance_2026": {
+            "label": "Taux d'assurance emploi (koyo hoken), annee fiscale reiwa 8 (avril 2026-mars 2027)",
+            "value": "13,5 pour mille au total pour une activite generale (5 pour mille salarie / 8,5 pour mille employeur)",
+            "source_name": "Ministere de la Sante, du Travail et des Affaires sociales (MHLW)",
+            "source_type": "official",
+            "url": "https://www.mhlw.go.jp/content/001692566.pdf",
+            "confidence": "high"
+        },
+        "mhlw_workers_accident_insurance_2026": {
+            "label": "Bareme des taux d'assurance accidents du travail (rousai hoken) par branche, 54 classes",
+            "value": "De 0,15% (le plus bas) a 11,0% (le plus eleve) ; 0,30% retenu pour la classe 94 (« autres activites diverses »), profil de bureau/services generique",
+            "source_name": "MHLW, bareme applicable depuis le 1er avril 2024, inchange pour reiwa 8",
+            "source_type": "official",
+            "url": "https://www.mhlw.go.jp/content/11200000/001221989.pdf",
+            "confidence": "high",
+            "note": "Taux retenu illustratif pour le profil de reference generique de ce module, pas une moyenne officielle."
+        },
+        "mhlw_minimum_wage_2026": {
+            "label": "Salaire minimum horaire par prefecture, actuellement en vigueur",
+            "value": "De 1023 a 1226 yens/heure selon la prefecture (Tokyo : 1226 yens, en vigueur depuis le 3 octobre 2025) ; moyenne ponderee nationale 1121 yens/heure",
+            "source_name": "Ministere de la Sante, du Travail et des Affaires sociales (MHLW), tableau national des 47 prefectures",
+            "source_type": "official",
+            "url": "https://www.mhlw.go.jp/content/11200000/001571192.pdf",
+            "confidence": "high",
+            "note": "Une nouvelle revision (annee fiscale reiwa 8) etait au stade de recommandation du Conseil central des salaires minimums au moment de la recherche (aout 2026), avec une entree en vigueur attendue a partir d'octobre 2026 -- non encore en vigueur legalement, donc non retenue ; ce module utilise le bareme reiwa 7 actuellement en vigueur."
+        },
+        "japan_prefecture_population_2025": {
+            "label": "Population par prefecture, estimation 2025",
+            "value": "Utilisee pour la ponderation demographique des 47 prefectures dans le module Comparaison",
+            "source_name": "Statistiques agregees d'apres le Bureau des statistiques du Japon (Soumusho Tokei-kyoku)",
+            "source_type": "official_aggregated",
+            "confidence": "high"
+        },
+        "ppp_conversion_factor": {
+            "label": "Facteur de conversion PPA, consommation finale des menages et ISBLSM (LCU pour 1 dollar international), Japon, 2024",
+            "value": 99.384798,
+            "source_name": "Banque mondiale, International Comparison Program (ICP)",
+            "source_type": "official",
+            "url": "https://api.worldbank.org/v2/country/JPN/indicator/PA.NUS.PRVT.PP",
+            "confidence": "high"
+        }
+    },
+    "audit_decision": {
+        "v0_scope": [
+            "Impot national sur le revenu (bareme 7 tranches, deduction pour revenu d'emploi, deduction de base reformee, surtaxe de reconstruction)",
+            "Taxe d'habitation (taux combine 10%, deduction de base propre, prelevement forfaitaire)",
+            "Retraite salariee (kosei nenkin) par palier, cotisation employeur pour les enfants et la famille",
+            "Assurance emploi (koyo hoken)",
+            "Assurance accidents du travail (rousai hoken), taux illustratif",
+            "Assurance maladie Kyokai Kenpo par palier, taux specifique aux 47 prefectures, cotisation de soutien aux enfants et a la famille"
+        ],
+        "not_yet_included": [
+            "Cotisation dependance (kaigo hoken, 40-64 ans)",
+            "Regularisation de fin d'annee mois par mois (nenmatsu chosei) : approxime par un equivalent mensuel de l'impot annuel etabli",
+            "Taux d'assurance emploi et d'accidents du travail specifiques a l'agriculture/sylviculture/peche et au BTP",
+            "Assiette de la taxe d'habitation sur le revenu de l'annee precedente (simplifiee en revenu de la meme annee)",
+            "Regimes de sante autres que Kyokai Kenpo (ex. caisses d'entreprise / kumiai kenpo, frequentes dans les grandes entreprises)"
+        ]
+    }
+}

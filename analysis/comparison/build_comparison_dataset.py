@@ -1,6 +1,6 @@
 """
 Labor Cost Lab
-Cross-country comparison dataset builder (France, Germany, Belgium, Switzerland, Netherlands, United Kingdom, Ireland, Spain, Sweden, Italy, United States, China).
+Cross-country comparison dataset builder (France, Germany, Belgium, Switzerland, Netherlands, United Kingdom, Ireland, Spain, Sweden, Italy, United States, China, Japan).
 
 Methodology
 -----------
@@ -48,6 +48,12 @@ local-currency wage:
                  income tax is identical nationwide; social-insurance
                  contribution-base floors/caps, some contribution rates, and
                  the housing-fund contribution base vary by province.
+    Japan:       analysis/japan/japan_payroll_2026.py (compute_japan_payroll_2026),
+                 computed for all 47 prefectures and aggregated with a
+                 population-weighted average (2025 official population
+                 estimates). National income tax and resident tax are
+                 identical nationwide; only the Kyokai Kenpo health-insurance
+                 premium rate varies by prefecture.
 
 Important note on the United Kingdom: income tax is a population-weighted
 average of the rUK (England/Wales/Northern Ireland) and Scotland devolved
@@ -162,6 +168,7 @@ sys.path.insert(0, str(ROOT_DIR / "analysis" / "sweden"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "italy"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "usa"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "china"))
+sys.path.insert(0, str(ROOT_DIR / "analysis" / "japan"))
 
 import pandas as pd  # noqa: E402
 
@@ -234,6 +241,11 @@ from us_payroll_2026 import (  # noqa: E402
 from china_payroll_2026 import (  # noqa: E402
     compute_china_payroll_2026,
     PROVINCE_DATA_2026 as CN_PROVINCE_DATA_2026,
+)
+
+from japan_payroll_2026 import (  # noqa: E402
+    compute_japan_payroll_2026,
+    PREFECTURE_DATA_2026 as JP_PREFECTURE_DATA_2026,
 )
 
 
@@ -1280,6 +1292,109 @@ def compute_china_row(
     return row
 
 
+def compute_japan_row(
+    wage_point_intl_usd: float,
+    ppp_factor: float,
+    prefecture_weights: Dict[str, float],
+    wage_reference_monthly_jpy: float,
+) -> Dict[str, Any]:
+    gross_local_jpy = wage_point_intl_usd * ppp_factor
+
+    weighted_sums = {
+        "employee_contrib": 0.0,
+        "employer_contrib": 0.0,
+        "net_before_tax": 0.0,
+        "income_tax": 0.0,
+        "net_after_tax": 0.0,
+        "employer_cost": 0.0,
+    }
+
+    for prefecture_code, weight in prefecture_weights.items():
+        result = compute_japan_payroll_2026(gross_local_jpy, prefecture_code)
+
+        employee_contrib = result["employee_contributions_monthly_jpy"]
+        employer_contrib = result["employer_contributions_monthly_jpy"]
+        income_tax = result["income_tax_monthly_jpy"]
+        net_before_tax = gross_local_jpy - employee_contrib
+        net_after_tax = net_before_tax - income_tax
+        employer_cost = gross_local_jpy + employer_contrib
+
+        weighted_sums["employee_contrib"] += weight * employee_contrib
+        weighted_sums["employer_contrib"] += weight * employer_contrib
+        weighted_sums["net_before_tax"] += weight * net_before_tax
+        weighted_sums["income_tax"] += weight * income_tax
+        weighted_sums["net_after_tax"] += weight * net_after_tax
+        weighted_sums["employer_cost"] += weight * employer_cost
+
+    employer_cost = weighted_sums["employer_cost"]
+    net_before_income_tax = weighted_sums["net_before_tax"]
+    net_after_income_tax = weighted_sums["net_after_tax"]
+    income_tax = weighted_sums["income_tax"]
+
+    row = base_row(
+        country="Japan",
+        country_code="JP",
+        currency_code="JPY",
+        reference_profile_id="japan__population_weighted_average_47_prefectures__single_no_child",
+        reference_profile_description=(
+            "Population-weighted average across all 47 prefectures (2025 "
+            "official population estimates), single, childless employee "
+            "under 40, standard formal employment, workers' accident "
+            "insurance class 94."
+        ),
+        harmonized_wage_point_intl_usd=wage_point_intl_usd,
+        ppp_factor=ppp_factor,
+    )
+
+    row.update(
+        {
+            "gross_monthly_local": round_money(gross_local_jpy),
+            "gross_monthly_intl_usd": round_money(gross_local_jpy / ppp_factor),
+            "employee_contributions_monthly_local": round_money(weighted_sums["employee_contrib"]),
+            "employee_contributions_monthly_intl_usd": round_money(weighted_sums["employee_contrib"] / ppp_factor),
+            "employer_contributions_monthly_local": round_money(weighted_sums["employer_contrib"]),
+            "employer_contributions_monthly_intl_usd": round_money(weighted_sums["employer_contrib"] / ppp_factor),
+            "net_before_income_tax_monthly_local": round_money(net_before_income_tax),
+            "net_before_income_tax_monthly_intl_usd": round_money(net_before_income_tax / ppp_factor),
+            "income_tax_or_withholding_tax_monthly_local": round_money(income_tax),
+            "income_tax_or_withholding_tax_monthly_intl_usd": round_money(income_tax / ppp_factor),
+            "net_after_income_tax_monthly_local": round_money(net_after_income_tax),
+            "net_after_income_tax_monthly_intl_usd": round_money(net_after_income_tax / ppp_factor),
+            "employer_cost_monthly_local": round_money(employer_cost),
+            "employer_cost_monthly_intl_usd": round_money(employer_cost / ppp_factor),
+            "social_wedge_before_income_tax_rate": round(
+                (employer_cost - net_before_income_tax) / employer_cost, 6
+            ) if employer_cost else None,
+            "total_wedge_after_income_tax_rate": round(
+                (employer_cost - net_after_income_tax) / employer_cost, 6
+            ) if employer_cost else None,
+            "cost_to_net_before_income_tax_ratio": round(employer_cost / net_before_income_tax, 6)
+            if net_before_income_tax else None,
+            "cost_to_net_after_income_tax_ratio": round(employer_cost / net_after_income_tax, 6)
+            if net_after_income_tax else None,
+            "income_tax_modeled": True,
+            "aggregation_method": "population_weighted_average_47_prefectures",
+            "below_minimum_wage": bool(gross_local_jpy < wage_reference_monthly_jpy),
+            "national_minimum_wage_monthly_local": round_money(wage_reference_monthly_jpy),
+            "note": (
+                "Japan has no national minimum wage; the reference wage is "
+                "Tokyo's own minimum wage (JPY 1,226/hour), used as a "
+                "methodological convention. National income tax and "
+                "resident tax are identical nationwide (though the two "
+                "levies use genuinely different basic-deduction schedules "
+                "since a 2026 tax reform); employee_contributions and "
+                "employer_contributions are a population-weighted average "
+                "of each of the 47 prefectures' own Kyokai Kenpo health-"
+                "insurance rate (9.21%-10.55%) combined with the "
+                "nationally-uniform employee pension, employment "
+                "insurance and workers' accident insurance rates."
+            ),
+        }
+    )
+
+    return row
+
+
 def compute_spain_row(
     wage_point_intl_usd: float,
     ppp_factor: float,
@@ -1514,6 +1629,14 @@ def build_dataset() -> pd.DataFrame:
     }
     cn_wage_reference_monthly_rmb = 2740.0
 
+    # --- Japan setup ---
+    jp_total_population = sum(prefecture["population"] for prefecture in JP_PREFECTURE_DATA_2026.values())
+    jp_prefecture_weights = {
+        code: prefecture["population"] / jp_total_population
+        for code, prefecture in JP_PREFECTURE_DATA_2026.items()
+    }
+    jp_wage_reference_monthly_jpy = 1226.0 * 40.0 * 52.0 / 12.0
+
     rows: List[Dict[str, Any]] = []
 
     for wage_point in wage_grid:
@@ -1630,6 +1753,15 @@ def build_dataset() -> pd.DataFrame:
                 ppp_values["CN"],
                 cn_province_weights,
                 cn_wage_reference_monthly_rmb,
+            )
+        )
+
+        rows.append(
+            compute_japan_row(
+                wage_point,
+                ppp_values["JP"],
+                jp_prefecture_weights,
+                jp_wage_reference_monthly_jpy,
             )
         )
 
