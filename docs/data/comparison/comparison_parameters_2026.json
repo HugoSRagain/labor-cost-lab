@@ -15,7 +15,8 @@
     "United States",
     "China",
     "Japan",
-    "Canada"
+    "Canada",
+    "Poland"
   ],
   "methodology": [
     "Comparison axis: absolute wage levels converted via purchasing power parity (PPP), not wages re-indexed to each country's own minimum wage.",
@@ -116,6 +117,12 @@
       "currency": "CAD",
       "value_intl_usd": 2458.4,
       "source": "Canada has no national minimum wage; this is Ontario's own minimum wage equivalent (17.60 CAD/hour x 40h/week), used as this module's reference wage by convention, docs/data/canada/canada_parameters_2026.json"
+    },
+    "PL": {
+      "value_local": 4806.0,
+      "currency": "PLN",
+      "value_intl_usd": 2393.4,
+      "source": "Statutory minimum wage, docs/data/poland/poland_parameters_2026.json"
     }
   },
   "ppp_conversion_factors": {
@@ -138,7 +145,8 @@
       "US": 1.0,
       "CN": 3.55078934957358,
       "JP": 99.384798,
-      "CA": 1.240903
+      "CA": 1.240903,
+      "PL": 2.008043
     }
   },
   "reference_profiles": {
@@ -206,6 +214,11 @@
       "profile_id": "japan__population_weighted_average_47_prefectures__single_no_child",
       "description": "Population-weighted average across all 47 prefectures (2025 official population estimates), single, childless employee under 40, standard formal employment, workers' accident insurance class 94. National income tax and resident tax are identical nationwide (though the two levies use genuinely different basic-deduction schedules since a 2026 tax reform); only the Kyokai Kenpo health-insurance premium rate (9.21%-10.55%) varies by prefecture.",
       "compute_source": "analysis/japan/build_japan_dataset.py and analysis/japan/japan_payroll_2026.py, aggregated across 47 prefectures"
+    },
+    "PL": {
+      "profile_id": "poland__standard_employee",
+      "description": "Standard, single, childless employee, general tax scale (skala podatkowa), no special reliefs.",
+      "compute_source": "analysis/poland/build_poland_dataset.py (compute_row)"
     }
   },
   "switzerland_canton_population_weights": {
@@ -452,7 +465,8 @@
     "China's individual income tax is entirely national (a uniform 7-bracket annual schedule and a fixed RMB 60,000/year basic deduction), unlike every other multi-region country in this comparison -- what varies by province is the social-insurance contribution-base floor and cap (typically 60%-300% of the province's own prior-year average wage), a handful of contribution rates that genuinely differ by province (Guangdong's unemployment-insurance split is 0.8% employer / 0.2% employee rather than the more common 0.5%/0.5%), and the Housing Provident Fund (住房公积金) contribution base -- its rate is a discretionary employer choice nationally (5%-12% band) and is modelled with one uniform illustrative rate (7%). This module aggregates all 31 mainland provinces/municipalities/autonomous regions with a population-weighted average (see 'cn_province_population_weights'). China has no national minimum wage; the reference wage used is Shanghai's own monthly minimum wage (RMB 2,740), a methodological convention. In most provinces the social-insurance contribution-base floor exceeds this reference wage, so at low harmonized wage points contributions are computed on that higher floor rather than actual gross pay -- a genuine structural feature of China's system.",
     "Japan's national income tax and resident tax (juminzei) are both uniform nationwide, but genuinely use two different basic-deduction schedules following a 2026 tax reform that substantially raised the income-tax basic deduction (up to JPY 1,040,000) while leaving the resident-tax basic deduction unchanged (a flat JPY 430,000) -- a real, growing divergence between the two levies. Employee pension, employment and workers' accident insurance rates are also uniform nationally; the ONLY prefecture-specific rate is the Kyokai Kenpo health-insurance premium (9.21%-10.55% across the 47 prefectures for 2026). This module aggregates all 47 prefectures with a population-weighted average (see 'jp_prefecture_population_weights'). Japan has no national minimum wage; the reference wage used is Tokyo's own minimum wage (JPY 1,226/hour), a methodological convention, mirroring China's Shanghai and the US's federal-minimum-wage conventions.",
     "All amounts are also cross-country comparable in international dollars (PPP) in addition to local currency.",
-    "Canada: employee_contributions, employer_contributions and income_tax_or_withholding_tax are a population-weighted average across all 10 provinces and 3 territories (2025 Statistics Canada estimates). Federal income tax, CPP/CPP2 (or QPP/QPP2 in Quebec) and Employment Insurance are set nationally but interact with each jurisdiction's own income-tax bracket schedule and basic personal amount. Quebec is structurally distinct: its own pension plan (QPP, higher rate than CPP), its own parental-insurance regime (QPIP, in addition to a reduced EI rate), a 16.5% federal tax abatement, and the Fonds des services de sante employer levy instead of Ontario's Employer Health Tax. The reference wage is Ontario's own minimum wage (CAD 17.60/hour), used as a methodological convention in the absence of a national minimum wage."
+    "Canada: employee_contributions, employer_contributions and income_tax_or_withholding_tax are a population-weighted average across all 10 provinces and 3 territories (2025 Statistics Canada estimates). Federal income tax, CPP/CPP2 (or QPP/QPP2 in Quebec) and Employment Insurance are set nationally but interact with each jurisdiction's own income-tax bracket schedule and basic personal amount. Quebec is structurally distinct: its own pension plan (QPP, higher rate than CPP), its own parental-insurance regime (QPIP, in addition to a reduced EI rate), a 16.5% federal tax abatement, and the Fonds des services de sante employer levy instead of Ontario's Employer Health Tax. The reference wage is Ontario's own minimum wage (CAD 17.60/hour), used as a methodological convention in the absence of a national minimum wage.",
+    "Poland: a single national tax and social-security system (no regional variation, unlike Switzerland, the US, China, Japan or Canada). Employee_contributions include both ZUS social-insurance contributions and the 9% health-insurance contribution (NFZ), non-deductible from income tax since the 2022 'Polski Lad' reform. The retirement and disability contribution base is capped at 30x the forecast average wage (PLN 282,600/year for 2026), modeled as a flat monthly equivalent. Employer-side Labour Fund and Guaranteed Employee Benefits Fund levies are waived when gross pay is below the minimum wage, a real rule directly relevant at this module's lowest wage points for Poland."
   ],
   "ca_province_population_weights": {
     "source": "Statistics Canada, aggregated",

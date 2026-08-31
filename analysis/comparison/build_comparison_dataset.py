@@ -170,6 +170,7 @@ sys.path.insert(0, str(ROOT_DIR / "analysis" / "usa"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "china"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "japan"))
 sys.path.insert(0, str(ROOT_DIR / "analysis" / "canada"))
+sys.path.insert(0, str(ROOT_DIR / "analysis" / "poland"))
 
 import pandas as pd  # noqa: E402
 
@@ -252,6 +253,11 @@ from japan_payroll_2026 import (  # noqa: E402
 from canada_payroll_2026 import (  # noqa: E402
     compute_canada_payroll_2026,
     PROVINCE_DATA_2026 as CA_PROVINCE_DATA_2026,
+)
+
+from build_poland_dataset import (  # noqa: E402
+    compute_row as pl_compute_row,
+    load_parameters as pl_load_parameters,
 )
 
 
@@ -1401,6 +1407,88 @@ def compute_japan_row(
     return row
 
 
+def compute_poland_row(
+    wage_point_intl_usd: float,
+    ppp_factor: float,
+    profile: Dict[str, Any],
+    parameters: Dict[str, Any],
+) -> Dict[str, Any]:
+    gross_local = wage_point_intl_usd * ppp_factor
+    wage_reference = parameters["wage_reference"]["gross_monthly_pln"]
+    smic_multiple = gross_local / wage_reference
+
+    result = pl_compute_row(profile, smic_multiple, parameters)
+
+    employer_cost = result["employer_cost_monthly_pln"]
+    net_before_income_tax = result["net_before_income_tax_monthly_pln"]
+    net_after_income_tax = result["net_after_income_tax_monthly_pln"]
+    income_tax = result["income_tax_monthly_pln"]
+
+    row = base_row(
+        country="Poland",
+        country_code="PL",
+        currency_code="PLN",
+        reference_profile_id=profile["profile_id"],
+        reference_profile_description=(
+            "Standard, single, childless employee, general tax scale "
+            "(skala podatkowa), no special reliefs."
+        ),
+        harmonized_wage_point_intl_usd=wage_point_intl_usd,
+        ppp_factor=ppp_factor,
+    )
+
+    cost_to_net_ratio = result["cost_to_net_ratio"]
+    cost_to_net_after_ratio = result["cost_to_net_after_income_tax_ratio"]
+
+    row.update(
+        {
+            "gross_monthly_local": round_money(result["gross_monthly_pln"]),
+            "gross_monthly_intl_usd": round_money(result["gross_monthly_pln"] / ppp_factor),
+            "employee_contributions_monthly_local": round_money(result["employee_contributions_monthly_pln"]),
+            "employee_contributions_monthly_intl_usd": round_money(result["employee_contributions_monthly_pln"] / ppp_factor),
+            "employer_contributions_monthly_local": round_money(result["employer_contributions_monthly_pln"]),
+            "employer_contributions_monthly_intl_usd": round_money(result["employer_contributions_monthly_pln"] / ppp_factor),
+            "net_before_income_tax_monthly_local": round_money(net_before_income_tax),
+            "net_before_income_tax_monthly_intl_usd": round_money(net_before_income_tax / ppp_factor),
+            "income_tax_or_withholding_tax_monthly_local": round_money(income_tax),
+            "income_tax_or_withholding_tax_monthly_intl_usd": round_money(income_tax / ppp_factor),
+            "net_after_income_tax_monthly_local": round_money(net_after_income_tax),
+            "net_after_income_tax_monthly_intl_usd": round_money(net_after_income_tax / ppp_factor),
+            "employer_cost_monthly_local": round_money(employer_cost),
+            "employer_cost_monthly_intl_usd": round_money(employer_cost / ppp_factor),
+            "social_wedge_before_income_tax_rate": round(
+                (employer_cost - net_before_income_tax) / employer_cost, 6
+            ) if employer_cost else None,
+            "total_wedge_after_income_tax_rate": round(
+                (employer_cost - net_after_income_tax) / employer_cost, 6
+            ) if employer_cost else None,
+            "cost_to_net_before_income_tax_ratio": round(cost_to_net_ratio, 6)
+            if cost_to_net_ratio == cost_to_net_ratio else None,
+            "cost_to_net_after_income_tax_ratio": round(cost_to_net_after_ratio, 6)
+            if cost_to_net_after_ratio == cost_to_net_after_ratio else None,
+            "income_tax_modeled": True,
+            "aggregation_method": "single_reference_profile",
+            "below_minimum_wage": bool(gross_local < wage_reference),
+            "national_minimum_wage_monthly_local": round_money(wage_reference),
+            "note": (
+                "Employee_contributions include both ZUS social-insurance "
+                "contributions and the 9% health-insurance contribution "
+                "(NFZ), which since the 2022 'Polski Lad' reform is not "
+                "deductible from income tax. The retirement and disability "
+                "contribution base is capped (30x the forecast average "
+                "wage, PLN 282,600/year), modeled as a flat monthly "
+                "equivalent. Employer contributions include the Labour "
+                "Fund and Guaranteed Employee Benefits Fund levies, both "
+                "waived when gross pay is below the minimum wage -- a real "
+                "rule, directly relevant at this module's lowest wage "
+                "points for Poland specifically."
+            ),
+        }
+    )
+
+    return row
+
+
 def compute_canada_row(
     wage_point_intl_usd: float,
     ppp_factor: float,
@@ -1683,6 +1771,14 @@ def build_dataset() -> pd.DataFrame:
         for code, population in uk_region_population.items()
     }
 
+    # --- Poland setup ---
+    pl_parameters = pl_load_parameters()
+    pl_profile_id = parameters["reference_profiles"]["PL"]["profile_id"]
+    pl_profile = next(
+        profile for profile in pl_parameters["profiles"]
+        if profile["profile_id"] == pl_profile_id
+    )
+
     # --- Ireland setup ---
     ie_parameters = ie_load_parameters()
     ie_profile_id = parameters["reference_profiles"]["IE"]["profile_id"]
@@ -1890,6 +1986,15 @@ def build_dataset() -> pd.DataFrame:
                 ppp_values["CA"],
                 ca_province_weights,
                 ca_wage_reference_monthly_cad,
+            )
+        )
+
+        rows.append(
+            compute_poland_row(
+                wage_point,
+                ppp_values["PL"],
+                pl_profile,
+                pl_parameters,
             )
         )
 

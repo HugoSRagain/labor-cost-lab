@@ -4,7 +4,7 @@ const COMPARISON_TAB_STORAGE_KEY = "comparison_tab";
 
 let COMPARISON_DATA = [];
 
-const COMPARISON_COUNTRY_ORDER = ["FR", "DE", "BE", "CH", "NL", "UK", "IE", "ES", "SE", "IT", "US", "CN", "JP", "CA"];
+const COMPARISON_COUNTRY_ORDER = ["FR", "DE", "BE", "CH", "NL", "UK", "IE", "ES", "SE", "IT", "US", "CN", "JP", "CA", "PL"];
 
 const COMPARISON_COUNTRY_LABELS = {
     fr: {
@@ -21,7 +21,8 @@ const COMPARISON_COUNTRY_LABELS = {
         US: "États-Unis",
         CN: "Chine",
         JP: "Japon",
-        CA: "Canada"
+        CA: "Canada",
+        PL: "Pologne"
     },
     en: {
         FR: "France",
@@ -37,7 +38,8 @@ const COMPARISON_COUNTRY_LABELS = {
         US: "United States",
         CN: "China",
         JP: "Japan",
-        CA: "Canada"
+        CA: "Canada",
+        PL: "Poland"
     }
 };
 
@@ -55,7 +57,8 @@ const COMPARISON_COLORS = {
     US: "#a21caf",
     CN: "#eab308",
     JP: "#78350f",
-    CA: "#9f1239"
+    CA: "#9f1239",
+    PL: "#7c3aed"
 };
 
 
@@ -381,7 +384,7 @@ function renderComparisonMetrics(lang) {
 
     setTextContent(
         "comparison-metrics-subtitle-" + lang,
-        (lang === "en" ? "Values for the 14 countries at " : "Valeurs des 14 pays à ")
+        (lang === "en" ? "Values for the 15 countries at " : "Valeurs des 15 pays à ")
         + usd(wage, lang)
         + (lang === "en"
             ? " international monthly, expressed in international dollars (PPP)."
@@ -402,7 +405,8 @@ function renderComparisonMetrics(lang) {
         US: "metric-comparison-us-net-" + lang,
         CN: "metric-comparison-cn-net-" + lang,
         JP: "metric-comparison-jp-net-" + lang,
-        CA: "metric-comparison-ca-net-" + lang
+        CA: "metric-comparison-ca-net-" + lang,
+        PL: "metric-comparison-pl-net-" + lang
     };
 
     COMPARISON_COUNTRY_ORDER.forEach(countryCode => {

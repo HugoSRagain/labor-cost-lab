@@ -1,0 +1,87 @@
+{
+    "country": "Poland",
+    "version": "2026-01",
+    "sources": [
+        {
+            "id": "poland_minimum_wage_2026",
+            "institution": "Rada Ministrow (Conseil des ministres)",
+            "institution_fr": "Conseil des ministres polonais",
+            "title": "Rozporzadzenie w sprawie wysokosci minimalnego wynagrodzenia za prace w 2026 r.",
+            "url": "https://forsal.pl/gospodarka/aktualnosci/artykuly/10599913,placa-minimalna-w-2026-roku-oto-dokladne-kwoty-brutto-i-netto.html",
+            "reference_year": 2026,
+            "retrieved": "2026-08-30",
+            "used_for": ["Salaire minimum mensuel de reference : 4 806 PLN brut (31,40 PLN/heure), en vigueur pour toute l'annee 2026"],
+            "status": "official_aggregated"
+        },
+        {
+            "id": "poland_zus_rates_2026",
+            "institution": "Zaklad Ubezpieczen Spolecznych (ZUS)",
+            "institution_fr": "Institution polonaise de securite sociale (ZUS)",
+            "title": "Wysokosc skladek na ubezpieczenia spoleczne / Nowe wysokosci skladek na ubezpieczenia spoleczne w 2026 r.",
+            "url": "https://www.zus.pl/en/baza-wiedzy/skladki-wskazniki-odsetki/skladki/wysokosc-skladek-na-ubezpieczenia-spoleczne",
+            "reference_year": 2026,
+            "retrieved": "2026-08-30",
+            "used_for": ["Taux de cotisation ZUS salarie et employeur (retraite 9,76 %, invalidite 1,5 %/6,5 %, maladie 2,45 %, accidents du travail 1,67 % de reference, Fundusz Pracy 2,45 %, FGSP 0,10 %)"],
+            "status": "official_aggregated"
+        },
+        {
+            "id": "poland_zus_annual_cap_2026",
+            "institution": "Zaklad Ubezpieczen Spolecznych (ZUS)",
+            "institution_fr": "Institution polonaise de securite sociale (ZUS)",
+            "title": "Roczne ograniczenie podstawy wymiaru skladek na ubezpieczenia emerytalne i rentowe w 2026 roku (trzydziestokrotnosc)",
+            "url": "https://www.gazetaprawna.pl/praca/artykuly/10493630,az-282-600-zl-dopiero-taki-przychod-zwolni-ze-skladek-zus-w-2026-r.html",
+            "reference_year": 2026,
+            "retrieved": "2026-08-30",
+            "used_for": ["Plafond annuel de cotisation retraite + invalidite : 282 600 PLN (30 x le salaire moyen previsionnel de 9 420 PLN/mois)"],
+            "status": "official_aggregated"
+        },
+        {
+            "id": "poland_fp_fgsp_exemption_below_minimum_wage",
+            "institution": "Zaklad Ubezpieczen Spolecznych (ZUS) / praktyka kadrowo-placowa",
+            "institution_fr": "ZUS / pratique de paie polonaise",
+            "title": "Zwolnienie z oplacania skladek na Fundusz Pracy i FGSP w przypadku wynagrodzenia nizszego od minimalnego",
+            "url": "https://poradnikprzedsiebiorcy.pl/-kiedy-nie-trzeba-oplacac-skladek-na-fp",
+            "reference_year": 2026,
+            "retrieved": "2026-08-30",
+            "used_for": ["Regle d'exoneration du Fundusz Pracy et du FGSP (cote employeur) lorsque la remuneration brute du salarie est inferieure au salaire minimum en vigueur -- directement pertinente aux points de la grille de salaire inferieurs a 1,0x dans ce module"],
+            "status": "official_aggregated"
+        },
+        {
+            "id": "poland_health_insurance_2026",
+            "institution": "Narodowy Fundusz Zdrowia (NFZ) / Polski Lad",
+            "institution_fr": "Fonds national de sante (NFZ) / reforme Polski Lad",
+            "title": "Skladka zdrowotna 9% -- zasady obliczania i (brak) odliczenia od podatku po Polskim Ladzie",
+            "url": "https://www.pit.pl/aktualnosci/skladka-zdrowotna-w-polskim-ladzie-dla-kogo-9-dla-kogo-49-i-kto-jej-nie-zaplaci-1006193",
+            "reference_year": 2026,
+            "retrieved": "2026-08-30",
+            "used_for": ["Taux de cotisation maladie (skladka zdrowotna) de 9 % et son caractere non deductible de l'impot sur le revenu pour les salaries imposes au bareme general depuis 2022"],
+            "status": "official_aggregated"
+        },
+        {
+            "id": "poland_pit_scale_2026",
+            "institution": "Ministerstwo Finansow",
+            "institution_fr": "Ministere des Finances polonais",
+            "title": "Skala podatkowa PIT 2026 : progi, kwota wolna od podatku, kwota zmniejszajaca podatek, koszty uzyskania przychodu",
+            "url": "https://www.pit.pl/skala-podatkowa-pit/",
+            "reference_year": 2026,
+            "retrieved": "2026-08-30",
+            "used_for": ["Bareme progressif de l'impot sur le revenu (12 % / 32 %, seuil 120 000 PLN annuel), montant exonere de 30 000 PLN, montant forfaitaire de reduction d'impot de 3 600 PLN/an (non degressif depuis 2022), deduction forfaitaire mensuelle de 250 PLN pour frais professionnels"],
+            "status": "official_aggregated"
+        },
+        {
+            "id": "worldbank_icp_ppp_poland",
+            "institution": "World Bank, International Comparison Program (ICP)",
+            "institution_fr": "Banque mondiale, Programme de comparaison internationale (PCI)",
+            "title": "PPP conversion factor, private consumption (LCU per international $), Poland",
+            "indicator_code": "PA.NUS.PRVT.PP",
+            "url": "https://api.worldbank.org/v2/country/POL/indicator/PA.NUS.PRVT.PP",
+            "reference_year": 2024,
+            "retrieved": "2026-08-30",
+            "used_for": ["Facteur de conversion PPA pour le module de comparaison internationale (2,008043 PLN pour 1 dollar international)"],
+            "status": "official"
+        }
+    ],
+    "notes": [
+        "La Pologne dispose d'un systeme fiscal et social entierement national (pas de variation regionale), a la difference de la Suisse, des Etats-Unis, de la Chine, du Japon ou du Canada deja modelises dans ce Lab -- un seul profil de reference suffit."
+    ]
+}

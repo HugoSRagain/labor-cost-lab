@@ -1,0 +1,69 @@
+{
+    "country": "Poland",
+    "country_code": "PL",
+    "version": "2026-01",
+    "effective_from": "2026-01-01",
+    "status": "prototype_v1",
+    "currency": "PLN",
+    "wage_reference": {
+        "name": "Salaire minimum national (placa minimalna)",
+        "gross_monthly_pln": 4806.0,
+        "hourly_rate_pln": 31.40,
+        "source": "Rozporzadzenie Rady Ministrow, en vigueur du 1er janvier au 31 decembre 2026",
+        "note": "Contrairement a certaines annees recentes, le salaire minimum polonais n'est revalorise qu'une seule fois pour toute l'annee 2026 (pas de second seuil au 1er juillet)."
+    },
+    "grid": {
+        "min_multiple": 0.80,
+        "max_multiple": 6.00,
+        "step": 0.01
+    },
+    "social_security": {
+        "zus_employee": {
+            "retirement_rate": 0.0976,
+            "disability_rate": 0.0150,
+            "sickness_rate": 0.0245,
+            "note": "Ubezpieczenie emerytalne (retraite) et rentowe (invalidite) plafonnes (voir annual_cap ci-dessous) ; ubezpieczenie chorobowe (maladie) non plafonne."
+        },
+        "zus_employer": {
+            "retirement_rate": 0.0976,
+            "disability_rate": 0.0650,
+            "accident_rate": 0.0167,
+            "labour_fund_rate": 0.0245,
+            "guaranteed_benefits_fund_rate": 0.0010,
+            "note": "Le taux d'assurance accidents du travail (wypadkowe) est le taux de reference pour les employeurs de moins de 10 assures (fourchette reelle : 0,67 % a 3,33 % selon la classe de risque). Le Fundusz Pracy et le FGSP ne sont pas dus lorsque la remuneration brute du salarie est inferieure au salaire minimum en vigueur."
+        },
+        "annual_contribution_base_cap": {
+            "amount_pln": 282600.0,
+            "note": "Plafond annuel (trentuple du salaire moyen previsionnel, 9 420 PLN/mois x 30) applicable uniquement a la base de cotisation retraite + invalidite (emerytalne + rentowe), cote salarie et employeur. Modelise ici comme un plafond mensuel equivalent (282 600 / 12 = 23 550 PLN/mois), simplification du mecanisme reel cumulatif sur l'annee civile."
+        },
+        "health_insurance": {
+            "rate": 0.0900,
+            "base_note": "Assiette = salaire brut moins les cotisations ZUS salariales (retraite + invalidite + maladie).",
+            "deductibility_note": "Non deductible de l'impot sur le revenu depuis la reforme « Polski Lad » de 2022 (contrairement au regime anterieur, ou 7,75 points de la cotisation etaient deductibles)."
+        }
+    },
+    "income_tax": {
+        "note": "Bareme progressif (skala podatkowa) 2026 : 12 % jusqu'a 120 000 PLN de revenu annuel imposable, 10 800 PLN + 32 % au-dela. Un montant forfaitaire de reduction d'impot (kwota zmniejszajaca podatek) de 3 600 PLN/an (12 % du montant exonere de 30 000 PLN, kwota wolna od podatku) est soustrait de l'impot calcule, sans degressivite aux revenus eleves depuis la reforme de 2022 (contrairement au regime anterieur a 2022).",
+        "brackets_annual": [
+            {"upper_pln": 120000.0, "rate": 0.12},
+            {"upper_pln": null, "rate": 0.32, "base_tax_pln": 10800.0}
+        ],
+        "tax_reducing_amount_annual_pln": 3600.0,
+        "tax_free_amount_annual_pln": 30000.0,
+        "monthly_cost_of_income_deduction_pln": 250.0
+    },
+    "profiles": [
+        {
+            "profile_id": "poland__standard_employee",
+            "label_fr": "Pologne · salarie standard",
+            "label_en": "Poland · standard employee"
+        }
+    ],
+    "limits": [
+        "Le taux d'assurance accidents du travail (wypadkowe) est le taux de reference pour un petit employeur (moins de 10 assures) ; la tarification reelle varie de 0,67 % a 3,33 % selon la classe de risque de l'employeur.",
+        "Le plafond annuel de cotisation retraite + invalidite (trentuple du salaire moyen previsionnel) est modelise comme un plafond mensuel equivalent constant, non comme le mecanisme cumulatif reel sur l'annee civile (qui, a salaire constant au-dessus du seuil, atteint le plafond en cours d'annee puis suspend la cotisation jusqu'a la fin de l'annee).",
+        "Le PPK (Pracownicze Plany Kapitalowe, plan d'epargne-retraite a adhesion automatique mais avec possibilite de sortie), facultatif et dont le taux de participation reel est significativement inferieur a 50 % de la population salariee, n'est pas modelise.",
+        "Aucun dispositif particulier (exoneration « ulga dla mlodych » pour les moins de 26 ans, quotient familial, imposition conjointe des couples, autres credits ou allegements) n'est modelise : le profil de reference est un salarie celibataire sans enfant, imposable au bareme general.",
+        "Seule la cotisation employeur ZUS standard (secteur prive, contrat de travail standard) est modelisee ; les regimes specifiques (agriculteurs KRUS, certaines professions liberales, contrats civils type umowa zlecenie/dzielo) ne le sont pas."
+    ]
+}

@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Poland Labour Cost Lab</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+    <link rel="stylesheet" href="../../assets/style.css?v=28">
+    <script defer src="../../assets/i18n_common.js?v=3"></script>
+    <script defer src="./assets/poland_app.js?v=2"></script>
+</head>
+
+<body>
+    <div class="global-project-banner">
+        <a href="../../index.html">
+            ← Labor Cost Lab
+        </a>
+
+        <span>
+            Poland module · Available socio-fiscal version
+        </span>
+    </div>
+
+    <div class="language-section active" id="section-fr">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · Module Pologne
+                </p>
+
+                <h1>Poland Labour Cost Lab</h1>
+
+                <p>
+                    Module de simulation du coût du travail en Pologne. Cette
+                    version calcule le salaire brut, les cotisations sociales
+                    ZUS (salarié et employeur), l'assurance maladie (NFZ),
+                    l'impôt sur le revenu (PIT), le coût employeur et les
+                    principaux indicateurs de coin social et socio-fiscal.
+                </p>
+
+                <p class="author-line">
+                    Par Hugo Spring-Ragain, Économiste, CEDS Paris
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchPolandLanguage()">
+                    English
+                </button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>Pologne · module socio-fiscal 2026</h2>
+
+                <p>
+                    Le Poland Labour Cost Lab simule le coût du travail en
+                    Pologne à partir d'un profil salarié standard, célibataire
+                    sans enfant, imposé au barème général (skala podatkowa).
+                    Il combine le salaire minimum national (placa minimalna)
+                    comme référence salariale, les cotisations sociales ZUS
+                    côté salarié (retraite, invalidité, maladie) et côté
+                    employeur (retraite, invalidité, accidents du travail,
+                    Fundusz Pracy, FGSP), l'assurance maladie NFZ (skladka
+                    zdrowotna, 9 %, non déductible de l'impôt depuis 2022) et
+                    l'impôt sur le revenu à deux tranches (12 % / 32 %).
+                </p>
+
+                <p>
+                    L'objectif est de mesurer, sur une échelle allant de 0,80 à
+                    6 fois le salaire minimum polonais, la façon dont un zloty
+                    de salaire brut se transforme en revenu net pour le
+                    salarié, en coût total pour l'employeur et en prélèvements
+                    sociaux et fiscaux.
+                </p>
+            </section>
+
+            <nav class="tabs" aria-label="Navigation Pologne">
+                <button class="tab-button active" data-tab="simulation" onclick="showPolandTab('fr', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showPolandTab('fr', 'flcl-index')">
+                    Indice du Lab
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showPolandTab('fr', 'data')">
+                    Données
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showPolandTab('fr', 'methodology')">
+                    Méthodologie
+                </button>
+            </nav>
+
+            <section id="tab-fr-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="poland-waterfall-title-fr">
+                        Du salaire net au coût employeur
+                    </h3>
+
+                    <p class="chart-subtitle" id="poland-waterfall-subtitle-fr">
+                        Décomposition du passage du salaire net après impôt au
+                        coût employeur total, en distinguant l'impôt sur le
+                        revenu, les cotisations salariales (ZUS et assurance
+                        maladie) et les cotisations employeur (ZUS, Fundusz
+                        Pracy, FGSP).
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="poland-waterfall-multiple-fr">
+                                Point de salaire sélectionné
+                            </label>
+
+                            <select id="poland-waterfall-multiple-fr">
+                                <option value="0.80">0,80 salaire minimum</option>
+                                <option value="0.90">0,90 salaire minimum</option>
+                                <option value="1.00">1,00 salaire minimum</option>
+                                <option value="1.25">1,25 salaire minimum</option>
+                                <option value="1.50">1,50 salaire minimum</option>
+                                <option value="2.00" selected>2,00 salaires minimums</option>
+                                <option value="2.50">2,50 salaires minimums</option>
+                                <option value="3.00">3,00 salaires minimums</option>
+                                <option value="4.00">4,00 salaires minimums</option>
+                                <option value="5.00">5,00 salaires minimums</option>
+                                <option value="6.00">6,00 salaires minimums</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-poland-waterfall-fr"
+                        class="plotly-chart"
+                        aria-label="Décomposition du coût du travail en Pologne"
+                    ></div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Graphiques complémentaires</h2>
+
+                    <p>
+                        Les graphiques suivants détaillent les salaires, les
+                        taux effectifs, la répartition entre cotisations ZUS,
+                        assurance maladie et impôt sur le revenu, le coin
+                        socio-fiscal et le rendement marginal du salaire brut.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Coût employeur, salaire brut et salaires nets</h3>
+
+                        <p class="chart-subtitle">
+                            Comparaison du salaire brut, du salaire net avant
+                            impôt, du salaire net après impôt et du coût
+                            employeur selon le multiple du salaire minimum
+                            polonais.
+                        </p>
+
+                        <div
+                            id="chart-poland-cost-fr"
+                            class="plotly-chart"
+                            aria-label="Coût du travail en Pologne"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Taux effectifs de prélèvement</h3>
+
+                        <p class="chart-subtitle">
+                            Taux salarié et employeur (cotisations ZUS) et
+                            taux d'imposition effectif. Deux effets de seuil
+                            sont visibles : un coude à 1,00x (Fundusz Pracy et
+                            FGSP non dus en dessous du salaire minimum) et une
+                            baisse progressive au-delà d'environ 4,90x
+                            (plafond de cotisation retraite + invalidité).
+                        </p>
+
+                        <div
+                            id="chart-poland-rates-fr"
+                            class="plotly-chart"
+                            aria-label="Taux de prélèvement en Pologne"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Cotisations ZUS, assurance maladie et impôt sur le revenu</h3>
+
+                        <p class="chart-subtitle">
+                            Montant mensuel des cotisations ZUS salarié
+                            (retraite, invalidité, maladie), de l'assurance
+                            maladie NFZ et de l'impôt sur le revenu.
+                        </p>
+
+                        <div
+                            id="chart-poland-contrib-tax-fr"
+                            class="plotly-chart"
+                            aria-label="Cotisations ZUS, assurance maladie et impôt sur le revenu en Pologne"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Coin social et coin socio-fiscal</h3>
+
+                        <p class="chart-subtitle">
+                            Comparaison du coin social avant impôt et du coin
+                            socio-fiscal après impôt sur le revenu.
+                        </p>
+
+                        <div
+                            id="chart-poland-wedge-fr"
+                            class="plotly-chart"
+                            aria-label="Coin social et socio-fiscal polonais"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Rendement marginal d'une hausse de salaire brut</h3>
+
+                        <p class="chart-subtitle">
+                            Part d'un zloty supplémentaire de salaire brut
+                            conservée avant et après impôt sur le revenu.
+                        </p>
+
+                        <div
+                            id="chart-poland-fiscal-return-fr"
+                            class="plotly-chart"
+                            aria-label="Rendement socio-fiscal d'une hausse de salaire brut en Pologne"
+                        ></div>
+
+                        <p class="method-note">
+                            L'effet marginal côté employeur présente deux
+                            paliers locaux : au passage du seuil du salaire
+                            minimum (1,00x), lorsque le Fundusz Pracy et le
+                            FGSP deviennent dus, et au-delà d'environ 4,90x,
+                            lorsque le plafond de cotisation retraite +
+                            invalidité (23 550 PLN/mois) devient actif.
+                        </p>
+                    </div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Indicateurs clés</h2>
+
+                    <p>
+                        Les indicateurs ci-dessous sont calculés au salaire
+                        minimum polonais (multiple = 1).
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="poland-metrics-fr">
+                    <article class="metric-card">
+                        <span class="metric-label">Salaire brut de référence</span>
+                        <strong id="metric-poland-reference-wage-fr">—</strong>
+                        <span class="metric-note">Salaire minimum mensuel (placa minimalna)</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Taux d'imposition effectif</span>
+                        <strong id="metric-poland-income-tax-rate-fr">—</strong>
+                        <span class="metric-note">Impôt sur le revenu / brut</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Taux employeur effectif</span>
+                        <strong id="metric-poland-employer-rate-fr">—</strong>
+                        <span class="metric-note">Cotisations ZUS employeur</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Ratio coût / net à 1 salaire minimum</span>
+                        <strong id="metric-poland-cost-to-net-fr">—</strong>
+                        <span class="metric-note">Après impôt sur le revenu</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-fr-flcl-index" class="tab-content">
+                <section class="chart-card">
+                    <h2>Indice du Lab</h2>
+                    <p class="chart-subtitle">
+                        Indicateurs d'efficacité salariale du coût du travail.
+                    </p>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-E</span>
+                            <strong id="poland-flcl-e-value-fr">—</strong>
+                            <span class="metric-note" id="poland-flcl-e-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-B</span>
+                            <strong id="poland-flcl-b-value-fr">—</strong>
+                            <span class="metric-note" id="poland-flcl-b-caption-fr"></span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Transmission marginale</span>
+                            <strong id="poland-flcl-transmission-value-fr">—</strong>
+                            <span class="metric-note" id="poland-flcl-transmission-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Captation marginale</span>
+                            <strong id="poland-flcl-capture-value-fr">—</strong>
+                            <span class="metric-note" id="poland-flcl-capture-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Progressivité implicite</span>
+                            <strong id="poland-flcl-progressivity-value-fr">—</strong>
+                            <span class="metric-note" id="poland-flcl-progressivity-caption-fr"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Soutien bas salaires</span>
+                            <strong id="poland-flcl-support-value-fr">—</strong>
+                            <span class="metric-note" id="poland-flcl-support-caption-fr"></span>
+                        </div>
+                    </div>
+
+                    <p class="method-note" style="margin-top: 16px;">
+                        Aucun allègement employeur ciblé et dégressif n'est modélisé pour
+                        la Pologne : l'indicateur Lab-R ne s'applique donc pas ici.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Indice du Lab</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × salaire net avant impôt / coût employeur.
+                        </p>
+                        <div id="chart-poland-flcl-e-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Transmission marginale</h3>
+                        <p class="chart-subtitle">
+                            Part d'un zloty supplémentaire de coût employeur allant au salarié net.
+                        </p>
+                        <div id="chart-poland-flcl-marginal-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Progressivité implicite</h3>
+                        <p class="chart-subtitle">
+                            Variation de Lab-E lorsque le niveau de salaire augmente.
+                        </p>
+                        <div id="chart-poland-flcl-progressivity-fr" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Destination marginale d'un zloty supplémentaire de coût employeur</h3>
+                        <p class="chart-subtitle">
+                            Répartition marginale entre salaire net, cotisations salarié et cotisations employeur.
+                        </p>
+                        <div id="chart-poland-flcl-destination-fr" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-fr-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Données</h3>
+
+                    <p class="chart-subtitle">
+                        Le jeu de données polonais peut être téléchargé au
+                        format CSV. Il contient l'ensemble des points de
+                        salaire simulés pour le profil standard : salaire
+                        brut, cotisations ZUS, assurance maladie, impôt sur
+                        le revenu, coût employeur et indicateurs de coin
+                        socio-fiscal.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/poland/poland_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Télécharger le jeu de données Pologne
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/poland/poland_parameters_2026.json"
+                            download
+                        >
+                            Télécharger les paramètres 2026
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/poland/poland_sources_2026.json"
+                            download
+                        >
+                            Télécharger les sources 2026
+                        </a>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Données du profil standard</h3>
+
+                    <p
+                        class="chart-subtitle"
+                        id="poland-data-caption-fr"
+                    >
+                        Salarié standard
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Multiple</th>
+                                    <th>Salaire brut (PLN)</th>
+                                    <th>Cotisations ZUS salarié (PLN)</th>
+                                    <th>Assurance maladie NFZ (PLN)</th>
+                                    <th>Net avant impôt (PLN)</th>
+                                    <th>Impôt sur le revenu (PLN)</th>
+                                    <th>Net après impôt (PLN)</th>
+                                    <th>Coût employeur (PLN)</th>
+                                    <th>Cotisations employeur (PLN)</th>
+                                    <th>Coin social (PLN)</th>
+                                    <th>Coin socio-fiscal (PLN)</th>
+                                    <th>Taux employeur</th>
+                                    <th>Coût / net après impôt</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="poland-data-table-body-fr">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="chart-subtitle" style="margin-top: 10px;">
+                        Cotisations ZUS salarié = retraite + invalidité +
+                        maladie (côté salarié), hors assurance maladie NFZ
+                        affichée séparément. Cotisations employeur = ZUS
+                        employeur (retraite, invalidité, accidents du
+                        travail) + Fundusz Pracy + FGSP. Voir l'onglet
+                        Méthodologie.
+                    </p>
+                </div>
+            </section>
+
+            <section id="tab-fr-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Méthodologie</h2>
+
+                    <p>
+                        Le module Pologne repose sur une simulation
+                        réglementaire du coût du travail pour un salarié
+                        standard, célibataire sans enfant, à temps plein. Le
+                        salaire brut est calculé comme multiple du salaire
+                        minimum national (placa minimalna) mensuel, unique
+                        pour toute l'année 2026 (4 806 PLN, 31,40 PLN/heure),
+                        utilisé comme référence de salaire minimum dans le
+                        module.
+                    </p>
+
+                    <h3>1. Cotisations sociales ZUS</h3>
+
+                    <p>
+                        Côté salarié, la ZUS regroupe trois cotisations :
+                        retraite (emerytalne, 9,76 %), invalidité (rentowe,
+                        1,50 %) et maladie (chorobowe, 2,45 %), soit 13,71 %
+                        combinés. Côté employeur : retraite (9,76 %),
+                        invalidité (6,50 %), accidents du travail (wypadkowe,
+                        1,67 %, taux de référence pour un petit employeur),
+                        Fundusz Pracy — Fonds du travail — (2,45 %) et FGSP —
+                        Fonds de garantie des prestations salariales —
+                        (0,10 %). Les cotisations retraite et invalidité,
+                        salarié et employeur, sont plafonnées sur une base
+                        annuelle de 282 600 PLN (trentuple du salaire moyen
+                        prévisionnel), modélisée ici comme un plafond mensuel
+                        équivalent constant de 23 550 PLN (≈ 4,90x le salaire
+                        minimum) : au-delà, le taux effectif de cotisation
+                        retraite + invalidité diminue progressivement à mesure
+                        que le salaire brut continue de croître alors que
+                        cette assiette plafonne. Par ailleurs, le Fundusz
+                        Pracy et le FGSP ne sont pas dus lorsque la
+                        rémunération brute du salarié est inférieure au
+                        salaire minimum en vigueur : ceci crée un coude
+                        visible dans le taux de cotisation employeur exactement
+                        au point 1,00x du salaire minimum (en dessous, ces deux
+                        cotisations sont nulles ; à partir de 1,00x, elles
+                        s'appliquent). Il ne s'agit pas d'une erreur de
+                        modélisation mais d'une règle réelle de la ZUS.
+                    </p>
+
+                    <h3>2. Assurance maladie (skladka zdrowotna, NFZ)</h3>
+
+                    <p>
+                        L'assurance maladie NFZ est une cotisation distincte
+                        de la ZUS et de l'impôt sur le revenu, au taux de 9 %,
+                        assise sur le salaire brut diminué des cotisations ZUS
+                        salariales (retraite + invalidité + maladie).
+                        Distinctement de la plupart des autres prélèvements
+                        sociaux modélisés dans ce Lab, elle n'est pas
+                        déductible de l'impôt sur le revenu depuis la réforme
+                        « Polski Lad » de 2022 : avant cette date, 7,75 points
+                        de la cotisation étaient déductibles de l'impôt, ce
+                        qui atténuait sensiblement son poids net. Ce module
+                        retient exclusivement les règles en vigueur depuis
+                        2022, sans déductibilité. Dans les graphiques et le
+                        tableau de données, l'assurance maladie est affichée
+                        séparément des cotisations ZUS salariales afin de
+                        rendre visible ce mécanisme distinctif.
+                    </p>
+
+                    <h3>3. Impôt sur le revenu (PIT, skala podatkowa)</h3>
+
+                    <p>
+                        L'impôt sur le revenu utilise le barème progressif
+                        2026 à deux tranches : 12 % jusqu'à 120 000 PLN de
+                        revenu annuel imposable, puis 10 800 PLN + 32 %
+                        au-delà. Un montant forfaitaire de réduction d'impôt
+                        (kwota zmniejszajaca podatek) de 3 600 PLN par an —
+                        soit 12 % du montant annuel exonéré de 30 000 PLN
+                        (kwota wolna od podatku) — est soustrait de l'impôt
+                        calculé, plancher à zéro. À la différence de
+                        certains mécanismes de crédit d'impôt dégressifs
+                        modélisés pour d'autres pays de ce Lab, ce montant
+                        est fixe et ne diminue pas aux revenus élevés depuis
+                        la réforme de 2022. Une déduction forfaitaire
+                        mensuelle de 250 PLN au titre des frais professionnels
+                        (koszty uzyskania przychodu) réduit également la base
+                        imposable.
+                    </p>
+
+                    <h3>4. Indicateurs produits</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Net avant impôt :</strong>
+                            salaire brut diminué des cotisations ZUS
+                            salariales et de l'assurance maladie NFZ.
+                        </li>
+
+                        <li>
+                            <strong>Net après impôt :</strong>
+                            net avant impôt diminué de l'impôt sur le revenu
+                            mensuel.
+                        </li>
+
+                        <li>
+                            <strong>Coût employeur :</strong>
+                            salaire brut augmenté des cotisations ZUS
+                            employeur (y compris Fundusz Pracy et FGSP).
+                        </li>
+
+                        <li>
+                            <strong>Coin social :</strong>
+                            différence entre le coût employeur et le net
+                            avant impôt.
+                        </li>
+
+                        <li>
+                            <strong>Coin socio-fiscal :</strong>
+                            différence entre le coût employeur et le net
+                            après impôt.
+                        </li>
+
+                        <li>
+                            <strong>Rendement marginal :</strong>
+                            part d'un zloty supplémentaire de salaire brut
+                            conservée avant et après impôt sur le revenu.
+                        </li>
+                    </ul>
+
+                    <h3>5. Indice du Lab</h3>
+
+                    <p>
+                        L'Indice du Lab mesure l'efficacité salariale du coût
+                        du travail, indépendamment de l'impôt sur le revenu.
+                        Lab-E = 100 × salaire net avant impôt / coût employeur,
+                        Lab-B = 100 − Lab-E. Aucun allègement employeur ciblé
+                        et dégressif n'est modélisé pour la Pologne :
+                        l'indicateur Lab-R ne s'applique donc pas ici.
+                    </p>
+
+                    <h3>6. Limites du scénario</h3>
+
+                    <p class="method-note">
+                        Le taux d'assurance accidents du travail (wypadkowe)
+                        est le taux de référence pour un petit employeur
+                        (moins de 10 assurés) ; la tarification réelle varie
+                        de 0,67 % à 3,33 % selon la classe de risque de
+                        l'employeur. Le plafond annuel de cotisation retraite +
+                        invalidité (trentuple du salaire moyen prévisionnel)
+                        est modélisé comme un plafond mensuel équivalent
+                        constant, non comme le mécanisme cumulatif réel sur
+                        l'année civile (qui, à salaire constant au-dessus du
+                        seuil, atteint le plafond en cours d'année puis
+                        suspend la cotisation jusqu'à la fin de l'année). Le
+                        PPK (Pracownicze Plany Kapitalowe, plan d'épargne-
+                        retraite à adhésion automatique mais avec possibilité
+                        de sortie), facultatif et dont le taux de
+                        participation réel est significativement inférieur à
+                        50 % de la population salariée, n'est pas modélisé.
+                        Aucun dispositif particulier (exonération « ulga dla
+                        mlodych » pour les moins de 26 ans, quotient familial,
+                        imposition conjointe des couples, autres crédits ou
+                        allègements) n'est modélisé : le profil de référence
+                        est un salarié célibataire sans enfant, imposable au
+                        barème général. Seule la cotisation employeur ZUS
+                        standard (secteur privé, contrat de travail standard)
+                        est modélisée ; les régimes spécifiques (agriculteurs
+                        KRUS, certaines professions libérales, contrats civils
+                        type umowa zlecenie/dzielo) ne le sont pas. Ces
+                        limites sont assumées afin de produire un scénario
+                        central stable et comparable aux autres modules
+                        nationaux du Labor Cost Lab.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="language-section" id="section-en">
+        <header class="hero">
+            <div>
+                <p class="eyebrow">
+                    Labor Cost Lab · Poland module
+                </p>
+
+                <h1>Poland Labour Cost Lab</h1>
+
+                <p>
+                    Simulation module for Polish labour costs. This version
+                    computes the gross wage, ZUS social-security
+                    contributions (employee and employer), health insurance
+                    (NFZ), personal income tax (PIT), the employer cost, and
+                    the main social and socio-fiscal wedge indicators.
+                </p>
+
+                <p class="author-line">
+                    By Hugo Spring-Ragain, Economist, CEDS Paris
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <button
+                    class="theme-toggle"
+                    onclick="toggleTheme()"
+                    title="Dark mode"
+                    aria-label="Dark mode"
+                >
+                    🌙
+                </button>
+
+                <button class="language-toggle" onclick="switchPolandLanguage()">
+                    Français
+                </button>
+            </div>
+        </header>
+
+        <main class="page-shell">
+            <section class="method-box">
+                <h2>Poland · 2026 socio-fiscal module</h2>
+
+                <p>
+                    The Poland Labour Cost Lab simulates Polish labour costs
+                    for a standard, single, childless employee taxed under
+                    the general PIT scale (skala podatkowa). It combines the
+                    national minimum wage (placa minimalna) as the wage
+                    reference, ZUS social-security contributions on the
+                    employee side (retirement, disability, sickness) and the
+                    employer side (retirement, disability, accident
+                    insurance, Labour Fund, Guaranteed Employee Benefits
+                    Fund), the NFZ health-insurance contribution (skladka
+                    zdrowotna, 9%, non-deductible from income tax since
+                    2022), and the two-band income tax scale (12% / 32%).
+                </p>
+
+                <p>
+                    The goal is to measure, over a range from 0.80 to 6 times
+                    the Polish minimum wage, how a zloty of gross wage turns
+                    into net income for the employee, into total cost for the
+                    employer, and into social and fiscal levies.
+                </p>
+            </section>
+
+            <nav class="tabs" aria-label="Poland navigation">
+                <button class="tab-button active" data-tab="simulation" onclick="showPolandTab('en', 'simulation')">
+                    Simulation
+                </button>
+
+                <button class="tab-button" data-tab="flcl-index" onclick="showPolandTab('en', 'flcl-index')">
+                    Lab Index
+                </button>
+
+                <button class="tab-button" data-tab="data" onclick="showPolandTab('en', 'data')">
+                    Data
+                </button>
+
+                <button class="tab-button" data-tab="methodology" onclick="showPolandTab('en', 'methodology')">
+                    Methodology
+                </button>
+            </nav>
+
+            <section id="tab-en-simulation" class="tab-content active">
+                <div class="chart-card chart-card-wide">
+                    <h3 id="poland-waterfall-title-en">
+                        From net wage to employer cost
+                    </h3>
+
+                    <p class="chart-subtitle" id="poland-waterfall-subtitle-en">
+                        Breakdown of the path from net wage after tax to
+                        total employer cost, distinguishing income tax,
+                        employee contributions (ZUS and health insurance) and
+                        employer contributions (ZUS, Labour Fund, FGSP).
+                    </p>
+
+                    <div class="profile-selector profile-selector-grid">
+                        <div class="selector-field">
+                            <label for="poland-waterfall-multiple-en">
+                                Selected wage point
+                            </label>
+
+                            <select id="poland-waterfall-multiple-en">
+                                <option value="0.80">0.80 minimum wage</option>
+                                <option value="0.90">0.90 minimum wage</option>
+                                <option value="1.00">1.00 minimum wage</option>
+                                <option value="1.25">1.25 minimum wages</option>
+                                <option value="1.50">1.50 minimum wages</option>
+                                <option value="2.00" selected>2.00 minimum wages</option>
+                                <option value="2.50">2.50 minimum wages</option>
+                                <option value="3.00">3.00 minimum wages</option>
+                                <option value="4.00">4.00 minimum wages</option>
+                                <option value="5.00">5.00 minimum wages</option>
+                                <option value="6.00">6.00 minimum wages</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div
+                        id="chart-poland-waterfall-en"
+                        class="plotly-chart"
+                        aria-label="Breakdown of labour cost in Poland"
+                    ></div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Additional charts</h2>
+
+                    <p>
+                        The charts below detail wages, effective rates, the
+                        split between ZUS contributions, health insurance
+                        and income tax, the socio-fiscal wedge, and the
+                        marginal return on a gross-wage increase.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Employer cost, gross wage and net wages</h3>
+
+                        <p class="chart-subtitle">
+                            Comparison of the gross wage, net wage before
+                            tax, net wage after tax, and employer cost across
+                            the multiple of the Polish minimum wage.
+                        </p>
+
+                        <div
+                            id="chart-poland-cost-en"
+                            class="plotly-chart"
+                            aria-label="Labour cost in Poland"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Effective levy rates</h3>
+
+                        <p class="chart-subtitle">
+                            Employee and employer rate (ZUS contributions)
+                            and effective income tax rate. Two step effects
+                            are visible: a kink at 1.00x (the Labour Fund and
+                            FGSP are not due below the minimum wage) and a
+                            gradual decline above roughly 4.90x (retirement +
+                            disability contribution-base cap).
+                        </p>
+
+                        <div
+                            id="chart-poland-rates-en"
+                            class="plotly-chart"
+                            aria-label="Levy rates in Poland"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>ZUS contributions, health insurance and income tax</h3>
+
+                        <p class="chart-subtitle">
+                            Monthly amount of employee ZUS contributions
+                            (retirement, disability, sickness), the NFZ
+                            health-insurance contribution, and income tax.
+                        </p>
+
+                        <div
+                            id="chart-poland-contrib-tax-en"
+                            class="plotly-chart"
+                            aria-label="ZUS contributions, health insurance and income tax in Poland"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Social wedge and total socio-fiscal wedge</h3>
+
+                        <p class="chart-subtitle">
+                            Comparison of the social wedge before tax and the
+                            total socio-fiscal wedge after income tax.
+                        </p>
+
+                        <div
+                            id="chart-poland-wedge-en"
+                            class="plotly-chart"
+                            aria-label="Social and socio-fiscal wedge in Poland"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Marginal return on a gross-wage increase</h3>
+
+                        <p class="chart-subtitle">
+                            Share of an additional zloty of gross wage kept
+                            before and after income tax.
+                        </p>
+
+                        <div
+                            id="chart-poland-fiscal-return-en"
+                            class="plotly-chart"
+                            aria-label="Socio-fiscal return on a gross-wage increase in Poland"
+                        ></div>
+
+                        <p class="method-note">
+                            The marginal effect on the employer side shows
+                            two local steps: at the minimum-wage threshold
+                            (1.00x), when the Labour Fund and FGSP become
+                            due, and above roughly 4.90x, when the retirement
+                            + disability contribution-base cap (PLN
+                            23,550/month) becomes active.
+                        </p>
+                    </div>
+                </div>
+
+                <section class="dashboard-section-heading">
+                    <h2>Key indicators</h2>
+
+                    <p>
+                        The indicators below are computed at the Polish
+                        minimum wage (multiple = 1).
+                    </p>
+                </section>
+
+                <section class="metrics-grid" id="poland-metrics-en">
+                    <article class="metric-card">
+                        <span class="metric-label">Reference gross wage</span>
+                        <strong id="metric-poland-reference-wage-en">—</strong>
+                        <span class="metric-note">Minimum wage, monthly (placa minimalna)</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Effective income tax rate</span>
+                        <strong id="metric-poland-income-tax-rate-en">—</strong>
+                        <span class="metric-note">Income tax / gross</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Effective employer rate</span>
+                        <strong id="metric-poland-employer-rate-en">—</strong>
+                        <span class="metric-note">Employer ZUS contributions</span>
+                    </article>
+
+                    <article class="metric-card">
+                        <span class="metric-label">Cost / net ratio at 1 minimum wage</span>
+                        <strong id="metric-poland-cost-to-net-en">—</strong>
+                        <span class="metric-note">After income tax</span>
+                    </article>
+                </section>
+            </section>
+
+            <section id="tab-en-flcl-index" class="tab-content">
+                <section class="chart-card">
+                    <h2>Lab Index</h2>
+                    <p class="chart-subtitle">
+                        Labour cost efficiency indicators.
+                    </p>
+
+                    <div class="metrics-grid" style="margin-top: 24px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-E</span>
+                            <strong id="poland-flcl-e-value-en">—</strong>
+                            <span class="metric-note" id="poland-flcl-e-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Lab-B</span>
+                            <strong id="poland-flcl-b-value-en">—</strong>
+                            <span class="metric-note" id="poland-flcl-b-caption-en"></span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid" style="margin-top: 16px;">
+                        <div class="metric-card">
+                            <span class="metric-label">Marginal transmission</span>
+                            <strong id="poland-flcl-transmission-value-en">—</strong>
+                            <span class="metric-note" id="poland-flcl-transmission-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Marginal capture</span>
+                            <strong id="poland-flcl-capture-value-en">—</strong>
+                            <span class="metric-note" id="poland-flcl-capture-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Implicit progressivity</span>
+                            <strong id="poland-flcl-progressivity-value-en">—</strong>
+                            <span class="metric-note" id="poland-flcl-progressivity-caption-en"></span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Low-wage support</span>
+                            <strong id="poland-flcl-support-value-en">—</strong>
+                            <span class="metric-note" id="poland-flcl-support-caption-en"></span>
+                        </div>
+                    </div>
+
+                    <p class="method-note" style="margin-top: 16px;">
+                        No targeted, degressive employer relief is modeled for
+                        Poland: the Lab-R indicator does not apply here.
+                    </p>
+                </section>
+
+                <div class="charts-grid">
+                    <div class="chart-card chart-card-full">
+                        <h3>Lab Index</h3>
+                        <p class="chart-subtitle">
+                            Lab-E = 100 × net wage before income tax / employer cost.
+                        </p>
+                        <div id="chart-poland-flcl-e-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal transmission</h3>
+                        <p class="chart-subtitle">
+                            Share of one additional zloty of employer cost reaching net wage.
+                        </p>
+                        <div id="chart-poland-flcl-marginal-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Implicit progressivity</h3>
+                        <p class="chart-subtitle">
+                            Change in Lab-E when the wage level increases.
+                        </p>
+                        <div id="chart-poland-flcl-progressivity-en" class="plotly-chart"></div>
+                    </div>
+
+                    <div class="chart-card chart-card-full">
+                        <h3>Marginal destination of one additional zloty of employer cost</h3>
+                        <p class="chart-subtitle">
+                            Marginal split between net wage, employee contributions and employer contributions.
+                        </p>
+                        <div id="chart-poland-flcl-destination-en" class="plotly-chart"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-en-data" class="tab-content">
+                <div class="chart-card">
+                    <h3>Data</h3>
+
+                    <p class="chart-subtitle">
+                        The Polish dataset can be downloaded as a CSV file.
+                        It contains every simulated wage point for the
+                        standard profile: gross wage, ZUS contributions,
+                        health insurance, income tax, employer cost, and
+                        socio-fiscal wedge indicators.
+                    </p>
+
+                    <div class="download-row" style="margin-top: 18px;">
+                        <a
+                            class="download-link"
+                            href="../../data/poland/poland_labour_cost_grid_2026.csv"
+                            download
+                        >
+                            Download the Poland dataset
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/poland/poland_parameters_2026.json"
+                            download
+                        >
+                            Download the 2026 parameters
+                        </a>
+
+                        <a
+                            class="download-link"
+                            href="../../data/poland/poland_sources_2026.json"
+                            download
+                        >
+                            Download the 2026 sources
+                        </a>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Data for the standard profile</h3>
+
+                    <p
+                        class="chart-subtitle"
+                        id="poland-data-caption-en"
+                    >
+                        Standard employee
+                    </p>
+
+                    <div class="table-wrapper data-table-scroll data-table-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Multiple</th>
+                                    <th>Gross wage (PLN)</th>
+                                    <th>Employee ZUS contributions (PLN)</th>
+                                    <th>NFZ health insurance (PLN)</th>
+                                    <th>Net before tax (PLN)</th>
+                                    <th>Income tax (PLN)</th>
+                                    <th>Net after tax (PLN)</th>
+                                    <th>Employer cost (PLN)</th>
+                                    <th>Employer contributions (PLN)</th>
+                                    <th>Social wedge (PLN)</th>
+                                    <th>Total socio-fiscal wedge (PLN)</th>
+                                    <th>Employer rate</th>
+                                    <th>Cost / net after tax</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="poland-data-table-body-en">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="chart-subtitle" style="margin-top: 10px;">
+                        Employee ZUS contributions = retirement + disability +
+                        sickness (employee side), excluding NFZ health
+                        insurance, shown separately. Employer contributions =
+                        employer ZUS (retirement, disability, accident
+                        insurance) + Labour Fund + FGSP. See the Methodology
+                        tab.
+                    </p>
+                </div>
+            </section>
+
+            <section id="tab-en-methodology" class="tab-content">
+                <div class="method-box">
+                    <h2>Methodology</h2>
+
+                    <p>
+                        The Poland module relies on a regulatory simulation
+                        of labour cost for a standard, single, childless
+                        full-time employee. The gross wage is computed as a
+                        multiple of the monthly national minimum wage (placa
+                        minimalna), set once for the whole of 2026 (PLN
+                        4,806, PLN 31.40/hour), used as the minimum-wage
+                        reference in the module.
+                    </p>
+
+                    <h3>1. ZUS social-security contributions</h3>
+
+                    <p>
+                        On the employee side, ZUS groups three contributions:
+                        retirement (emerytalne, 9.76%), disability (rentowe,
+                        1.50%) and sickness (chorobowe, 2.45%), 13.71%
+                        combined. On the employer side: retirement (9.76%),
+                        disability (6.50%), accident insurance (wypadkowe,
+                        1.67%, the reference rate for a small employer),
+                        Labour Fund (Fundusz Pracy, 2.45%), and the
+                        Guaranteed Employee Benefits Fund (FGSP, 0.10%).
+                        Retirement and disability contributions, on both the
+                        employee and employer sides, are capped on an annual
+                        contribution base of PLN 282,600 (thirty times the
+                        projected average wage), modeled here as a constant
+                        monthly-equivalent ceiling of PLN 23,550 (roughly
+                        4.90x the minimum wage): above that point, the
+                        effective retirement + disability contribution rate
+                        gradually declines as gross pay keeps rising while
+                        this base plateaus. Separately, the Labour Fund and
+                        FGSP are not due when the employee's gross pay is
+                        below the minimum wage in effect: this creates a
+                        visible kink in the employer contribution rate right
+                        at the 1.00x minimum-wage point (below it, these two
+                        levies are zero; from 1.00x onward, they apply). This
+                        is a real ZUS rule, not a modeling error.
+                    </p>
+
+                    <h3>2. Health insurance (skladka zdrowotna, NFZ)</h3>
+
+                    <p>
+                        The NFZ health-insurance contribution is separate
+                        from both ZUS and income tax, charged at 9%, on
+                        gross pay minus employee ZUS contributions
+                        (retirement + disability + sickness). Unlike most
+                        other social levies modeled in this Lab, it has not
+                        been deductible from income tax since the "Polski
+                        Lad" reform of 2022: before that date, 7.75 points of
+                        the contribution were tax-deductible, which
+                        meaningfully softened its net weight. This module
+                        follows the rules in effect since 2022, with no
+                        deductibility. In the charts and data table, health
+                        insurance is shown separately from employee ZUS
+                        contributions to make this distinctive mechanism
+                        visible.
+                    </p>
+
+                    <h3>3. Income tax (PIT, skala podatkowa)</h3>
+
+                    <p>
+                        Income tax uses the 2026 two-band progressive scale:
+                        12% up to PLN 120,000 of annual taxable income, then
+                        PLN 10,800 + 32% above that. A flat tax-reducing
+                        amount (kwota zmniejszajaca podatek) of PLN 3,600 per
+                        year -- 12% of the PLN 30,000 annual tax-free amount
+                        (kwota wolna od podatku) -- is subtracted from the
+                        computed tax, floored at zero. Unlike some
+                        degressive tax-credit mechanisms modeled for other
+                        countries in this Lab, this amount is fixed and does
+                        not taper off at higher incomes since the 2022
+                        reform. A flat monthly deduction of PLN 250 for
+                        deemed professional expenses (koszty uzyskania
+                        przychodu) also reduces the taxable base.
+                    </p>
+
+                    <h3>4. Indicators produced</h3>
+
+                    <ul>
+                        <li>
+                            <strong>Net before tax:</strong>
+                            gross wage minus employee ZUS contributions and
+                            NFZ health insurance.
+                        </li>
+
+                        <li>
+                            <strong>Net after tax:</strong>
+                            net before tax minus monthly income tax.
+                        </li>
+
+                        <li>
+                            <strong>Employer cost:</strong>
+                            gross wage plus employer ZUS contributions
+                            (including the Labour Fund and FGSP).
+                        </li>
+
+                        <li>
+                            <strong>Social wedge:</strong>
+                            difference between employer cost and net before
+                            tax.
+                        </li>
+
+                        <li>
+                            <strong>Total socio-fiscal wedge:</strong>
+                            difference between employer cost and net after
+                            tax.
+                        </li>
+
+                        <li>
+                            <strong>Marginal return:</strong>
+                            share of an additional zloty of gross wage kept
+                            before and after income tax.
+                        </li>
+                    </ul>
+
+                    <h3>5. Lab Index</h3>
+
+                    <p>
+                        The Lab Index measures the wage efficiency of labour
+                        cost, independently of income tax. Lab-E = 100 × net
+                        wage before income tax / employer cost, Lab-B = 100
+                        − Lab-E. No targeted, degressive employer relief is
+                        modeled for Poland: the Lab-R indicator therefore
+                        does not apply here.
+                    </p>
+
+                    <h3>6. Limits of the scenario</h3>
+
+                    <p class="method-note">
+                        The work-accident insurance rate (wypadkowe) used
+                        here is the reference rate for a small employer
+                        (fewer than 10 insured persons); the actual rate
+                        ranges from 0.67% to 3.33% depending on the
+                        employer's risk class. The annual retirement +
+                        disability contribution-base cap (thirty times the
+                        projected average wage) is modeled as a constant
+                        monthly-equivalent ceiling, not as the real
+                        cumulative calendar-year mechanism (which, at a
+                        constant wage above the threshold, reaches the cap
+                        partway through the year and then suspends the
+                        contribution until year-end). The PPK (Pracownicze
+                        Plany Kapitalowe, an auto-enrollment but opt-out-
+                        eligible retirement savings plan), whose real
+                        participation rate is significantly below 50% of the
+                        employed population, is not modeled. No special
+                        mechanism (the "ulga dla mlodych" exemption for
+                        under-26s, family quotient, joint taxation of
+                        couples, or other credits and reliefs) is modeled:
+                        the reference profile is a single, childless
+                        employee taxed under the general scale. Only the
+                        standard ZUS employer contribution (private sector,
+                        standard employment contract) is modeled; specific
+                        regimes (KRUS farmers, certain liberal professions,
+                        civil-law contracts such as umowa zlecenie/dzielo)
+                        are not. These limits are accepted in order to
+                        produce a stable central scenario, comparable with
+                        the Labor Cost Lab's other national modules.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

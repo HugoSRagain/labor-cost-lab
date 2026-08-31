@@ -15,7 +15,8 @@
     "United States",
     "China",
     "Japan",
-    "Canada"
+    "Canada",
+    "Poland"
   ],
   "sources": [
     {
@@ -405,6 +406,34 @@
         "Population weights for the 13-province/territory population-weighted average, mirroring the Swiss canton weighting approach"
       ],
       "status": "official_aggregated"
+    },
+    {
+      "id": "worldbank_icp_ppp_poland",
+      "institution": "World Bank, International Comparison Program (ICP)",
+      "institution_fr": "Banque mondiale, Programme de comparaison internationale (PCI)",
+      "title": "PPP conversion factor, private consumption (LCU per international $), Poland",
+      "indicator_code": "PA.NUS.PRVT.PP",
+      "url": "https://api.worldbank.org/v2/country/POL/indicator/PA.NUS.PRVT.PP",
+      "reference_year": 2024,
+      "retrieved": "2026-08-30",
+      "used_for": [
+        "Converting the harmonized wage grid into zloty and back into international dollars for Poland"
+      ],
+      "status": "official"
+    },
+    {
+      "id": "poland_zus_nfz_pit_2026",
+      "institution": "Zaklad Ubezpieczen Spolecznych (ZUS); Narodowy Fundusz Zdrowia (NFZ); Ministerstwo Finansow",
+      "institution_fr": "Institution polonaise de securite sociale (ZUS), Fonds national de sante (NFZ), ministere des Finances polonais",
+      "title": "ZUS social-insurance contribution rates and annual contribution-base cap; 9% NFZ health-insurance contribution; PIT progressive scale, tax-reducing amount and standard cost-of-income deduction, 2026",
+      "url": "https://www.zus.pl/en/baza-wiedzy/skladki-wskazniki-odsetki/skladki/wysokosc-skladek-na-ubezpieczenia-spoleczne",
+      "reference_year": 2026,
+      "retrieved": "2026-08-30",
+      "used_for": [
+        "Poland's ZUS employee/employer contributions, NFZ health insurance, and progressive income tax layer"
+      ],
+      "status": "official_aggregated",
+      "note": "Full citations and confidence flags in docs/data/poland/poland_sources_2026.json."
     }
   ],
   "notes": [
