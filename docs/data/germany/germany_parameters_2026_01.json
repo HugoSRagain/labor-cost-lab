@@ -89,6 +89,13 @@
         "care_employer_childless_outside_saxony": 0.018
     },
 
+    "employer_only_levies_2026": {
+        "insolvency_levy": 0.0015,
+        "u2_maternity_levy_standard": 0.0044,
+        "source": "TK (Techniker Krankenkasse) Firmenkunden 2026 rate pages, cross-checked against NWB Datenbank",
+        "note": "Insolvenzgeldumlage (0.15%) and the general (non-minijob) U2 Mutterschaftsumlage (0.44%) are mandatory, employer-only levies applying to essentially all employers, regardless of size, for standard and midijob employment. This is a DIFFERENT rate from the minijob regime's own U2 rate (0.22%, employment_regimes.minijob.employer_flat_rates.u2_maternity_levy): the Minijob-Zentrale runs its own separate Ausgleichskasse with its own U1/U2/Insolvenzgeldumlage rates, distinct from the general Krankenkassen-administered U2 rate used here. The U1 Umlage (Krankheitsumlage, sick-pay reimbursement) is NOT added here because it is mandatory only for employers with 30 or fewer employees, and voluntary above that -- not modeled since this module does not specify an employer size for standard/midijob employment (unlike the minijob regime, where a small-employer profile is implicit)."
+    },
+
 "profiles": [
     {
         "profile_id": "germany__public_health__with_children__outside_saxony",
@@ -133,12 +140,12 @@
 ],
 
     "methodological_limits": [
-        "Income tax is excluded from V1.",
-        "Net wage is computed before personal income tax.",
+        "Income tax (Lohnsteuer) and the solidarity surcharge (Solidaritatszuschlag) are computed via the official 2026 BMF Programmablaufplan (see analysis/germany/pap_2026_lohnsteuer.py); net wage figures are after personal income tax, not before it.",
         "Mini-jobs are modelled with the 2026 employer flat-rate schedule and 0% employee contribution (opt-out from the pension top-up assumed); midi-jobs are modelled with the 2026 Übergangsbereich Gleitzone formula (Faktor F).",
         "Private health insurance is excluded from V1.",
         "Individual sickness-fund additional contribution rates are not modelled in V1.",
         "The health additional contribution is modelled with a reference average rate.",
-        "Accident insurance contributions are excluded from V1."
+        "Accident insurance contributions are excluded from V1.",
+        "The Insolvenzgeldumlage (0.15%) and the general U2 Mutterschaftsumlage (0.44%) are now modeled as separate employer-only levies for standard and midijob rows (added 2026-08-31, see employer_only_levies_2026), in addition to the minijob regime's own bundled flat-rate figures. The U1 Umlage (Krankheitsumlage) remains unmodeled for standard/midijob rows since it only applies to employers with 30 or fewer employees, a size this module does not specify outside the minijob regime."
     ]
 }

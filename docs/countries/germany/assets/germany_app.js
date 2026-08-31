@@ -843,21 +843,25 @@ function renderGermanyContributionBreakdownChart(lang) {
     const row = findGermanyClosestRow(data, 2.00);
 
     const labels = lang === "en"
-        ? ["Pension", "Health", "Long-term care", "Unemployment"]
-        : ["Retraite", "Maladie", "Dépendance", "Chômage"];
+        ? ["Pension", "Health", "Long-term care", "Unemployment", "Insolvency levy", "U2 (maternity)"]
+        : ["Retraite", "Maladie", "Dépendance", "Chômage", "Insolvenzgeldumlage", "U2 (maternité)"];
 
     const employeeValues = [
         deNum(row.employee_pension_monthly_eur),
         deNum(row.employee_health_monthly_eur),
         deNum(row.employee_care_monthly_eur),
-        deNum(row.employee_unemployment_monthly_eur)
+        deNum(row.employee_unemployment_monthly_eur),
+        0,
+        0
     ];
 
     const employerValues = [
         deNum(row.employer_pension_monthly_eur),
         deNum(row.employer_health_monthly_eur),
         deNum(row.employer_care_monthly_eur),
-        deNum(row.employer_unemployment_monthly_eur)
+        deNum(row.employer_unemployment_monthly_eur),
+        deNum(row.employer_insolvency_levy_monthly_eur),
+        deNum(row.employer_u2_levy_monthly_eur)
     ];
 
     const employeeLabel = lang === "en" ? "Employee" : "Salarié";

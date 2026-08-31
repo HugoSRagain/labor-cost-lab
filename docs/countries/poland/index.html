@@ -10,7 +10,7 @@
 
     <link rel="stylesheet" href="../../assets/style.css?v=28">
     <script defer src="../../assets/i18n_common.js?v=3"></script>
-    <script defer src="./assets/poland_app.js?v=2"></script>
+    <script defer src="./assets/poland_app.js?v=3"></script>
 </head>
 
 <body>
@@ -198,18 +198,20 @@
                     </div>
 
                     <div class="chart-card">
-                        <h3>Cotisations ZUS, assurance maladie et impôt sur le revenu</h3>
+                        <h3>Décomposition détaillée des cotisations ZUS, assurance maladie et impôt sur le revenu</h3>
 
                         <p class="chart-subtitle">
-                            Montant mensuel des cotisations ZUS salarié
-                            (retraite, invalidité, maladie), de l'assurance
-                            maladie NFZ et de l'impôt sur le revenu.
+                            Montant mensuel de chaque ligne de cotisation ZUS
+                            salarié et employeur (retraite, invalidité,
+                            maladie, accidents du travail, Fundusz Pracy,
+                            FGŚP), de l'assurance maladie NFZ et de l'impôt
+                            sur le revenu.
                         </p>
 
                         <div
                             id="chart-poland-contrib-tax-fr"
                             class="plotly-chart"
-                            aria-label="Cotisations ZUS, assurance maladie et impôt sur le revenu en Pologne"
+                            aria-label="Décomposition détaillée des cotisations et de l'impôt en Pologne"
                         ></div>
                     </div>
 
@@ -433,13 +435,19 @@
                                 <tr>
                                     <th>Multiple</th>
                                     <th>Salaire brut (PLN)</th>
-                                    <th>Cotisations ZUS salarié (PLN)</th>
+                                    <th>Retraite salarié (PLN)</th>
+                                    <th>Invalidité salarié (PLN)</th>
+                                    <th>Maladie ZUS salarié (PLN)</th>
                                     <th>Assurance maladie NFZ (PLN)</th>
                                     <th>Net avant impôt (PLN)</th>
                                     <th>Impôt sur le revenu (PLN)</th>
                                     <th>Net après impôt (PLN)</th>
+                                    <th>Retraite employeur (PLN)</th>
+                                    <th>Invalidité employeur (PLN)</th>
+                                    <th>Accidents du travail (PLN)</th>
+                                    <th>Fundusz Pracy (PLN)</th>
+                                    <th>FGŚP (PLN)</th>
                                     <th>Coût employeur (PLN)</th>
-                                    <th>Cotisations employeur (PLN)</th>
                                     <th>Coin social (PLN)</th>
                                     <th>Coin socio-fiscal (PLN)</th>
                                     <th>Taux employeur</th>
@@ -809,18 +817,20 @@
                     </div>
 
                     <div class="chart-card">
-                        <h3>ZUS contributions, health insurance and income tax</h3>
+                        <h3>Detailed breakdown of ZUS contributions, health insurance and income tax</h3>
 
                         <p class="chart-subtitle">
-                            Monthly amount of employee ZUS contributions
-                            (retirement, disability, sickness), the NFZ
-                            health-insurance contribution, and income tax.
+                            Monthly amount of every employee and employer
+                            ZUS contribution line (retirement, disability,
+                            sickness, accident insurance, Labour Fund,
+                            FGSP), the NFZ health-insurance contribution,
+                            and income tax.
                         </p>
 
                         <div
                             id="chart-poland-contrib-tax-en"
                             class="plotly-chart"
-                            aria-label="ZUS contributions, health insurance and income tax in Poland"
+                            aria-label="Detailed breakdown of contributions and income tax in Poland"
                         ></div>
                     </div>
 
@@ -1043,13 +1053,19 @@
                                 <tr>
                                     <th>Multiple</th>
                                     <th>Gross wage (PLN)</th>
-                                    <th>Employee ZUS contributions (PLN)</th>
+                                    <th>Retirement, employee (PLN)</th>
+                                    <th>Disability, employee (PLN)</th>
+                                    <th>Sickness, employee (PLN)</th>
                                     <th>NFZ health insurance (PLN)</th>
                                     <th>Net before tax (PLN)</th>
                                     <th>Income tax (PLN)</th>
                                     <th>Net after tax (PLN)</th>
+                                    <th>Retirement, employer (PLN)</th>
+                                    <th>Disability, employer (PLN)</th>
+                                    <th>Accident insurance (PLN)</th>
+                                    <th>Labour Fund (PLN)</th>
+                                    <th>FGSP (PLN)</th>
                                     <th>Employer cost (PLN)</th>
-                                    <th>Employer contributions (PLN)</th>
                                     <th>Social wedge (PLN)</th>
                                     <th>Total socio-fiscal wedge (PLN)</th>
                                     <th>Employer rate</th>

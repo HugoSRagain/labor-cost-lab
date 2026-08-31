@@ -23,6 +23,18 @@
             "confidence": "high"
         },
 
+        "onss_contribution_branches": {
+            "label": "Sous-taux ONSS par branche (retraite, assurance maladie-invalidite, chomage, maladies professionnelles, accidents du travail)",
+            "source_name": "ONSS, instructions administratives DmfA",
+            "source_type": "official",
+            "url": "https://www.socialsecurity.be/employer/instructions/dmfa/fr/latest/instructions/socialsecuritycontributions/contributions.html",
+            "evidence": "Employee: pension 7.50%, sante-soins 3.55%, sante-indemnites 1.15%, chomage 0.87% (total 13.07%, matching the module's existing flat employee rate exactly). Employer: pension 8.86%, sante-soins 3.80%, sante-indemnites 2.35%, chomage 1.46%, maladies professionnelles 1.00%, accidents du travail 0.30% (these six branches total 17.77 points, leaving a 7.23-point residual against the module's existing 25.00% flat employer rate).",
+            "confidence": "high for the seven directly-sourced sub-rates listed; the 7.23-point employer residual (family allowances, regionalized since 2015 but still consolidated in the ONSS base rate, plus smaller miscellaneous items such as conge-education paye) is a DERIVED value (25.00% minus the six sourced branches), not independently verified against a primary source",
+            "implementation_status": "implemented",
+            "added": "2026-08-31",
+            "note": "The employer branch amounts are computed 'before structural reduction' (gross wage x branch rate); the existing structural-reduction mechanism, which is not attributable to any single branch, continues to apply as a single lump-sum deduction against the branch total, unchanged from before this addition."
+        },
+
         "withholding_tax": {
             "label": "Précompte professionnel",
             "source_name": "SPF Finances",
@@ -30,7 +42,8 @@
             "url": "https://finances.belgium.be/fr/entreprises/personnel_et_remuneration/precompte_professionnel/calcul",
             "evidence": "Official page for the calculation of withholding tax, including 2026 rules.",
             "confidence": "high",
-            "implementation_status": "to_implement"
+            "implementation_status": "implemented",
+            "verification_note": "The 4-bracket 2026 scale used in analysis/belgium/precompte_professionnel_2026.py (16,710/29,500/51,050 EUR thresholds at 26.75/42.80/48.15/53.50%) was re-checked 2026-08-31 against a second independent secondary source (calculateur-de-salaire.be), which reproduced the same four thresholds and rates, plus the same 30%/6,070 EUR professional-expense cap and basic-tax-reduction figures already in the code. A conflicting set of thresholds (16,310/28,790/49,820 EUR) surfaced in some other aggregator summaries during this check, but could not be traced to a primary source and is not corroborated elsewhere -- most likely a stale or conflated figure (e.g. the annual IPP tax-return scale rather than the précompte formule-clé scale, which use different year-ahead indexation). The code's existing values are treated as confirmed pending a direct check against Moniteur belge Annexe III (29 December 2025), which could not be fetched directly."
         },
 
         "pay_slip_net_wage": {
@@ -68,9 +81,7 @@
             "employer cost before reductions"
         ],
         "not_yet_included": [
-            "structural reduction",
             "work bonus",
-            "withholding tax",
             "sectoral contributions",
             "manual worker holiday pay contribution",
             "regional differences",

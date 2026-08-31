@@ -85,6 +85,17 @@ def compute_row(
         "employee_ss_monthly_eur": round_money(employee_ss),
         "employer_ss_monthly_eur": round_money(employer_ss),
 
+        "employee_contingencias_comunes_monthly_eur": round_money(result["employee_contingencias_comunes_monthly_eur"]),
+        "employee_desempleo_monthly_eur": round_money(result["employee_desempleo_monthly_eur"]),
+        "employee_mei_monthly_eur": round_money(result["employee_mei_monthly_eur"]),
+        "employee_formacion_profesional_monthly_eur": round_money(result["employee_formacion_profesional_monthly_eur"]),
+        "employer_contingencias_comunes_monthly_eur": round_money(result["employer_contingencias_comunes_monthly_eur"]),
+        "employer_desempleo_monthly_eur": round_money(result["employer_desempleo_monthly_eur"]),
+        "employer_mei_monthly_eur": round_money(result["employer_mei_monthly_eur"]),
+        "employer_formacion_profesional_monthly_eur": round_money(result["employer_formacion_profesional_monthly_eur"]),
+        "employer_fogasa_monthly_eur": round_money(result["employer_fogasa_monthly_eur"]),
+        "employer_at_ep_monthly_eur": round_money(result["employer_at_ep_monthly_eur"]),
+
         "employee_contributions_monthly_eur": round_money(employee_contributions),
         "employer_contributions_monthly_eur": round_money(employer_contributions),
 

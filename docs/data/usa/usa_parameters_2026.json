@@ -117,6 +117,7 @@
         "La reduction potentielle du credit FUTA pour la Californie (et les Iles Vierges americaines) au titre de 2026 n'est pas finalisee avant le 10 novembre 2026 et n'est pas modelisee.",
         "Le bareme complet d'Hawaii (12 tranches) et la deduction du Nouveau-Mexique reposent sur des sources secondaires convergentes mais non verifiees directement contre un document officiel dans le cadre de cette recherche -- confiance moyenne, voir usa_sources_2026.json.",
         "Le Programme de conge familial et medical (PFML) de Virginie a ete adopte en 2026 mais ses cotisations ne debutent qu'en avril 2028 -- non modelise pour cette annee de reference.",
-        "Le TFR-equivalent, une retenue de securite sociale forfaitaire additionnelle, une eventuelle assurance maladie privee obligatoire (mandat federal ACA, non fiscal) et les avantages en nature ne sont pas modelises."
+        "Le TFR-equivalent, une retenue de securite sociale forfaitaire additionnelle, une eventuelle assurance maladie privee obligatoire (mandat federal ACA, non fiscal) et les avantages en nature ne sont pas modelises.",
+        "Le salaire de reference uniforme (salaire minimum federal, 7,25 USD/heure) place meme le sommet de la grille (6x) autour de 90 480 USD/an, sous le seuil de l'Additional Medicare Tax (200 000 USD) et sous les tranches marginales superieures de la plupart des Etats (Californie, New York, Massachusetts, etc.) : ces lignes sont donc a zero sur toute la grille publiee, non par erreur mais parce que ce salaire de reference ne les atteint jamais."
     ]
 }

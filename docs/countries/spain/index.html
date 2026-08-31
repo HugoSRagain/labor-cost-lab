@@ -10,7 +10,7 @@
 
     <link rel="stylesheet" href="../../assets/style.css?v=28">
     <script defer src="../../assets/i18n_common.js?v=3"></script>
-    <script defer src="./assets/spain_app.js?v=2"></script>
+    <script defer src="./assets/spain_app.js?v=3"></script>
 </head>
 
 <body>
@@ -192,6 +192,23 @@
                             id="chart-spain-rates-fr"
                             class="plotly-chart"
                             aria-label="Taux de prélèvement en Espagne"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Décomposition détaillée des cotisations Seguridad Social</h3>
+
+                        <p class="chart-subtitle">
+                            Montant mensuel de chaque ligne de cotisation
+                            salarié et employeur (contingencias comunes,
+                            chômage, MEI, formation professionnelle, FOGASA,
+                            accidents du travail).
+                        </p>
+
+                        <div
+                            id="chart-spain-contrib-breakdown-fr"
+                            class="plotly-chart"
+                            aria-label="Décomposition détaillée des cotisations Seguridad Social en Espagne"
                         ></div>
                     </div>
 
@@ -437,12 +454,20 @@
                                 <tr>
                                     <th>Multiple</th>
                                     <th>Salaire brut (€)</th>
+                                    <th>Conting. comunes salarié (€)</th>
+                                    <th>Chômage salarié (€)</th>
+                                    <th>MEI salarié (€)</th>
+                                    <th>Form. prof. salarié (€)</th>
                                     <th>Net avant impôt (€)</th>
                                     <th>IRPF (€)</th>
                                     <th>Net après impôt (€)</th>
+                                    <th>Conting. comunes employeur (€)</th>
+                                    <th>Chômage employeur (€)</th>
+                                    <th>MEI employeur (€)</th>
+                                    <th>Form. prof. employeur (€)</th>
+                                    <th>FOGASA (€)</th>
+                                    <th>AT/EP (€)</th>
                                     <th>Coût employeur (€)</th>
-                                    <th>Cotisations salarié (€)</th>
-                                    <th>Cotisations employeur (€)</th>
                                     <th>Coin social (€)</th>
                                     <th>Coin socio-fiscal (€)</th>
                                     <th>Taux employeur</th>
@@ -582,13 +607,15 @@
                         (célibataire, sans enfant à charge) est modélisé. Le
                         taux AT/EP est modélisé à un taux standard bas risque
                         unique (1,00 %), alors que le tarif officiel varie
-                        selon le code CNAE de l'activité. La loi prévoit une
-                        exonération spécifique de l'IRPF au niveau du SMI
-                        (article 28 du Real Decreto-ley 5/2026) : ce module ne
-                        modélise pas ce mécanisme explicite mais obtient un
-                        résultat proche de zéro à ce niveau, dans toutes les
-                        régions, via le minimo personal et la réduction pour
-                        revenus du travail. Seul le Régime général de la
+                        selon le code CNAE de l'activité. La déduction
+                        spécifique pour les revenus du travail de faible
+                        montant (article 28 du Real Decreto-ley 5/2026,
+                        590,89 €, dégressive entre 17 094 € et 20 048,45 €
+                        de revenu brut annuel) est modélisée explicitement,
+                        en plus du minimo personal et de la réduction pour
+                        revenus du travail : l'IRPF au niveau du SMI est
+                        désormais exactement nul dans les 16 régions
+                        modélisées. Seul le Régime général de la
                         Seguridad Social est modélisé. Ces limites sont
                         assumées afin de produire un scénario central stable et
                         comparable aux autres modules nationaux du Labor Cost
@@ -767,6 +794,23 @@
                             id="chart-spain-rates-en"
                             class="plotly-chart"
                             aria-label="Levy rates in Spain"
+                        ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Detailed breakdown of Seguridad Social contributions</h3>
+
+                        <p class="chart-subtitle">
+                            Monthly amount of every employee and employer
+                            contribution line (contingencias comunes,
+                            unemployment, MEI, vocational training, FOGASA,
+                            workplace accidents).
+                        </p>
+
+                        <div
+                            id="chart-spain-contrib-breakdown-en"
+                            class="plotly-chart"
+                            aria-label="Detailed breakdown of Seguridad Social contributions in Spain"
                         ></div>
                     </div>
 
@@ -1012,12 +1056,20 @@
                                 <tr>
                                     <th>Multiple</th>
                                     <th>Gross wage (€)</th>
+                                    <th>Conting. comunes, employee (€)</th>
+                                    <th>Unemployment, employee (€)</th>
+                                    <th>MEI, employee (€)</th>
+                                    <th>Vocational training, employee (€)</th>
                                     <th>Net before tax (€)</th>
                                     <th>IRPF (€)</th>
                                     <th>Net after tax (€)</th>
+                                    <th>Conting. comunes, employer (€)</th>
+                                    <th>Unemployment, employer (€)</th>
+                                    <th>MEI, employer (€)</th>
+                                    <th>Vocational training, employer (€)</th>
+                                    <th>FOGASA (€)</th>
+                                    <th>Workplace accidents (€)</th>
                                     <th>Employer cost (€)</th>
-                                    <th>Employee contributions (€)</th>
-                                    <th>Employer contributions (€)</th>
                                     <th>Social wedge (€)</th>
                                     <th>Total socio-fiscal wedge (€)</th>
                                     <th>Employer rate</th>
@@ -1151,13 +1203,15 @@
                         children) is modeled. The AT/EP rate is modeled at a
                         single standard low-risk rate (1.00%), while the
                         official tariff varies by the company's CNAE activity
-                        code. Spanish law provides a specific IRPF exemption
-                        at the SMI level (Art. 28 of Real Decreto-ley
-                        5/2026); this module does not model that explicit
-                        mechanism but obtains a near-zero result at that
-                        level, in every region, via the personal minimum and
-                        the work-income reduction. Only the Régimen General of
-                        Seguridad Social is modeled. These limits are accepted
+                        code. The specific deduction for low labour income
+                        (Art. 28 of Real Decreto-ley 5/2026, EUR 590.89,
+                        tapering between EUR 17,094 and EUR 20,048.45 of
+                        annual gross income) is modeled explicitly, on top
+                        of the personal minimum and the work-income
+                        reduction: IRPF at the SMI level is now exactly
+                        zero in every one of the 16 modeled regions. Only
+                        the Régimen General of Seguridad Social is modeled.
+                        These limits are accepted
                         in order to produce a stable central scenario,
                         comparable with the Labor Cost Lab's other national
                         modules.

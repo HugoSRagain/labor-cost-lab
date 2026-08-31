@@ -53,12 +53,14 @@ dimensions:
     lt50:
       label_fr: "Moins de 50 salariés"
       label_en: "Fewer than 50 employees"
-      situation: {}
+      situation:
+        entreprise . salariés . effectif: 30
 
     ge50:
       label_fr: "50 salariés et plus"
       label_en: "50 employees or more"
-      situation: {}
+      situation:
+        entreprise . salariés . effectif: 100
 
   working_time:
     full_time:

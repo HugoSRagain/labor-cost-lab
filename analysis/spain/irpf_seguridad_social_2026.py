@@ -49,6 +49,17 @@ Figures used (2025/2026):
   EUR 7,302 if rendimiento neto del trabajo <= EUR 14,852; tapering
   linearly to EUR 2,364.34 at EUR 17,673.52, then to EUR 0 at
   EUR 19,747.50 and above. National, does not vary by region.
+- Deduccion por obtencion de rendimientos del trabajo de escasa cuantia
+  (Art. 28 Real Decreto-ley 5/2026, amending Disposicion Adicional 61 of
+  Ley 35/2006): a flat EUR 590.89 deduction from the COMBINED state +
+  regional tax quota (not from the taxable base) when gross labour income
+  is EUR 17,094/year or below (exactly this module's SMI reference wage),
+  tapering linearly to EUR 0 between EUR 17,094 and EUR 20,048.45. Unlike
+  the Art. 20 reduction above, this is a direct credit against tax due,
+  introduced specifically so that a full-time SMI earner owes exactly
+  EUR 0 of IRPF in every region -- the Art. 20 reduction alone leaves a
+  small residual liability (a few hundred EUR/year) at the SMI reference
+  point, which this deduction cancels. National, does not vary by region.
 - Seguridad Social, Regimen General, contrato indefinido: employee 6.50%
   (contingencias comunes 4.70%, desempleo 1.55%, MEI 0.15%, formacion
   profesional 0.10%); employer 31.65% (contingencias comunes 23.60%,
@@ -321,6 +332,35 @@ def compute_work_income_reduction_2026(rendimiento_neto_trabajo: float) -> float
     return 0.0
 
 
+SMI_TAX_CREDIT_FULL_AMOUNT_2026 = 590.89
+SMI_TAX_CREDIT_THRESHOLD_EUR = 17094.00
+SMI_TAX_CREDIT_TAPER_END_EUR = 20048.45
+
+
+def compute_smi_tax_credit_2026(annual_gross_eur: float) -> float:
+    """
+    2026 "deduccion por obtencion de rendimientos del trabajo de escasa
+    cuantia" (Art. 28 Real Decreto-ley 5/2026): a flat EUR 590.89 credit
+    against the combined state+regional tax quota when annual gross
+    labour income is at or below the SMI (EUR 17,094), tapering linearly
+    to EUR 0 by EUR 20,048.45.
+    """
+    x = max(0.0, annual_gross_eur)
+
+    if x <= SMI_TAX_CREDIT_THRESHOLD_EUR:
+        return SMI_TAX_CREDIT_FULL_AMOUNT_2026
+
+    if x <= SMI_TAX_CREDIT_TAPER_END_EUR:
+        taper_span = SMI_TAX_CREDIT_TAPER_END_EUR - SMI_TAX_CREDIT_THRESHOLD_EUR
+        return round_cent(
+            SMI_TAX_CREDIT_FULL_AMOUNT_2026
+            * (SMI_TAX_CREDIT_TAPER_END_EUR - x)
+            / taper_span
+        )
+
+    return 0.0
+
+
 def compute_irpf_2026(
     annual_gross_eur: float,
     annual_employee_ss_eur: float,
@@ -360,7 +400,9 @@ def compute_irpf_2026(
         - apply_progressive_scale(regional_minimo_applied, regional_scale["brackets"])
     )
 
-    return round_cent(max(0.0, state_tax + regional_tax))
+    smi_tax_credit = compute_smi_tax_credit_2026(annual_gross_eur)
+
+    return round_cent(max(0.0, state_tax + regional_tax - smi_tax_credit))
 
 
 SEGURIDAD_SOCIAL_RATES_2026 = {
@@ -413,12 +455,52 @@ def compute_spain_irpf_seguridad_social_2026(
     employee_rates = SEGURIDAD_SOCIAL_RATES_2026["employee"]
     employer_rates = SEGURIDAD_SOCIAL_RATES_2026["employer"]
 
+    employee_contingencias_comunes_monthly = round_cent(
+        contribution_base_monthly * employee_rates["contingencias_comunes"]
+    )
+    employee_desempleo_monthly = round_cent(
+        contribution_base_monthly * employee_rates["desempleo"]
+    )
+    employee_mei_monthly = round_cent(
+        contribution_base_monthly * employee_rates["mei"]
+    )
+    employee_formacion_profesional_monthly = round_cent(
+        contribution_base_monthly * employee_rates["formacion_profesional"]
+    )
+
+    employer_contingencias_comunes_monthly = round_cent(
+        contribution_base_monthly * employer_rates["contingencias_comunes"]
+    )
+    employer_desempleo_monthly = round_cent(
+        contribution_base_monthly * employer_rates["desempleo"]
+    )
+    employer_mei_monthly = round_cent(
+        contribution_base_monthly * employer_rates["mei"]
+    )
+    employer_formacion_profesional_monthly = round_cent(
+        contribution_base_monthly * employer_rates["formacion_profesional"]
+    )
+    employer_fogasa_monthly = round_cent(
+        contribution_base_monthly * employer_rates["fogasa"]
+    )
+    employer_at_ep_monthly = round_cent(
+        contribution_base_monthly * employer_rates["at_ep"]
+    )
+
     employee_ss_monthly = round_cent(
-        contribution_base_monthly * sum(employee_rates.values())
+        employee_contingencias_comunes_monthly
+        + employee_desempleo_monthly
+        + employee_mei_monthly
+        + employee_formacion_profesional_monthly
     )
 
     employer_ss_monthly = round_cent(
-        contribution_base_monthly * sum(employer_rates.values())
+        employer_contingencias_comunes_monthly
+        + employer_desempleo_monthly
+        + employer_mei_monthly
+        + employer_formacion_profesional_monthly
+        + employer_fogasa_monthly
+        + employer_at_ep_monthly
     )
 
     annual_employee_ss = round_cent(employee_ss_monthly * 12.0)
@@ -433,6 +515,16 @@ def compute_spain_irpf_seguridad_social_2026(
         "annual_employee_ss_eur": annual_employee_ss,
         "annual_employer_ss_eur": annual_employer_ss,
         "annual_irpf_eur": annual_irpf,
+        "employee_contingencias_comunes_monthly_eur": employee_contingencias_comunes_monthly,
+        "employee_desempleo_monthly_eur": employee_desempleo_monthly,
+        "employee_mei_monthly_eur": employee_mei_monthly,
+        "employee_formacion_profesional_monthly_eur": employee_formacion_profesional_monthly,
+        "employer_contingencias_comunes_monthly_eur": employer_contingencias_comunes_monthly,
+        "employer_desempleo_monthly_eur": employer_desempleo_monthly,
+        "employer_mei_monthly_eur": employer_mei_monthly,
+        "employer_formacion_profesional_monthly_eur": employer_formacion_profesional_monthly,
+        "employer_fogasa_monthly_eur": employer_fogasa_monthly,
+        "employer_at_ep_monthly_eur": employer_at_ep_monthly,
         "employee_ss_monthly_eur": employee_ss_monthly,
         "employer_ss_monthly_eur": employer_ss_monthly,
         "irpf_monthly_eur": irpf_monthly,

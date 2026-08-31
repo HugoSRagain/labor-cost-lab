@@ -137,6 +137,21 @@ def compute_row(
     employee_rate = profile["employee_contribution_rate"]
     employer_rate = profile["employer_contribution_rate"]
 
+    employee_branches = parameters["social_security"]["employee_contribution_branches"]
+    employer_branches = parameters["social_security"]["employer_contribution_branches"]
+
+    employee_branch_amounts = {
+        key: gross_monthly_eur * rate
+        for key, rate in employee_branches.items()
+        if key != "note"
+    }
+
+    employer_branch_amounts_before_reduction = {
+        key: gross_monthly_eur * rate
+        for key, rate in employer_branches.items()
+        if key != "note"
+    }
+
     employee_contributions = (
         gross_monthly_eur
         * employee_rate
@@ -216,6 +231,19 @@ def compute_row(
         "employer_contributions_before_reduction_monthly_eur": round_money(
             employer_contributions_before_reduction
         ),
+
+        "employee_pension_monthly_eur": round_money(employee_branch_amounts["pension"]),
+        "employee_sante_soins_monthly_eur": round_money(employee_branch_amounts["sante_soins"]),
+        "employee_sante_indemnites_monthly_eur": round_money(employee_branch_amounts["sante_indemnites"]),
+        "employee_chomage_monthly_eur": round_money(employee_branch_amounts["chomage"]),
+
+        "employer_pension_monthly_eur": round_money(employer_branch_amounts_before_reduction["pension"]),
+        "employer_sante_soins_monthly_eur": round_money(employer_branch_amounts_before_reduction["sante_soins"]),
+        "employer_sante_indemnites_monthly_eur": round_money(employer_branch_amounts_before_reduction["sante_indemnites"]),
+        "employer_chomage_monthly_eur": round_money(employer_branch_amounts_before_reduction["chomage"]),
+        "employer_maladies_professionnelles_monthly_eur": round_money(employer_branch_amounts_before_reduction["maladies_professionnelles"]),
+        "employer_accidents_travail_monthly_eur": round_money(employer_branch_amounts_before_reduction["accidents_travail"]),
+        "employer_residuel_monthly_eur": round_money(employer_branch_amounts_before_reduction["residuel"]),
 
         "structural_reduction_monthly_eur": round_money(
             structural_reduction["structural_reduction_monthly_eur"]

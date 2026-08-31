@@ -6,7 +6,7 @@
     "effective_from": "2026-01-01",
     "currency": "CHF",
     "status": "prototype",
-    "description": "Swiss labour cost simulation module with canton-level fiscal profiles. Version 1 combines national social contributions, standard occupational pension assumptions, accident insurance assumptions and canton-level withholding-tax placeholders.",
+    "description": "Swiss labour cost simulation module with canton-level fiscal profiles. Combines national social contributions, standard occupational pension assumptions, accident insurance assumptions, canton-level withholding tax (impot a la source, all 26 cantons, official ESTV 2026 tariff files) and canton-level ordinary tax assessment (federal + cantonal + communal, all 26 cantons).",
 
     "wage_grid": {
         "gross_monthly_min_chf": 3000,
@@ -75,7 +75,7 @@
     },
 
     "withholding_tax": {
-        "status": "placeholder_for_canton_tables",
+        "status": "implemented_2026",
         "year": 2026,
         "profile": {
             "tariff_code": "A0",
@@ -83,7 +83,7 @@
             "children": 0,
             "church_tax": false
         },
-        "source_note": "Canton-level withholding-tax tables are published by the Swiss Federal Tax Administration. They will be integrated in a second step."
+        "source_note": "Canton-level withholding-tax tables (impot a la source, tariff A0, all 26 cantons) are published by the Swiss Federal Tax Administration (ESTV) and are fully implemented in analysis/switzerland/swiss_withholding_tax_2026.py, which parses the official 2026 fixed-width tariff files directly. See switzerland_sources_2026.json for exact source URLs."
     },
 
     "ordinary_tax": {

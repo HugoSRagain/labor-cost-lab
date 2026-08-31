@@ -159,6 +159,11 @@ def compute_standard_contributions(
         * profile["care_employer_rate"]
     )
 
+    employer_only_levies = parameters["employer_only_levies_2026"]
+
+    employer_insolvency_levy = gross * employer_only_levies["insolvency_levy"]
+    employer_u2_levy = gross * employer_only_levies["u2_maternity_levy_standard"]
+
     return {
         "employee_pension": employee_pension,
         "employer_pension": employer_pension,
@@ -168,6 +173,10 @@ def compute_standard_contributions(
         "employer_health": employer_health,
         "employee_care": employee_care,
         "employer_care": employer_care,
+        "employee_insolvency_levy": 0.0,
+        "employer_insolvency_levy": employer_insolvency_levy,
+        "employee_u2_levy": 0.0,
+        "employer_u2_levy": employer_u2_levy,
         "health_care_base": health_care_base,
         "pension_unemployment_base": pension_unemployment_base,
     }
@@ -201,6 +210,10 @@ def compute_minijob_contributions(gross: float, parameters: dict) -> dict:
         "employer_health": employer_health + employer_other,
         "employee_care": 0.0,
         "employer_care": 0.0,
+        "employee_insolvency_levy": 0.0,
+        "employer_insolvency_levy": 0.0,
+        "employee_u2_levy": 0.0,
+        "employer_u2_levy": 0.0,
         "health_care_base": gross,
         "pension_unemployment_base": gross,
     }
@@ -254,6 +267,17 @@ def compute_midijob_contributions(
         result[f"employee_{name}"] = employee_contribution
         result[f"employer_{name}"] = employer_contribution
 
+    # Insolvenzgeldumlage and the general U2 Umlage are pure employer-only
+    # flat-rate levies on actual gross pay, with no employee-side
+    # counterpart to relieve -- unlike the four core branches above, they
+    # are not subject to the Gleitzone reduced-base mechanism.
+    employer_only_levies = parameters["employer_only_levies_2026"]
+
+    result["employee_insolvency_levy"] = 0.0
+    result["employer_insolvency_levy"] = gross * employer_only_levies["insolvency_levy"]
+    result["employee_u2_levy"] = 0.0
+    result["employer_u2_levy"] = gross * employer_only_levies["u2_maternity_levy_standard"]
+
     return result
 
 
@@ -288,6 +312,8 @@ def compute_row(
     employer_health = contributions["employer_health"]
     employee_care = contributions["employee_care"]
     employer_care = contributions["employer_care"]
+    employer_insolvency_levy = contributions["employer_insolvency_levy"]
+    employer_u2_levy = contributions["employer_u2_levy"]
     health_care_base = contributions["health_care_base"]
     pension_unemployment_base = contributions["pension_unemployment_base"]
 
@@ -303,6 +329,8 @@ def compute_row(
         + employer_unemployment
         + employer_health
         + employer_care
+        + employer_insolvency_levy
+        + employer_u2_levy
     )
 
     net_before_income_tax = gross - employee_contributions
@@ -402,6 +430,8 @@ def compute_row(
         "employer_unemployment_monthly_eur": employer_unemployment,
         "employer_health_monthly_eur": employer_health,
         "employer_care_monthly_eur": employer_care,
+        "employer_insolvency_levy_monthly_eur": employer_insolvency_levy,
+        "employer_u2_levy_monthly_eur": employer_u2_levy,
 
         "health_care_base_monthly_eur": health_care_base,
         "pension_unemployment_base_monthly_eur": pension_unemployment_base,

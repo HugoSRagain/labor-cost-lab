@@ -60,6 +60,13 @@ const ITALY_COLORS = {
     ivsEmployer: "#dc2626",
     ivsEmployee: "#9333ea",
     otherEmployer: "#f59e0b",
+    naspi: "#f59e0b",
+    cigo: "#fb923c",
+    cigsEmployer: "#fbbf24",
+    maternita: "#facc15",
+    fondoGaranziaTfr: "#eab308",
+    cuaf: "#ca8a04",
+    inail: "#a16207",
     otherEmployee: "#c084fc",
     aggiuntivo: "#be123c",
     irpef: "#0d9488",
@@ -181,19 +188,6 @@ function italyIrpefNetMonthly(row) {
     );
 
     return annual / 12;
-}
-
-
-function italyOtherEmployerMonthly(row) {
-    return (
-        itNum(row.naspi_monthly_eur)
-        + itNum(row.cigo_monthly_eur)
-        + itNum(row.cigs_employer_monthly_eur)
-        + itNum(row.maternita_monthly_eur)
-        + itNum(row.fondo_garanzia_tfr_monthly_eur)
-        + itNum(row.cuaf_monthly_eur)
-        + itNum(row.inail_monthly_eur)
-    );
 }
 
 
@@ -672,16 +666,73 @@ function renderItalyInpsBreakdownChart(lang) {
         },
         {
             x: x,
-            y: data.map(row => italyOtherEmployerMonthly(row)),
+            y: data.map(row => itNum(row.naspi_monthly_eur)),
             type: "scatter",
             mode: "lines",
             stackgroup: "one",
-            name: lang === "en" ? "Other employer (NASpI, CIGO, CIGS, maternita, Fondo Garanzia TFR, CUAF, INAIL)" : "Autres employeur (NASpI, CIGO, CIGS, maternità, Fondo Garanzia TFR, CUAF, INAIL)",
-            line: {
-                color: ITALY_COLORS.otherEmployer,
-                width: 1
-            },
-            hovertemplate: hoverPrefix + "%{y:,.0f} EUR<extra></extra>"
+            name: "NASpI " + (lang === "en" ? "(employer)" : "(employeur)"),
+            line: { color: ITALY_COLORS.naspi, width: 1 },
+            hovertemplate: hoverPrefix + "%{y:,.2f} EUR<extra></extra>"
+        },
+        {
+            x: x,
+            y: data.map(row => itNum(row.cigo_monthly_eur)),
+            type: "scatter",
+            mode: "lines",
+            stackgroup: "one",
+            name: "CIGO " + (lang === "en" ? "(employer)" : "(employeur)"),
+            line: { color: ITALY_COLORS.cigo, width: 1 },
+            hovertemplate: hoverPrefix + "%{y:,.2f} EUR<extra></extra>"
+        },
+        {
+            x: x,
+            y: data.map(row => itNum(row.cigs_employer_monthly_eur)),
+            type: "scatter",
+            mode: "lines",
+            stackgroup: "one",
+            name: "CIGS " + (lang === "en" ? "(employer)" : "(employeur)"),
+            line: { color: ITALY_COLORS.cigsEmployer, width: 1 },
+            hovertemplate: hoverPrefix + "%{y:,.2f} EUR<extra></extra>"
+        },
+        {
+            x: x,
+            y: data.map(row => itNum(row.maternita_monthly_eur)),
+            type: "scatter",
+            mode: "lines",
+            stackgroup: "one",
+            name: lang === "en" ? "Maternity (employer)" : "Maternità (employeur)",
+            line: { color: ITALY_COLORS.maternita, width: 1 },
+            hovertemplate: hoverPrefix + "%{y:,.2f} EUR<extra></extra>"
+        },
+        {
+            x: x,
+            y: data.map(row => itNum(row.fondo_garanzia_tfr_monthly_eur)),
+            type: "scatter",
+            mode: "lines",
+            stackgroup: "one",
+            name: lang === "en" ? "TFR guarantee fund (employer)" : "Fondo Garanzia TFR (employeur)",
+            line: { color: ITALY_COLORS.fondoGaranziaTfr, width: 1 },
+            hovertemplate: hoverPrefix + "%{y:,.2f} EUR<extra></extra>"
+        },
+        {
+            x: x,
+            y: data.map(row => itNum(row.cuaf_monthly_eur)),
+            type: "scatter",
+            mode: "lines",
+            stackgroup: "one",
+            name: "CUAF " + (lang === "en" ? "(employer)" : "(employeur)"),
+            line: { color: ITALY_COLORS.cuaf, width: 1 },
+            hovertemplate: hoverPrefix + "%{y:,.2f} EUR<extra></extra>"
+        },
+        {
+            x: x,
+            y: data.map(row => itNum(row.inail_monthly_eur)),
+            type: "scatter",
+            mode: "lines",
+            stackgroup: "one",
+            name: "INAIL " + (lang === "en" ? "(employer, illustrative rate)" : "(employeur, taux illustratif)"),
+            line: { color: ITALY_COLORS.inail, width: 1 },
+            hovertemplate: hoverPrefix + "%{y:,.2f} EUR<extra></extra>"
         },
         {
             x: x,
@@ -1061,13 +1112,22 @@ function renderItalyDataTable(lang) {
         const cells = [
             itRatio(row.smic_multiple, lang),
             eur(row.gross_monthly_eur, lang),
+            eur(row.ivs_employee_monthly_eur, lang),
+            eur(row.cigs_employee_monthly_eur, lang),
+            eur(row.aggiuntivo_1_percent_monthly_eur, lang),
             eur(row.net_before_income_tax_monthly_eur, lang),
             eur(row.income_tax_monthly_eur, lang),
             eur(row.net_after_income_tax_monthly_eur, lang),
             eur(row.tfr_accrual_monthly_eur, lang),
+            eur(row.ivs_employer_monthly_eur, lang),
+            eur(row.naspi_monthly_eur, lang),
+            eur(row.cigo_monthly_eur, lang),
+            eur(row.cigs_employer_monthly_eur, lang),
+            eur(row.maternita_monthly_eur, lang),
+            eur(row.fondo_garanzia_tfr_monthly_eur, lang),
+            eur(row.cuaf_monthly_eur, lang),
+            eur(row.inail_monthly_eur, lang),
             eur(row.employer_cost_monthly_eur, lang),
-            eur(row.employee_contributions_monthly_eur, lang),
-            eur(row.employer_contributions_monthly_eur, lang),
             eur(row.social_wedge_monthly_eur, lang),
             eur(row.total_wedge_after_income_tax_monthly_eur, lang),
             itPct(row.employer_contribution_rate, lang),

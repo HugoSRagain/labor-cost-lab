@@ -60,6 +60,23 @@ const SPAIN_COLORS = {
     total: "#0f172a"
 };
 
+// Detailed Seguridad Social breakdown palette: employee-side components
+// first (purple shades), then employer-side components (red/orange/amber
+// shades), mirroring the China/Poland modules' breakdown-palette
+// convention.
+const SPAIN_BREAKDOWN_PALETTE = {
+    employeeContingenciasComunes: "#9333ea",
+    employeeDesempleo: "#a855f7",
+    employeeMei: "#c084fc",
+    employeeFormacionProfesional: "#d8b4fe",
+    employerContingenciasComunes: "#dc2626",
+    employerDesempleo: "#ef4444",
+    employerMei: "#f97316",
+    employerFormacionProfesional: "#fb923c",
+    employerFogasa: "#facc15",
+    employerAtEp: "#eab308"
+};
+
 
 function esNum(value) {
     const number = Number(value);
@@ -887,6 +904,107 @@ function renderSpainFiscalReturnChart(lang) {
 }
 
 
+function renderSpainContribBreakdownChart(lang) {
+    const data = getSpainData(getSelectedSpainRegion(lang));
+
+    const x = data.map(row => esNum(row.smic_multiple));
+    const hoverPrefix = "%{x:.2f} × ref. wage<br>";
+
+    function line(field, name, color) {
+        return {
+            x: x,
+            y: data.map(row => esNum(row[field])),
+            type: "scatter",
+            mode: "lines",
+            stackgroup: "one",
+            name: name,
+            line: { color: color, width: 1 },
+            hovertemplate: hoverPrefix + "%{y:,.2f} €<extra></extra>"
+        };
+    }
+
+    const traces = [
+        line(
+            "employee_contingencias_comunes_monthly_eur",
+            lang === "en" ? "Contingencias comunes (employee)" : "Contingencias comunes (salarié)",
+            SPAIN_BREAKDOWN_PALETTE.employeeContingenciasComunes
+        ),
+        line(
+            "employee_desempleo_monthly_eur",
+            lang === "en" ? "Unemployment (employee)" : "Chômage (salarié)",
+            SPAIN_BREAKDOWN_PALETTE.employeeDesempleo
+        ),
+        line(
+            "employee_mei_monthly_eur",
+            "MEI " + (lang === "en" ? "(employee)" : "(salarié)"),
+            SPAIN_BREAKDOWN_PALETTE.employeeMei
+        ),
+        line(
+            "employee_formacion_profesional_monthly_eur",
+            lang === "en" ? "Vocational training (employee)" : "Formation professionnelle (salarié)",
+            SPAIN_BREAKDOWN_PALETTE.employeeFormacionProfesional
+        ),
+        line(
+            "employer_contingencias_comunes_monthly_eur",
+            lang === "en" ? "Contingencias comunes (employer)" : "Contingencias comunes (employeur)",
+            SPAIN_BREAKDOWN_PALETTE.employerContingenciasComunes
+        ),
+        line(
+            "employer_desempleo_monthly_eur",
+            lang === "en" ? "Unemployment (employer)" : "Chômage (employeur)",
+            SPAIN_BREAKDOWN_PALETTE.employerDesempleo
+        ),
+        line(
+            "employer_mei_monthly_eur",
+            "MEI " + (lang === "en" ? "(employer)" : "(employeur)"),
+            SPAIN_BREAKDOWN_PALETTE.employerMei
+        ),
+        line(
+            "employer_formacion_profesional_monthly_eur",
+            lang === "en" ? "Vocational training (employer)" : "Formation professionnelle (employeur)",
+            SPAIN_BREAKDOWN_PALETTE.employerFormacionProfesional
+        ),
+        line(
+            "employer_fogasa_monthly_eur",
+            "FOGASA " + (lang === "en" ? "(employer)" : "(employeur)"),
+            SPAIN_BREAKDOWN_PALETTE.employerFogasa
+        ),
+        line(
+            "employer_at_ep_monthly_eur",
+            lang === "en" ? "Workplace accidents (employer, illustrative rate)" : "Accidents du travail (employeur, taux illustratif)",
+            SPAIN_BREAKDOWN_PALETTE.employerAtEp
+        ),
+        {
+            x: x,
+            y: data.map(row => (
+                esNum(row.employee_contributions_monthly_eur)
+                + esNum(row.employer_contributions_monthly_eur)
+            )),
+            type: "scatter",
+            mode: "lines",
+            name: lang === "en" ? "Total Seguridad Social" : "Total Seguridad Social",
+            line: {
+                color: SPAIN_COLORS.total,
+                width: 3,
+                dash: "dot"
+            },
+            hovertemplate: hoverPrefix + "%{y:,.2f} €<extra></extra>"
+        }
+    ];
+
+    const layout = spainBaseLayout(lang, lang === "en" ? "Monthly amount, EUR" : "Montant mensuel, EUR");
+
+    layout.yaxis.ticksuffix = " €";
+    layout.height = 460;
+
+    spainPlot(
+        "chart-spain-contrib-breakdown-" + lang,
+        traces,
+        layout
+    );
+}
+
+
 function renderSpainDataTable(lang) {
     const tableBody = getI18nElement("spain-data-table-body", lang);
 
@@ -913,12 +1031,20 @@ function renderSpainDataTable(lang) {
         const cells = [
             esRatio(row.smic_multiple, lang),
             esEuro(row.gross_monthly_eur, lang),
+            esEuro(row.employee_contingencias_comunes_monthly_eur, lang),
+            esEuro(row.employee_desempleo_monthly_eur, lang),
+            esEuro(row.employee_mei_monthly_eur, lang),
+            esEuro(row.employee_formacion_profesional_monthly_eur, lang),
             esEuro(row.net_before_income_tax_monthly_eur, lang),
             esEuro(row.irpf_monthly_eur, lang),
             esEuro(row.net_after_income_tax_monthly_eur, lang),
+            esEuro(row.employer_contingencias_comunes_monthly_eur, lang),
+            esEuro(row.employer_desempleo_monthly_eur, lang),
+            esEuro(row.employer_mei_monthly_eur, lang),
+            esEuro(row.employer_formacion_profesional_monthly_eur, lang),
+            esEuro(row.employer_fogasa_monthly_eur, lang),
+            esEuro(row.employer_at_ep_monthly_eur, lang),
             esEuro(row.employer_cost_monthly_eur, lang),
-            esEuro(row.employee_contributions_monthly_eur, lang),
-            esEuro(row.employer_contributions_monthly_eur, lang),
             esEuro(row.social_wedge_monthly_eur, lang),
             esEuro(row.total_wedge_after_income_tax_monthly_eur, lang),
             esPct(row.employer_contribution_rate, lang),
@@ -942,6 +1068,7 @@ function renderSpain(lang) {
     renderSpainWaterfallChart(lang);
     renderSpainCostChart(lang);
     renderSpainRateChart(lang);
+    renderSpainContribBreakdownChart(lang);
     renderSpainWedgeChart(lang);
     renderSpainFiscalReturnChart(lang);
     renderSpainDataTable(lang);

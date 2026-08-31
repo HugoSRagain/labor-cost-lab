@@ -67,17 +67,25 @@
     "audit_decision": {
         "v0_scope": [
             "IRPF (state scale + 16 regional scales: Madrid, Andalucia, Aragon, Asturias, Baleares, Canarias, Cantabria, Castilla-La Mancha, Castilla y Leon, Cataluna, Extremadura, Galicia, Murcia, La Rioja, Comunidad Valenciana, Ceuta/Melilla; single/childless reference taxpayer, selectable by region)",
-            "Personal minimum (minimo del contribuyente, state figure for the state portion, each region's own figure for its regional portion) and work-income reduction (Art. 20 LIRPF)",
+            "Personal minimum (minimo del contribuyente, state figure for the state portion, each region's own figure for its regional portion), work-income reduction (Art. 20 LIRPF), and the SMI low-income tax credit (Art. 28 Real Decreto-ley 5/2026, added 2026-08-31)",
             "Seguridad Social Regimen General, contrato indefinido (employee and employer, contribution base floor/ceiling, national, identical across all regions)",
             "Population-weighted national average across the 16 modeled regions, mirroring the Switzerland canton-weighting approach"
         ],
         "not_yet_included": [
             "Navarra and Pais Vasco: separate 'foral' tax systems (Concierto/Convenio economico), out of scope",
             "Family minimums (children, ascendants, disability)",
-            "The explicit SMI income-tax exemption mechanism (Art. 28 RDL 5/2026); this module instead relies on the general minimo personal + Art. 20 reduction mechanism, which independently produces a near-zero result at the SMI level in every region",
             "CNAE-specific AT/EP contribution rates",
             "Special Seguridad Social regimes (autonomos, agrario, empleados de hogar, etc.)",
             "Private pension contributions and their tax/Seguridad Social relief"
-        ]
+        ],
+        "smi_tax_credit_2026": {
+            "label": "Deduccion por obtencion de rendimientos del trabajo de escasa cuantia (Art. 28 RDL 5/2026)",
+            "source_name": "Real Decreto-ley 5/2026, published BOE 19 February 2026, in force 20 February 2026, amending Disposicion Adicional 61 of Ley 35/2006",
+            "source_type": "official (secondary summaries cross-checked: laboral-social.com, iberley.es, prodespachos.com)",
+            "evidence": "EUR 590.89 flat deduction against combined state+regional tax quota for annual gross labour income <= EUR 17,094 (the SMI), tapering linearly to EUR 0 by EUR 20,048.45.",
+            "confidence": "high",
+            "implementation_status": "implemented",
+            "added": "2026-08-31"
+        }
     }
 }

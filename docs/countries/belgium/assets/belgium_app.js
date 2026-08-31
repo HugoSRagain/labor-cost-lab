@@ -58,6 +58,23 @@ const BELGIUM_COLORS = {
     total: "#0f172a"
 };
 
+// Detailed ONSS branch-breakdown palette: employee-side branches first
+// (purple shades), then employer-side branches (red/orange/amber shades),
+// mirroring the China/Poland/Spain modules' breakdown-palette convention.
+const BELGIUM_BREAKDOWN_PALETTE = {
+    employeePension: "#9333ea",
+    employeeSanteSoins: "#a855f7",
+    employeeSanteIndemnites: "#c084fc",
+    employeeChomage: "#d8b4fe",
+    employerPension: "#dc2626",
+    employerSanteSoins: "#ef4444",
+    employerSanteIndemnites: "#f97316",
+    employerChomage: "#fb923c",
+    employerMaladiesProfessionnelles: "#facc15",
+    employerAccidentsTravail: "#eab308",
+    employerResiduel: "#a16207"
+};
+
 
 function deNum(value) {
     const number = Number(value);
@@ -892,6 +909,110 @@ function renderBelgiumFiscalReturnChart(lang) {
 }
 
 
+function renderBelgiumContribBreakdownChart(lang) {
+    const profileId = getBelgiumSelectedProfile(lang);
+    const data = getBelgiumProfileData(profileId);
+
+    const x = data.map(row => deNum(row.smic_multiple));
+    const hoverPrefix = "%{x:.2f} × ref. wage<br>";
+
+    function line(field, name, color) {
+        return {
+            x: x,
+            y: data.map(row => deNum(row[field])),
+            type: "scatter",
+            mode: "lines",
+            stackgroup: "one",
+            name: name,
+            line: { color: color, width: 1 },
+            hovertemplate: hoverPrefix + "%{y:,.2f} €<extra></extra>"
+        };
+    }
+
+    const traces = [
+        line(
+            "employee_pension_monthly_eur",
+            lang === "en" ? "Pension (employee)" : "Retraite (salarié)",
+            BELGIUM_BREAKDOWN_PALETTE.employeePension
+        ),
+        line(
+            "employee_sante_soins_monthly_eur",
+            lang === "en" ? "Health insurance - care (employee)" : "Assurance maladie-invalidité, soins de santé (salarié)",
+            BELGIUM_BREAKDOWN_PALETTE.employeeSanteSoins
+        ),
+        line(
+            "employee_sante_indemnites_monthly_eur",
+            lang === "en" ? "Health insurance - benefits (employee)" : "Assurance maladie-invalidité, indemnités (salarié)",
+            BELGIUM_BREAKDOWN_PALETTE.employeeSanteIndemnites
+        ),
+        line(
+            "employee_chomage_monthly_eur",
+            lang === "en" ? "Unemployment (employee)" : "Chômage (salarié)",
+            BELGIUM_BREAKDOWN_PALETTE.employeeChomage
+        ),
+        line(
+            "employer_pension_monthly_eur",
+            lang === "en" ? "Pension (employer)" : "Retraite (employeur)",
+            BELGIUM_BREAKDOWN_PALETTE.employerPension
+        ),
+        line(
+            "employer_sante_soins_monthly_eur",
+            lang === "en" ? "Health insurance - care (employer)" : "Assurance maladie-invalidité, soins de santé (employeur)",
+            BELGIUM_BREAKDOWN_PALETTE.employerSanteSoins
+        ),
+        line(
+            "employer_sante_indemnites_monthly_eur",
+            lang === "en" ? "Health insurance - benefits (employer)" : "Assurance maladie-invalidité, indemnités (employeur)",
+            BELGIUM_BREAKDOWN_PALETTE.employerSanteIndemnites
+        ),
+        line(
+            "employer_chomage_monthly_eur",
+            lang === "en" ? "Unemployment (employer)" : "Chômage (employeur)",
+            BELGIUM_BREAKDOWN_PALETTE.employerChomage
+        ),
+        line(
+            "employer_maladies_professionnelles_monthly_eur",
+            lang === "en" ? "Occupational diseases (employer)" : "Maladies professionnelles (employeur)",
+            BELGIUM_BREAKDOWN_PALETTE.employerMaladiesProfessionnelles
+        ),
+        line(
+            "employer_accidents_travail_monthly_eur",
+            lang === "en" ? "Workplace accidents (employer)" : "Accidents du travail (employeur)",
+            BELGIUM_BREAKDOWN_PALETTE.employerAccidentsTravail
+        ),
+        line(
+            "employer_residuel_monthly_eur",
+            lang === "en" ? "Family allowances and other (employer, derived residual)" : "Allocations familiales et divers (employeur, résiduel dérivé)",
+            BELGIUM_BREAKDOWN_PALETTE.employerResiduel
+        ),
+        {
+            x: x,
+            y: data.map(row => deNum(row.employer_contributions_before_reduction_monthly_eur)),
+            type: "scatter",
+            mode: "lines",
+            name: lang === "en" ? "Total ONSS (before structural reduction)" : "Total ONSS (avant réduction structurelle)",
+            line: {
+                color: BELGIUM_COLORS.total,
+                width: 3,
+                dash: "dot"
+            },
+            hovertemplate: hoverPrefix + "%{y:,.2f} €<extra></extra>"
+        }
+    ];
+
+    const layout = belgiumBaseLayout(lang, lang === "en" ? "Monthly amount, EUR" : "Montant mensuel, EUR");
+
+    layout.yaxis.ticksuffix = " €";
+    layout.height = 480;
+
+    belgiumPlot(
+        "chart-belgium-contrib-breakdown-" + lang,
+        traces,
+        layout
+    );
+}
+
+
 function renderBelgiumDataTable(lang) {
     const tableBody = getI18nElement("belgium-data-table-body", lang);
 
@@ -933,7 +1054,18 @@ function renderBelgiumDataTable(lang) {
             deEuro(row.net_after_withholding_tax_monthly_eur, lang),
             deEuro(row.employer_cost_monthly_eur, lang),
             deEuro(row.employee_contributions_monthly_eur, lang),
+            deEuro(row.employee_pension_monthly_eur, lang),
+            deEuro(row.employee_sante_soins_monthly_eur, lang),
+            deEuro(row.employee_sante_indemnites_monthly_eur, lang),
+            deEuro(row.employee_chomage_monthly_eur, lang),
             deEuro(row.employer_contributions_monthly_eur, lang),
+            deEuro(row.employer_pension_monthly_eur, lang),
+            deEuro(row.employer_sante_soins_monthly_eur, lang),
+            deEuro(row.employer_sante_indemnites_monthly_eur, lang),
+            deEuro(row.employer_chomage_monthly_eur, lang),
+            deEuro(row.employer_maladies_professionnelles_monthly_eur, lang),
+            deEuro(row.employer_accidents_travail_monthly_eur, lang),
+            deEuro(row.employer_residuel_monthly_eur, lang),
             deEuro(row.social_wedge_monthly_eur, lang),
             deEuro(row.total_wedge_after_withholding_tax_monthly_eur, lang),
             dePct(row.employee_contribution_rate, lang),
@@ -958,6 +1090,7 @@ function renderBelgium(lang) {
     renderBelgiumWaterfallChart(lang);
     renderBelgiumCostChart(lang);
     renderBelgiumContributionRateChart(lang);
+    renderBelgiumContribBreakdownChart(lang);
     renderBelgiumStructuralReductionChart(lang);
     renderBelgiumWedgeChart(lang);
     renderBelgiumFiscalReturnChart(lang);

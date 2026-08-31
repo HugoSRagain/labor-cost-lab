@@ -22,6 +22,23 @@
         "employer_base_contribution_rate": 0.25,
         "employee_contribution_note": "Standard employee ONSS contribution rate for private-sector employees.",
         "employer_contribution_note": "Base employer contribution rate for the private market sector before reductions.",
+        "employee_contribution_branches": {
+            "pension": 0.0750,
+            "sante_soins": 0.0355,
+            "sante_indemnites": 0.0115,
+            "chomage": 0.0087,
+            "note": "Sous-taux ONSS par branche (retraite, assurance maladie-invalidite - soins de sante, assurance maladie-invalidite - indemnites, chomage), somme exactement egale au taux global de 13,07 %. Source : instructions administratives ONSS (socialsecurity.be/employer/instructions/dmfa)."
+        },
+        "employer_contribution_branches": {
+            "pension": 0.0886,
+            "sante_soins": 0.0380,
+            "sante_indemnites": 0.0235,
+            "chomage": 0.0146,
+            "maladies_professionnelles": 0.0100,
+            "accidents_travail": 0.0030,
+            "residuel": 0.0723,
+            "note": "Sous-taux ONSS par branche (retraite, assurance maladie-invalidite - soins de sante, assurance maladie-invalidite - indemnites, chomage, maladies professionnelles, accidents du travail), issus des instructions administratives ONSS (socialsecurity.be/employer/instructions/dmfa). Ces six branches sourcees directement totalisent 17,77 points ; le residuel de 7,23 points (jusqu'au taux de base de 25,00 %) regroupe les allocations familiales (regionalisees depuis 2015 mais toujours consolidees dans le taux de base ONSS) et des cotisations diverses de moindre montant (conge-education paye, plan d'accompagnement, accueil des enfants, etc.) qui n'ont pas pu etre individuellement verifiees aupres d'une source primaire dans le cadre de cette recherche -- ce residuel est donc une valeur derivee (25,00 % moins les six branches sourcees), pas une valeur sourcee independamment."
+        },
         "structural_reduction": {
             "active": true,
             "category": 1,
@@ -72,7 +89,7 @@
         }
     ],
     "limits": [
-        "Personal income tax and withholding tax are not simulated in this V1.",
+        "Personal income tax withholding (precompte professionnel) is simulated for a single, childless resident taxpayer with no other income or deductions; other personal-tax-return mechanisms (joint assessment, dependants, other tax credits) are not modeled -- see analysis/belgium/precompte_professionnel_2026.py.",
         "The structural reduction is simulated for category 1 (general private sector) and category 2 (secteur non-marchand / Maribel social) using a simplified full-time monthly implementation. Category 2's high-wage component depends on the employer's total payroll mass in the official formula; this module approximates it with the single simulated employee's own wage, since no firm-level aggregate is modeled.",
         "The quarterly reference wage S is approximated as monthly gross wage multiplied by 3.",
         "Sectoral minimum wages are not simulated.",

@@ -71,6 +71,21 @@ const POLAND_COLORS = {
     capZone: "rgba(249, 115, 22, 0.14)"
 };
 
+// Detailed breakdown palette: employee-side ZUS components first (purple
+// shades), then employer-side components (red/orange/amber shades),
+// mirroring the China module's five-insurances-and-housing-fund breakdown
+// palette convention.
+const POLAND_BREAKDOWN_PALETTE = {
+    retirementEmployee: "#9333ea",
+    disabilityEmployee: "#a855f7",
+    sicknessEmployee: "#c084fc",
+    retirementEmployer: "#dc2626",
+    disabilityEmployer: "#ef4444",
+    accidentEmployer: "#f97316",
+    labourFundEmployer: "#fb923c",
+    guaranteedBenefitsFundEmployer: "#eab308"
+};
+
 
 function plNum(value) {
     const number = Number(value);
@@ -679,48 +694,76 @@ function renderPolandContribTaxChart(lang) {
     const x = data.map(row => plNum(row.smic_multiple));
     const hoverPrefix = "%{x:.2f} × min. wage<br>";
 
+    function line(field, name, color, extra) {
+        return Object.assign({
+            x: x,
+            y: data.map(row => plNum(row[field])),
+            type: "scatter",
+            mode: "lines",
+            name: name,
+            line: Object.assign({ color: color, width: 1.75 }, extra || {}),
+            hovertemplate: hoverPrefix + "%{y:,.0f} PLN<extra></extra>"
+        });
+    }
+
     const traces = [
-        {
-            x: x,
-            y: data.map(row => polandEmployeeZusMonthly(row)),
-            type: "scatter",
-            mode: "lines",
-            name: lang === "en" ? "Employee ZUS contributions" : "Cotisations ZUS salarié",
-            line: {
-                color: POLAND_COLORS.employee,
-                width: 2
-            },
-            hovertemplate: hoverPrefix + "%{y:,.0f} PLN<extra></extra>"
-        },
-        {
-            x: x,
-            y: data.map(row => plNum(row.health_insurance_monthly_pln)),
-            type: "scatter",
-            mode: "lines",
-            name: lang === "en" ? "NFZ health insurance" : "Assurance maladie NFZ",
-            line: {
-                color: POLAND_COLORS.health,
-                width: 2
-            },
-            hovertemplate: hoverPrefix + "%{y:,.0f} PLN<extra></extra>"
-        },
-        {
-            x: x,
-            y: data.map(row => plNum(row.income_tax_monthly_pln)),
-            type: "scatter",
-            mode: "lines",
-            name: lang === "en" ? "Income tax (PIT)" : "Impôt sur le revenu (PIT)",
-            line: {
-                color: POLAND_COLORS.incomeTax,
-                width: 2,
-                dash: "dash"
-            },
-            hovertemplate: hoverPrefix + "%{y:,.0f} PLN<extra></extra>"
-        },
+        line(
+            "retirement_employee_monthly_pln",
+            lang === "en" ? "Retirement (employee)" : "Retraite (salarié)",
+            POLAND_BREAKDOWN_PALETTE.retirementEmployee
+        ),
+        line(
+            "disability_employee_monthly_pln",
+            lang === "en" ? "Disability (employee)" : "Invalidité (salarié)",
+            POLAND_BREAKDOWN_PALETTE.disabilityEmployee
+        ),
+        line(
+            "sickness_employee_monthly_pln",
+            lang === "en" ? "Sickness (employee)" : "Maladie ZUS (salarié)",
+            POLAND_BREAKDOWN_PALETTE.sicknessEmployee
+        ),
+        line(
+            "retirement_employer_monthly_pln",
+            lang === "en" ? "Retirement (employer)" : "Retraite (employeur)",
+            POLAND_BREAKDOWN_PALETTE.retirementEmployer
+        ),
+        line(
+            "disability_employer_monthly_pln",
+            lang === "en" ? "Disability (employer)" : "Invalidité (employeur)",
+            POLAND_BREAKDOWN_PALETTE.disabilityEmployer
+        ),
+        line(
+            "accident_employer_monthly_pln",
+            lang === "en" ? "Accident insurance (employer)" : "Accidents du travail (employeur)",
+            POLAND_BREAKDOWN_PALETTE.accidentEmployer
+        ),
+        line(
+            "labour_fund_employer_monthly_pln",
+            lang === "en" ? "Labour Fund (employer)" : "Fundusz Pracy (employeur)",
+            POLAND_BREAKDOWN_PALETTE.labourFundEmployer
+        ),
+        line(
+            "guaranteed_benefits_fund_employer_monthly_pln",
+            lang === "en" ? "FGSP (employer)" : "FGŚP (employeur)",
+            POLAND_BREAKDOWN_PALETTE.guaranteedBenefitsFundEmployer
+        ),
+        line(
+            "health_insurance_monthly_pln",
+            lang === "en" ? "NFZ health insurance" : "Assurance maladie NFZ",
+            POLAND_COLORS.health,
+            { width: 2 }
+        ),
+        line(
+            "income_tax_monthly_pln",
+            lang === "en" ? "Income tax (PIT)" : "Impôt sur le revenu (PIT)",
+            POLAND_COLORS.incomeTax,
+            { width: 2, dash: "dash" }
+        ),
         {
             x: x,
             y: data.map(row => (
                 polandEmployeeZusMonthly(row)
+                + plNum(row.employer_contributions_monthly_pln)
                 + plNum(row.health_insurance_monthly_pln)
                 + plNum(row.income_tax_monthly_pln)
             )),
@@ -739,6 +782,7 @@ function renderPolandContribTaxChart(lang) {
     const layout = polandBaseLayout(lang, lang === "en" ? "Monthly amount, PLN" : "Montant mensuel, PLN");
 
     layout.yaxis.ticksuffix = " PLN";
+    layout.height = 460;
 
     polandPlot(
         "chart-poland-contrib-tax-" + lang,
@@ -985,13 +1029,19 @@ function renderPolandDataTable(lang) {
         const cells = [
             plRatio(row.smic_multiple, lang),
             plCur(row.gross_monthly_pln, lang),
-            plCur(polandEmployeeZusMonthly(row), lang),
+            plCur(row.retirement_employee_monthly_pln, lang),
+            plCur(row.disability_employee_monthly_pln, lang),
+            plCur(row.sickness_employee_monthly_pln, lang),
             plCur(row.health_insurance_monthly_pln, lang),
             plCur(row.net_before_income_tax_monthly_pln, lang),
             plCur(row.income_tax_monthly_pln, lang),
             plCur(row.net_after_income_tax_monthly_pln, lang),
+            plCur(row.retirement_employer_monthly_pln, lang),
+            plCur(row.disability_employer_monthly_pln, lang),
+            plCur(row.accident_employer_monthly_pln, lang),
+            plCur(row.labour_fund_employer_monthly_pln, lang),
+            plCur(row.guaranteed_benefits_fund_employer_monthly_pln, lang),
             plCur(row.employer_cost_monthly_pln, lang),
-            plCur(row.employer_contributions_monthly_pln, lang),
             plCur(row.social_wedge_monthly_pln, lang),
             plCur(row.total_wedge_after_income_tax_monthly_pln, lang),
             plPct(row.employer_contribution_rate, lang),

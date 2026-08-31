@@ -142,12 +142,15 @@ def compute_employee_prsi_2026(weekly_gross_eur: float) -> float:
 def compute_employer_prsi_2026(weekly_gross_eur: float) -> float:
     """
     2026 (Jan-Sep) PRSI Class A, employer side: 9.0% of full weekly
-    earnings at or below EUR 496/week, 11.25% of full weekly earnings
-    above EUR 496/week.
+    earnings at or below EUR 552/week, 11.25% of full weekly earnings
+    above EUR 552/week. The EUR 552 threshold applies for the whole of
+    2026 (it is unchanged from the value used since 1 January 2026);
+    only the rates themselves step up on 1 October 2026 (see module
+    docstring), not this threshold.
     """
     x = max(0.0, weekly_gross_eur)
 
-    reduced_rate_threshold = 496.00
+    reduced_rate_threshold = 552.00
     reduced_rate = 0.09
     standard_rate = 0.1125
 

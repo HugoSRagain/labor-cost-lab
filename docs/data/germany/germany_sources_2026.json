@@ -31,6 +31,17 @@
             "evidence": "Official Programmablaufplan for the machine calculation of wage tax, solidarity surcharge and church-tax base for 2026.",
             "confidence": "high"
         },
+        "employer_only_levies": {
+            "insolvency_levy": 0.0015,
+            "u2_maternity_levy_standard": 0.0044,
+            "label": "Insolvenzgeldumlage and general U2 Mutterschaftsumlage",
+            "source_name": "TK (Techniker Krankenkasse) Firmenkunden",
+            "source_type": "official_aggregated",
+            "url": "https://www.tk.de/firmenkunden/versicherung/beitraege-faq/umlagen-u1-u2-und-insolvenzgeld/hoehe-umlagesaetze-u1-und-u2-2031720",
+            "evidence": "Insolvenzgeldumlage 0.15% for 2026 (unchanged from 2025, confirmed via NWB Datenbank cross-check); general U2 rate 0.44% for 2026, described as a nationally uniform rate set at the Ausgleichskasse level. Distinct from the Minijob-Zentrale's own U2 rate (0.22%), which is a separate Ausgleichskasse with its own rate schedule.",
+            "confidence": "high",
+            "added": "2026-08-31"
+        },
         "implementation_scope": {
             "included": [
                 "gross wage grid",
@@ -42,7 +53,9 @@
                 "standardized PAP 2026 wage-tax simulation",
                 "net wage after Lohnsteuer and Solidaritätszuschlag",
                 "Saxony and non-Saxony care contribution profiles",
-                "childless and with-child care contribution profiles"
+                "childless and with-child care contribution profiles",
+                "Minijob and Midijob (Übergangsbereich/Gleitzone) specific contribution formulas",
+                "Insolvenzgeldumlage and the general U2 Mutterschaftsumlage as separate employer-only levies (added 2026-08-31)"
             ],
             "excluded_or_simplified": [
                 "private health insurance",
@@ -50,7 +63,7 @@
                 "accident insurance",
                 "collective agreements",
                 "firm-level payroll details",
-                "Minijob and Midijob specific contribution formulas",
+                "U1 Umlage (Krankheitsumlage), mandatory only for employers with 30 or fewer employees, not modeled since employer size is unspecified outside the minijob regime",
                 "special payments and bonuses",
                 "household taxation and spouse effects"
             ]

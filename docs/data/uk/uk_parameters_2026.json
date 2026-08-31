@@ -19,7 +19,7 @@
         "step": 0.01
     },
     "social_security": {
-        "income_tax_note": "Barème rUK (Angleterre/Pays de Galles/Irlande du Nord) : l'Écosse applique des taux dévolus distincts, non modélisés ici. Voir analysis/uk/paye_ni_2026.py pour le détail du calcul (abattement personnel dégressif, tranches d'impôt, National Insurance, pension d'entreprise obligatoire).",
+        "income_tax_note": "Barème rUK (Angleterre/Pays de Galles/Irlande du Nord) : l'Écosse applique des taux dévolus distincts, modélisés séparément via le profil 'uk__standard_employee_scotland' (voir income_tax_bands_scotland ci-dessous et le sélecteur de profil du module). Voir analysis/uk/paye_ni_2026.py pour le détail du calcul (abattement personnel dégressif, tranches d'impôt, National Insurance, pension d'entreprise obligatoire).",
         "personal_allowance": {
             "standard_gbp": 12570,
             "taper_threshold_gbp": 100000,

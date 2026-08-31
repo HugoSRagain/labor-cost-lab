@@ -10,7 +10,7 @@
 
     <link rel="stylesheet" href="../../assets/style.css?v=28">
     <script defer src="../../assets/i18n_common.js?v=3"></script>
-    <script defer src="./assets/belgium_app.js?v=12"></script>
+    <script defer src="./assets/belgium_app.js?v=13"></script>
 </head>
 
 <body>
@@ -197,6 +197,34 @@
                             class="plotly-chart"
                             aria-label="Taux de cotisation en Belgique"
                         ></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3>Décomposition détaillée des cotisations ONSS par branche</h3>
+
+                        <p class="chart-subtitle">
+                            Montant mensuel de chaque branche de cotisation
+                            ONSS salariale et patronale (retraite, assurance
+                            maladie-invalidité, chômage, maladies
+                            professionnelles, accidents du travail), avant
+                            réduction structurelle.
+                        </p>
+
+                        <div
+                            id="chart-belgium-contrib-breakdown-fr"
+                            class="plotly-chart"
+                            aria-label="Décomposition détaillée des cotisations ONSS par branche"
+                        ></div>
+
+                        <p class="method-note">
+                            Les six branches sourcées directement totalisent
+                            17,77 points sur les 25,00 % du taux de base
+                            employeur ; le résiduel (7,23 points) regroupe les
+                            allocations familiales et des cotisations
+                            diverses de moindre montant qui n'ont pas pu être
+                            individuellement vérifiées auprès d'une source
+                            primaire — voir l'onglet Méthodologie.
+                        </p>
                     </div>
 
                     <div class="chart-card">
@@ -468,7 +496,18 @@
                                     <th>Net après précompte (€)</th>
                                     <th>Coût employeur (€)</th>
                                     <th>Cotisations salarié (€)</th>
+                                    <th>Retraite salarié (€)</th>
+                                    <th>Maladie-inval. soins salarié (€)</th>
+                                    <th>Maladie-inval. indem. salarié (€)</th>
+                                    <th>Chômage salarié (€)</th>
                                     <th>Cotisations employeur (€)</th>
+                                    <th>Retraite employeur (€)</th>
+                                    <th>Maladie-inval. soins employeur (€)</th>
+                                    <th>Maladie-inval. indem. employeur (€)</th>
+                                    <th>Chômage employeur (€)</th>
+                                    <th>Maladies professionnelles (€)</th>
+                                    <th>Accidents du travail (€)</th>
+                                    <th>Résiduel (alloc. fam., etc.) (€)</th>
                                     <th>Coin social (€)</th>
                                     <th>Coin socio-fiscal (€)</th>
                                     <th>Taux salarié</th>
@@ -482,6 +521,18 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <p class="method-note">
+                        Les colonnes par branche (retraite, assurance
+                        maladie-invalidité, chômage, maladies
+                        professionnelles, accidents du travail, résiduel)
+                        sont calculées avant réduction structurelle ; leur
+                        somme correspond donc à « Cotisations employeur »
+                        uniquement lorsque la réduction structurelle est
+                        nulle. La colonne « Cotisations employeur »
+                        elle-même reste nette de la réduction structurelle,
+                        comme partout ailleurs dans ce module.
+                    </p>
                 </div>
             </section>
 
@@ -801,6 +852,33 @@
                     </div>
 
                     <div class="chart-card">
+                        <h3>Detailed breakdown of ONSS contributions by branch</h3>
+
+                        <p class="chart-subtitle">
+                            Monthly amount of every employee and employer
+                            ONSS contribution branch (pension, health
+                            insurance, unemployment, occupational diseases,
+                            workplace accidents), before structural
+                            reduction.
+                        </p>
+
+                        <div
+                            id="chart-belgium-contrib-breakdown-en"
+                            class="plotly-chart"
+                            aria-label="Detailed breakdown of ONSS contributions by branch"
+                        ></div>
+
+                        <p class="method-note">
+                            The six directly-sourced branches total 17.77
+                            points of the 25.00% employer base rate; the
+                            residual (7.23 points) bundles family allowances
+                            and smaller miscellaneous contributions that
+                            could not be individually verified against a
+                            primary source -- see the Methodology tab.
+                        </p>
+                    </div>
+
+                    <div class="chart-card">
                         <h3>Structural reduction of employer contributions</h3>
 
                         <p class="chart-subtitle">
@@ -1070,7 +1148,18 @@
                                     <th>Net after withholding tax (€)</th>
                                     <th>Employer cost (€)</th>
                                     <th>Employee contributions (€)</th>
+                                    <th>Pension, employee (€)</th>
+                                    <th>Health ins. care, employee (€)</th>
+                                    <th>Health ins. benefits, employee (€)</th>
+                                    <th>Unemployment, employee (€)</th>
                                     <th>Employer contributions (€)</th>
+                                    <th>Pension, employer (€)</th>
+                                    <th>Health ins. care, employer (€)</th>
+                                    <th>Health ins. benefits, employer (€)</th>
+                                    <th>Unemployment, employer (€)</th>
+                                    <th>Occupational diseases (€)</th>
+                                    <th>Workplace accidents (€)</th>
+                                    <th>Residual (family allow., etc.) (€)</th>
                                     <th>Social wedge (€)</th>
                                     <th>Total socio-fiscal wedge (€)</th>
                                     <th>Employee rate</th>
@@ -1084,6 +1173,17 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <p class="method-note">
+                        The per-branch columns (pension, health insurance,
+                        unemployment, occupational diseases, workplace
+                        accidents, residual) are computed before structural
+                        reduction; their sum therefore matches "Employer
+                        contributions" only when the structural reduction is
+                        zero. The "Employer contributions" column itself
+                        remains net of the structural reduction, as
+                        everywhere else in this module.
+                    </p>
                 </div>
             </section>
 
