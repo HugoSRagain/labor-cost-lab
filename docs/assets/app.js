@@ -1438,7 +1438,9 @@ function renderWaterfallChart(data, lang) {
     const grossWage = num(row.gross_monthly_eur);
     const employerCost = num(row.employer_cost_monthly_eur);
 
-    const employeeCsgCrds = num(row.employee_csg_crds_monthly_eur);
+    const employeeCrds = num(row.employee_crds_monthly_eur);
+    const employeeCsgDeductible = num(row.employee_csg_deductible_monthly_eur);
+    const employeeCsgNonDeductible = num(row.employee_csg_non_deductible_monthly_eur);
     const employeeOldAge = num(row.employee_old_age_monthly_eur);
     const employeeRetirement = num(row.employee_retirement_complementary_ceg_cet_monthly_eur);
     const employeeOther = num(row.employee_other_monthly_eur);
@@ -1461,7 +1463,9 @@ function renderWaterfallChart(data, lang) {
     const labels = lang === "fr"
         ? [
             "Salaire net",
-            "CSG-CRDS",
+            "CRDS",
+            "CSG déductible",
+            "CSG non déductible",
             "Vieillesse salarié",
             "Retraite compl. salarié",
             "Autres cotisations salarié",
@@ -1480,7 +1484,9 @@ function renderWaterfallChart(data, lang) {
         ]
         : [
             "Net wage",
-            "CSG-CRDS",
+            "CRDS",
+            "Deductible CSG",
+            "Non-deductible CSG",
             "Employee old-age",
             "Employee supplementary pension",
             "Other employee contributions",
@@ -1500,7 +1506,9 @@ function renderWaterfallChart(data, lang) {
 
     const values = [
         netWage,
-        employeeCsgCrds,
+        employeeCrds,
+        employeeCsgDeductible,
+        employeeCsgNonDeductible,
         employeeOldAge,
         employeeRetirement,
         employeeOther,
@@ -1520,6 +1528,8 @@ function renderWaterfallChart(data, lang) {
 
     const measures = [
         "absolute",
+        "relative",
+        "relative",
         "relative",
         "relative",
         "relative",
@@ -1548,9 +1558,9 @@ function renderWaterfallChart(data, lang) {
             .replace(".", ",") + " %";
     }
 
-    const employeeIndexes = [1, 2, 3, 4];
-    const employerIndexes = [6, 7, 8, 9, 10, 11, 12, 13, 14];
-    const reliefIndexes = [15];
+    const employeeIndexes = [1, 2, 3, 4, 5, 6];
+    const employerIndexes = [8, 9, 10, 11, 12, 13, 14, 15, 16];
+    const reliefIndexes = [17];
 
     const percentLabels = values.map((value, index) => {
         if (employeeIndexes.includes(index)) {

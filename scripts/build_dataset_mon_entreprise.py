@@ -144,6 +144,13 @@ BASE_EXPRESSIONS = [
 
     # Income-tax base (used for the progressive income-tax calculation)
     "salarié . rémunération . net . imposable",
+
+    # CSG-CRDS sub-components (appended at the end, rather than replacing
+    # index 6's existing bundled "CSG-CRDS" total, so that every other
+    # hardcoded extract_value(result, N) index above stays valid).
+    "salarié . cotisations . CSG-CRDS . CRDS",
+    "salarié . cotisations . CSG-CRDS . CSG . déductible",
+    "salarié . cotisations . CSG-CRDS . CSG . non déductible",
 ]
 
 
@@ -432,8 +439,12 @@ def compute_indicators(result, gross_monthly, rgdu_expression=None):
 
     net_imposable = extract_value(result, 21)
 
+    employee_crds = extract_value(result, 22)
+    employee_csg_deductible = extract_value(result, 23)
+    employee_csg_non_deductible = extract_value(result, 24)
+
     if rgdu_expression:
-        rgdu_monthly = extract_value(result, 22)
+        rgdu_monthly = extract_value(result, 25)
     else:
         rgdu_monthly = 0.0
 
@@ -546,6 +557,9 @@ def compute_indicators(result, gross_monthly, rgdu_expression=None):
 
         # Detailed decomposition
         "employee_csg_crds": employee_csg_crds,
+        "employee_crds": employee_crds,
+        "employee_csg_deductible": employee_csg_deductible,
+        "employee_csg_non_deductible": employee_csg_non_deductible,
         "employee_old_age": employee_old_age,
         "employee_retirement_complementary_ceg_cet": employee_retirement_complementary_ceg_cet,
         "employee_other": employee_other,
@@ -633,6 +647,9 @@ def make_success_row(
         "rgdu_rate_employer_cost": safe_round(indicators["rgdu_rate_employer_cost"], 4),
 
         "employee_csg_crds_monthly_eur": safe_round(indicators["employee_csg_crds"], 2),
+        "employee_crds_monthly_eur": safe_round(indicators["employee_crds"], 2),
+        "employee_csg_deductible_monthly_eur": safe_round(indicators["employee_csg_deductible"], 2),
+        "employee_csg_non_deductible_monthly_eur": safe_round(indicators["employee_csg_non_deductible"], 2),
         "employee_old_age_monthly_eur": safe_round(indicators["employee_old_age"], 2),
         "employee_retirement_complementary_ceg_cet_monthly_eur": safe_round(indicators["employee_retirement_complementary_ceg_cet"], 2),
         "employee_other_monthly_eur": safe_round(indicators["employee_other"], 2),
@@ -702,6 +719,9 @@ def make_error_row(
 
         "rgdu_monthly_eur": None,
         "employee_csg_crds_monthly_eur": None,
+        "employee_crds_monthly_eur": None,
+        "employee_csg_deductible_monthly_eur": None,
+        "employee_csg_non_deductible_monthly_eur": None,
         "employee_old_age_monthly_eur": None,
         "employee_retirement_complementary_ceg_cet_monthly_eur": None,
         "employee_other_monthly_eur": None,
